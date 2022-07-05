@@ -1,0 +1,12 @@
+[
+  {
+    "origin": 
+      [
+        "https://angular-oshiro-2.web.app/",
+        "https://angular-oshiro-2.firebaseapp.com/",
+        "http://localhost:4200"
+      ],
+    "method": ["GET"],
+    "maxAgeSeconds": 3600
+  }
+]
