@@ -622,6 +622,7 @@
   <!------------------------------------------------------------------------->
   <!-- Image files (kaichiku) ----------------------------------------------->
   <!------------------------------------------------------------------------->
+  <!-- Disable upload kaichiku images. 
   <p-divider align="center"><span>画像 (改壱)</span></p-divider>
   <div class="formgrid grid p-fluid">
     <div class="field col-12 lg:col-6" *ngFor="let imageType of imageTypesAndLabels; let i = index">
@@ -667,31 +668,34 @@
       </div>
     </div>
   </div>
+  -->
 
   <!---->
   <!-- Footer -->
   <!---->
-  <p-button
-    [label]="okLabel"
-    icon="pi pi-check"
-    (onClick)="onOkClick()"
-    [styleClass]="buttonStyleClass"
-    [disabled]="
-      !selectedCharacterType ||
-      inputCharacterName === '' ||
-      !selectedRarerity ||
-      !selectedWeaponType ||
-      selectedGeographTypes.length === 0 ||
-      !this.thumbnailBlob
-    "
-  ></p-button>
-  <p-button
-    [label]="cancelLabel"
-    icon="pi pi-times"
-    [style]="{ 'margin-left': '.5rem' }"
-    (onClick)="onCancelClick()"
-    [styleClass]="'p-button-secondary ' + buttonStyleClass"
-  ></p-button>
+  <div style="margin-top: 1rem">
+    <p-button
+      [label]="okLabel"
+      icon="pi pi-check"
+      (onClick)="onOkClick()"
+      [styleClass]="buttonStyleClass"
+      [disabled]="
+        !selectedCharacterType ||
+        inputCharacterName === '' ||
+        !selectedRarerity ||
+        !selectedWeaponType ||
+        selectedGeographTypes.length === 0 ||
+        !this.thumbnailBlob
+      "
+    ></p-button>
+    <p-button
+      [label]="cancelLabel"
+      icon="pi pi-times"
+      [style]="{ 'margin-left': '.5rem' }"
+      (onClick)="onCancelClick()"
+      [styleClass]="'p-button-secondary ' + buttonStyleClass"
+    ></p-button>
+  </div>
 </form>
 
 <!----------------------------------------------------------------------------->
