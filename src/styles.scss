@@ -1,1 +1,34 @@
-/* You can add global styles to this file, and also import other style files */
+html {
+  height: 100vh;
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  font-family: "Noto Sans JP", "Helvetica Neue", sans-serif;
+}
+
+.h1 {
+  font-size: xx-large;
+  font-weight: 100;
+}
+
+.h2 {
+  font-size: x-large;
+  font-weight: 100;
+}
+
+.h3 {
+  font-size: large;
+  font-weight: 100;
+}
+
+.dialog {
+  max-width: 50vw;
+}
+
+@media screen and (max-width: 959px) {
+  .dialog {
+    max-width: 80vw;
+  }
+}

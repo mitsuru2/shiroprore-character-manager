@@ -1,0 +1,11 @@
+<!--<div class="tool-bar-icon"></div>-->
+<div class="tool-bar-body">
+  <div>
+    <p-button icon="pi pi-bars" (onClick)="menu.toggle($event)"></p-button>
+    <p-menu #menu [popup]="true" [model]="menuItems" [style]="{ width: 'auto' }"></p-menu>
+  </div>
+  <div>
+    <img src="../../../../../assets/icon_home_m.png" />
+  </div>
+  <div style="width: 40px"></div>
+</div>

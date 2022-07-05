@@ -1,0 +1,193 @@
+<!----------------------------------------------------------------------------->
+<!-- Contents ----------------------------------------------------------------->
+<!----------------------------------------------------------------------------->
+
+<div [ngClass]="styleClass">
+  <!--------------------------------------------------------------------------->
+  <!-- Basic Information ------------------------------------------------------>
+  <!--------------------------------------------------------------------------->
+  <p-divider align="center"><span>基本情報</span></p-divider>
+  <div class="formgrid grid" style="margin-bottom: 0.5rem">
+    <div class="col-6 lg:col-3">キャラクタータイプ</div>
+    <div class="col-6 lg:col-3">{{ character.characterType.name }}</div>
+    <div class="col-6 lg:col-3">サブタイプ</div>
+    <div class="col-6 lg:col-3">
+      <span *ngIf="character.subCharacterType.name !== ''">{{ character.subCharacterType.name }}</span>
+      <span *ngIf="character.subCharacterType.name === ''">{{ textNotAvailable }}</span>
+    </div>
+    <div class="col-6 lg:col-3">キャラクター名</div>
+    <div class="col-6 lg:col-3">{{ character.characterName }}</div>
+    <div class="col-6 lg:col-3">レアリティ</div>
+    <div class="col-6 lg:col-3">{{ character.rarerity }}</div>
+    <div class="col-6 lg:col-3">武器タイプ</div>
+    <div class="col-6 lg:col-3">{{ character.weaponType.name }}</div>
+    <div class="col-6 lg:col-3">地形属性</div>
+    <div class="col-6 lg:col-3">
+      <span *ngFor="let geoType of character.geographTypes; let i = index">
+        <span *ngIf="i > 0">, </span>
+        <span>{{ geoType.name }}</span>
+      </span>
+    </div>
+    <div class="col-6 lg:col-3">地域</div>
+    <div class="col-6 lg:col-9">
+      <span *ngIf="character.region.name !== ''">{{ character.region.name }}</span>
+      <span *ngIf="character.region.name === ''">{{ textNotAvailable }}</span>
+    </div>
+    <div class="col-6 lg:col-3">キャラクターボイス</div>
+    <div class="col-6 lg:col-3">
+      <span *ngIf="character.voiceActor.name !== ''">{{ character.voiceActor.name }}</span>
+      <span *ngIf="character.voiceActor.name === ''">{{ textNotAvailable }}</span>
+    </div>
+    <div class="col-6 lg:col-3">イラストレーター</div>
+    <div class="col-6 lg:col-3">
+      <span *ngIf="character.illustrator.name !== ''">{{ character.illustrator.name }}</span>
+      <span *ngIf="character.illustrator.name === ''">{{ textNotAvailable }}</span>
+    </div>
+    <div class="col-6 lg:col-3">モチーフ武器</div>
+    <div class="col-6 lg:col-3">
+      <span *ngIf="character.motifWeapons.length > 0"
+        ><span *ngFor="let weapon of character.motifWeapons; let i = index"> <span *ngIf="i > 0">, </span>{{ weapon.name }}</span>
+      </span>
+      <span *ngIf="character.motifWeapons.length === 0">{{ textNotAvailable }}</span>
+    </div>
+    <div class="col-6 lg:col-3">モチーフ施設</div>
+    <div class="col-6 lg:col-3">
+      <span *ngIf="character.motifFacilities.length > 0"
+        ><span *ngFor="let facility of character.motifFacilities; let i = index"><span *ngIf="i > 0">, </span>{{ facility.name }}</span></span
+      >
+      <span *ngIf="character.motifFacilities.length === 0">{{ textNotAvailable }}</span>
+    </div>
+    <div class="col-6 lg:col-3">タグ</div>
+    <div class="col-6 lg:col-9">
+      <span *ngIf="character.characterTags.length > 0"
+        ><span *ngFor="let tag of character.characterTags; let i = index"
+          ><span *ngIf="i > 0">, </span><span>{{ tag.name }}</span></span
+        ></span
+      >
+      <span *ngIf="character.characterTags.length === 0">{{ textNotAvailable }}</span>
+    </div>
+  </div>
+
+  <!--------------------------------------------------------------------------->
+  <!-- Ability (before kaichiku) ---------------------------------------------->
+  <!--------------------------------------------------------------------------->
+  <p-divider align="center"><span>特技/計略</span></p-divider>
+  <div *ngIf="character.abilities.length === 0" [style]="{ 'margin-bottom': '1rem' }">{{ textNotAvailable }}</div>
+  <div *ngFor="let ability of character.abilities; let i = index">
+    <p-card [style]="{ 'margin-bottom': '1rem' }">
+      <div class="formgrid grid">
+        <div class="col-6 lg:col-3">特技/計略タイプ</div>
+        <div class="col-6 lg:col-3">{{ ability.typeName }}</div>
+        <div class="col-6 lg:col-3">特技/計略名</div>
+        <div class="col-6 lg:col-3">{{ ability.name }}</div>
+        <div class="col-6 lg:col-3" *ngIf="ability.typeName === '計略'">使用間隔</div>
+        <div class="col-6 lg:col-3" *ngIf="ability.typeName === '計略'">{{ ability.interval }} 秒</div>
+        <div class="col-6 lg:col-3" *ngIf="ability.typeName === '計略'">消費気</div>
+        <div class="col-6 lg:col-3" *ngIf="ability.typeName === '計略'">{{ ability.cost }}</div>
+        <div class="col-6 lg:col-3" *ngIf="ability.typeName === '計略' && ability.tokenLayouts.length > 0">トークン配置マス</div>
+        <div class="col-6 lg:col-9" *ngIf="ability.typeName === '計略' && ability.tokenLayouts.length > 0">
+          <span *ngFor="let layout of ability.tokenLayouts; let j = index">
+            <span *ngIf="j > 0">, </span>
+            {{ layout }}
+          </span>
+        </div>
+        <div class="col-6 lg:col-3">説明</div>
+        <div class="col-6 lg:col-9">
+          <div *ngFor="let desc of ability.descriptions">{{ desc }}</div>
+        </div>
+      </div>
+    </p-card>
+  </div>
+
+  <!--------------------------------------------------------------------------->
+  <!-- Ability (after kaichiku) ---------------------------------------------->
+  <!--------------------------------------------------------------------------->
+  <p-divider align="center"><span>特技/計略 (改壱)</span></p-divider>
+  <div *ngIf="character.abilitiesKai.length === 0" [style]="{ 'margin-bottom': '1rem' }">{{ textNotAvailable }}</div>
+  <div *ngFor="let ability of character.abilitiesKai; let i = index">
+    <p-card [style]="{ 'margin-bottom': '1rem' }">
+      <div class="formgrid grid">
+        <div class="col-6 lg:col-3">特技/計略タイプ</div>
+        <div class="col-6 lg:col-3">{{ ability.typeName }}</div>
+        <div class="col-6 lg:col-3">特技/計略名</div>
+        <div class="col-6 lg:col-3">{{ ability.name }}</div>
+        <div class="col-6 lg:col-3" *ngIf="ability.typeName === '計略'">使用間隔</div>
+        <div class="col-6 lg:col-3" *ngIf="ability.typeName === '計略'">{{ ability.interval }} 秒</div>
+        <div class="col-6 lg:col-3" *ngIf="ability.typeName === '計略'">消費気</div>
+        <div class="col-6 lg:col-3" *ngIf="ability.typeName === '計略'">{{ ability.cost }}</div>
+        <div class="col-6 lg:col-3" *ngIf="ability.typeName === '計略' && ability.tokenLayouts.length > 0">トークン配置マス</div>
+        <div class="col-6 lg:col-9" *ngIf="ability.typeName === '計略' && ability.tokenLayouts.length > 0">
+          <span *ngIf="ability.tokenLayouts">
+            <span *ngFor="let layout of ability.tokenLayouts; let j = index">
+              <span *ngIf="j > 0">, </span>
+              {{ layout }}
+            </span></span
+          >
+        </div>
+        <div class="col-6 lg:col-3">説明</div>
+        <div class="col-6 lg:col-9">
+          <div *ngFor="let desc of ability.descriptions">{{ desc }}</div>
+        </div>
+      </div>
+    </p-card>
+  </div>
+
+  <!--------------------------------------------------------------------------->
+  <!-- Image files. ----------------------------------------------------------->
+  <!--------------------------------------------------------------------------->
+  <p-divider align="center"><span>画像</span></p-divider>
+  <div class="col">
+    <span *ngFor="let image of character.imageFiles; let i = index" style="margin-right: 0.5rem">
+      <p-progressSpinner
+        *ngIf="image && (!imagesLoaded || !canvasesReady)"
+        [style]="{ 'max-width': previewCanvasWidth, 'max-height': previewCanvasHeight }"
+      ></p-progressSpinner>
+      <canvas
+        [hidden]="!image || !imagesLoaded || !canvasesReady"
+        [id]="'NewCharacterConfirmation_ImagePreview_' + i"
+        [style]="{ 'max-width': previewCanvasWidth, 'max-height': previewCanvasHeight }"
+      ></canvas
+    ></span>
+    <span style="margin-right: 0.5rem">
+      <p-progressSpinner
+        *ngIf="!imagesLoaded || !canvasesReady"
+        [style]="{ 'max-width': previewCanvasWidth, 'max-height': previewCanvasHeight }"
+      ></p-progressSpinner>
+      <canvas
+        [hidden]="!imagesLoaded || !canvasesReady"
+        id="NewCharacterConfirmation_ThumbnailPreview"
+        [style]="{ 'max-width': previewCanvasWidth, 'max-height': previewCanvasHeight }"
+      ></canvas>
+    </span>
+  </div>
+
+  <!--------------------------------------------------------------------------->
+  <!-- Image files (kaichiku) ------------------------------------------------->
+  <!--------------------------------------------------------------------------->
+  <p-divider align="center"><span>画像 (改壱)</span></p-divider>
+  <div class="col">
+    <span *ngFor="let image of character.imageFilesKai; let i = index" style="margin-right: 0.5rem">
+      <p-progressSpinner
+        *ngIf="image && (!imagesLoaded || !canvasesReady)"
+        [style]="{ 'max-width': previewCanvasWidth, 'max-height': previewCanvasHeight }"
+      ></p-progressSpinner>
+      <canvas
+        [hidden]="!image || !imagesLoaded || !canvasesReady"
+        [id]="'NewCharacterConfirmation_ImagePreviewKai_' + i"
+        [style]="{ 'max-width': previewCanvasWidth, 'max-height': previewCanvasHeight }"
+      ></canvas
+    ></span>
+  </div>
+</div>
+
+<!----------------------------------------------------------------------------->
+<!-- Footer ------------------------------------------------------------------->
+<!----------------------------------------------------------------------------->
+<p-button [label]="okLabel" icon="pi pi-check" [disabled]="false" (onClick)="onOkClick()" [styleClass]="buttonStyleClass"></p-button>
+<p-button
+  [label]="cancelLabel"
+  icon="pi pi-times"
+  [style]="{ 'margin-left': '.5rem' }"
+  (onClick)="onCancelClick()"
+  [styleClass]="'p-button-secondary ' + buttonStyleClass"
+></p-button>

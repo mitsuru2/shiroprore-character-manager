@@ -1,0 +1,11 @@
+.tool-bar-body {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.tool-bar-icon {
+  position: fixed;
+  left: calc(50vw - 23px); // 23px: Half of image width.
+  width: 100vw;
+}

@@ -1,0 +1,114 @@
+<form [style]="{ 'margin-bottom': '1rem' }" [ngClass]="styleClass">
+  <div class="formgrid grid">
+    <div class="field col">
+      <label>施設タイプ</label>
+      <div class="formgroup-inline">
+        <div *ngFor="let item of facilityTypes" class="field-checkbox">
+          <p-radioButton
+            [inputId]="'NewFacilityForm_FacilityTypeInput_' + item.name"
+            name="NewFacilityForm_FacilityTypeInput"
+            [value]="item"
+            [(ngModel)]="selectedType"
+          ></p-radioButton>
+          <label [for]="'NewFacilityForm_FacilityTypeInput_' + item.name">{{ item.name }}</label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="formgrid grid" style="margin-bottom: 1rem">
+    <div class="field col">
+      <label for="NewFacilityForm_FacilityNameInput">施設名</label>
+      <span class="p-input-icon-right" [style]="{ width: '100%' }">
+        <i *ngIf="inputName !== ''" class="pi pi-times" (click)="clearNameInput()"></i>
+        <input
+          type="text"
+          id="NewFacilityForm_FacilityNameInput"
+          name="NewFacilityForm_FacilityNameInput"
+          [(ngModel)]="inputName"
+          pInputText
+          [style]="{ width: '100%' }"
+          (change)="onNameInputChange()"
+        />
+      </span>
+      <div class="text-sm text-red-600" *ngIf="errorMessage !== ''">{{ errorMessage }}</div>
+    </div>
+  </div>
+
+  <div class="formgrid grid">
+    <div class="field col">
+      <label>レアリティ</label>
+      <div class="formgroup-inline">
+        <div *ngFor="let item of rarerityItems" class="field-checkbox">
+          <p-radioButton
+            [inputId]="'NewFacilityForm_RarerityInput_' + item.toString()"
+            name="NewFacilityForm_RarerityInput_"
+            [value]="item"
+            [(ngModel)]="selectedRarerity"
+          ></p-radioButton>
+          <label [for]="'NewFacilityForm_RarerityInput_' + item.toString()">★{{ item }}</label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="formgrid grid" *ngIf="mode !== minimumMode" style="margin-bottom: 1rem">
+    <div class="field col">
+      <label>説明</label>
+      <div *ngFor="let desc of inputDescriptions; trackBy: trackByItem; let i = index">
+        <span class="p-input-icon-right" [style]="{ width: '100%' }">
+          <i *ngIf="inputDescriptions[i] !== ''" class="pi pi-times" (click)="inputDescriptions[i] = ''"></i>
+          <input
+            type="text"
+            [id]="'NewFacilityForm_DescriptionInput_' + i"
+            [name]="'NewFacilityForm_DescriptionInput_' + i"
+            [(ngModel)]="inputDescriptions[i]"
+            pInputText
+            [style]="{ width: '100%', 'margin-bottom': '2px' }"
+          />
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <div class="formgrid grid p-fluid" *ngIf="mode !== minimumMode" style="margin-bottom: 1rem">
+    <div class="field col">
+      <label>効果</label>
+      <p-chips inputId="NewFacilityForm_FacilityEffectInput" name="NewFacilityForm_FacilityEffectInput" [(ngModel)]="inputEffects" [max]="4"></p-chips>
+    </div>
+  </div>
+
+  <div class="formgrid grid" *ngIf="mode !== minimumMode" style="margin-bottom: 1rem">
+    <div class="field col">
+      <label>詳細</label>
+      <div *ngFor="let desc of inputDetails; trackBy: trackByItem; let i = index">
+        <span class="p-input-icon-right" [style]="{ width: '100%' }">
+          <i *ngIf="inputDetails[i] !== ''" class="pi pi-times" (click)="inputDetails[i] = ''"></i>
+          <input
+            type="text"
+            [id]="'NewFacilityForm_DetailInput_' + i"
+            [name]="'NewFacilityForm_DetailInput_' + i"
+            [(ngModel)]="inputDetails[i]"
+            pInputText
+            [style]="{ width: '100%', 'margin-bottom': '2px' }"
+          />
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <p-button
+    [label]="okLabel"
+    icon="pi pi-check"
+    (onClick)="onOkClick()"
+    [disabled]="!selectedType || inputName === '' || errorMessage !== '' || !selectedRarerity"
+    [styleClass]="buttonStyleClass"
+  ></p-button>
+  <p-button
+    [label]="cancelLabel"
+    icon="pi pi-times"
+    [style]="{ 'margin-left': '.5rem' }"
+    (onClick)="onCancelClick()"
+    [styleClass]="'p-button-secondary ' + buttonStyleClass"
+  ></p-button>
+</form>

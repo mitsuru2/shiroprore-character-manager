@@ -1,0 +1,75 @@
+.main-background {
+  display: flex;
+  justify-content: center;
+  width: 100vw;
+  background-color: var(--primary-color);
+  background-image: linear-gradient(rgb(255 255 255 / 25%), rgb(255 255 255 / 75%));
+  background-repeat: no-repeat;
+}
+
+.main-body {
+  display: flex;
+  flex-direction: column;
+  width: min(1200px, 100vw);
+  height: 100vh;
+  background-color: white;
+}
+
+.tool-bar {
+  padding-top: 0.5rem;
+  padding-right: 1rem;
+  padding-left: 1rem;
+}
+
+.tool-bar-m {
+  display: none;
+  padding-top: 0.5rem;
+  padding-right: 1rem;
+  padding-left: 1rem;
+}
+
+.container {
+  display: flex;
+  flex-direction: row;
+  flex-grow: 1;
+  overflow-y: auto;
+
+  .side-menu {
+    width: 240px;
+    min-width: 240px;
+    padding-top: 0.5rem;
+    padding-left: 1rem;
+    overflow-y: auto;
+  }
+
+  .main-contents {
+    flex-grow: 1;
+    padding-top: 0.5rem;
+    padding-right: 1rem;
+    padding-left: 1rem;
+    overflow-y: auto;
+  }
+}
+
+@media screen and (max-width: 959px) {
+  .tool-bar {
+    display: none;
+  }
+
+  .tool-bar-m {
+    display: block;
+  }
+
+  .side-menu {
+    display: none;
+  }
+
+  .main-body {
+    display: flex;
+    flex-direction: column;
+    width: 100vw;
+    max-width: auto;
+    height: 100vh;
+    background-color: white;
+  }
+}

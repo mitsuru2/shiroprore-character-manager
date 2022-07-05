@@ -103,9 +103,62 @@
             ],
             "scripts": []
           }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "src/**/*.ts",
+              "src/**/*.html"
+            ]
+          }
+        },
+        "cypress-run": {
+          "builder": "@cypress/schematic:cypress",
+          "options": {
+            "devServerTarget": "shiroprore-character-manager:serve"
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "shiroprore-character-manager:serve:production"
+            }
+          }
+        },
+        "cypress-open": {
+          "builder": "@cypress/schematic:cypress",
+          "options": {
+            "watch": true,
+            "headless": false
+          }
+        },
+        "e2e": {
+          "builder": "@cypress/schematic:cypress",
+          "options": {
+            "devServerTarget": "shiroprore-character-manager:serve",
+            "watch": true,
+            "headless": false
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "shiroprore-character-manager:serve:production"
+            }
+          }
+        },
+        "deploy": {
+          "builder": "@angular/fire:deploy",
+          "options": {
+            "prerender": false,
+            "ssr": false,
+            "browserTarget": "shiroprore-character-manager:build:production",
+            "firebaseProject": "shiroprore-character",
+            "firebaseHostingSite": "shiroprore-character"
+          }
         }
       }
     }
   },
-  "defaultProject": "shiroprore-character-manager"
+  "defaultProject": "shiroprore-character-manager",
+  "cli": {
+    "defaultCollection": "@angular-eslint/schematics"
+  }
 }

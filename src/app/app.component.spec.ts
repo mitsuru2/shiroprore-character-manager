@@ -20,16 +20,16 @@ describe('AppComponent', () => {
     expect(app).toBeTruthy();
   });
 
-  it(`should have as title 'shiroprore-character-manager'`, () => {
+  it(`should have as title 'angular-oshiro-2'`, () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
-    expect(app.title).toEqual('shiroprore-character-manager');
+    expect(app.title).toEqual('angular-oshiro-2');
   });
 
   it('should render title', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('.content span')?.textContent).toContain('shiroprore-character-manager app is running!');
+    expect(compiled.querySelector('.content span')?.textContent).toContain('angular-oshiro-2 app is running!');
   });
 });

@@ -1,0 +1,11 @@
+<div class="tool-bar-body" #toolBar>
+  <div>
+    <img src="../../../../../assets/icon_home.png" style="vertical-align: middle" />
+    <span class="title h2">{{ appInfo.title }} {{ appInfo.subTitle }} </span>
+  </div>
+  <div>
+    <p-button icon="pi pi-user" [style]="{ margin: '0 1rem' }"></p-button>
+    <p-button *ngIf="!signedIn" icon="pi pi-sign-in"></p-button>
+    <p-button *ngIf="signedIn" icon="pi pi-sign-out"></p-button>
+  </div>
+</div>

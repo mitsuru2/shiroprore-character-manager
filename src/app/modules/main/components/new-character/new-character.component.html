@@ -1,0 +1,54 @@
+<!----------------------------------------------------------------------------->
+<!-- New character form ------------------------------------------------------->
+<!----------------------------------------------------------------------------->
+<app-new-character-form
+  [shown]="showNewCharacterForm"
+  [okLabel]="'入力内容確認'"
+  [cancelLabel]="'キャンセル'"
+  [characterTypes]="characterTypes"
+  [characters]="characters"
+  [characterTags]="characterTags"
+  [weaponTypes]="weaponTypes"
+  [geographTypes]="geographTypes"
+  [regions]="regions"
+  [voiceActors]="voiceActors"
+  [illustrators]="illustrators"
+  [weapons]="weapons"
+  [facilities]="facilities"
+  [facilityTypes]="facilityTypes"
+  [abilityTypes]="abilityTypes"
+  [abilities]="abilities"
+  (formResult)="onNewCharacterFormResult($event)"
+></app-new-character-form>
+
+<!----------------------------------------------------------------------------->
+<!-- Confirmation dialog ------------------------------------------------------>
+<!----------------------------------------------------------------------------->
+<p-dialog header="入力内容を確認してください。" [(visible)]="showConfirmationDialog" [modal]="true" [draggable]="false" [resizable]="false">
+  <app-new-character-confirmation
+    styleClass="dialog"
+    okLabel="ＯＫ"
+    cancelLabel="キャンセル"
+    buttonStyleClass="p-button-text"
+    [dialogMode]="true"
+    [shown]="showConfirmationDialog"
+    [character]="newCharacterFormContent"
+    (confirmationResult)="onNewCharacterConfirmResult($event)"
+  ></app-new-character-confirmation>
+</p-dialog>
+
+<!----------------------------------------------------------------------------->
+<!-- Progress spinner dialog -------------------------------------------------->
+<!----------------------------------------------------------------------------->
+<p-dialog
+  [(visible)]="showProgressDialog"
+  [modal]="true"
+  [draggable]="false"
+  [resizable]="false"
+  [closable]="false"
+  [showHeader]="false"
+  [contentStyle]="{ 'background-color': 'transparent' }"
+  styleClass="progress-dialog"
+>
+  <p-progressSpinner></p-progressSpinner>
+</p-dialog>

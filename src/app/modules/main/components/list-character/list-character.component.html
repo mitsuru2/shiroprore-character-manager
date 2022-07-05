@@ -1,0 +1,55 @@
+<div class="data-list-view">
+  <!---->
+  <!-- Header Area -->
+  <!---->
+  <div class="header">
+    <!-- Filter button -->
+    <div style="width: 75px">
+      <button pButton type="button" icon="pi pi-filter"></button>
+    </div>
+
+    <!-- Text search input. -->
+    <div>
+      <span [class.p-input-icon-left]="inputSearchText === ''" [class.p-input-icon-right]="inputSearchText !== ''">
+        <i class="pi" [class.pi-search]="inputSearchText === ''" [class.pi-times]="inputSearchText !== ''" (click)="inputSearchText = ''"></i>
+        <input type="text" pInputText [(ngModel)]="inputSearchText" placeholder="Search" />
+      </span>
+    </div>
+
+    <!-- Layout mode switch. -->
+    <div>
+      <span class="p-buttonset">
+        <button pButton type="button" icon="pi pi-list" [class.p-button-outlined]="!isListLayout" (click)="isListLayout = true"></button>
+        <button pButton type="button" icon="pi pi-th-large" [class.p-button-outlined]="isListLayout" (click)="isListLayout = false"></button>
+      </span>
+    </div>
+  </div>
+
+  <!---->
+  <!-- Contents Area -->
+  <!---->
+  <div class="content">
+    <div [class.grid-layout]="!isListLayout" [class.list-layout]="isListLayout">
+      <div *ngFor="let i of paginator.rowIndexes" class="item">
+        <div>
+          <img [id]="'ListCharacter_Thumb_' + i" />
+        </div>
+        <div>
+          <table [id]="'ListCharacter_Table_' + i" [hidden]="!isListLayout">
+            <colgroup>
+              <col class="short-col" />
+              <col class="long-col" />
+            </colgroup>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!---->
+  <!-- Footer Area -->
+  <!---->
+  <div class="footer">
+    <p-paginator [rows]="paginator.rowNum" [totalRecords]="filteredIndexes.length" styleClass="paginator" (onPageChange)="onPageChange($event)"></p-paginator>
+  </div>
+</div>

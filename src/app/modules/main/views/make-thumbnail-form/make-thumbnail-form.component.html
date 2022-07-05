@@ -1,0 +1,33 @@
+<div class="gap-4 make-thumbnail-view" [ngClass]="styleClass">
+  <div class="flex">
+    <canvas id="MakeThumbnailForm_Preview" class="no-swipe"></canvas>
+  </div>
+  <div class="flex flex-column justify-content-between">
+    <div class="scale-input">
+      <div>スケール</div>
+      <p-inputNumber
+        inputId="MakeThumbnailForm_ImageScaleInput"
+        name="MakeThumbnailForm_ImageScaleInput"
+        [(ngModel)]="imageScale"
+        mode="decimal"
+        [showButtons]="true"
+        suffix="%"
+        [min]="10"
+        [max]="100"
+        [step]="5"
+        (onInput)="onImageScaleInputChange($event)"
+      >
+      </p-inputNumber>
+    </div>
+    <div class="flex flex-row">
+      <p-button [label]="okLabel" icon="pi pi-check" (onClick)="onOkClick()" [styleClass]="buttonStyleClass"></p-button>
+      <p-button
+        [label]="cancelLabel"
+        icon="pi pi-times"
+        [style]="{ 'margin-left': '.5rem' }"
+        (onClick)="onCancelClick()"
+        [styleClass]="'p-button-secondary ' + buttonStyleClass"
+      ></p-button>
+    </div>
+  </div>
+</div>

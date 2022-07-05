@@ -1,0 +1,14 @@
+{
+  "targets": {
+    "shiroprore-character": {
+      "hosting": {
+        "shiroprore-character-manager": [
+          "shiroprore-character"
+        ]
+      }
+    }
+  },
+  "projects": {
+    "default": "shiroprore-character"
+  }
+}

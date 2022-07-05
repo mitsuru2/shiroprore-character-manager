@@ -1,0 +1,155 @@
+<form [style]="{ 'margin-bottom': '1rem' }" [ngClass]="styleClass">
+  <div class="formgrid grid">
+    <div class="field col">
+      <label>武器タイプ</label>
+      <div class="formgroup-inline">
+        <div *ngFor="let item of weaponTypes" class="field-checkbox">
+          <p-radioButton
+            [inputId]="'NewWeaponForm_WeaponTypeInput_' + item.name"
+            name="NewWeaponForm_WeaponTypeInput"
+            [value]="item"
+            [(ngModel)]="selectedType"
+          ></p-radioButton>
+          <label [for]="'NewWeaponForm_WeaponTypeInput_' + item.name">{{ item.name }}</label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="formgrid grid" style="margin-bottom: 1rem">
+    <div class="field col">
+      <label for="NewWeaponForm_WeaponNameInput">武器名</label>
+      <span class="p-input-icon-right" [style]="{ width: '100%' }">
+        <i *ngIf="inputName !== ''" class="pi pi-times" (click)="inputName = ''"></i>
+        <input
+          type="text"
+          id="NewWeaponForm_WeaponNameInput"
+          name="NewWeaponForm_WeaponNameInput"
+          [(ngModel)]="inputName"
+          pInputText
+          [style]="{ width: '100%' }"
+          (change)="onNameInputChange()"
+        />
+      </span>
+      <div class="text-sm text-red-600" *ngIf="errorMessage !== ''">{{ errorMessage }}</div>
+    </div>
+  </div>
+
+  <div class="formgrid grid">
+    <div class="field col">
+      <label>レアリティ</label>
+      <div class="formgroup-inline">
+        <div *ngFor="let item of rarerityItems" class="field-checkbox">
+          <p-radioButton
+            [inputId]="'NewWeaponForm_RarerityInput_' + item.toString()"
+            name="NewWeaponForm_RarerityInput"
+            [value]="item"
+            [(ngModel)]="selectedRarerity"
+          ></p-radioButton>
+          <label [for]="'NewWeaponForm_RarerityInput_' + item.toString()">★{{ item }}</label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="formgrid grid" *ngIf="mode === normalMode" style="margin-bottom: 1rem">
+    <div class="field col-12 lg:col-6 p-fluid">
+      <label for="NewWeaponForm_AttackInput">攻撃</label>
+      <p-inputNumber
+        inputId="NewWeaponForm_AttackInput"
+        name="NewWeaponForm_AttackInput"
+        [(ngModel)]="inputAttack"
+        mode="decimal"
+        [showButtons]="true"
+        [min]="0"
+        [max]="255"
+      >
+      </p-inputNumber>
+    </div>
+    <div class="field col-12 lg:col-6 p-fluid" *ngIf="selectedRarerity === 4">
+      <label for="NewWeaponForm_AttackKaiInput">攻撃［改］</label>
+      <p-inputNumber
+        inputId="NewWeaponForm_AttackKaiInput"
+        name="NewWeaponForm_AttackKaiInput"
+        [(ngModel)]="inputAttackKai"
+        mode="decimal"
+        [showButtons]="true"
+        [min]="0"
+        [max]="255"
+      >
+      </p-inputNumber>
+    </div>
+  </div>
+
+  <div class="formgrid grid" *ngIf="mode === normalMode" style="margin-bottom: 1rem">
+    <div class="field col">
+      <label>説明</label>
+      <div *ngFor="let desc of inputDescriptions; trackBy: trackByItem; let i = index">
+        <span class="p-input-icon-right" [style]="{ width: '100%' }">
+          <i *ngIf="inputDescriptions[i] !== ''" class="pi pi-times" (click)="inputDescriptions[i] = ''"></i>
+          <input
+            type="text"
+            [id]="'NewWeaponForm_DescriptionInput_' + i"
+            [name]="'NewWeaponForm_DescriptionInput_' + i"
+            [(ngModel)]="inputDescriptions[i]"
+            pInputText
+            [style]="{ width: '100%', 'margin-bottom': '2px' }"
+          />
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <div class="formgrid grid" *ngIf="mode === normalMode" style="margin-bottom: 1rem">
+    <div class="field col">
+      <label>効果</label>
+      <div *ngFor="let desc of inputEffects; trackBy: trackByItem; let i = index">
+        <span class="p-input-icon-right" [style]="{ width: '100%' }">
+          <i *ngIf="inputEffects[i] !== ''" class="pi pi-times" (click)="inputEffects[i] = ''"></i>
+          <input
+            type="text"
+            [id]="'NewWeaponForm_EffectInput_' + i"
+            [name]="'NewWeaponForm_EffectInput_' + i"
+            [(ngModel)]="inputEffects[i]"
+            pInputText
+            [style]="{ width: '100%', 'margin-bottom': '2px' }"
+          />
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <div class="formgrid grid" *ngIf="mode === normalMode" style="margin-bottom: 1rem">
+    <div class="field col" *ngIf="selectedRarerity === 4">
+      <label>効果［改］</label>
+      <div *ngFor="let desc of inputEffectsKai; trackBy: trackByItem; let i = index">
+        <span class="p-input-icon-right" [style]="{ width: '100%' }">
+          <i *ngIf="inputEffectsKai[i] !== ''" class="pi pi-times" (click)="inputEffectsKai[i] = ''"></i>
+          <input
+            type="text"
+            [id]="'NewWeaponForm_EffectKaiInput_' + i"
+            [name]="'NewWeaponForm_EffectKaiInput_' + i"
+            [(ngModel)]="inputEffectsKai[i]"
+            pInputText
+            [style]="{ width: '100%', 'margin-bottom': '2px' }"
+          />
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <p-button
+    [label]="okLabel"
+    icon="pi pi-check"
+    [disabled]="!selectedType || inputName === '' || errorMessage !== '' || !selectedRarerity"
+    (onClick)="onOkClick()"
+    [styleClass]="buttonStyleClass"
+  ></p-button>
+  <p-button
+    [label]="cancelLabel"
+    icon="pi pi-times"
+    [style]="{ 'margin-left': '.5rem' }"
+    (onClick)="onCancelClick()"
+    [styleClass]="'p-button-secondary ' + buttonStyleClass"
+  ></p-button>
+</form>
