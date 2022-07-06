@@ -14,7 +14,8 @@ import { HttpClientModule } from '@angular/common/http'; // for NGX Logger.
 // PrimeNG modules.
 import { ButtonModule } from 'primeng/button';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
-import { DividerModule } from 'primeng/divider';
+
+// Application components.
 import { SplashComponent } from './views/splash/splash.component';
 
 @NgModule({
@@ -34,7 +35,6 @@ import { SplashComponent } from './views/splash/splash.component';
     }),
     ButtonModule,
     ProgressSpinnerModule,
-    DividerModule,
   ],
   providers: [],
   bootstrap: [AppComponent],

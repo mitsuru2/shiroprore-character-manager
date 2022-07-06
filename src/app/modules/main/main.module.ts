@@ -2,26 +2,24 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
-import { ButtonModule } from 'primeng/button';
-import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { ToolbarModule } from 'primeng/toolbar';
-import { MenuModule } from 'primeng/menu';
-import { PanelModule } from 'primeng/panel';
-import { DropdownModule } from 'primeng/dropdown';
-import { InputTextModule } from 'primeng/inputtext';
-import { FileUploadModule } from 'primeng/fileupload';
-import { DialogModule } from 'primeng/dialog';
-import { CardModule } from 'primeng/card';
-import { RadioButtonModule } from 'primeng/radiobutton';
-import { CheckboxModule } from 'primeng/checkbox';
-import { InputNumberModule } from 'primeng/inputnumber';
+/** PrimeNG modules. */
 import { AutoCompleteModule } from 'primeng/autocomplete';
-import { DividerModule } from 'primeng/divider';
+import { ButtonModule } from 'primeng/button';
+import { CardModule } from 'primeng/card';
+import { CheckboxModule } from 'primeng/checkbox';
 import { ChipsModule } from 'primeng/chips';
-import { ProgressSpinnerModule } from 'primeng/progressspinner';
-import { DataViewModule } from 'primeng/dataview';
+import { DialogModule } from 'primeng/dialog';
+import { DividerModule } from 'primeng/divider';
+import { DropdownModule } from 'primeng/dropdown';
+import { InputNumberModule } from 'primeng/inputnumber';
+import { InputTextModule } from 'primeng/inputtext';
+import { MenuModule } from 'primeng/menu';
 import { PaginatorModule } from 'primeng/paginator';
+import { PanelModule } from 'primeng/panel';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { RadioButtonModule } from 'primeng/radiobutton';
 
+/** Application components. */
 import { MainRoutingModule } from './main-routing.module';
 import { MainComponent } from './main.component';
 import { NewCharacterComponent } from './components/new-character/new-character.component';
@@ -36,6 +34,7 @@ import { NewFacilityFormComponent } from './views/new-facility-form/new-facility
 import { NewCharacterConfirmationComponent } from './views/new-character-confirmation/new-character-confirmation.component';
 import { MakeThumbnailFormComponent } from './views/make-thumbnail-form/make-thumbnail-form.component';
 import { TopMenuMComponent } from './views/top-menu-m/top-menu-m.component';
+import { LoginComponent } from './components/login/login.component';
 
 @NgModule({
   declarations: [
@@ -51,20 +50,18 @@ import { TopMenuMComponent } from './views/top-menu-m/top-menu-m.component';
     NewCharacterConfirmationComponent,
     MakeThumbnailFormComponent,
     TopMenuMComponent,
+    LoginComponent,
   ],
   imports: [
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
     MainRoutingModule,
-    ToolbarModule,
     ButtonModule,
-    ConfirmDialogModule,
     MenuModule,
     PanelModule,
     DropdownModule,
     InputTextModule,
-    FileUploadModule,
     DialogModule,
     CardModule,
     RadioButtonModule,
@@ -74,7 +71,6 @@ import { TopMenuMComponent } from './views/top-menu-m/top-menu-m.component';
     DividerModule,
     ChipsModule,
     ProgressSpinnerModule,
-    DataViewModule,
     PaginatorModule,
   ],
   bootstrap: [MainComponent],
