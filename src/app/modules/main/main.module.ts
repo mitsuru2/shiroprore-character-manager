@@ -2,6 +2,11 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
+/** Firebase modules. */
+import { AngularFireModule } from '@angular/fire/compat';
+import { AngularFireAuthModule } from '@angular/fire/compat/auth';
+import { FirebaseUIModule, firebase, firebaseui } from 'firebaseui-angular';
+
 /** PrimeNG modules. */
 import { AutoCompleteModule } from 'primeng/autocomplete';
 import { ButtonModule } from 'primeng/button';
@@ -34,6 +39,24 @@ import { NewWeaponFormComponent } from './views/new-weapon-form/new-weapon-form.
 import { NewFacilityFormComponent } from './views/new-facility-form/new-facility-form.component';
 import { NewCharacterConfirmationComponent } from './views/new-character-confirmation/new-character-confirmation.component';
 import { MakeThumbnailFormComponent } from './views/make-thumbnail-form/make-thumbnail-form.component';
+import * as firebaseui from 'firebaseui';
+import { environment } from 'src/environments/environment';
+
+const firebaseUiAuthConfig: firebaseui.auth.Config = {
+  autoUpgradeAnonymousUsers: false, // Disable annymouse users.
+  signInFlow: 'redirect', // redirect or popup
+  signInOptions: [
+    {
+      provider: firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+      //requireDisplayName: false,
+    },
+  ],
+  signInSuccessUrl: 'https://google.com',
+  privacyPolicyUrl: 'https://www.primefaces.org/primeng/',
+  tosUrl: 'https://shiroprore-character.web.app',
+  credentialHelper: firebaseui.auth.CredentialHelper.GOOGLE_YOLO,
+  siteName: 'my-app',
+};
 
 @NgModule({
   declarations: [
@@ -56,21 +79,24 @@ import { MakeThumbnailFormComponent } from './views/make-thumbnail-form/make-thu
     FormsModule,
     ReactiveFormsModule,
     MainRoutingModule,
-    ButtonModule,
-    MenuModule,
-    PanelModule,
-    DropdownModule,
-    InputTextModule,
-    DialogModule,
-    CardModule,
-    RadioButtonModule,
-    CheckboxModule,
-    InputNumberModule,
+    AngularFireModule.initializeApp(environment.firebase),
+    AngularFireAuthModule,
+    FirebaseUIModule.forRoot(firebaseUiAuthConfig),
     AutoCompleteModule,
-    DividerModule,
+    ButtonModule,
+    CardModule,
+    CheckboxModule,
     ChipsModule,
-    ProgressSpinnerModule,
+    DialogModule,
+    DividerModule,
+    DropdownModule,
+    InputNumberModule,
+    InputTextModule,
+    MenuModule,
     PaginatorModule,
+    PanelModule,
+    ProgressSpinnerModule,
+    RadioButtonModule,
   ],
   bootstrap: [MainComponent],
   providers: [],
