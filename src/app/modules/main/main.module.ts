@@ -24,17 +24,16 @@ import { MainRoutingModule } from './main-routing.module';
 import { MainComponent } from './main.component';
 import { NewCharacterComponent } from './components/new-character/new-character.component';
 import { ListCharacterComponent } from './components/list-character/list-character.component';
-import { TopMenuComponent } from './views/top-menu/top-menu.component';
-import { ConfirmationService } from 'primeng/api';
-import { SideMenuComponent } from './views/side-menu/side-menu.component';
 import { LegalComponent } from './components/legal/legal.component';
+import { LoginComponent } from './components/login/login.component';
+import { TopMenuComponent } from './views/top-menu/top-menu.component';
+import { TopMenuMComponent } from './views/top-menu-m/top-menu-m.component';
+import { SideMenuComponent } from './views/side-menu/side-menu.component';
 import { NewCharacterFormComponent } from './views/new-character-form/new-character-form.component';
 import { NewWeaponFormComponent } from './views/new-weapon-form/new-weapon-form.component';
 import { NewFacilityFormComponent } from './views/new-facility-form/new-facility-form.component';
 import { NewCharacterConfirmationComponent } from './views/new-character-confirmation/new-character-confirmation.component';
 import { MakeThumbnailFormComponent } from './views/make-thumbnail-form/make-thumbnail-form.component';
-import { TopMenuMComponent } from './views/top-menu-m/top-menu-m.component';
-import { LoginComponent } from './components/login/login.component';
 
 @NgModule({
   declarations: [
@@ -74,6 +73,6 @@ import { LoginComponent } from './components/login/login.component';
     PaginatorModule,
   ],
   bootstrap: [MainComponent],
-  providers: [ConfirmationService],
+  providers: [],
 })
 export class MainModule {}

@@ -1,7 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { NGXLogger } from 'ngx-logger';
-import { ConfirmationService } from 'primeng/api';
 import { AppInfo } from 'src/app/app-info.enum';
 import { NewCharacterComponent } from './components/new-character/new-character.component';
 
@@ -91,20 +90,13 @@ export class MainComponent /*implements OnInit*/ {
     },
   ];
 
-  constructor(private logger: NGXLogger, private confirmDialog: ConfirmationService, private router: Router) {
+  constructor(private logger: NGXLogger, private router: Router) {
     this.logger.trace(`new ${this.className}()`);
   }
 
   askSignOut(): void {
     const location = `${this.className}.askSignOut()`;
     this.logger.trace(location);
-
-    this.confirmDialog.confirm({
-      message: 'Are you sure to sign out?',
-      accept: () => {
-        this.signedIn = false;
-      },
-    });
   }
 
   async navigate(url: string): Promise<boolean> {
