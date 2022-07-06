@@ -39,7 +39,6 @@ import { NewWeaponFormComponent } from './views/new-weapon-form/new-weapon-form.
 import { NewFacilityFormComponent } from './views/new-facility-form/new-facility-form.component';
 import { NewCharacterConfirmationComponent } from './views/new-character-confirmation/new-character-confirmation.component';
 import { MakeThumbnailFormComponent } from './views/make-thumbnail-form/make-thumbnail-form.component';
-import * as firebaseui from 'firebaseui';
 import { environment } from 'src/environments/environment';
 
 const firebaseUiAuthConfig: firebaseui.auth.Config = {

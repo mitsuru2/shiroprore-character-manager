@@ -11,7 +11,7 @@ const routes: Routes = [
     path: '',
     component: MainComponent,
     children: [
-      { path: '', redirectTo: 'list-character', pathMatch: 'full' },
+      { path: '', redirectTo: 'login', pathMatch: 'full' },
       { path: 'new-character', component: NewCharacterComponent },
       { path: 'list-character', component: ListCharacterComponent },
       { path: 'legal', component: LegalComponent },
