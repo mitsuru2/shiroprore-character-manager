@@ -24,6 +24,7 @@ import {
   FsWeaponType,
 } from './firestore-document.interface';
 import { FirestoreCollectionWrapper } from './firestore-collection-wrapper.class';
+import { AppNavigateService } from '../app-navigate/app-navigate.service';
 
 //==============================================================================
 // Service class implementation.
@@ -66,8 +67,39 @@ export class FirestoreDataService {
    * @param fs Firestore is used to access database.
    * @param logger Logging utility.
    */
-  constructor(private fs: Firestore, private logger: NGXLogger) {
+  constructor(private fs: Firestore, private logger: NGXLogger, private navigator: AppNavigateService) {
     this.logger.trace('new FirestoreDataService()');
+
+    this.loadAll();
+  }
+
+  /**
+   * It loads all data collections.
+   */
+  async loadAll(): Promise<void> {
+    const location = `${this.className}.loadAll()`;
+
+    try {
+      await Promise.all([
+        this.load(FsCollectionName.Abilities),
+        this.load(FsCollectionName.AbilityTypes),
+        this.load(FsCollectionName.CharacterTags),
+        this.load(FsCollectionName.CharacterTypes),
+        this.load(FsCollectionName.Characters),
+        this.load(FsCollectionName.Facilities),
+        this.load(FsCollectionName.FacilityTypes),
+        this.load(FsCollectionName.Regions),
+        this.load(FsCollectionName.GeographTypes),
+        this.load(FsCollectionName.VoiceActors),
+        this.load(FsCollectionName.Illustrators),
+        this.load(FsCollectionName.Weapons),
+        this.load(FsCollectionName.WeaponTypes),
+      ]);
+      this.logger.info(location, 'Firestore data loading finished.');
+      this.navigator.dataLoaded = true;
+    } catch {
+      this.logger.error(location, 'Firestore data loading failed.');
+    }
   }
 
   /**

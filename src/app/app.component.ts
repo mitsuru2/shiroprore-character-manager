@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { NGXLogger } from 'ngx-logger';
+import { FirestoreDataService } from './services/firestore-data/firestore-data.service';
 
 @Component({
   selector: 'app-root',
@@ -9,7 +10,7 @@ import { NGXLogger } from 'ngx-logger';
 export class AppComponent implements OnInit {
   readonly className = 'AppComponent';
 
-  constructor(private logger: NGXLogger) {
+  constructor(private logger: NGXLogger, private firestore: FirestoreDataService) {
     this.logger.trace(`new ${this.className}()`);
   }
 
