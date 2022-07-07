@@ -1,12 +1,16 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { StartUpComponent } from './components/start-up/start-up.component';
 import { AppNavigateService } from './services/app-navigate/app-navigate.service';
 
 const routes: Routes = [
   {
+    path: '',
+    component: StartUpComponent,
+  },
+  {
     path: 'main',
     loadChildren: () => import('./modules/main/main.module').then((m) => m.MainModule),
-    canLoad: [AppNavigateService],
   },
 ];
 

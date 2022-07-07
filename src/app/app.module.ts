@@ -17,9 +17,10 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 // Application components.
 import { SplashComponent } from './views/splash/splash.component';
+import { StartUpComponent } from './components/start-up/start-up.component';
 
 @NgModule({
-  declarations: [AppComponent, SplashComponent],
+  declarations: [AppComponent, SplashComponent, StartUpComponent],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,

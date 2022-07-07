@@ -1,9 +1,1 @@
-<app-splash
-  *ngIf="appNavi.status !== appStatusValues.Main"
-  [ready]="appNavi.status === appStatusValues.Loaded"
-  [title]="title"
-  [subTitle]="subTitle"
-  (enterEvent)="goToMain()"
->
-</app-splash>
-<router-outlet *ngIf="appNavi.status === appStatusValues.Main"></router-outlet>
+<router-outlet></router-outlet>
