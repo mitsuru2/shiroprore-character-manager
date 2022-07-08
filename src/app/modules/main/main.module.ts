@@ -50,8 +50,8 @@ const firebaseUiAuthConfig: firebaseui.auth.Config = {
       //requireDisplayName: false,
     },
   ],
-  privacyPolicyUrl: 'https://www.primefaces.org/primeng/',
-  tosUrl: 'https://shiroprore-character.web.app',
+  privacyPolicyUrl: 'https://shiroprore-character.web.app/main/legal',
+  tosUrl: 'https://shiroprore-character.web.app/main/legal',
   credentialHelper: firebaseui.auth.CredentialHelper.GOOGLE_YOLO,
   siteName: 'my-app',
 };
