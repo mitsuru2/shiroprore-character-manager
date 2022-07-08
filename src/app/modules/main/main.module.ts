@@ -50,7 +50,6 @@ const firebaseUiAuthConfig: firebaseui.auth.Config = {
       //requireDisplayName: false,
     },
   ],
-  signInSuccessUrl: 'https://google.com',
   privacyPolicyUrl: 'https://www.primefaces.org/primeng/',
   tosUrl: 'https://shiroprore-character.web.app',
   credentialHelper: firebaseui.auth.CredentialHelper.GOOGLE_YOLO,
