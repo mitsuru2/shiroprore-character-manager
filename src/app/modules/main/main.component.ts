@@ -2,6 +2,7 @@ import { Component, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { NGXLogger } from 'ngx-logger';
 import { AppInfo } from 'src/app/app-info.enum';
+import { AppNavigateService } from 'src/app/services/app-navigate/app-navigate.service';
 import { NewCharacterComponent } from './components/new-character/new-character.component';
 
 @Component({
@@ -16,8 +17,6 @@ export class MainComponent /*implements OnInit*/ {
   private newCharacterComponent!: NewCharacterComponent;
 
   appInfo = AppInfo;
-
-  signedIn = true;
 
   sideMenuItems = [
     {
@@ -78,19 +77,19 @@ export class MainComponent /*implements OnInit*/ {
         },
         {
           label: 'サインイン',
-          visible: !this.signedIn,
+          visible: !this.navigator.signedIn,
           command: () => {},
         },
         {
           label: 'サインアウト',
-          visible: this.signedIn,
+          visible: this.navigator.signedIn,
           command: () => {},
         },
       ],
     },
   ];
 
-  constructor(private logger: NGXLogger, private router: Router) {
+  constructor(private logger: NGXLogger, private router: Router, public navigator: AppNavigateService) {
     this.logger.trace(`new ${this.className}()`);
   }
 

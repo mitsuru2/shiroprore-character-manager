@@ -47,6 +47,10 @@ export class AppNavigateService implements CanActivate, CanActivateChild {
     return this.canActivatePath(path);
   }
 
+  navigate(path: string) {
+    this.router.navigateByUrl(path);
+  }
+
   private canActivatePath(path: string): boolean {
     const location = `${this.className}.canActivatePath()`;
 
