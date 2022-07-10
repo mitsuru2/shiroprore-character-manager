@@ -2,11 +2,6 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
-/** Firebase modules. */
-import { AngularFireModule } from '@angular/fire/compat';
-import { AngularFireAuthModule } from '@angular/fire/compat/auth';
-import { FirebaseUIModule, firebase, firebaseui } from 'firebaseui-angular';
-
 /** PrimeNG modules. */
 import { AutoCompleteModule } from 'primeng/autocomplete';
 import { ButtonModule } from 'primeng/button';
@@ -39,7 +34,14 @@ import { NewWeaponFormComponent } from './views/new-weapon-form/new-weapon-form.
 import { NewFacilityFormComponent } from './views/new-facility-form/new-facility-form.component';
 import { NewCharacterConfirmationComponent } from './views/new-character-confirmation/new-character-confirmation.component';
 import { MakeThumbnailFormComponent } from './views/make-thumbnail-form/make-thumbnail-form.component';
+
+/** Firebase modules. */
+import { AngularFireModule } from '@angular/fire/compat';
+import { AngularFireAuthModule } from '@angular/fire/compat/auth';
+import { FirebaseUIModule, firebase, firebaseui } from 'firebaseui-angular';
 import { environment } from 'src/environments/environment';
+import { NavigatorService } from './services/navigator/navigator.service';
+import { UserAuthService } from './services/user-auth/user-auth.service';
 
 const firebaseUiAuthConfig: firebaseui.auth.Config = {
   autoUpgradeAnonymousUsers: false, // Disable annymouse users.
@@ -97,6 +99,6 @@ const firebaseUiAuthConfig: firebaseui.auth.Config = {
     RadioButtonModule,
   ],
   bootstrap: [MainComponent],
-  providers: [],
+  providers: [NavigatorService, UserAuthService],
 })
 export class MainModule {}

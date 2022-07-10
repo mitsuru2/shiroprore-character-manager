@@ -1,7 +1,5 @@
-import { coerceBooleanProperty } from '@angular/cdk/coercion';
 import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { NGXLogger } from 'ngx-logger';
-import { tmpdir } from 'os';
 import { AppInfo } from 'src/app/app-info.enum';
 import { CloudStorageService } from 'src/app/services/cloud-storage/cloud-storage.service';
 import { FsCollectionName } from 'src/app/services/firestore-data/firestore-collection-name.enum';
@@ -20,7 +18,6 @@ import {
   FsWeapon,
   FsWeaponType,
 } from 'src/app/services/firestore-data/firestore-document.interface';
-import { resourceLimits } from 'worker_threads';
 
 export class ThumbImageWrapper {
   url: string = '';

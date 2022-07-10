@@ -8,9 +8,13 @@ import { AppInfo } from 'src/app/app-info.enum';
   styleUrls: ['./top-menu.component.scss'],
 })
 export class TopMenuComponent /*implements OnInit*/ {
+  readonly className = 'TopMenuComponent';
+
   appInfo = AppInfo;
 
   @Input() signedIn: boolean = false;
+
+  @Output() requestSignInEvent = new EventEmitter<boolean>();
 
   @Output() requestSignOutEvent = new EventEmitter<boolean>();
 
@@ -20,8 +24,16 @@ export class TopMenuComponent /*implements OnInit*/ {
 
   // ngOnInit(): void {}
 
-  requestSignOut() {
-    this.logger.trace('TopMenuComponent.requestSignOut()');
+  onSignInClick() {
+    const location = `${this.className}.onSigneInClick()`;
+    this.logger.trace(location);
+
+    this.requestSignInEvent.emit(true);
+  }
+
+  onSignOutClick() {
+    const location = `${this.className}.onSignOutClick()`;
+    this.logger.trace(location);
     this.requestSignOutEvent.emit(true);
   }
 }

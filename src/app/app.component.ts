@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { NGXLogger } from 'ngx-logger';
 import { FirestoreDataService } from './services/firestore-data/firestore-data.service';
 
@@ -7,12 +7,12 @@ import { FirestoreDataService } from './services/firestore-data/firestore-data.s
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
-export class AppComponent implements OnInit {
+export class AppComponent /*implements OnInit*/ {
   readonly className = 'AppComponent';
 
   constructor(private logger: NGXLogger, private firestore: FirestoreDataService) {
     this.logger.trace(`new ${this.className}()`);
   }
 
-  ngOnInit(): void {}
+  // ngOnInit(): void {}
 }

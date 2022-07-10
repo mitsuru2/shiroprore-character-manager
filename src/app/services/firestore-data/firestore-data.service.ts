@@ -24,7 +24,6 @@ import {
   FsWeaponType,
 } from './firestore-document.interface';
 import { FirestoreCollectionWrapper } from './firestore-collection-wrapper.class';
-import { AppNavigateService } from '../app-navigate/app-navigate.service';
 
 //==============================================================================
 // Service class implementation.
@@ -44,6 +43,8 @@ import { AppNavigateService } from '../app-navigate/app-navigate.service';
 })
 export class FirestoreDataService {
   private className = 'FirestoreDataService';
+
+  loaded = false;
 
   collections: { [key in FsCollectionName]: FirestoreCollectionWrapper<any> } = {
     [FsCollectionName.Abilities]:      new FirestoreCollectionWrapper<FsAbility>       (this.fs, FsCollectionName.Abilities), // eslint-disable-line
@@ -67,7 +68,7 @@ export class FirestoreDataService {
    * @param fs Firestore is used to access database.
    * @param logger Logging utility.
    */
-  constructor(private fs: Firestore, private logger: NGXLogger, private navigator: AppNavigateService) {
+  constructor(private fs: Firestore, private logger: NGXLogger) {
     this.logger.trace('new FirestoreDataService()');
 
     this.loadAll();
@@ -96,7 +97,7 @@ export class FirestoreDataService {
         this.load(FsCollectionName.WeaponTypes),
       ]);
       this.logger.info(location, 'Firestore data loading finished.');
-      this.navigator.dataLoaded = true;
+      this.loaded = true;
     } catch {
       this.logger.error(location, 'Firestore data loading failed.');
     }

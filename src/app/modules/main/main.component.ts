@@ -2,8 +2,8 @@ import { Component, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { NGXLogger } from 'ngx-logger';
 import { AppInfo } from 'src/app/app-info.enum';
-import { AppNavigateService } from 'src/app/services/app-navigate/app-navigate.service';
 import { NewCharacterComponent } from './components/new-character/new-character.component';
+import { UserAuthService } from './services/user-auth/user-auth.service';
 
 @Component({
   selector: 'app-main',
@@ -22,7 +22,7 @@ export class MainComponent /*implements OnInit*/ {
     {
       label: '新規キャラクター登録',
       command: () => {
-        this.navigate('/main/new-character').then(() => {
+        this.router.navigateByUrl('/main/new-character').then(() => {
           try {
             this.newCharacterComponent.showNewCharacterForm = true;
           } catch {
@@ -34,13 +34,13 @@ export class MainComponent /*implements OnInit*/ {
     {
       label: 'キャラクター一覧',
       command: () => {
-        this.navigate('/main/list-character');
+        this.router.navigateByUrl('/main/list-character');
       },
     },
     {
       label: 'コピーライト表記',
       command: () => {
-        this.navigate('/main/legal');
+        this.router.navigateByUrl('/main/legal');
       },
     },
   ];
@@ -53,19 +53,19 @@ export class MainComponent /*implements OnInit*/ {
         {
           label: '新規キャラクター登録',
           command: () => {
-            this.navigate('/main/new-character');
+            this.router.navigateByUrl('/main/new-character');
           },
         },
         {
           label: 'キャラクター一覧',
           command: () => {
-            this.navigate('/main/list-character');
+            this.router.navigateByUrl('/main/list-character');
           },
         },
         {
           label: 'コピーライト表記',
           command: () => {
-            this.navigate('/main/legal');
+            this.router.navigateByUrl('/main/legal');
           },
         },
         {
@@ -77,31 +77,34 @@ export class MainComponent /*implements OnInit*/ {
         },
         {
           label: 'サインイン',
-          visible: !this.navigator.signedIn,
+          visible: !this.userAuth.signedIn,
           command: () => {},
         },
         {
           label: 'サインアウト',
-          visible: this.navigator.signedIn,
+          visible: this.userAuth.signedIn,
           command: () => {},
         },
       ],
     },
   ];
 
-  constructor(private logger: NGXLogger, private router: Router, public navigator: AppNavigateService) {
+  constructor(private logger: NGXLogger, private router: Router, private userAuth: UserAuthService) {
     this.logger.trace(`new ${this.className}()`);
   }
 
-  askSignOut(): void {
-    const location = `${this.className}.askSignOut()`;
-    this.logger.trace(location);
+  signIn() {
+    this.router.navigateByUrl('/main/login');
   }
 
-  async navigate(url: string): Promise<boolean> {
-    const location = `${this.className}.navigate()`;
-    this.logger.trace(location, { url: url });
+  signOut() {
+    const location = `${this.className}.signOut()`;
+    this.logger.trace(location);
 
-    return this.router.navigateByUrl(url);
+    this.userAuth.signOut();
+  }
+
+  isSignedIn() {
+    return this.userAuth.signedIn;
   }
 }

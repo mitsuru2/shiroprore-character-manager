@@ -2,8 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { NGXLogger } from 'ngx-logger';
 import { AppInfo } from 'src/app/app-info.enum';
-import { AppNavigateService } from 'src/app/services/app-navigate/app-navigate.service';
-import { FsCollectionName } from 'src/app/services/firestore-data/firestore-collection-name.enum';
 import { FirestoreDataService } from 'src/app/services/firestore-data/firestore-data.service';
 
 @Component({
@@ -18,7 +16,7 @@ export class StartUpComponent implements OnInit {
 
   readonly className = 'StartUpComponent';
 
-  constructor(private logger: NGXLogger, private navigator: AppNavigateService, private router: Router) {
+  constructor(private logger: NGXLogger, private router: Router, private firestore: FirestoreDataService) {
     this.logger.trace(`new ${this.className}()`);
   }
 
@@ -27,8 +25,8 @@ export class StartUpComponent implements OnInit {
     this.logger.trace(location);
 
     const timer = setInterval(() => {
-      if (this.navigator.dataLoaded) {
-        this.loaded = this.navigator.dataLoaded;
+      if (this.firestore.loaded) {
+        this.loaded = true;
         clearInterval(timer);
       }
     }, 200);
