@@ -39,18 +39,20 @@ export class FirestoreCollectionWrapper<T extends FsDocumentBase> {
    * @returns Promise<number>. Data length.
    */
   async load(): Promise<number> {
-    // Clear current data.
-    while (this.data.length > 0) {
-      this.data.pop();
-    }
-
     // Get data.
     try {
-      // Copy document ID and its data to "this.data" object, if it's not empty.
+      // Get document snapshot and check if it is empty or not.
       const snapshot = await getDocs(this.collection);
       if (snapshot.empty) {
         throw Error(`${location} Empty data.`);
       }
+
+      // If the document is not empty, clear existing data before copying.
+      while (this.data.length > 0) {
+        this.data.pop();
+      }
+
+      // Copy document ID and its data to "this.data" object.
       snapshot.forEach((document) => {
         const tmp = document.data();
         tmp.id = document.id;
