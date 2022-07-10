@@ -10,7 +10,7 @@ import { UserAuthService } from '../../services/user-auth/user-auth.service';
 export class LoginComponent /*implements OnInit*/ {
   readonly className = 'LoginComponent';
 
-  constructor(private logger: NGXLogger, private userAuth: UserAuthService) {
+  constructor(private logger: NGXLogger, public userAuth: UserAuthService) {
     this.logger.trace(`new ${this.className}()`);
   }
 

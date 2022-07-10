@@ -53,7 +53,13 @@ export class MainComponent /*implements OnInit*/ {
         {
           label: '新規キャラクター登録',
           command: () => {
-            this.router.navigateByUrl('/main/new-character');
+            this.router.navigateByUrl('/main/new-character').then(() => {
+              try {
+                this.newCharacterComponent.showNewCharacterForm = true;
+              } catch {
+                // do nothing.
+              }
+            });
           },
         },
         {
@@ -76,20 +82,24 @@ export class MainComponent /*implements OnInit*/ {
           separator: true,
         },
         {
-          label: 'サインイン',
+          label: 'ログイン',
           visible: !this.userAuth.signedIn,
-          command: () => {},
+          command: () => {
+            this.signIn();
+          },
         },
         {
-          label: 'サインアウト',
+          label: 'ログアウト',
           visible: this.userAuth.signedIn,
-          command: () => {},
+          command: () => {
+            this.signOut();
+          },
         },
       ],
     },
   ];
 
-  constructor(private logger: NGXLogger, private router: Router, private userAuth: UserAuthService) {
+  constructor(private logger: NGXLogger, private router: Router, public userAuth: UserAuthService) {
     this.logger.trace(`new ${this.className}()`);
   }
 
@@ -102,9 +112,5 @@ export class MainComponent /*implements OnInit*/ {
     this.logger.trace(location);
 
     this.userAuth.signOut();
-  }
-
-  isSignedIn() {
-    return this.userAuth.signedIn;
   }
 }

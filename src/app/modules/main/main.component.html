@@ -1,7 +1,7 @@
 <div class="main-background">
   <div class="main-body" id="MainBody">
     <div class="tool-bar">
-      <app-top-menu [signedIn]="isSignedIn()" (requestSignInEvent)="signIn()" (requestSignOutEvent)="signOut()"></app-top-menu>
+      <app-top-menu [signedIn]="userAuth.signedIn" (requestSignInEvent)="signIn()" (requestSignOutEvent)="signOut()"></app-top-menu>
     </div>
     <div class="tool-bar-m"><app-top-menu-m [menuItems]="sideMenuItemsM"></app-top-menu-m></div>
     <div class="container">
