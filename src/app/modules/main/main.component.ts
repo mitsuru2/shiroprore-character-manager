@@ -30,6 +30,7 @@ export class MainComponent /*implements OnInit*/ {
           }
         });
       },
+      // disabled: !this.userAuth.signedIn,
     },
     {
       label: 'キャラクター一覧',
@@ -61,6 +62,7 @@ export class MainComponent /*implements OnInit*/ {
               }
             });
           },
+          disabled: !this.userAuth.signedIn,
         },
         {
           label: 'キャラクター一覧',
@@ -99,8 +101,14 @@ export class MainComponent /*implements OnInit*/ {
     },
   ];
 
+  //============================================================================
+  // Class methods.
+  //
   constructor(private logger: NGXLogger, private router: Router, public userAuth: UserAuthService) {
     this.logger.trace(`new ${this.className}()`);
+
+    this.userAuth.addEventListener('signIn', this.onUserAuthChanged.bind(this));
+    this.userAuth.addEventListener('signOut', this.onUserAuthChanged.bind(this));
   }
 
   signIn() {
@@ -112,5 +120,37 @@ export class MainComponent /*implements OnInit*/ {
     this.logger.trace(location);
 
     this.userAuth.signOut();
+  }
+
+  isSignedIn() {
+    return this.userAuth.signedIn;
+  }
+
+  //============================================================================
+  // Private methods.
+  //
+  //----------------------------------------------------------------------------
+  // User sign in/out event listners.
+  //
+  private onUserAuthChanged() {
+    const location = `${this.className}.onUserSignedIn()`;
+    this.logger.trace(location, { signedIn: this.userAuth.signedIn });
+
+    // let menuItem = this.sideMenuItems.find((item) => item.label && item.label === '新規キャラクター登録');
+    // if (menuItem) {
+    //   menuItem.disabled = !this.userAuth.signedIn;
+    // }
+    let menuItemM = this.sideMenuItemsM[0].items.find((item) => item.label && item.label === '新規キャラクター登録');
+    if (menuItemM) {
+      menuItemM.disabled = !this.userAuth.signedIn;
+    }
+    menuItemM = this.sideMenuItemsM[0].items.find((item) => item.label && item.label === 'ログイン');
+    if (menuItemM) {
+      menuItemM.visible = !this.userAuth.signedIn;
+    }
+    menuItemM = this.sideMenuItemsM[0].items.find((item) => item.label && item.label === 'ログアウト');
+    if (menuItemM) {
+      menuItemM.visible = this.userAuth.signedIn;
+    }
   }
 }

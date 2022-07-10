@@ -12,6 +12,8 @@ export class UserAuthService {
 
   userName = '';
 
+  private eventListeners: { event: string; cbFn: () => void }[] = [];
+
   //============================================================================
   // Class methods.
   //
@@ -37,6 +39,37 @@ export class UserAuthService {
       this.signedIn = false;
       this.userId = '';
       this.userName = '';
+
+      for (let i = 0; i < this.eventListeners.length; ++i) {
+        if (this.eventListeners[i].event === 'signOut') {
+          this.eventListeners[i].cbFn();
+        }
+      }
+    }
+  }
+
+  addEventListener(event: 'signIn' | 'signOut', cbFn: () => void) {
+    const location = `${this.className}.addEventListener()`;
+    this.logger.trace(location, { event: event, cbFn: cbFn });
+
+    this.eventListeners.push({ event: event, cbFn: cbFn });
+
+    if (event === 'signIn' && this.signedIn) {
+      cbFn();
+    } else if (event === 'signOut' && !this.signedIn) {
+      cbFn();
+    }
+  }
+
+  removeEventListener(cbFn: () => void) {
+    const location = `${this.className}.removeEventListener()`;
+    this.logger.trace(location, { cbFn: cbFn });
+
+    const index = this.eventListeners.findIndex((item) => item.cbFn === cbFn);
+    if (index >= 0) {
+      this.eventListeners.splice(index, 1);
+    } else {
+      this.logger.warn(location, 'The target listener is not found.');
     }
   }
 
@@ -53,6 +86,13 @@ export class UserAuthService {
         this.signedIn = true;
 
         this.logger.info(location, { uid: this.userId, name: this.userName });
+
+        // Run callback functions.
+        for (let i = 0; i < this.eventListeners.length; ++i) {
+          if (this.eventListeners[i].event === 'signIn') {
+            this.eventListeners[i].cbFn();
+          }
+        }
       }
 
       subscription.unsubscribe();
