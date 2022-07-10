@@ -18,6 +18,8 @@ export class TopMenuComponent /*implements OnInit*/ {
 
   @Output() requestSignOutEvent = new EventEmitter<boolean>();
 
+  @Output() requestGoHomeEvent = new EventEmitter<boolean>();
+
   constructor(private logger: NGXLogger) {
     this.logger.trace('new TopMenuComponent()');
   }
@@ -35,5 +37,12 @@ export class TopMenuComponent /*implements OnInit*/ {
     const location = `${this.className}.onSignOutClick()`;
     this.logger.trace(location);
     this.requestSignOutEvent.emit(true);
+  }
+
+  onLogoIconClick() {
+    const location = `${this.className}.onLogoIconClick()`;
+    this.logger.trace(location);
+
+    this.requestGoHomeEvent.emit(true);
   }
 }

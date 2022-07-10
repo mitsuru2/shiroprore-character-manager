@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { NGXLogger } from 'ngx-logger';
 import { MenuItem } from 'primeng/api';
 
@@ -15,7 +15,13 @@ export class TopMenuMComponent /*implements OnInit*/ {
 
   menuShown = false;
 
+  @Output() requestGoToHomeEvent = new EventEmitter<boolean>();
+
   constructor(private logger: NGXLogger) {}
 
   // ngOnInit(): void {}
+
+  onLogoIconClick() {
+    this.requestGoToHomeEvent.emit(true);
+  }
 }

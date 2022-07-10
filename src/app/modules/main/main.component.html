@@ -1,9 +1,14 @@
 <div class="main-background">
   <div class="main-body" id="MainBody">
     <div class="tool-bar">
-      <app-top-menu [signedIn]="userAuth.signedIn" (requestSignInEvent)="signIn()" (requestSignOutEvent)="signOut()"></app-top-menu>
+      <app-top-menu
+        [signedIn]="userAuth.signedIn"
+        (requestSignInEvent)="signIn()"
+        (requestSignOutEvent)="signOut()"
+        (requestGoHomeEvent)="goToStartupScreen()"
+      ></app-top-menu>
     </div>
-    <div class="tool-bar-m"><app-top-menu-m [menuItems]="sideMenuItemsM"></app-top-menu-m></div>
+    <div class="tool-bar-m"><app-top-menu-m [menuItems]="sideMenuItemsM" (requestGoToHomeEvent)="goToStartupScreen()"></app-top-menu-m></div>
     <div class="container">
       <div class="side-menu"><app-side-menu [menuItems]="sideMenuItems"></app-side-menu></div>
       <div class="main-contents" id="MainContents">

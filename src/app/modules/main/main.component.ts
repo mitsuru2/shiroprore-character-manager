@@ -122,8 +122,8 @@ export class MainComponent /*implements OnInit*/ {
     this.userAuth.signOut();
   }
 
-  isSignedIn() {
-    return this.userAuth.signedIn;
+  goToStartupScreen() {
+    this.router.navigateByUrl('');
   }
 
   //============================================================================

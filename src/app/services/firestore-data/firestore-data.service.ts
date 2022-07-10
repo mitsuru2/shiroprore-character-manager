@@ -124,6 +124,7 @@ export class FirestoreDataService {
         await this.loadSubCharacterTypes();
       }
     } catch (error) {
+      this.logger.error(location, error);
       throw error;
     }
 
