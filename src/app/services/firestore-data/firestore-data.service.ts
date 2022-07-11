@@ -24,6 +24,7 @@ import {
   FsWeaponType,
 } from './firestore-document.interface';
 import { FirestoreCollectionWrapper } from './firestore-collection-wrapper.class';
+import { FirestoreCollectionDummy } from './firestore-collection-dummy.class';
 
 //==============================================================================
 // Service class implementation.
@@ -46,19 +47,19 @@ export class FirestoreDataService {
 
   loaded = false;
 
-  collections: { [key in FsCollectionName]: FirestoreCollectionWrapper<any> } = {
+  collections: { [key in FsCollectionName]: FirestoreCollectionWrapper<any> | FirestoreCollectionDummy<any> } = {
     [FsCollectionName.Abilities]:      new FirestoreCollectionWrapper<FsAbility>       (this.fs, FsCollectionName.Abilities), // eslint-disable-line
-    [FsCollectionName.AbilityTypes]:   new FirestoreCollectionWrapper<FsAbilityType>   (this.fs, FsCollectionName.AbilityTypes), // eslint-disable-line
+    [FsCollectionName.AbilityTypes]:   new FirestoreCollectionDummy<FsAbilityType>     (         FsCollectionName.AbilityTypes), // eslint-disable-line
     [FsCollectionName.CharacterTags]:  new FirestoreCollectionWrapper<FsCharacterTag>  (this.fs, FsCollectionName.CharacterTags), // eslint-disable-line
     [FsCollectionName.CharacterTypes]: new FirestoreCollectionWrapper<FsCharacterType> (this.fs, FsCollectionName.CharacterTypes), // eslint-disable-line
     [FsCollectionName.Characters]:     new FirestoreCollectionWrapper<FsCharacter>     (this.fs, FsCollectionName.Characters), // eslint-disable-line
     [FsCollectionName.Facilities]:     new FirestoreCollectionWrapper<FsFacility>      (this.fs, FsCollectionName.Facilities), // eslint-disable-line
-    [FsCollectionName.FacilityTypes]:  new FirestoreCollectionWrapper<FsFacilityType>  (this.fs, FsCollectionName.FacilityTypes), // eslint-disable-line
-    [FsCollectionName.GeographTypes]:  new FirestoreCollectionWrapper<FsGeographType>  (this.fs, FsCollectionName.GeographTypes), // eslint-disable-line
+    [FsCollectionName.FacilityTypes]:  new FirestoreCollectionDummy<FsFacilityType>    (         FsCollectionName.FacilityTypes), // eslint-disable-line
+    [FsCollectionName.GeographTypes]:  new FirestoreCollectionDummy<FsGeographType>    (         FsCollectionName.GeographTypes), // eslint-disable-line
     [FsCollectionName.Illustrators]:   new FirestoreCollectionWrapper<FsIllustrator>   (this.fs, FsCollectionName.Illustrators), // eslint-disable-line
-    [FsCollectionName.Regions]:        new FirestoreCollectionWrapper<FsRegion>        (this.fs, FsCollectionName.Regions), // eslint-disable-line
+    [FsCollectionName.Regions]:        new FirestoreCollectionDummy<FsRegion>          (         FsCollectionName.Regions), // eslint-disable-line
     [FsCollectionName.VoiceActors]:    new FirestoreCollectionWrapper<FsVoiceActor>    (this.fs, FsCollectionName.VoiceActors), // eslint-disable-line
-    [FsCollectionName.WeaponTypes]:    new FirestoreCollectionWrapper<FsWeaponType>    (this.fs, FsCollectionName.WeaponTypes), // eslint-disable-line
+    [FsCollectionName.WeaponTypes]:    new FirestoreCollectionDummy<FsWeaponType>      (         FsCollectionName.WeaponTypes), // eslint-disable-line
     [FsCollectionName.Weapons]:        new FirestoreCollectionWrapper<FsWeapon>        (this.fs, FsCollectionName.Weapons), // eslint-disable-line
   };
 
@@ -133,15 +134,15 @@ export class FirestoreDataService {
     return result;
   }
 
-  startListening(name: FsCollectionName, errorFn?: (e: Error) => void) {
-    this.logger.trace(`FirestoreDataService.startListening(${name})`);
-    this.collections[name as FsCollectionName].startListening(errorFn);
-  }
+  // startListening(name: FsCollectionName, errorFn?: (e: Error) => void) {
+  //   this.logger.trace(`FirestoreDataService.startListening(${name})`);
+  //   this.collections[name as FsCollectionName].startListening(errorFn);
+  // }
 
-  stopListening(name: FsCollectionName) {
-    this.logger.trace(`FirestoreDataService.startListening(${name})`);
-    this.collections[name as FsCollectionName].stopListening();
-  }
+  // stopListening(name: FsCollectionName) {
+  //   this.logger.trace(`FirestoreDataService.startListening(${name})`);
+  //   this.collections[name as FsCollectionName].stopListening();
+  // }
 
   /**
    * It returns data body of target data collection.

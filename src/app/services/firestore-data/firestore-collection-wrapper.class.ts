@@ -6,10 +6,6 @@ import {
   doc,
   Firestore,
   getDocs,
-  getDocsFromServer,
-  onSnapshot,
-  orderBy,
-  query,
   runTransaction,
 } from '@angular/fire/firestore';
 import { Unsubscribe } from '@angular/fire/app-check';
@@ -44,7 +40,7 @@ export class FirestoreCollectionWrapper<T extends FsDocumentBase> {
       // Get document snapshot and check if it is empty or not.
       const snapshot = await getDocs(this.collection);
       if (snapshot.empty) {
-        throw Error(`${location} Empty data.`);
+        throw Error(`${location} Empty data. { name: ${this.name} }`);
       }
 
       // If the document is not empty, clear existing data before copying.
@@ -64,7 +60,7 @@ export class FirestoreCollectionWrapper<T extends FsDocumentBase> {
     }
 
     // Return data length.
-    return Object.keys(this.data).length;
+    return this.data.length;
   }
 
   async loadSub<TSub extends FsDocumentBase>(docId: string, subName: string): Promise<TSub[]> {
@@ -74,7 +70,7 @@ export class FirestoreCollectionWrapper<T extends FsDocumentBase> {
     try {
       // Copy document ID and its data to "this.data" object, if it's not empty.
       const subCollection = collection(this.fs, this.name, docId, subName) as CollectionReference<TSub>;
-      const snapshot = await getDocsFromServer(subCollection);
+      const snapshot = await getDocs(subCollection);
       if (snapshot.empty) {
         throw Error(`${location} Empty data.`);
       }
@@ -90,53 +86,53 @@ export class FirestoreCollectionWrapper<T extends FsDocumentBase> {
     return result;
   }
 
-  /**
-   * It starts listening data from server.
-   * ATTENTION: Don't forget to do stop listening by stopListening().
-   */
-  startListening(errorFn?: (e: Error) => void): void {
-    this.isListening = true;
+  // /**
+  //  * It starts listening data from server.
+  //  * ATTENTION: Don't forget to do stop listening by stopListening().
+  //  */
+  // startListening(errorFn?: (e: Error) => void): void {
+  //   this.isListening = true;
 
-    const q = query(this.collection, orderBy('index'));
+  //   const q = query(this.collection, orderBy('index'));
 
-    this.unsubscribe = onSnapshot(
-      // Query.
-      q,
+  //   this.unsubscribe = onSnapshot(
+  //     // Query.
+  //     q,
 
-      // Success handler. (It corresponding next() of Observable.)
-      // Copy received data and set 'isLoaded' flag.
-      (snapshot) => {
-        while (this.data.length > 0) {
-          this.data.pop();
-        }
-        snapshot.forEach((document) => {
-          const tmp = document.data();
-          tmp.id = document.id;
-          this.data.push(tmp);
-        });
-        this.isLoaded = true;
-      },
+  //     // Success handler. (It corresponding next() of Observable.)
+  //     // Copy received data and set 'isLoaded' flag.
+  //     (snapshot) => {
+  //       while (this.data.length > 0) {
+  //         this.data.pop();
+  //       }
+  //       snapshot.forEach((document) => {
+  //         const tmp = document.data();
+  //         tmp.id = document.id;
+  //         this.data.push(tmp);
+  //       });
+  //       this.isLoaded = true;
+  //     },
 
-      // Error handler.
-      // 'isListening' flag is cleared because it will stop listening automatically by error.
-      (error) => {
-        this.isListening = false;
-        if (errorFn != null) {
-          errorFn(error);
-        }
-      }
-    );
-  }
+  //     // Error handler.
+  //     // 'isListening' flag is cleared because it will stop listening automatically by error.
+  //     (error) => {
+  //       this.isListening = false;
+  //       if (errorFn != null) {
+  //         errorFn(error);
+  //       }
+  //     }
+  //   );
+  // }
 
-  /**
-   * It stops listening.
-   */
-  stopListening(): void {
-    if (this.unsubscribe != null && this.isListening === true) {
-      this.unsubscribe();
-      this.isListening = false;
-    }
-  }
+  // /**
+  //  * It stops listening.
+  //  */
+  // stopListening(): void {
+  //   if (this.unsubscribe != null && this.isListening === true) {
+  //     this.unsubscribe();
+  //     this.isListening = false;
+  //   }
+  // }
 
   /**
    * Add new document to the collection.

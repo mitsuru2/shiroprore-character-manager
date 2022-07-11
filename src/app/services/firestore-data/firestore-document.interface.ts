@@ -40,6 +40,12 @@ export class FsAbilityType implements FsDocumentBaseWithOrder {
   name = '';
 
   order = 0;
+
+  constructor(id = '', name = '', order = 0) {
+    this.id = id;
+    this.name = name;
+    this.order = order;
+  }
 }
 
 export class FsCharacterTag implements FsDocumentBase {
@@ -132,6 +138,13 @@ export class FsFacilityType implements FsDocumentBaseWithCode {
   code = '';
 
   count = 0;
+
+  constructor(id = '', name = '', code = '') {
+    this.id = id;
+    this.name = name;
+    this.code = code;
+    this.count = 0;
+  }
 }
 
 export const FsFacilityRarerityMax = 5;
@@ -158,6 +171,12 @@ export class FsGeographType implements FsDocumentBaseWithOrder {
   name = '';
 
   order = 0;
+
+  constructor(id = '', name = '', order = 0) {
+    this.id = id;
+    this.name = name;
+    this.order = order;
+  }
 }
 
 export class FsIllustrator implements FsDocumentBase {
@@ -172,6 +191,12 @@ export class FsRegion implements FsDocumentBaseWithOrder {
   name = '';
 
   order = 0;
+
+  constructor(id = '', name = '', order = 0) {
+    this.id = id;
+    this.name = name;
+    this.order = order;
+  }
 }
 
 export class FsVoiceActor implements FsDocumentBase {
@@ -190,6 +215,13 @@ export class FsWeaponType implements FsDocumentBaseWithCode {
   count = 0;
 
   baseCost: number = 0;
+
+  constructor(id = '', name = '', code = '', baseCost = 0) {
+    this.id = id;
+    this.name = name;
+    this.code = code;
+    this.baseCost = baseCost;
+  }
 }
 
 export const FsWeaponRarerityMax = 5;
