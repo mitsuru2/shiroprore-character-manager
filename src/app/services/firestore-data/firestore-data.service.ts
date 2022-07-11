@@ -25,6 +25,8 @@ import {
 } from './firestore-document.interface';
 import { FirestoreCollectionWrapper } from './firestore-collection-wrapper.class';
 import { FirestoreCollectionDummy } from './firestore-collection-dummy.class';
+import { ErrorHandlerService } from '../error-handler/error-handler.service';
+import { ErrorCode } from '../error-handler/error-code.enum';
 
 //==============================================================================
 // Service class implementation.
@@ -69,7 +71,7 @@ export class FirestoreDataService {
    * @param fs Firestore is used to access database.
    * @param logger Logging utility.
    */
-  constructor(private fs: Firestore, private logger: NGXLogger) {
+  constructor(private logger: NGXLogger, private fs: Firestore, private errorHandler: ErrorHandlerService) {
     this.logger.trace('new FirestoreDataService()');
 
     this.loadAll();
@@ -126,10 +128,11 @@ export class FirestoreDataService {
       }
     } catch (error) {
       this.logger.error(location, error);
-      throw error;
+      this.errorHandler.notifyError(ErrorCode.InternalServerError, [
+        'Firestore data loading failed.',
+        `Collection Name: ${name}`,
+      ]);
     }
-
-    // this.logger.debug(location, { name: name, data: this.collections[name].data });
 
     return result;
   }

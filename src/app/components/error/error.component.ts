@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NGXLogger } from 'ngx-logger';
+import { ErrorHandlerService } from 'src/app/services/error-handler/error-handler.service';
 
 @Component({
   selector: 'app-error',
@@ -12,17 +13,9 @@ export class ErrorComponent implements OnInit {
 
   errorCode = '';
 
-  errorMessage = '';
+  errorTitle = '';
 
-  private messageMap: { [key: string]: string } = {
-    '400': 'Bad Request',
-    '401': 'Unauthorized',
-    '404': 'Not Found',
-    '406': 'Not Acceptable',
-    '500': 'Internal Server Error',
-  };
-
-  constructor(private logger: NGXLogger, private route: ActivatedRoute) {
+  constructor(private logger: NGXLogger, private route: ActivatedRoute, public errorHandler: ErrorHandlerService) {
     this.logger.trace(`new ${this.className}()`);
   }
 
@@ -30,7 +23,7 @@ export class ErrorComponent implements OnInit {
     const tmp = this.route.snapshot.paramMap.get('error');
     if (tmp) {
       this.errorCode = tmp;
-      this.errorMessage = this.messageMap[this.errorCode];
+      this.errorTitle = this.errorHandler.getErrorTitle(this.errorCode);
     }
   }
 }
