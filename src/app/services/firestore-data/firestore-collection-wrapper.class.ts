@@ -6,6 +6,8 @@ import {
   doc,
   Firestore,
   getDocs,
+  Query,
+  QuerySnapshot,
   runTransaction,
 } from '@angular/fire/firestore';
 import { Unsubscribe } from '@angular/fire/app-check';
@@ -22,6 +24,13 @@ export class FirestoreCollectionWrapper<T extends FsDocumentBase> {
 
   private unsubscribe?: Unsubscribe;
 
+  private readonly retryMax = 2;
+
+  private readonly retryInterval = 500; // ms.
+
+  //============================================================================
+  // Class methods.
+  //
   constructor(private fs: Firestore, private name: FsCollectionName) {
     this.collection = collection(this.fs, name) as CollectionReference<T>;
     this.data = [];
@@ -35,104 +44,24 @@ export class FirestoreCollectionWrapper<T extends FsDocumentBase> {
    * @returns Promise<number>. Data length.
    */
   async load(): Promise<number> {
-    // Get data.
-    try {
-      // Get document snapshot and check if it is empty or not.
-      const snapshot = await getDocs(this.collection);
-      if (snapshot.empty) {
-        throw Error(`${location} Empty data. { name: ${this.name} }`);
-      }
+    const dataLength = await this.loadQuery(this.collection, this.data, this.name);
 
-      // If the document is not empty, clear existing data before copying.
-      while (this.data.length > 0) {
-        this.data.pop();
-      }
-
-      // Copy document ID and its data to "this.data" object.
-      snapshot.forEach((document) => {
-        const tmp = document.data();
-        tmp.id = document.id;
-        this.data.push(tmp);
-      });
+    if (dataLength > 0) {
       this.isLoaded = true;
-    } catch (error) {
-      throw error;
     }
 
-    // Return data length.
-    return this.data.length;
+    return dataLength;
   }
 
   async loadSub<TSub extends FsDocumentBase>(docId: string, subName: string): Promise<TSub[]> {
     const result: TSub[] = [];
 
-    // Get data.
-    try {
-      // Copy document ID and its data to "this.data" object, if it's not empty.
-      const subCollection = collection(this.fs, this.name, docId, subName) as CollectionReference<TSub>;
-      const snapshot = await getDocs(subCollection);
-      if (snapshot.empty) {
-        throw Error(`${location} Empty data.`);
-      }
-      snapshot.forEach((document) => {
-        const tmp = document.data() as TSub;
-        tmp.id = document.id;
-        result.push(tmp);
-      });
-    } catch (error) {
-      throw error;
-    }
+    const subCollection = collection(this.fs, this.name, docId, subName) as CollectionReference<TSub>;
+
+    await this.loadQuery(subCollection, result, subName);
 
     return result;
   }
-
-  // /**
-  //  * It starts listening data from server.
-  //  * ATTENTION: Don't forget to do stop listening by stopListening().
-  //  */
-  // startListening(errorFn?: (e: Error) => void): void {
-  //   this.isListening = true;
-
-  //   const q = query(this.collection, orderBy('index'));
-
-  //   this.unsubscribe = onSnapshot(
-  //     // Query.
-  //     q,
-
-  //     // Success handler. (It corresponding next() of Observable.)
-  //     // Copy received data and set 'isLoaded' flag.
-  //     (snapshot) => {
-  //       while (this.data.length > 0) {
-  //         this.data.pop();
-  //       }
-  //       snapshot.forEach((document) => {
-  //         const tmp = document.data();
-  //         tmp.id = document.id;
-  //         this.data.push(tmp);
-  //       });
-  //       this.isLoaded = true;
-  //     },
-
-  //     // Error handler.
-  //     // 'isListening' flag is cleared because it will stop listening automatically by error.
-  //     (error) => {
-  //       this.isListening = false;
-  //       if (errorFn != null) {
-  //         errorFn(error);
-  //       }
-  //     }
-  //   );
-  // }
-
-  // /**
-  //  * It stops listening.
-  //  */
-  // stopListening(): void {
-  //   if (this.unsubscribe != null && this.isListening === true) {
-  //     this.unsubscribe();
-  //     this.isListening = false;
-  //   }
-  // }
 
   /**
    * Add new document to the collection.
@@ -208,4 +137,114 @@ export class FirestoreCollectionWrapper<T extends FsDocumentBase> {
 
     return docId;
   }
+
+  //============================================================================
+  // Private methods.
+  //
+  private async loadQuery(query: Query, dst: any[], name: string): Promise<number> {
+    let retryCnt = this.retryMax;
+
+    // Getting data with retry.
+    let snapshot = await this.getDocs(query);
+    if (!snapshot) {
+      while (retryCnt > 0) {
+        await this.sleep(this.retryInterval);
+        snapshot = await this.getDocs(query);
+        console.log(`${name} retry: ${retryCnt}`);
+        retryCnt--;
+      }
+    }
+
+    // Check data.
+    if (!snapshot || snapshot.empty) {
+      throw Error(`Data loading failed. { name: ${this.name} }`);
+    }
+
+    // If the document is not empty, clear existing data before copying.
+    while (dst.length > 0) {
+      this.data.pop();
+    }
+
+    // Copy document ID and its data to "this.data" object.
+    snapshot.forEach((document) => {
+      const tmp = document.data() as T;
+      tmp.id = document.id;
+      dst.push(tmp);
+    });
+
+    // Return data length.
+    return dst.length;
+  }
+
+  private async getDocs(collectionRef: Query): Promise<QuerySnapshot | undefined> {
+    let snapshot: QuerySnapshot | undefined = undefined;
+
+    try {
+      snapshot = await getDocs(collectionRef);
+      if (snapshot.empty) {
+        console.log(`${this.name} empty`);
+        snapshot = undefined;
+      }
+    } catch (e) {
+      console.log(`${this.name} error: ${e}`);
+      snapshot = undefined;
+    }
+
+    return snapshot;
+  }
+
+  private sleep(ms: number): Promise<void> {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  //============================================================================
+  // Removed class methods.
+  //
+  // /**
+  //  * It starts listening data from server.
+  //  * ATTENTION: Don't forget to do stop listening by stopListening().
+  //  */
+  // startListening(errorFn?: (e: Error) => void): void {
+  //   this.isListening = true;
+
+  //   const q = query(this.collection, orderBy('index'));
+
+  //   this.unsubscribe = onSnapshot(
+  //     // Query.
+  //     q,
+
+  //     // Success handler. (It corresponding next() of Observable.)
+  //     // Copy received data and set 'isLoaded' flag.
+  //     (snapshot) => {
+  //       while (this.data.length > 0) {
+  //         this.data.pop();
+  //       }
+  //       snapshot.forEach((document) => {
+  //         const tmp = document.data();
+  //         tmp.id = document.id;
+  //         this.data.push(tmp);
+  //       });
+  //       this.isLoaded = true;
+  //     },
+
+  //     // Error handler.
+  //     // 'isListening' flag is cleared because it will stop listening automatically by error.
+  //     (error) => {
+  //       this.isListening = false;
+  //       if (errorFn != null) {
+  //         errorFn(error);
+  //       }
+  //     }
+  //   );
+  // }
+
+  // /**
+  //  * It stops listening.
+  //  */
+  // stopListening(): void {
+  //   if (this.unsubscribe != null && this.isListening === true) {
+  //     this.unsubscribe();
+  //     this.isListening = false;
+  //   }
+  // }
 }

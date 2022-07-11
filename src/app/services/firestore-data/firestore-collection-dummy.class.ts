@@ -125,7 +125,6 @@ export class FirestoreCollectionDummy<T extends FsDocumentBase> {
    * @returns Promise<number>. Data length.
    */
   async load(): Promise<number> {
-    console.log('load() from dummy class.');
     return this.data.length;
   }
 
