@@ -13,6 +13,7 @@ export class ErrorHandlerService {
   readonly errorTitleMap = {
     [ErrorCode.BadRequest]: 'Bad Request',
     [ErrorCode.NotFound]: 'Not Found',
+    [ErrorCode.MethodNotAllowed]: 'Method Not Allowed',
     [ErrorCode.InternalServerError]: 'Internal Server Error',
   };
 
