@@ -141,6 +141,9 @@ export class FirestoreCollectionWrapper<T extends FsDocumentBase> {
   //============================================================================
   // Private methods.
   //
+  //----------------------------------------------------------------------------
+  // Load data from server.
+  //
   private async loadQuery(query: Query, dst: any[], name: string): Promise<number> {
     let retryCnt = this.retryMax;
 
@@ -193,6 +196,9 @@ export class FirestoreCollectionWrapper<T extends FsDocumentBase> {
     return snapshot;
   }
 
+  //----------------------------------------------------------------------------
+  // Utility functions.
+  //
   private sleep(ms: number): Promise<void> {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
