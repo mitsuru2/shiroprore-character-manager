@@ -207,6 +207,7 @@ export class MakeThumbnailFormComponent implements OnChanges, AfterViewInit {
     promise.then((result) => {
       this.inputImage = result;
       this.imagePos.x = (this.canvasSize.x - this.inputImage.width) / 2;
+      this.imagePos.y = (this.canvasSize.y - this.inputImage.height) / 2;
       this.scaledImageSize = this.calcScaledImageSize(100);
       if (this.canvas) {
         this.onImageScaleInputChange({ value: this.imageScale });

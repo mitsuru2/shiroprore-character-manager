@@ -102,34 +102,36 @@
   <!--------------------------------------------------------------------------->
   <!-- Ability (after kaichiku) ---------------------------------------------->
   <!--------------------------------------------------------------------------->
-  <p-divider align="center"><span>特技/計略 (改壱)</span></p-divider>
-  <div *ngIf="character.abilitiesKai.length === 0" [style]="{ 'margin-bottom': '1rem' }">{{ textNotAvailable }}</div>
-  <div *ngFor="let ability of character.abilitiesKai; let i = index">
-    <p-card [style]="{ 'margin-bottom': '1rem' }">
-      <div class="formgrid grid">
-        <div class="col-6 lg:col-3">特技/計略タイプ</div>
-        <div class="col-6 lg:col-3">{{ ability.typeName }}</div>
-        <div class="col-6 lg:col-3">特技/計略名</div>
-        <div class="col-6 lg:col-3">{{ ability.name }}</div>
-        <div class="col-6 lg:col-3" *ngIf="ability.typeName === '計略'">使用間隔</div>
-        <div class="col-6 lg:col-3" *ngIf="ability.typeName === '計略'">{{ ability.interval }} 秒</div>
-        <div class="col-6 lg:col-3" *ngIf="ability.typeName === '計略'">消費気</div>
-        <div class="col-6 lg:col-3" *ngIf="ability.typeName === '計略'">{{ ability.cost }}</div>
-        <div class="col-6 lg:col-3" *ngIf="ability.typeName === '計略' && ability.tokenLayouts.length > 0">トークン配置マス</div>
-        <div class="col-6 lg:col-9" *ngIf="ability.typeName === '計略' && ability.tokenLayouts.length > 0">
-          <span *ngIf="ability.tokenLayouts">
-            <span *ngFor="let layout of ability.tokenLayouts; let j = index">
-              <span *ngIf="j > 0">, </span>
-              {{ layout }}
-            </span></span
-          >
+  <p-divider align="center" *ngIf="character.characterType.isKaichikuEnable"><span>特技/計略 (改壱)</span></p-divider>
+  <div *ngIf="character.characterType.isKaichikuEnable">
+    <div *ngIf="character.abilitiesKai.length === 0" [style]="{ 'margin-bottom': '1rem' }">{{ textNotAvailable }}</div>
+    <div *ngFor="let ability of character.abilitiesKai; let i = index">
+      <p-card [style]="{ 'margin-bottom': '1rem' }">
+        <div class="formgrid grid">
+          <div class="col-6 lg:col-3">特技/計略タイプ</div>
+          <div class="col-6 lg:col-3">{{ ability.typeName }}</div>
+          <div class="col-6 lg:col-3">特技/計略名</div>
+          <div class="col-6 lg:col-3">{{ ability.name }}</div>
+          <div class="col-6 lg:col-3" *ngIf="ability.typeName === '計略'">使用間隔</div>
+          <div class="col-6 lg:col-3" *ngIf="ability.typeName === '計略'">{{ ability.interval }} 秒</div>
+          <div class="col-6 lg:col-3" *ngIf="ability.typeName === '計略'">消費気</div>
+          <div class="col-6 lg:col-3" *ngIf="ability.typeName === '計略'">{{ ability.cost }}</div>
+          <div class="col-6 lg:col-3" *ngIf="ability.typeName === '計略' && ability.tokenLayouts.length > 0">トークン配置マス</div>
+          <div class="col-6 lg:col-9" *ngIf="ability.typeName === '計略' && ability.tokenLayouts.length > 0">
+            <span *ngIf="ability.tokenLayouts">
+              <span *ngFor="let layout of ability.tokenLayouts; let j = index">
+                <span *ngIf="j > 0">, </span>
+                {{ layout }}
+              </span></span
+            >
+          </div>
+          <div class="col-6 lg:col-3">説明</div>
+          <div class="col-6 lg:col-9">
+            <div *ngFor="let desc of ability.descriptions">{{ desc }}</div>
+          </div>
         </div>
-        <div class="col-6 lg:col-3">説明</div>
-        <div class="col-6 lg:col-9">
-          <div *ngFor="let desc of ability.descriptions">{{ desc }}</div>
-        </div>
-      </div>
-    </p-card>
+      </p-card>
+    </div>
   </div>
 
   <!--------------------------------------------------------------------------->
