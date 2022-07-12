@@ -27,13 +27,13 @@
         (onChange)="onCharacterTypeChanged()"
       ></p-dropdown>
     </div>
-    <div class="field col-12 lg:col-6" *ngIf="selectedCharacterType.subTypes.length > 0">
+    <div class="field col-12 lg:col-6" *ngIf="selectedCharacterType.hasSubTypes">
       <label for="NewCharacterForm_SubCharacterTypeInput">サブキャラクタータイプ</label>
       <p-dropdown
         id="NewCharacterForm_SubCharacterTypeInput"
         name="NewCharacterForm_SubCharacterTypeInput"
         [(ngModel)]="selectedSubCharacterType"
-        [options]="selectedCharacterType.subTypes"
+        [options]="subCharacterTypeItems"
         optionLabel="name"
         [style]="{ width: '100%' }"
       ></p-dropdown>
@@ -413,9 +413,9 @@
   <!------------------------------------------------------------------------->
   <!-- Ability (Kaichiku) --------------------------------------------------->
   <!------------------------------------------------------------------------->
-  <p-divider align="center"><span>特技 / 計略 (改壱)</span></p-divider>
+  <p-divider align="center" *ngIf="selectedCharacterType.isKaichikuEnable"><span>特技 / 計略 (改壱)</span></p-divider>
 
-  <div>
+  <div *ngIf="selectedCharacterType.isKaichikuEnable">
     <div class="formgrid grid" *ngFor="let item of selectedAbilityTypesKai; trackBy: trackByItem; let i = index">
       <div class="col" [style]="{ 'margin-bottom': '1rem' }">
         <p-card>

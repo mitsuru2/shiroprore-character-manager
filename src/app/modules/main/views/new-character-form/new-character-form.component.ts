@@ -63,6 +63,10 @@ export class NewCharacterFormComponent implements OnChanges {
 
   selectedCharacterType!: FsCharacterType; // Init at ngOnChanges().
 
+  @Input() subCharacterTypes!: FsSubCharacterType[];
+
+  subCharacterTypeItems!: FsSubCharacterType[]; // Sub character types list filtered by the selected character type. Init at ngOnChanges().
+
   selectedSubCharacterType?: FsSubCharacterType;
 
   /** Character Name */
@@ -219,11 +223,8 @@ export class NewCharacterFormComponent implements OnChanges {
     this.selectedCharacterType = this.characterTypes[0];
 
     // Sub character type.
-    for (let i = 0; i < this.characterTypes.length; ++i) {
-      if (this.characterTypes[i].subTypes) {
-        this.firestore.sortByCode(this.characterTypes[i].subTypes as FsSubCharacterType[]);
-      }
-    }
+    this.subCharacterTypeItems = this.subCharacterTypes.filter((item) => item.parent === this.selectedCharacterType.id);
+    this.firestore.sortByCode(this.subCharacterTypeItems);
 
     // Weapon type.
     this.weaponTypeItems = this.makeFilteredFormItems(this.selectedCharacterType.weaponTypes, this.weaponTypes);
@@ -256,6 +257,11 @@ export class NewCharacterFormComponent implements OnChanges {
 
     // Clear form except character type.
     this.clearForm(['characterType']);
+
+    // Update sub character type list.
+    this.subCharacterTypeItems = this.subCharacterTypes.filter((item) => item.parent === this.selectedCharacterType.id);
+    this.firestore.sortByCode(this.subCharacterTypeItems);
+    this.selectedSubCharacterType = this.subCharacterTypeItems[0];
 
     // Update weapon type item list.
     this.weaponTypeItems = this.makeFilteredFormItems(this.selectedCharacterType.weaponTypes, this.weaponTypes);
@@ -864,7 +870,7 @@ export class NewCharacterFormComponent implements OnChanges {
       }
 
       // Sub character type.
-      if (content.characterType.subTypes.length > 0 && this.selectedSubCharacterType) {
+      if (content.characterType.hasSubTypes && this.selectedSubCharacterType) {
         content.subCharacterType = this.selectedSubCharacterType;
       }
 
@@ -1179,7 +1185,7 @@ export class NewCharacterFormComponent implements OnChanges {
       }
 
       // Sub-character type.
-      if (this.selectedCharacterType.subTypes.length > 0 && !this.selectedSubCharacterType) {
+      if (this.selectedCharacterType.hasSubTypes && !this.selectedSubCharacterType) {
         this.logger.warn(location, 'No character type is selected.');
         this.errorMessage = 'キャラクタータイプを選択してください。';
         return;
@@ -1221,7 +1227,7 @@ export class NewCharacterFormComponent implements OnChanges {
       }
 
       // Regions.
-      if (this.selectedCharacterType.regions && !this.selectedRegion) {
+      if (this.selectedCharacterType.regions.length > 0 && !this.selectedRegion) {
         this.logger.warn(location, 'No region type is selected.');
         this.errorMessage = '地域を選択してください。';
         return;

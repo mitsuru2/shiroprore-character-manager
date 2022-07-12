@@ -3,7 +3,7 @@
 //
 import { Injectable } from '@angular/core';
 import { NGXLogger } from 'ngx-logger';
-import { Firestore, doc, runTransaction, DocumentReference } from '@angular/fire/firestore';
+import { Firestore, doc, runTransaction } from '@angular/fire/firestore';
 import { FsCollectionName } from './firestore-collection-name.enum';
 import {
   FsAbility,
@@ -50,19 +50,20 @@ export class FirestoreDataService {
   loaded = false;
 
   collections: { [key in FsCollectionName]: FirestoreCollectionWrapper<any> | FirestoreCollectionDummy<any> } = {
-    [FsCollectionName.Abilities]:      new FirestoreCollectionWrapper<FsAbility>       (this.fs, FsCollectionName.Abilities), // eslint-disable-line
-    [FsCollectionName.AbilityTypes]:   new FirestoreCollectionDummy<FsAbilityType>     (         FsCollectionName.AbilityTypes), // eslint-disable-line
-    [FsCollectionName.CharacterTags]:  new FirestoreCollectionWrapper<FsCharacterTag>  (this.fs, FsCollectionName.CharacterTags), // eslint-disable-line
-    [FsCollectionName.CharacterTypes]: new FirestoreCollectionWrapper<FsCharacterType> (this.fs, FsCollectionName.CharacterTypes), // eslint-disable-line
-    [FsCollectionName.Characters]:     new FirestoreCollectionWrapper<FsCharacter>     (this.fs, FsCollectionName.Characters), // eslint-disable-line
-    [FsCollectionName.Facilities]:     new FirestoreCollectionWrapper<FsFacility>      (this.fs, FsCollectionName.Facilities), // eslint-disable-line
-    [FsCollectionName.FacilityTypes]:  new FirestoreCollectionDummy<FsFacilityType>    (         FsCollectionName.FacilityTypes), // eslint-disable-line
-    [FsCollectionName.GeographTypes]:  new FirestoreCollectionDummy<FsGeographType>    (         FsCollectionName.GeographTypes), // eslint-disable-line
-    [FsCollectionName.Illustrators]:   new FirestoreCollectionWrapper<FsIllustrator>   (this.fs, FsCollectionName.Illustrators), // eslint-disable-line
-    [FsCollectionName.Regions]:        new FirestoreCollectionDummy<FsRegion>          (         FsCollectionName.Regions), // eslint-disable-line
-    [FsCollectionName.VoiceActors]:    new FirestoreCollectionWrapper<FsVoiceActor>    (this.fs, FsCollectionName.VoiceActors), // eslint-disable-line
-    [FsCollectionName.WeaponTypes]:    new FirestoreCollectionDummy<FsWeaponType>      (         FsCollectionName.WeaponTypes), // eslint-disable-line
-    [FsCollectionName.Weapons]:        new FirestoreCollectionWrapper<FsWeapon>        (this.fs, FsCollectionName.Weapons), // eslint-disable-line
+    [FsCollectionName.Abilities]:         new FirestoreCollectionWrapper<FsAbility>          (this.fs, FsCollectionName.Abilities), // eslint-disable-line
+    [FsCollectionName.AbilityTypes]:      new FirestoreCollectionDummy<FsAbilityType>        (         FsCollectionName.AbilityTypes), // eslint-disable-line
+    [FsCollectionName.CharacterTags]:     new FirestoreCollectionWrapper<FsCharacterTag>     (this.fs, FsCollectionName.CharacterTags), // eslint-disable-line
+    [FsCollectionName.CharacterTypes]:    new FirestoreCollectionWrapper<FsCharacterType>    (this.fs, FsCollectionName.CharacterTypes), // eslint-disable-line
+    [FsCollectionName.Characters]:        new FirestoreCollectionWrapper<FsCharacter>        (this.fs, FsCollectionName.Characters), // eslint-disable-line
+    [FsCollectionName.Facilities]:        new FirestoreCollectionWrapper<FsFacility>         (this.fs, FsCollectionName.Facilities), // eslint-disable-line
+    [FsCollectionName.FacilityTypes]:     new FirestoreCollectionDummy<FsFacilityType>       (         FsCollectionName.FacilityTypes), // eslint-disable-line
+    [FsCollectionName.GeographTypes]:     new FirestoreCollectionDummy<FsGeographType>       (         FsCollectionName.GeographTypes), // eslint-disable-line
+    [FsCollectionName.Illustrators]:      new FirestoreCollectionWrapper<FsIllustrator>      (this.fs, FsCollectionName.Illustrators), // eslint-disable-line
+    [FsCollectionName.Regions]:           new FirestoreCollectionDummy<FsRegion>             (         FsCollectionName.Regions), // eslint-disable-line
+    [FsCollectionName.SubCharacterTypes]: new FirestoreCollectionWrapper<FsSubCharacterType> (this.fs, FsCollectionName.SubCharacterTypes), // eslint-disable-line
+    [FsCollectionName.VoiceActors]:       new FirestoreCollectionWrapper<FsVoiceActor>       (this.fs, FsCollectionName.VoiceActors), // eslint-disable-line
+    [FsCollectionName.WeaponTypes]:       new FirestoreCollectionDummy<FsWeaponType>         (         FsCollectionName.WeaponTypes), // eslint-disable-line
+    [FsCollectionName.Weapons]:           new FirestoreCollectionWrapper<FsWeapon>           (this.fs, FsCollectionName.Weapons), // eslint-disable-line
   };
 
   /**
@@ -92,10 +93,11 @@ export class FirestoreDataService {
         this.load(FsCollectionName.Characters),
         this.load(FsCollectionName.Facilities),
         this.load(FsCollectionName.FacilityTypes),
-        this.load(FsCollectionName.Regions),
         this.load(FsCollectionName.GeographTypes),
-        this.load(FsCollectionName.VoiceActors),
         this.load(FsCollectionName.Illustrators),
+        this.load(FsCollectionName.Regions),
+        this.load(FsCollectionName.SubCharacterTypes),
+        this.load(FsCollectionName.VoiceActors),
         this.load(FsCollectionName.Weapons),
         this.load(FsCollectionName.WeaponTypes),
       ]);
@@ -120,12 +122,6 @@ export class FirestoreDataService {
     try {
       const collection = this.collections[name as FsCollectionName];
       result = await collection.load();
-
-      // Special process for CharacterTypes collection.
-      // It needs sub collection loading.
-      if (name === FsCollectionName.CharacterTypes) {
-        await this.loadSubCharacterTypes();
-      }
     } catch (error) {
       this.logger.error(location, error);
       this.errorHandler.notifyError(ErrorCode.InternalServerError, [
@@ -186,21 +182,17 @@ export class FirestoreDataService {
    * @param docId Document ID.
    * @returns Promise with number. The number represents the counter value after increment.
    */
-  async incrementCounter(name: FsCollectionName, docId: string, subName?: string, subDocId?: string): Promise<number> {
+  async incrementCounter(name: FsCollectionName, docId: string): Promise<number> {
     const location = `${this.className}.incrementCounter()`;
-    this.logger.trace(location, { name: name, docId: docId, subName: subName, subDocId: subDocId });
+    this.logger.trace(location, { name: name, docId: docId });
 
     if (
       name === FsCollectionName.CharacterTypes ||
       name === FsCollectionName.FacilityTypes ||
+      name === FsCollectionName.SubCharacterTypes ||
       name === FsCollectionName.WeaponTypes
     ) {
-      let docRef: DocumentReference;
-      if (!subName || !subDocId) {
-        docRef = doc(this.fs, `${name}/${docId}`);
-      } else {
-        docRef = doc(this.fs, `${name}/${docId}/${subName}/${subDocId}`);
-      }
+      let docRef = doc(this.fs, `${name}/${docId}`);
       let count = 0;
 
       await runTransaction(this.fs, async (transaction) => {
@@ -254,30 +246,6 @@ export class FirestoreDataService {
       items.sort((a, b) => {
         return b.code < a.code ? -1 : 1;
       });
-    }
-  }
-
-  private async loadSubCharacterTypes() {
-    // const location = `${this.className}.loadSubCharacterTypes()`;
-    const fsCollection = this.collections[FsCollectionName.CharacterTypes];
-
-    for (let i = 0; i < fsCollection.data.length; ++i) {
-      const docData = fsCollection.data[i] as FsCharacterType;
-      if (docData.hasSubTypes) {
-        const tmp = await fsCollection.loadSub<FsSubCharacterType>(docData.id, 'SubTypes');
-        if (!docData.subTypes) {
-          docData.subTypes = tmp;
-        } else {
-          while (docData.subTypes.length > 0) {
-            docData.subTypes.pop();
-          }
-          for (let j = 0; j < tmp.length; ++j) {
-            docData.subTypes.push(tmp[j]);
-          }
-        }
-      } else {
-        docData.subTypes = [];
-      }
     }
   }
 }

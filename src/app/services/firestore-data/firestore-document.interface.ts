@@ -76,8 +76,6 @@ export class FsCharacterType implements FsDocumentBaseWithCode {
   isKaichikuEnable: boolean = false;
 
   hasSubTypes: boolean = false;
-
-  subTypes: FsSubCharacterType[] = [];
 }
 
 export class FsSubCharacterType implements FsDocumentBaseWithCode {
@@ -88,6 +86,8 @@ export class FsSubCharacterType implements FsDocumentBaseWithCode {
   code = '00';
 
   count = 0;
+
+  parent = '';
 }
 
 export const FsCharacterRarerityMax = 7;

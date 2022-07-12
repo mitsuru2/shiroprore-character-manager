@@ -56,6 +56,8 @@ export class NewCharacterComponent /*implements OnInit*/ {
 
   regions = this.firestore.getData(FsCollectionName.Regions) as FsRegion[];
 
+  subCharacterTypes = this.firestore.getData(FsCollectionName.SubCharacterTypes) as FsSubCharacterType[];
+
   voiceActors = this.firestore.getData(FsCollectionName.VoiceActors) as FsVoiceActor[];
 
   weaponTypes = this.firestore.getData(FsCollectionName.WeaponTypes) as FsWeaponType[];
@@ -316,7 +318,7 @@ export class NewCharacterComponent /*implements OnInit*/ {
     // Increment and get character type count.
     count = await this.firestore.incrementCounter(FsCollectionName.CharacterTypes, type.id);
     if (subCode !== '00') {
-      count = await this.firestore.incrementCounter(FsCollectionName.CharacterTypes, type.id, 'SubTypes', subType.id);
+      count = await this.firestore.incrementCounter(FsCollectionName.SubCharacterTypes, subType.id);
     }
 
     // Make string index.

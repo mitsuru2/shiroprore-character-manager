@@ -9,6 +9,7 @@ export enum FsCollectionName {
   GeographTypes = 'GeographTypes',
   Illustrators = 'Illustrators',
   Regions = 'Regions',
+  SubCharacterTypes = 'SubCharacterTypes',
   VoiceActors = 'VoiceActors',
   Weapons = 'Weapons',
   WeaponTypes = 'WeaponTypes',
