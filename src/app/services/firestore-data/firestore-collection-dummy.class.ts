@@ -153,4 +153,13 @@ export class FirestoreCollectionDummy<T extends FsDocumentBase> {
   async pushToListField<TField>(docId: string, fieldName: string, value: TField): Promise<string> {
     return docId;
   }
+
+  /**
+   * Increment the 'count' field value.
+   * @param docId Document ID.
+   * @returns Counter value after increment.
+   */
+  async incrementCounter(docId: string): Promise<number> {
+    return 0;
+  }
 }

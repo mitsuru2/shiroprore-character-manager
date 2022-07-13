@@ -3,7 +3,7 @@
 //
 import { Injectable } from '@angular/core';
 import { NGXLogger } from 'ngx-logger';
-import { Firestore, doc, runTransaction } from '@angular/fire/firestore';
+import { Firestore, doc, runTransaction, serverTimestamp } from '@angular/fire/firestore';
 import { FsCollectionName } from './firestore-collection-name.enum';
 import {
   FsAbility,
@@ -162,6 +162,9 @@ export class FirestoreDataService {
    * @returns Data document ID.
    */
   async addData(name: FsCollectionName, data: any): Promise<string> {
+    const location = `${this.className}.addData()`;
+    this.logger.trace(location, { name: name, data: data.name });
+
     const docId = await this.collections[name].add(data);
     return docId;
   }
@@ -172,6 +175,9 @@ export class FirestoreDataService {
     fieldName: string,
     value: TField
   ): Promise<string> {
+    const location = `${this.className}.pushToListField()`;
+    this.logger.trace(location, { name: name, docId: docId, field: fieldName });
+
     const docIdResult = await this.collections[name].pushToListField<TField>(docId, fieldName, value);
     return docIdResult;
   }
@@ -186,35 +192,8 @@ export class FirestoreDataService {
     const location = `${this.className}.incrementCounter()`;
     this.logger.trace(location, { name: name, docId: docId });
 
-    if (
-      name === FsCollectionName.CharacterTypes ||
-      name === FsCollectionName.FacilityTypes ||
-      name === FsCollectionName.SubCharacterTypes ||
-      name === FsCollectionName.WeaponTypes
-    ) {
-      let docRef = doc(this.fs, `${name}/${docId}`);
-      let count = 0;
-
-      await runTransaction(this.fs, async (transaction) => {
-        const docBody = await transaction.get(docRef);
-
-        if (!docBody.exists()) {
-          this.logger.error(
-            `FirestoreDataService.incrementCounter() | Document was not found. { path: ${name}/${docId} }`
-          );
-          throw Error(`FirestoreDataService.incrementCounter() | Document was not found. { path: ${name}/${docId} }`);
-        }
-
-        count = (docBody.data() as FsCharacterType).count;
-        count += 1;
-        transaction.update(docRef, { count: count });
-      });
-
-      return count;
-    } else {
-      this.logger.error(`FirestoreDataService.incrementCounter() | Unsupported collection. { name: ${name} }`);
-      throw Error(`FirestoreDataService.incrementCounter() | Unsupported collection. { name: ${name} }`);
-    }
+    const count = await this.collections[name].incrementCounter(docId);
+    return count;
   }
 
   sortByOrder(items: FsDocumentBaseWithOrder[], isDesc: boolean = false) {

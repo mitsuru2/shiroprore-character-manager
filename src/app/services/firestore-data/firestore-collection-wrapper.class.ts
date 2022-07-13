@@ -9,6 +9,7 @@ import {
   Query,
   QuerySnapshot,
   runTransaction,
+  serverTimestamp,
 } from '@angular/fire/firestore';
 import { Unsubscribe } from '@angular/fire/app-check';
 import { FsDocumentBase } from './firestore-document.interface';
@@ -87,6 +88,10 @@ export class FirestoreCollectionWrapper<T extends FsDocumentBase> {
           }
         }
 
+        // Set 'createdAt' timestamp.
+        data.createdAt = serverTimestamp();
+        data.updatedAt = data.createdAt;
+
         // Remove 'id' field from the target data.
         const tmp = { ...data } as any;
         delete tmp.id;
@@ -133,9 +138,48 @@ export class FirestoreCollectionWrapper<T extends FsDocumentBase> {
         docData[fieldName].push(value);
       }
       transaction.update(docRef, { [fieldName]: docData[fieldName] });
+      transaction.update(docRef, { updatedAt: serverTimestamp() });
     });
 
     return docId;
+  }
+
+  /**
+   * Increment the 'count' field value.
+   * @param docId Document ID.
+   * @returns Counter value after increment.
+   */
+  async incrementCounter(docId: string): Promise<number> {
+    // Get document reference.
+    const docRef = doc(this.fs, `${this.name}/${docId}`);
+    let count = 0;
+
+    // Do transaction.
+    await runTransaction(this.fs, async (transaction) => {
+      // Get target document.
+      // Throw error if the target document is not existing.
+      const docBody = await transaction.get(docRef);
+      if (!docBody.exists()) {
+        throw Error(
+          `FirestoreDataService.incrementCounter() | Document was not found. { path: ${this.name}/${docId} }`
+        );
+      }
+
+      // Get counter value.
+      const docData = docBody.data() as any;
+      if (Object.keys(docData).includes('count')) {
+        count = docData.count;
+      }
+
+      // Increment counter value.
+      count += 1;
+
+      // Update database.
+      transaction.update(docRef, { count: count });
+      transaction.update(docRef, { updatedAt: serverTimestamp() });
+    });
+
+    return count;
   }
 
   //============================================================================

@@ -1,28 +1,48 @@
+import { FieldValue, Timestamp } from '@angular/fire/firestore';
+
 /**
  * Base data types.
  */
-export interface FsDocumentBase {
-  id: string;
-  name: string;
+export class FsDocumentBase {
+  id: string = '';
+
+  name: string = '';
+
+  createdAt: FieldValue = Timestamp.fromDate(new Date('2022-07-13T00:00:00+0900'));
+
+  updatedAt: FieldValue = Timestamp.fromDate(new Date('2022-07-13T00:00:00+0900'));
+
+  constructor(id = '', name = '') {
+    this.id = id;
+    this.name = name;
+  }
 }
 
-export interface FsDocumentBaseWithOrder extends FsDocumentBase {
-  order: number;
+export class FsDocumentBaseWithOrder extends FsDocumentBase {
+  order: number = 0;
+
+  constructor(id = '', name = '', order = 0) {
+    super(id, name);
+    this.order = order;
+  }
 }
 
-export interface FsDocumentBaseWithCode extends FsDocumentBase {
-  code: string;
-  count: number;
+export class FsDocumentBaseWithCode extends FsDocumentBase {
+  code: string = '00';
+
+  count: number = 0;
+
+  constructor(id = '', name = '', code = '00') {
+    super(id, name);
+    this.code = code;
+    this.count = 0;
+  }
 }
 
 /**
  * Practical data types.
  */
-export class FsAbility implements FsDocumentBase {
-  id = '';
-
-  name = '';
-
+export class FsAbility extends FsDocumentBase {
   type: string = '';
 
   descriptions: string[] = [];
@@ -34,37 +54,13 @@ export class FsAbility implements FsDocumentBase {
   tokenLayouts: string[] = [];
 }
 
-export class FsAbilityType implements FsDocumentBaseWithOrder {
-  id = '';
+export class FsAbilityType extends FsDocumentBaseWithOrder {}
 
-  name = '';
-
-  order = 0;
-
-  constructor(id = '', name = '', order = 0) {
-    this.id = id;
-    this.name = name;
-    this.order = order;
-  }
-}
-
-export class FsCharacterTag implements FsDocumentBase {
-  id = '';
-
-  name = '';
-
+export class FsCharacterTag extends FsDocumentBase {
   characters: string[] = [];
 }
 
-export class FsCharacterType implements FsDocumentBaseWithCode {
-  id = '';
-
-  name = '';
-
-  code = '';
-
-  count = 0;
-
+export class FsCharacterType extends FsDocumentBaseWithCode {
   weaponTypes: string[] = [];
 
   geographTypes: string[] = [];
@@ -78,25 +74,13 @@ export class FsCharacterType implements FsDocumentBaseWithCode {
   hasSubTypes: boolean = false;
 }
 
-export class FsSubCharacterType implements FsDocumentBaseWithCode {
-  id = '';
-
-  name = '';
-
-  code = '00';
-
-  count = 0;
-
+export class FsSubCharacterType extends FsDocumentBaseWithCode {
   parent = '';
 }
 
 export const FsCharacterRarerityMax = 7;
 
-export class FsCharacter implements FsDocumentBase {
-  id = '';
-
-  name = '';
-
+export class FsCharacter extends FsDocumentBase {
   index: string = '';
 
   type: string = '';
@@ -130,30 +114,11 @@ export class FsCharacter implements FsDocumentBase {
   tags: string[] = [];
 }
 
-export class FsFacilityType implements FsDocumentBaseWithCode {
-  id = '';
-
-  name = '';
-
-  code = '';
-
-  count = 0;
-
-  constructor(id = '', name = '', code = '') {
-    this.id = id;
-    this.name = name;
-    this.code = code;
-    this.count = 0;
-  }
-}
+export class FsFacilityType extends FsDocumentBaseWithCode {}
 
 export const FsFacilityRarerityMax = 5;
 
-export class FsFacility implements FsDocumentBase {
-  id = '';
-
-  name = '';
-
+export class FsFacility extends FsDocumentBase {
   type: string = '';
 
   rarerity: number = 0;
@@ -165,72 +130,26 @@ export class FsFacility implements FsDocumentBase {
   details: string[] = [];
 }
 
-export class FsGeographType implements FsDocumentBaseWithOrder {
-  id = '';
+export class FsGeographType extends FsDocumentBaseWithOrder {}
 
-  name = '';
+export class FsIllustrator extends FsDocumentBase {}
 
-  order = 0;
+export class FsRegion extends FsDocumentBaseWithOrder {}
 
-  constructor(id = '', name = '', order = 0) {
-    this.id = id;
-    this.name = name;
-    this.order = order;
-  }
-}
+export class FsVoiceActor extends FsDocumentBase {}
 
-export class FsIllustrator implements FsDocumentBase {
-  id = '';
-
-  name = '';
-}
-
-export class FsRegion implements FsDocumentBaseWithOrder {
-  id = '';
-
-  name = '';
-
-  order = 0;
-
-  constructor(id = '', name = '', order = 0) {
-    this.id = id;
-    this.name = name;
-    this.order = order;
-  }
-}
-
-export class FsVoiceActor implements FsDocumentBase {
-  id = '';
-
-  name = '';
-}
-
-export class FsWeaponType implements FsDocumentBaseWithCode {
-  id = '';
-
-  name = '';
-
-  code = '';
-
-  count = 0;
-
+export class FsWeaponType extends FsDocumentBaseWithCode {
   baseCost: number = 0;
 
   constructor(id = '', name = '', code = '', baseCost = 0) {
-    this.id = id;
-    this.name = name;
-    this.code = code;
+    super(id, name, code);
     this.baseCost = baseCost;
   }
 }
 
 export const FsWeaponRarerityMax = 5;
 
-export class FsWeapon implements FsDocumentBase {
-  id = '';
-
-  name = '';
-
+export class FsWeapon extends FsDocumentBase {
   type: string = '';
 
   rarerity: number = 0;
