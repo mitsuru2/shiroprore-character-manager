@@ -4,15 +4,18 @@ import {
   collection,
   CollectionReference,
   doc,
+  FieldValue,
   Firestore,
   getDocs,
   Query,
   QuerySnapshot,
   runTransaction,
   serverTimestamp,
+  Timestamp,
 } from '@angular/fire/firestore';
 import { Unsubscribe } from '@angular/fire/app-check';
 import { FsDocumentBase } from './firestore-document.interface';
+import { indexedDbWrapper } from './indexed-db-wrapper.class';
 
 export class FirestoreCollectionWrapper<T extends FsDocumentBase> {
   private collection: CollectionReference<T>;
@@ -52,16 +55,6 @@ export class FirestoreCollectionWrapper<T extends FsDocumentBase> {
     }
 
     return dataLength;
-  }
-
-  async loadSub<TSub extends FsDocumentBase>(docId: string, subName: string): Promise<TSub[]> {
-    const result: TSub[] = [];
-
-    const subCollection = collection(this.fs, this.name, docId, subName) as CollectionReference<TSub>;
-
-    await this.loadQuery(subCollection, result, subName);
-
-    return result;
   }
 
   /**
@@ -219,6 +212,9 @@ export class FirestoreCollectionWrapper<T extends FsDocumentBase> {
       dst.push(tmp);
     });
 
+    // Store data copy to the indexed DB.
+    indexedDbWrapper.storeDataCollection(name, dst);
+
     // Return data length.
     return dst.length;
   }
@@ -246,6 +242,17 @@ export class FirestoreCollectionWrapper<T extends FsDocumentBase> {
   private sleep(ms: number): Promise<void> {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
+
+  // private async getServerTimestamp(): Promise<Timestamp> {
+  //   let timestamp = Timestamp.fromDate(new Date('2020-01-01T00:00:00'));
+
+  //   // Do transaction.
+  //   await runTransaction(this.fs, async (transaction) => {
+  //     timestamp = serverTimestamp();
+  //   });
+
+  //   return timestamp;
+  // }
 
   //============================================================================
   // Removed class methods.

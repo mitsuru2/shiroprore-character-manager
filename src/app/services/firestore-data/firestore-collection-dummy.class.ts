@@ -128,10 +128,6 @@ export class FirestoreCollectionDummy<T extends FsDocumentBase> {
     return this.data.length;
   }
 
-  async loadSub<TSub extends FsDocumentBase>(docId: string, subName: string): Promise<TSub[]> {
-    return [];
-  }
-
   /**
    * Add new document to the collection.
    * ID will be assigned automatically.
