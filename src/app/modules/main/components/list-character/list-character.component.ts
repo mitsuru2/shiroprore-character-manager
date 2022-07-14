@@ -1,4 +1,5 @@
 import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { takeRight } from 'cypress/types/lodash';
 import { NGXLogger } from 'ngx-logger';
 import { AppInfo } from 'src/app/app-info.enum';
 import { CloudStorageService } from 'src/app/services/cloud-storage/cloud-storage.service';
@@ -28,7 +29,7 @@ export class ThumbImageWrapper {
 export class Paginator {
   first: number = 0;
 
-  rowNum: number = 4;
+  rowNum: number = 10;
 
   rowIndexes: number[] = [];
 
@@ -252,6 +253,7 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     for (let i = 0; i < this.paginator.rowNum; ++i) {
       const tableId = `ListCharacter_Table_${i}`;
       if (i + this.paginator.first < this.filteredIndexes.length) {
+        // Make character table for 'a' character.
         const iCharacter = this.filteredIndexes[i + this.paginator.first];
         this.makeCharacterInfoTable(tableId, iCharacter);
       } else {
@@ -275,7 +277,7 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     let td = tr.insertCell();
     td.textContent = `${character.name} (★${character.rarerity})`;
     td.colSpan = 2;
-    this.setTdStyle(td);
+    this.setTdStyle(td, TableCellType.h1);
 
     // 2nd row: Basic information.
     tr = t.insertRow();
@@ -294,6 +296,23 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     td = tr.insertCell();
     td.textContent = this.makeMotifWeaponAndFacilityText(character);
     this.setTdStyle(td);
+
+    // 4th row: Tag inforamtion.
+    tr = t.insertRow();
+    td = tr.insertCell();
+    td.textContent = 'タグ';
+    this.setTdStyle(td);
+    td = tr.insertCell();
+    td.textContent = this.makeCharacterTagText(character);
+    this.setTdStyle(td);
+
+    // Make ability info rows.
+    this.makeAbilityInfoRows(t, character, '特技');
+    this.makeAbilityInfoRows(t, character, '編成特技');
+    this.makeAbilityInfoRows(t, character, '所持特技');
+    this.makeAbilityInfoRows(t, character, '大破特技');
+    this.makeAbilityInfoRows(t, character, '特殊攻撃');
+    this.makeAbilityInfoRows(t, character, '計略');
   }
 
   private clearTable(tableId: string) {
@@ -308,6 +327,11 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     td.style.border = 'solid';
     td.style.borderWidth = 'thin';
     td.style.borderColor = 'var(--primary-color)';
+
+    if (type === TableCellType.h1) {
+      td.style.textAlign = 'center';
+      td.style.backgroundColor = 'azure';
+    }
   }
 
   private makeBasicInfoText(character: FsCharacter): string {
@@ -431,6 +455,140 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
         }
       }
       result += tmp;
+    }
+
+    return result;
+  }
+
+  private makeCharacterTagText(character: FsCharacter): string {
+    let result = '';
+
+    // CASE: No character tags.
+    if (character.tags.length === 0) {
+      return 'なし';
+    }
+
+    // CASE: Make character tag text.
+    else {
+      for (let i = 0; i < character.tags.length; ++i) {
+        const tag = this.characterTags.find((item) => item.id === character.tags[i]);
+        if (tag) {
+          if (i > 0) {
+            result += ', ';
+          }
+          result += tag.name;
+        }
+      }
+    }
+
+    return result;
+  }
+
+  private makeAbilityInfoRows(t: HTMLTableElement, character: FsCharacter, typeName: string) {
+    // const location = `${this.className}.makeAbilityInfoRows()`;
+    const typeId = this.getAbilityTypeId(typeName);
+
+    // Filter abilities and abilities(kai).
+    const abilities = this.abilities
+      .filter((item) => character.abilities.includes(item.id))
+      .filter((item) => item.type === typeId);
+    const abilitiesKai = this.abilities
+      .filter((item) => character.abilitiesKai.includes(item.id))
+      .filter((item) => item.type === typeId);
+
+    // CASE: No abilities. --> Do nothing.
+    if (abilities.length === 0 && abilitiesKai.length === 0) {
+      return;
+    }
+
+    // Make ability type caption.
+    let tr = t.insertRow();
+    let td = tr.insertCell();
+    td.textContent = typeName;
+    td.colSpan = 2;
+    this.setTdStyle(td, TableCellType.h1);
+
+    // Make ability name and description.
+    let prevAbilityName = '';
+    let prevAbilityDescCell: HTMLTableCellElement | undefined;
+    for (let i = 0; i < abilities.length; ++i) {
+      const ability = abilities[i];
+
+      // Make ability name text.
+      tr = t.insertRow();
+      td = tr.insertCell();
+      td.textContent = `［無印］${ability.name}`;
+      this.setTdStyle(td);
+
+      // If previous ability is same, it expands row span.
+      if (ability.name === prevAbilityName) {
+        if (prevAbilityDescCell) {
+          prevAbilityDescCell.rowSpan = 2;
+        }
+      }
+
+      // Make ability description text.
+      else {
+        td = tr.insertCell();
+        let descText = ability.descriptions[0];
+        for (let j = 1; j < ability.descriptions.length; ++j) {
+          descText += '\n' + ability.descriptions[j];
+        }
+        td.innerText = descText; // User 'innerText' property to activate line feed.
+        this.setTdStyle(td);
+      }
+
+      // Update prev*** variables.
+      prevAbilityName = ability.name;
+      prevAbilityDescCell = td;
+    }
+
+    // Make ability info (kaichiku)
+    for (let i = 0; i < abilitiesKai.length; ++i) {
+      const ability = abilitiesKai[i];
+
+      // Make ability name text.
+      tr = t.insertRow();
+      td = tr.insertCell();
+      td.textContent = `［改壱］${ability.name}`;
+      this.setTdStyle(td);
+
+      // If previous ability is same, it expands row span.
+      if (ability.name === prevAbilityName) {
+        if (prevAbilityDescCell) {
+          prevAbilityDescCell.rowSpan = 2;
+        }
+      }
+
+      // Make ability description text.
+      else {
+        td = tr.insertCell();
+        let descText = ability.descriptions[0];
+        for (let j = 1; j < ability.descriptions.length; ++j) {
+          descText += '\n' + ability.descriptions[j];
+        }
+        td.innerText = descText; // User 'innerText' property to activate line feed.
+        this.setTdStyle(td);
+      }
+
+      // Update prev*** variables.
+      prevAbilityName = ability.name;
+      prevAbilityDescCell = td;
+    }
+  }
+
+  getAbilityTypeId(typeName: string): string {
+    const location = `${this.className}.getAbilityTypeId()`;
+    let result = '';
+
+    const ability = this.abilityTypes.find((item) => item.name === typeName);
+    if (ability) {
+      result = ability.id;
+    } else {
+      this.logger.error(location, 'Ability type ID not found.', {
+        typeName: typeName,
+        abilityTypes: this.abilityTypes,
+      });
     }
 
     return result;

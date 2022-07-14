@@ -18,10 +18,10 @@
       display: grid;
       grid-template-columns: repeat(auto-fill, 160px);  // 160px: Thumbnail image size.
       gap: 0.5rem;
-      justify-content: space-around;
     }
 
-    .list-layout {}
+    .list-layout {
+    }
 
     .item {
       display: flex;
@@ -29,6 +29,10 @@
       .hidden-info {
         display: none;
       }
+    }
+
+    .list-item {
+      margin-bottom: 1rem;
     }
 
     img {
@@ -50,7 +54,7 @@ table {
   border-collapse: collapse;
 
   .short-col {
-    width: 160px;
+    width: 35%;
   }
 
   .long-col {}

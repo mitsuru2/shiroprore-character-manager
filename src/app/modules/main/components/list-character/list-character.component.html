@@ -30,7 +30,7 @@
   <!---->
   <div class="content">
     <div [class.grid-layout]="!isListLayout" [class.list-layout]="isListLayout">
-      <div *ngFor="let i of paginator.rowIndexes" class="item">
+      <div *ngFor="let i of paginator.rowIndexes" class="item" [class.list-item]="isListLayout">
         <div>
           <img [id]="'ListCharacter_Thumb_' + i" />
         </div>
