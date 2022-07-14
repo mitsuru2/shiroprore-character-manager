@@ -290,6 +290,7 @@ export class NewCharacterComponent /*implements OnInit*/ {
     this.logger.trace(location, { name: name, dataName: data.name });
 
     // Check if the voice actor is new or existing.
+    // If found, get the document ID.
     let isFound = false;
     for (let i = 0; i < refData.length; ++i) {
       if (refData[i].name === data.name) {

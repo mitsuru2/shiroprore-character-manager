@@ -36,7 +36,7 @@ export interface StoredAtTimestampMap {
 // }
 
 export class IndexedDbWrapper extends Dexie {
-  static readonly dbName = 'ShiroproreCharacter';
+  static readonly dbName = 'shiroprore-character-manager-db';
 
   abilities!: Table<FsAbility, string>;
 
@@ -109,10 +109,40 @@ export class IndexedDbWrapper extends Dexie {
     }
   }
 
+  async retrieveDataCollection(name: string): Promise<FsDocumentBase[]> {
+    let result: any[] = [];
+
+    if (name === FsCollectionName.Abilities) {
+      result = await indexedDbWrapper.abilities.toArray();
+    } else if (name === FsCollectionName.CharacterTags) {
+      result = await indexedDbWrapper.characterTags.toArray();
+    } else if (name === FsCollectionName.CharacterTypes) {
+      result = await indexedDbWrapper.characterTypes.toArray();
+    } else if (name === FsCollectionName.Characters) {
+      result = await indexedDbWrapper.characters.toArray();
+    } else if (name === FsCollectionName.Facilities) {
+      result = await indexedDbWrapper.facilities.toArray();
+    } else if (name === FsCollectionName.Illustrators) {
+      result = await indexedDbWrapper.illustrators.toArray();
+    } else if (name === FsCollectionName.SubCharacterTypes) {
+      result = await indexedDbWrapper.subCharacterTypes.toArray();
+    } else if (name === FsCollectionName.VoiceActors) {
+      result = await indexedDbWrapper.voiceActors.toArray();
+    } else if (name === FsCollectionName.Weapons) {
+      result = await indexedDbWrapper.weapons.toArray();
+    }
+
+    return result;
+  }
+
+  async getTimestamp(name: string): Promise<Date | undefined> {
+    let record = await indexedDbWrapper.timeStamps.get(name);
+    return record?.timestamp;
+  }
+
   //============================================================================
   // Private methods.
   //
-  private setSchema() {}
 }
 
 export const indexedDbWrapper = new IndexedDbWrapper();

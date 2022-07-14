@@ -4,14 +4,14 @@ import {
   collection,
   CollectionReference,
   doc,
-  FieldValue,
   Firestore,
   getDocs,
+  query,
   Query,
   QuerySnapshot,
   runTransaction,
   serverTimestamp,
-  Timestamp,
+  where,
 } from '@angular/fire/firestore';
 import { Unsubscribe } from '@angular/fire/app-check';
 import { FsDocumentBase } from './firestore-document.interface';
@@ -48,13 +48,34 @@ export class FirestoreCollectionWrapper<T extends FsDocumentBase> {
    * @returns Promise<number>. Data length.
    */
   async load(): Promise<number> {
-    const dataLength = await this.loadQuery(this.collection, this.data, this.name);
+    // Get timestamp of local storage.
+    let timestamp = await indexedDbWrapper.getTimestamp(this.name);
+    if (!timestamp) {
+      timestamp = new Date('2022-07-13T00:00:00+0900'); // Default time stamp.
+    }
 
-    if (dataLength > 0) {
+    // Clear existing data.
+    this.clearData();
+
+    // Retrieve data from the local storage.
+    const localData = await indexedDbWrapper.retrieveDataCollection(this.name);
+    console.log(`${this.name} Items from indexed DB: ${localData.length}`);
+    this.mergeData(localData);
+
+    // Make query for firestore db.
+    const q = query(this.collection, where('updatedAt', '>', timestamp));
+
+    // Load data from firestore db.
+    const remoteData = await this.loadQuery(q);
+    console.log(`${this.name} Items from Firestore DB: ${remoteData.length}`);
+    this.mergeData(remoteData);
+
+    // Set 'isLoaded' flag.
+    if (this.data.length > 0) {
       this.isLoaded = true;
     }
 
-    return dataLength;
+    return this.data.length;
   }
 
   /**
@@ -181,42 +202,38 @@ export class FirestoreCollectionWrapper<T extends FsDocumentBase> {
   //----------------------------------------------------------------------------
   // Load data from server.
   //
-  private async loadQuery(query: Query, dst: any[], name: string): Promise<number> {
+  private async loadQuery(q: Query): Promise<any[]> {
+    let result: any[] = [];
     let retryCnt = this.retryMax;
 
     // Getting data with retry.
-    let snapshot = await this.getDocs(query);
+    let snapshot = await this.getDocs(q);
     if (!snapshot) {
       while (retryCnt > 0) {
         await this.sleep(this.retryInterval);
-        snapshot = await this.getDocs(query);
-        console.log(`${name} retry: ${retryCnt}`);
+        snapshot = await this.getDocs(q);
+        console.log(`${this.name} retry: ${retryCnt}`);
         retryCnt--;
       }
     }
 
     // Check data.
-    if (!snapshot || snapshot.empty) {
+    if (!snapshot) {
       throw Error(`Data loading failed. { name: ${this.name} }`);
-    }
-
-    // If the document is not empty, clear existing data before copying.
-    while (dst.length > 0) {
-      this.data.pop();
     }
 
     // Copy document ID and its data to "this.data" object.
     snapshot.forEach((document) => {
       const tmp = document.data() as T;
       tmp.id = document.id;
-      dst.push(tmp);
+      result.push(tmp);
     });
 
     // Store data copy to the indexed DB.
-    indexedDbWrapper.storeDataCollection(name, dst);
+    indexedDbWrapper.storeDataCollection(this.name, result);
 
-    // Return data length.
-    return dst.length;
+    // Return data array.
+    return result;
   }
 
   private async getDocs(collectionRef: Query): Promise<QuerySnapshot | undefined> {
@@ -224,10 +241,6 @@ export class FirestoreCollectionWrapper<T extends FsDocumentBase> {
 
     try {
       snapshot = await getDocs(collectionRef);
-      if (snapshot.empty) {
-        console.log(`${this.name} empty`);
-        snapshot = undefined;
-      }
     } catch (e) {
       console.log(`${this.name} error: ${e}`);
       snapshot = undefined;
@@ -241,6 +254,29 @@ export class FirestoreCollectionWrapper<T extends FsDocumentBase> {
   //
   private sleep(ms: number): Promise<void> {
     return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  private clearData() {
+    while (this.data.length > 0) {
+      this.data.pop();
+    }
+  }
+
+  private mergeData(items: FsDocumentBase[]) {
+    for (let i = 0; i < items.length; ++i) {
+      // If there is no item sharing the same ID, simply push the data item.
+      let index = this.data.findIndex((item) => item.id === items[i].id);
+      if (index < 0) {
+        this.data.push(items[i]);
+      }
+
+      // If there is already an item sharing the same ID, update item if it's new.
+      else {
+        if (this.data[index].updatedAt < items[i].updatedAt) {
+          this.data[index] = items[i];
+        }
+      }
+    }
   }
 
   // private async getServerTimestamp(): Promise<Timestamp> {
