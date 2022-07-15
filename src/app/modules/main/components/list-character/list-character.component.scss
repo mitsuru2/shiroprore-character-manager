@@ -18,26 +18,29 @@
       display: grid;
       grid-template-columns: repeat(auto-fill, 160px);  // 160px: Thumbnail image size.
       gap: 0.5rem;
+      justify-content: center;
     }
 
     .list-layout {
     }
 
     .item {
-      display: flex;
-
       .hidden-info {
         display: none;
       }
     }
 
     .list-item {
+      display: flex;
       margin-bottom: 1rem;
     }
 
     img {
-      margin-right: 1rem;
       border-radius: 1rem;
+    }
+
+    .list-image {
+      margin-right: 1rem;
     }
   }
 
