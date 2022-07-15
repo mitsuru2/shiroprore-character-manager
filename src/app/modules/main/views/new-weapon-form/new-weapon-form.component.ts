@@ -56,6 +56,8 @@ export class NewWeaponFormComponent implements OnChanges {
 
   selectedRarerity?: number;
 
+  rarerityShown = true;
+
   /** Attack */
   inputAttack = 0;
 
@@ -113,6 +115,15 @@ export class NewWeaponFormComponent implements OnChanges {
    */
   trackByItem(index: number, obj: any): any { // eslint-disable-line
     return index;
+  }
+
+  onWeaponTypeClick() {
+    const location = `${this.className}.onWeaponTypeClick()`;
+    this.logger.trace(location);
+
+    if (this.selectedType) {
+      this.rarerityShown = !this.selectedType.isFixed;
+    }
   }
 
   onNameInputChange() {
@@ -174,7 +185,7 @@ export class NewWeaponFormComponent implements OnChanges {
     else {
       // The mandatory input fields must not be null or undefined.
       // Input value validation shall be implemented at template.
-      if (!this.selectedType || this.inputName === '' || !this.selectedRarerity) {
+      if (!this.selectedType || this.inputName === '' || (this.rarerityShown && !this.selectedRarerity)) {
         this.logger.error(location, 'Necessary field is not input.', {
           type: this.selectedType,
           name: this.inputName,
@@ -188,7 +199,11 @@ export class NewWeaponFormComponent implements OnChanges {
       const content = new NewWeaponFormContent();
       content.type = this.selectedType;
       content.name = this.inputName;
-      content.rarerity = this.selectedRarerity;
+      if (this.selectedType.isFixed || !this.selectedRarerity) {
+        content.rarerity = -1;
+      } else {
+        content.rarerity = this.selectedRarerity;
+      }
       content.attack = this.inputAttack;
       if (content.rarerity === 4) {
         content.attackKai = this.inputAttackKai;

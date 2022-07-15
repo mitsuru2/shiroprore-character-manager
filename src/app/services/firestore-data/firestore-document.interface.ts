@@ -141,9 +141,12 @@ export class FsVoiceActor extends FsDocumentBase {}
 export class FsWeaponType extends FsDocumentBaseWithCode {
   baseCost: number = 0;
 
-  constructor(id = '', name = '', code = '', baseCost = 0) {
+  isFixed = false;
+
+  constructor(id = '', name = '', code = '', baseCost = 0, isFixed = false) {
     super(id, name, code);
     this.baseCost = baseCost;
+    this.isFixed = isFixed;
   }
 }
 

@@ -9,6 +9,7 @@
             name="NewWeaponForm_WeaponTypeInput"
             [value]="item"
             [(ngModel)]="selectedType"
+            (onClick)="onWeaponTypeClick()"
           ></p-radioButton>
           <label [for]="'NewWeaponForm_WeaponTypeInput_' + item.name">{{ item.name }}</label>
         </div>
@@ -35,7 +36,7 @@
     </div>
   </div>
 
-  <div class="formgrid grid">
+  <div class="formgrid grid" *ngIf="rarerityShown">
     <div class="field col">
       <label>レアリティ</label>
       <div class="formgroup-inline">
@@ -141,7 +142,7 @@
   <p-button
     [label]="okLabel"
     icon="pi pi-check"
-    [disabled]="!selectedType || inputName === '' || errorMessage !== '' || !selectedRarerity"
+    [disabled]="!selectedType || inputName === '' || errorMessage !== '' || (rarerityShown && !selectedRarerity)"
     (onClick)="onOkClick()"
     [styleClass]="buttonStyleClass"
   ></p-button>

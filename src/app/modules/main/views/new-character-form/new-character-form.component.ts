@@ -486,7 +486,8 @@ export class NewCharacterFormComponent implements OnChanges {
     // Import form result to motif weapon field.
     if (!formResult.canceled && formResult.content) {
       const content = formResult.content;
-      const weaponText = `${content.rarerity.toString()}|${content.type.name}|${content.name}`;
+      const rarerityText = content.rarerity < 0 ? '-' : content.rarerity.toString();
+      const weaponText = `${rarerityText}|${content.type.name}|${content.name}`;
       this.inputMotifWeapons.push(weaponText);
     }
 
@@ -1040,7 +1041,7 @@ export class NewCharacterFormComponent implements OnChanges {
         this.logger.error(location, 'Invalid format text.', { text: text });
         throw Error(`${location} Invalid format text. ${{ text: text }}`);
       }
-      const rarerity = Number(tokens[0]);
+      const rarerity = tokens[0] === '-' ? -1 : Number(tokens[0]);
       const typeName = tokens[1];
       name = tokens[2];
 
