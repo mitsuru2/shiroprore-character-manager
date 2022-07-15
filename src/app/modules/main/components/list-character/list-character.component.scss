@@ -18,7 +18,7 @@
       display: grid;
       grid-template-columns: repeat(auto-fill, 160px);  // 160px: Thumbnail image size.
       gap: 0.5rem;
-      justify-content: center;
+      justify-content: space-between;
     }
 
     .list-layout {
@@ -82,5 +82,15 @@ table {
 
   .p-paginator-last {
     border-radius: 50%;
+  }
+}
+
+@media screen and (max-width: 959px) {
+  .data-list-view {
+    .content {
+      .grid-layout {
+        justify-content: space-around;
+      }
+    }
   }
 }
