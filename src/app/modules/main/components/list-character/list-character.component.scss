@@ -7,12 +7,20 @@
     display: flex;
     justify-content: space-between;
     padding-bottom: 0.5rem;
+
+    .header-left-div {
+      width: 75px;
+    }
+
+    .search-text-input {
+    }
   }
 
   .content {
     flex-grow: 1;
     padding: 0.5rem 0;
     overflow-y: auto;
+    font-weight: lighter;
 
     .grid-layout {
       display: grid;
@@ -87,9 +95,34 @@ table {
 
 @media screen and (max-width: 959px) {
   .data-list-view {
+    .header {
+      .header-left-div {
+        width: auto;
+      }
+
+      .search-text-input {
+        width: 40%;
+      }
+    }
+
     .content {
+      font-size: xx-small;
+      font-weight: lighter;
+
       .grid-layout {
+        grid-template-columns: repeat(auto-fill, 80px);  // 160px: Thumbnail image size.
+        gap: 0.25rem;
         justify-content: space-around;
+      }
+
+      img {
+        width: 80px;
+        height: 80px;
+        border-radius: 1rem;
+      }
+
+      .list-image {
+        margin-right: 0.2rem;
       }
     }
   }

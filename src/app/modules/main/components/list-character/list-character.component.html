@@ -4,15 +4,15 @@
   <!---->
   <div class="header">
     <!-- Filter button -->
-    <div style="width: 75px">
+    <div class="header-left-div">
       <button pButton type="button" icon="pi pi-filter"></button>
     </div>
 
     <!-- Text search input. -->
-    <div>
+    <div class="search-text-input">
       <span [class.p-input-icon-left]="inputSearchText === ''" [class.p-input-icon-right]="inputSearchText !== ''">
         <i class="pi" [class.pi-search]="inputSearchText === ''" [class.pi-times]="inputSearchText !== ''" (click)="inputSearchText = ''"></i>
-        <input type="text" pInputText [(ngModel)]="inputSearchText" placeholder="Search" />
+        <input type="text" pInputText [(ngModel)]="inputSearchText" placeholder="Search" style="width: 100%" />
       </span>
     </div>
 

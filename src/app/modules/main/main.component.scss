@@ -24,8 +24,8 @@
 .tool-bar-m {
   display: none;
   padding-top: 0.5rem;
-  padding-right: 1rem;
-  padding-left: 1rem;
+  padding-right: 0.5rem;
+  padding-left: 0.5rem;
 }
 
 .container {
@@ -71,5 +71,12 @@
     max-width: auto;
     height: 100vh;
     background-color: white;
+  }
+
+  .container {
+    .main-contents {
+      padding-right: 0.2rem;
+      padding-left: 0.2rem;
+    }
   }
 }

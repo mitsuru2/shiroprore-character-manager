@@ -46,6 +46,7 @@ export class CloudStorageService {
 
   private async download(path: string): Promise<void> {
     const location = `${this.className}.download()`;
+    this.logger.trace(location, { path: path });
 
     const dataRef = ref(this.storage, path);
     try {

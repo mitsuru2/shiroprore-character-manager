@@ -517,7 +517,7 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
       // Make ability name text.
       tr = t.insertRow();
       td = tr.insertCell();
-      td.textContent = `［無印］${ability.name}`;
+      td.textContent = `[無印] ${ability.name}`;
       this.setTdStyle(td);
 
       // If previous ability is same, it expands row span.
@@ -550,7 +550,7 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
       // Make ability name text.
       tr = t.insertRow();
       td = tr.insertCell();
-      td.textContent = `［改壱］${ability.name}`;
+      td.textContent = `[改壱] ${ability.name}`;
       this.setTdStyle(td);
 
       // If previous ability is same, it expands row span.
