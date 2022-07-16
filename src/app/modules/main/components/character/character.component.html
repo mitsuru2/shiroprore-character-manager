@@ -1,2 +1,28 @@
-<img id="Character_ImagePreview" />
-<h1>{{ id }}</h1>
+<!---->
+<!-- Image preview -->
+<!---->
+<div class="formgroup-inline">
+  <div *ngFor="let item of imageTypes" class="field-checkbox">
+    <p-radioButton
+      [inputId]="'Character_ImageTypeInput_' + item.type"
+      name="Character_ImageTypeInput"
+      [value]="item"
+      [(ngModel)]="selectedImageType"
+      (onClick)="onImageTypeClick()"
+    ></p-radioButton>
+    <label [for]="'Character_ImageTypeInput_' + item.type">{{ item.label }}</label>
+  </div>
+</div>
+<img id="Character_ImagePreview" class="character-image" />
+
+<!---->
+<!-- Characer Information. -->
+<!---->
+<div>
+  <table id="Character_Table">
+    <colgroup>
+      <col class="short-col" />
+      <col class="long-col" />
+    </colgroup>
+  </table>
+</div>

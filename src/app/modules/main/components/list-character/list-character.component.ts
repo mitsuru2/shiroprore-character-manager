@@ -22,6 +22,7 @@ import {
 } from 'src/app/services/firestore-data/firestore-document.interface';
 import { NavigatorService } from '../../services/navigator/navigator.service';
 import { sleep } from '../../utils/sleep/sleep.utility';
+import { isMobileMode } from '../../utils/window-size/window-size.util';
 
 export class ThumbImageWrapper {
   url: string = '';
@@ -392,7 +393,7 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
 
     // Geograph types.
     if (character.geographTypes.length > 0) {
-      let tmp = ', 地形属性: ';
+      let tmp = ', 地形タイプ: ';
       for (let i = 0; i < character.geographTypes.length; ++i) {
         let gt = this.geographTypes.find((item) => item.id === character.geographTypes[i]);
         if (i > 0) {
@@ -666,7 +667,7 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
 
     // CASE: Mobile mode.
     // When text length > 18 full characters, no line feed is added.
-    if (this.isMobileMode()) {
+    if (isMobileMode()) {
       result = descriptions[0];
       let prevLine = descriptions[0];
       for (let i = 1; i < descriptions.length; ++i) {
@@ -719,7 +720,7 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     let result = defaultGidRowNum;
 
     // Get screen mode.
-    const mobileMode = this.isMobileMode();
+    const mobileMode = isMobileMode();
 
     // Get div size.
     const dw = this.getHtmlElementWidth('ListCharacter_Content');
@@ -739,10 +740,6 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     result = columnNum * rowNum;
 
     return result;
-  }
-
-  private isMobileMode(): boolean {
-    return window.innerWidth <= 959 ? true : false;
   }
 
   private getHtmlElementWidth(id: string): number {
