@@ -1,6 +1,5 @@
 import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { takeRight } from 'cypress/types/lodash';
 import { NGXLogger } from 'ngx-logger';
 import { AppInfo } from 'src/app/app-info.enum';
 import { CloudStorageService } from 'src/app/services/cloud-storage/cloud-storage.service';
@@ -570,10 +569,7 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
       // Make ability description text.
       else {
         td = tr.insertCell();
-        let descText = ability.descriptions[0];
-        for (let j = 1; j < ability.descriptions.length; ++j) {
-          descText += '\n' + ability.descriptions[j];
-        }
+        let descText = this.makeAbilityDescriptionText(ability.descriptions);
 
         // If the ability type is Keiryaku, add interval, cost, and token info.
         if (typeName === '計略') {
@@ -617,10 +613,7 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
       // Make ability description text.
       else {
         td = tr.insertCell();
-        let descText = ability.descriptions[0];
-        for (let j = 1; j < ability.descriptions.length; ++j) {
-          descText += '\n' + ability.descriptions[j];
-        }
+        let descText = this.makeAbilityDescriptionText(ability.descriptions);
 
         // If the ability type is Keiryaku, add interval, cost, and token info.
         if (typeName === '計略') {
@@ -662,6 +655,57 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     return result;
   }
 
+  private makeAbilityDescriptionText(descriptions: string[]): string {
+    let result = '';
+
+    // CASE: Mobile mode.
+    // When text length > 18 full characters, no line feed is added.
+    if (this.isMobileMode()) {
+      result = descriptions[0];
+      let prevLine = descriptions[0];
+      for (let i = 1; i < descriptions.length; ++i) {
+        if (this.getTextLengthUtf8(prevLine) <= 18 * 2) {
+          result += '\n';
+        }
+        result += descriptions[i];
+        prevLine = descriptions[i];
+      }
+    }
+
+    // CASE: PC mode.
+    // Connect all lines with line feeds.
+    else {
+      result = descriptions[0];
+      for (let i = 1; i < descriptions.length; ++i) {
+        result += '\n' + descriptions[i];
+      }
+    }
+
+    return result;
+  }
+
+  /**
+   * It calculate text length.
+   * It counts a half character as 1, and counts a full character as 2.
+   * @param text Input text.
+   * @returns Text length.
+   */
+  private getTextLengthUtf8(text: string): number {
+    let count = 0;
+    let c = 0;
+
+    for (let i = 0, len = text.length; i < len; i++) {
+      c = text.charCodeAt(i);
+      if ((c >= 0x0 && c < 0x81) || c == 0xf8f0 || (c >= 0xff61 && c < 0xffa0) || (c >= 0xf8f1 && c < 0xf8f4)) {
+        count += 1;
+      } else {
+        count += 2;
+      }
+    }
+
+    return count;
+  }
+
   //----------------------------------------------------------------------------
   // Grid layout control.
   //
@@ -669,7 +713,7 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     let result = defaultGidRowNum;
 
     // Get screen mode.
-    const mobileMode = window.innerWidth <= 959 ? true : false;
+    const mobileMode = this.isMobileMode();
 
     // Get div size.
     const dw = this.getHtmlElementWidth('ListCharacter_Content');
@@ -677,7 +721,7 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
 
     // Calc image size and gaps.
     let iw = mobileMode ? 80 : 160;
-    let ih = mobileMode ? 80 + 3 : 160 + 4;
+    let ih = mobileMode ? iw + 3 : iw + 4;
     let gw = mobileMode ? 6 : 12;
     let gh = gw;
 
@@ -689,6 +733,10 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     result = columnNum * rowNum;
 
     return result;
+  }
+
+  private isMobileMode(): boolean {
+    return window.innerWidth <= 959 ? true : false;
   }
 
   private getHtmlElementWidth(id: string): number {
