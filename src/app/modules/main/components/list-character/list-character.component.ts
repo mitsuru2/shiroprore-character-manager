@@ -534,6 +534,20 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
         for (let j = 1; j < ability.descriptions.length; ++j) {
           descText += '\n' + ability.descriptions[j];
         }
+
+        // If the ability type is Keiryaku, add interval, cost, and token info.
+        if (typeName === '計略') {
+          if (ability.tokenLayouts.length === 0) {
+            descText += `\n(CT:${ability.interval}秒/消費気:${ability.cost})`;
+          } else {
+            let tokenLayoutText = '';
+            for (let j = 0; j < ability.tokenLayouts.length; ++j) {
+              tokenLayoutText += ability.tokenLayouts[j];
+            }
+            descText += `\n(CT:${ability.interval}秒/消費気:${ability.cost}/配置:${tokenLayoutText})`;
+          }
+        }
+
         td.innerText = descText; // User 'innerText' property to activate line feed.
         this.setTdStyle(td);
       }
@@ -567,6 +581,20 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
         for (let j = 1; j < ability.descriptions.length; ++j) {
           descText += '\n' + ability.descriptions[j];
         }
+
+        // If the ability type is Keiryaku, add interval, cost, and token info.
+        if (typeName === '計略') {
+          if (ability.tokenLayouts.length === 0) {
+            descText += `\n(CT:${ability.interval}秒/消費気:${ability.cost})`;
+          } else {
+            let tokenLayoutText = '';
+            for (let j = 0; j < ability.tokenLayouts.length; ++j) {
+              tokenLayoutText += ability.tokenLayouts[j];
+            }
+            descText += `\n(CT:${ability.interval}秒/消費気:${ability.cost}/配置:${tokenLayoutText})`;
+          }
+        }
+
         td.innerText = descText; // User 'innerText' property to activate line feed.
         this.setTdStyle(td);
       }
