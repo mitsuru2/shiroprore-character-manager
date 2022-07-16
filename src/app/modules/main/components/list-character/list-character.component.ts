@@ -10,6 +10,7 @@ import {
   FsAbilityType,
   FsCharacter,
   FsCharacterTag,
+  FsCharacterType,
   FsFacility,
   FsFacilityType,
   FsGeographType,
@@ -78,6 +79,8 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
   abilityTypes = this.firestore.getData(FsCollectionName.AbilityTypes) as FsAbilityType[];
 
   characterTags = this.firestore.getData(FsCollectionName.CharacterTags) as FsCharacterTag[];
+
+  characterTypes = this.firestore.getData(FsCollectionName.CharacterTypes) as FsCharacterType[];
 
   characters = this.firestore.getData(FsCollectionName.Characters) as FsCharacter[];
 
@@ -376,6 +379,9 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
   private makeBasicInfoText(character: FsCharacter): string {
     let result = '';
 
+    // Get character type.
+    const characterType = this.characterTypes.find((item) => item.id === character.type);
+
     // Weapon type.
     if (character.weaponType !== '') {
       let tmp = '武器タイプ: ';
@@ -408,7 +414,7 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     // Cost.
     if (character.cost > 0) {
       let tmp = `, コスト: ${character.cost}`;
-      if (character.costKai > 0) {
+      if (characterType?.isKaichikuEnable) {
         tmp += `/${character.costKai}(改)`;
       }
       result += tmp;
