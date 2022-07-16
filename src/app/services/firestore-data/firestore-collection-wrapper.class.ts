@@ -16,6 +16,7 @@ import {
 import { Unsubscribe } from '@angular/fire/app-check';
 import { FsDocumentBase } from './firestore-document.interface';
 import { indexedDbWrapper } from './indexed-db-wrapper.class';
+import { sleep } from 'src/app/modules/main/utils/sleep/sleep.utility';
 
 export class FirestoreCollectionWrapper<T extends FsDocumentBase> {
   private collection: CollectionReference<T>;
@@ -210,7 +211,7 @@ export class FirestoreCollectionWrapper<T extends FsDocumentBase> {
     let snapshot = await this.getDocs(q);
     if (!snapshot) {
       while (retryCnt > 0) {
-        await this.sleep(this.retryInterval);
+        await sleep(this.retryInterval);
         snapshot = await this.getDocs(q);
         console.log(`${this.name} retry: ${retryCnt}`);
         retryCnt--;
@@ -252,10 +253,6 @@ export class FirestoreCollectionWrapper<T extends FsDocumentBase> {
   //----------------------------------------------------------------------------
   // Utility functions.
   //
-  private sleep(ms: number): Promise<void> {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-  }
-
   private clearData() {
     while (this.data.length > 0) {
       this.data.pop();

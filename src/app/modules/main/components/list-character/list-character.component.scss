@@ -6,7 +6,7 @@
   .header {
     display: flex;
     justify-content: space-between;
-    padding-bottom: 0.5rem;
+    margin-bottom: 0.5rem;
 
     .header-left-div {
       width: 75px;
@@ -16,16 +16,19 @@
     }
   }
 
+  // !!! ATTENTION !!!
+  // Please be careful when you change these properties.
+  // You shall check ListCharacterComponent::calcGridRowNum() too.
   .content {
     flex-grow: 1;
-    padding: 0.5rem 0;
+    margin: 0.5rem 0;
     overflow-y: auto;
     font-weight: lighter;
 
     .grid-layout {
       display: grid;
       grid-template-columns: repeat(auto-fill, 160px);  // 160px: Thumbnail image size.
-      gap: 0.5rem;
+      gap: 12px;
       justify-content: space-between;
     }
 
@@ -55,7 +58,7 @@
   .footer {
     display: flex;
     justify-content: center;
-    padding: 0.5rem 0;
+    margin: 0.5rem 0;
   }
 }
 
@@ -105,13 +108,16 @@ table {
       }
     }
 
+    // !!! ATTENTION !!!
+    // Please be careful when you change these properties.
+    // You shall check ListCharacterComponent::calcGridRowNum() too.
     .content {
       font-size: xx-small;
       font-weight: lighter;
 
       .grid-layout {
         grid-template-columns: repeat(auto-fill, 80px);  // 160px: Thumbnail image size.
-        gap: 0.25rem;
+        gap: 6px;
         justify-content: space-around;
       }
 

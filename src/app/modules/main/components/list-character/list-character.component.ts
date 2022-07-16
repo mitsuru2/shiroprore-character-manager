@@ -19,6 +19,7 @@ import {
   FsWeapon,
   FsWeaponType,
 } from 'src/app/services/firestore-data/firestore-document.interface';
+import { sleep } from '../../utils/sleep/sleep.utility';
 
 export class ThumbImageWrapper {
   url: string = '';
@@ -26,14 +27,22 @@ export class ThumbImageWrapper {
   data: Blob = new Blob();
 }
 
+export const defaultGidRowNum = 10;
+
 export class Paginator {
   first: number = 0;
 
-  rowNum: number = 10;
+  rowNum: number = defaultGidRowNum;
 
   rowIndexes: number[] = [];
 
   constructor() {
+    this.setRowNum(defaultGidRowNum);
+  }
+
+  setRowNum(num: number) {
+    this.rowNum = num;
+    this.rowIndexes = [];
     for (let i = 0; i < this.rowNum; ++i) {
       this.rowIndexes.push(i);
     }
@@ -129,28 +138,34 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
       return a.index < b.index ? -1 : 1;
     });
 
-    // Start loading of thumnail images.
-    await this.loadThumbImages();
+    // // Start loading of thumnail images.
+    // await this.loadThumbImages();
 
-    // Update thumbnail images if view initialization has been finished.
-    if (this.viewInited) {
-      this.updateThumbImages();
-      this.makeCharacterInfoTables();
-    }
+    // // Update thumbnail images if view initialization has been finished.
+    // if (this.viewInited) {
+    //   this.updateThumbImages();
+    //   this.makeCharacterInfoTables();
+    // }
   }
 
-  ngAfterViewInit(): void {
+  async ngAfterViewInit(): Promise<void> {
     const location = `${this.className}.ngAfterViewInit()`;
     this.logger.trace(location);
 
     // Set view initialized flag.
     this.viewInited = true;
 
-    // Update thumbnail images if image loading has been finished.
-    if (this.thumbLoaded) {
-      this.updateThumbImages();
-      this.makeCharacterInfoTables();
-    }
+    await sleep(10);
+
+    this.paginator.setRowNum(this.calcGridRowNum());
+    await sleep(10);
+
+    // Start loading of thumnail images.
+    await this.loadThumbImages();
+
+    // Update thumbnail images.
+    this.updateThumbImages();
+    this.makeCharacterInfoTables();
   }
 
   async onPageChange(event: any) {
@@ -170,6 +185,9 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
 
   //============================================================================
   // Private methods.
+  //
+  //----------------------------------------------------------------------------
+  // Thumbnail image control.
   //
   private async loadThumbImages(): Promise<number> {
     const location = `${this.className}.loadThumbImages()`;
@@ -239,7 +257,7 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
   }
 
   //----------------------------------------------------------------------------
-  // Character info table.
+  // Character information table.
   //
   private makeCharacterInfoTables() {
     const location = `${this.className}.makeCharacterInfoTable()`;
@@ -620,5 +638,56 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     }
 
     return result;
+  }
+
+  //----------------------------------------------------------------------------
+  // Grid layout control.
+  //
+  private calcGridRowNum(): number {
+    let result = defaultGidRowNum;
+
+    // Get screen mode.
+    const mobileMode = window.innerWidth <= 959 ? true : false;
+
+    // Get div size.
+    const dw = this.getHtmlElementWidth('ListCharacter_Content');
+    const dh = this.getHtmlElementHeight('ListCharacter_Content');
+
+    // Calc image size and gaps.
+    let iw = mobileMode ? 80 : 160;
+    let ih = mobileMode ? 80 + 3 : 160 + 4;
+    let gw = mobileMode ? 6 : 12;
+    let gh = gw;
+
+    // Calc number of images.
+    let columnNum = 1 + Math.floor((dw - iw) / (iw + gw));
+    let rowNum = 1 + Math.floor((dh - ih) / (ih + gh));
+
+    // columns x rows = total image count.
+    result = columnNum * rowNum;
+
+    return result;
+  }
+
+  private getHtmlElementWidth(id: string): number {
+    let width = 0;
+
+    let element = document.getElementById(id);
+    if (element) {
+      width = element.clientWidth;
+    }
+
+    return width;
+  }
+
+  private getHtmlElementHeight(id: string): number {
+    let height = 0;
+
+    let element = document.getElementById(id);
+    if (element) {
+      height = element.clientHeight;
+    }
+
+    return height;
   }
 }
