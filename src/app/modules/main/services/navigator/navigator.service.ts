@@ -8,6 +8,13 @@ import { UserAuthService } from '../user-auth/user-auth.service';
 export class NavigatorService implements CanActivateChild {
   readonly className = 'NavigatorService';
 
+  paramStorage: {
+    [key: string]: any;
+  } = { 'list-character': undefined, 'new-character': undefined, character: undefined, legal: undefined };
+
+  //============================================================================
+  // Class methods.
+  //
   constructor(
     private logger: NGXLogger,
     private router: Router,

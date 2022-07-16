@@ -32,7 +32,7 @@
     <div [class.grid-layout]="!isListLayout" [class.list-layout]="isListLayout">
       <div *ngFor="let i of paginator.rowIndexes" class="item" [class.list-item]="isListLayout">
         <div>
-          <img [id]="'ListCharacter_Thumb_' + i" [class.list-image]="isListLayout" />
+          <img [id]="'ListCharacter_Thumb_' + i" [class.list-image]="isListLayout" (click)="onThumbnailClick(i)" />
         </div>
         <div>
           <table [id]="'ListCharacter_Table_' + i" [hidden]="!isListLayout">
@@ -50,6 +50,12 @@
   <!-- Footer Area -->
   <!---->
   <div class="footer">
-    <p-paginator [rows]="paginator.rowNum" [totalRecords]="filteredIndexes.length" styleClass="paginator" (onPageChange)="onPageChange($event)"></p-paginator>
+    <p-paginator
+      [rows]="paginator.rowNum"
+      [first]="paginator.first"
+      [totalRecords]="filteredIndexes.length"
+      styleClass="paginator"
+      (onPageChange)="onPageChange($event)"
+    ></p-paginator>
   </div>
 </div>

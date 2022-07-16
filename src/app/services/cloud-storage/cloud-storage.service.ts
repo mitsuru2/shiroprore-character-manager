@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { getBlob, ref, Storage, uploadBytes } from '@angular/fire/storage';
 import { NGXLogger } from 'ngx-logger';
+import { loadImageFile } from 'src/app/modules/main/utils/image-file/image-file.utility';
 
 @Injectable({
   providedIn: 'root',
@@ -26,19 +27,24 @@ export class CloudStorageService {
     }
   }
 
-  async get(path: string): Promise<Blob> {
+  async get(path: string): Promise<Blob | undefined> {
     const location = `${this.className}.get()`;
     this.logger.trace(location, { path: path });
 
     // Download data if it's not downloaded.
     if (this.dataPool.findIndex((item) => item.path === path) < 0) {
-      await this.download(path);
+      try {
+        await this.download(path);
+      } catch {
+        return undefined;
+      }
     }
 
     // Return data.
     const index = this.dataPool.findIndex((item) => item.path === path);
     if (index < 0) {
-      throw Error(`${location} Data is not found. ${{ path: path }}`);
+      this.logger.error(location, 'Data is not found.', { path: path });
+      return undefined;
     }
 
     return this.dataPool[index].data;
@@ -57,7 +63,7 @@ export class CloudStorageService {
     }
   }
 
-  makeCharacterImagePath(index: string, type: string, kaichiku: boolean): string {
+  makeCharacterImagePath(index: string, type: string, kaichiku: boolean = false): string {
     if (!kaichiku) {
       return `images/characters/${index}/${index}_${type}.png`;
     } else {

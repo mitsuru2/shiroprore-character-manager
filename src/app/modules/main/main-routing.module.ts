@@ -6,6 +6,7 @@ import { ListCharacterComponent } from './components/list-character/list-charact
 import { LegalComponent } from './components/legal/legal.component';
 import { LoginComponent } from './components/login/login.component';
 import { NavigatorService } from './services/navigator/navigator.service';
+import { CharacterComponent } from './components/character/character.component';
 
 const routes: Routes = [
   {
@@ -15,6 +16,7 @@ const routes: Routes = [
       { path: '', redirectTo: 'list-character', pathMatch: 'full' },
       { path: 'new-character', component: NewCharacterComponent },
       { path: 'list-character', component: ListCharacterComponent },
+      { path: 'character/:id', component: CharacterComponent },
       { path: 'legal', component: LegalComponent },
       { path: 'login', component: LoginComponent },
     ],

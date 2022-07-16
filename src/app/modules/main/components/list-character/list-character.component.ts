@@ -1,4 +1,5 @@
 import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { takeRight } from 'cypress/types/lodash';
 import { NGXLogger } from 'ngx-logger';
 import { AppInfo } from 'src/app/app-info.enum';
@@ -19,6 +20,7 @@ import {
   FsWeapon,
   FsWeaponType,
 } from 'src/app/services/firestore-data/firestore-document.interface';
+import { NavigatorService } from '../../services/navigator/navigator.service';
 import { sleep } from '../../utils/sleep/sleep.utility';
 
 export class ThumbImageWrapper {
@@ -106,6 +108,8 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
 
   thumbImages: ThumbImageWrapper[] = [];
 
+  readonly dummyThumbUrl = './assets/no_image.png';
+
   /** Data view: footer. */
   paginator = new Paginator();
 
@@ -115,7 +119,9 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
   constructor(
     private logger: NGXLogger,
     private firestore: FirestoreDataService,
-    private storage: CloudStorageService
+    private storage: CloudStorageService,
+    private router: Router,
+    private navigator: NavigatorService
   ) {
     this.logger.trace(`new ${this.className}()`);
 
@@ -137,15 +143,6 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     this.characters.sort((a, b) => {
       return a.index < b.index ? -1 : 1;
     });
-
-    // // Start loading of thumnail images.
-    // await this.loadThumbImages();
-
-    // // Update thumbnail images if view initialization has been finished.
-    // if (this.viewInited) {
-    //   this.updateThumbImages();
-    //   this.makeCharacterInfoTables();
-    // }
   }
 
   async ngAfterViewInit(): Promise<void> {
@@ -154,13 +151,20 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
 
     // Set view initialized flag.
     this.viewInited = true;
-
     await sleep(10);
 
-    this.paginator.setRowNum(this.calcGridRowNum());
-    await sleep(10);
+    // Restore paginator if stored.
+    if (this.navigator.paramStorage['list-character']) {
+      this.paginator = this.navigator.paramStorage['list-character'];
+    }
+
+    // Else, calculate num of thumbnails per page.
+    else {
+      this.paginator.setRowNum(this.calcGridRowNum());
+    }
 
     // Start loading of thumnail images.
+    await sleep(10);
     await this.loadThumbImages();
 
     // Update thumbnail images.
@@ -183,6 +187,19 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     this.makeCharacterInfoTables();
   }
 
+  onThumbnailClick(i: number) {
+    const location = `${this.className}.onThumbnailClick()`;
+    this.logger.trace(location, { i: i });
+
+    // Store paginator param.
+    this.navigator.paramStorage['list-character'] = this.paginator;
+
+    // Go to character page.
+    const iFilter = this.paginator.first + i;
+    const id = this.characters[this.filteredIndexes[iFilter]].id;
+    this.router.navigateByUrl(`main/character/${id}`);
+  }
+
   //============================================================================
   // Private methods.
   //
@@ -192,7 +209,7 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
   private async loadThumbImages(): Promise<number> {
     const location = `${this.className}.loadThumbImages()`;
 
-    const promises: Promise<Blob>[] = [];
+    const promises: Promise<Blob | undefined>[] = [];
     let thumbCount = 0;
 
     for (let i = 0; i < this.paginator.rowNum; ++i) {
@@ -213,8 +230,13 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
 
     // Store thumnail images.
     for (let i = 0; i < thumbCount; ++i) {
-      this.thumbImages[this.filteredIndexes[i + this.paginator.first]].data = blobs[i];
-      this.thumbImages[this.filteredIndexes[i + this.paginator.first]].url = window.URL.createObjectURL(blobs[i]);
+      const index = this.filteredIndexes[i + this.paginator.first];
+      if (blobs[i]) {
+        this.thumbImages[index].data = blobs[i] as Blob;
+        this.thumbImages[index].url = window.URL.createObjectURL(blobs[i] as Blob);
+      } else {
+        this.thumbImages[index].url = this.dummyThumbUrl;
+      }
     }
 
     // Set flag.

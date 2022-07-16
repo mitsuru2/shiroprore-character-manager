@@ -42,6 +42,7 @@ import { FirebaseUIModule, firebase, firebaseui } from 'firebaseui-angular';
 import { environment } from 'src/environments/environment';
 import { NavigatorService } from './services/navigator/navigator.service';
 import { UserAuthService } from './services/user-auth/user-auth.service';
+import { CharacterComponent } from './components/character/character.component';
 
 const firebaseUiAuthConfig: firebaseui.auth.Config = {
   autoUpgradeAnonymousUsers: false, // Disable annymouse users.
@@ -73,6 +74,7 @@ const firebaseUiAuthConfig: firebaseui.auth.Config = {
     MakeThumbnailFormComponent,
     TopMenuMComponent,
     LoginComponent,
+    CharacterComponent,
   ],
   imports: [
     CommonModule,

@@ -150,8 +150,23 @@ export class FirestoreDataService {
    * @returns Data body of target data collection.
    */
   getData(name: FsCollectionName) {
-    this.logger.trace(`FirestoreDataService.getData(${name})`);
+    const location = `${this.className}.getData()`;
+    this.logger.trace(location, { name: name });
+
     return this.collections[name].data;
+  }
+
+  /**
+   * It returns one data document specified by input ID.
+   * @param name Data collection name.
+   * @param id Document ID.
+   * @returns Data document or 'undefined'.
+   */
+  getDataById(name: FsCollectionName, id: string): any {
+    const location = `${this.className}.getDataById()`;
+    this.logger.trace(location, { name: name, id: id });
+
+    return this.collections[name].data.find((item) => item.id === id);
   }
 
   /**
