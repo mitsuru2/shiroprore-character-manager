@@ -1,3 +1,4 @@
+import { TypeModifier } from '@angular/compiler';
 import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { NGXLogger } from 'ngx-logger';
@@ -156,6 +157,9 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     this.viewInited = true;
     await sleep(10);
 
+    // Sort ability types.
+    this.firestore.sortByOrder(this.abilityTypes);
+
     // Restore paginator if stored.
     if (this.navigator.paramStorage['list-character']) {
       this.paginator = this.navigator.paramStorage['list-character'];
@@ -308,6 +312,7 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
 
   private makeCharacterInfoTable(tableId: string, iCharacter: number) {
     const character = this.characters[iCharacter];
+    const cType = this.characterTypes.find((item) => item.id === character.type);
 
     // Clear table.
     this.clearTable(tableId);
@@ -332,13 +337,15 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     this.setTdStyle(td);
 
     // 3rd row: Motif weapons and facilities.
-    tr = t.insertRow();
-    td = tr.insertCell();
-    td.textContent = 'モチーフ武器/施設';
-    this.setTdStyle(td);
-    td = tr.insertCell();
-    td.textContent = this.makeMotifWeaponAndFacilityText(character);
-    this.setTdStyle(td);
+    if (cType && !cType.isItem) {
+      tr = t.insertRow();
+      td = tr.insertCell();
+      td.textContent = 'モチーフ武器/施設';
+      this.setTdStyle(td);
+      td = tr.insertCell();
+      td.textContent = this.makeMotifWeaponAndFacilityText(character);
+      this.setTdStyle(td);
+    }
 
     // 4th row: Tag inforamtion.
     tr = t.insertRow();
@@ -350,12 +357,9 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     this.setTdStyle(td);
 
     // Make ability info rows.
-    this.makeAbilityInfoRows(t, character, '特技');
-    this.makeAbilityInfoRows(t, character, '編成特技');
-    this.makeAbilityInfoRows(t, character, '所持特技');
-    this.makeAbilityInfoRows(t, character, '大破特技');
-    this.makeAbilityInfoRows(t, character, '特殊攻撃');
-    this.makeAbilityInfoRows(t, character, '計略');
+    for (let i = 0; i < this.abilityTypes.length; ++i) {
+      this.makeAbilityInfoRows(t, character, this.abilityTypes[i]);
+    }
   }
 
   private clearTable(tableId: string) {
@@ -530,17 +534,14 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     return result;
   }
 
-  private makeAbilityInfoRows(t: HTMLTableElement, character: FsCharacter, typeName: string) {
-    // const location = `${this.className}.makeAbilityInfoRows()`;
-    const typeId = this.getAbilityTypeId(typeName);
-
+  private makeAbilityInfoRows(t: HTMLTableElement, character: FsCharacter, type: FsAbilityType) {
     // Filter abilities and abilities(kai).
     const abilities = this.abilities
       .filter((item) => character.abilities.includes(item.id))
-      .filter((item) => item.type === typeId);
+      .filter((item) => item.type === type.id);
     const abilitiesKai = this.abilities
       .filter((item) => character.abilitiesKai.includes(item.id))
-      .filter((item) => item.type === typeId);
+      .filter((item) => item.type === type.id);
 
     // CASE: No abilities. --> Do nothing.
     if (abilities.length === 0 && abilitiesKai.length === 0) {
@@ -550,7 +551,7 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     // Make ability type caption.
     let tr = t.insertRow();
     let td = tr.insertCell();
-    td.textContent = typeName;
+    td.textContent = type.name;
     td.colSpan = 2;
     this.setTdStyle(td, TableCellType.h1);
 
@@ -579,7 +580,7 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
         let descText = this.makeAbilityDescriptionText(ability.descriptions);
 
         // If the ability type is Keiryaku, add interval, cost, and token info.
-        if (typeName === '計略') {
+        if (type.isKeiryaku) {
           if (ability.tokenLayouts.length === 0) {
             descText += `\n(CT:${ability.interval}秒/消費気:${ability.cost})`;
           } else {
@@ -623,7 +624,7 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
         let descText = this.makeAbilityDescriptionText(ability.descriptions);
 
         // If the ability type is Keiryaku, add interval, cost, and token info.
-        if (typeName === '計略') {
+        if (type.isKeiryaku) {
           if (ability.tokenLayouts.length === 0) {
             descText += `\n(CT:${ability.interval}秒/消費気:${ability.cost})`;
           } else {

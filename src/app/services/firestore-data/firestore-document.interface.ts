@@ -54,7 +54,14 @@ export class FsAbility extends FsDocumentBase {
   tokenLayouts: string[] = [];
 }
 
-export class FsAbilityType extends FsDocumentBaseWithOrder {}
+export class FsAbilityType extends FsDocumentBaseWithOrder {
+  isKeiryaku: boolean = false;
+
+  constructor(id = '', name = '', order = 0, isKeiryaku = false) {
+    super(id, name, order);
+    this.isKeiryaku = isKeiryaku;
+  }
+}
 
 export class FsCharacterTag extends FsDocumentBase {
   characters: string[] = [];
@@ -68,6 +75,8 @@ export class FsCharacterType extends FsDocumentBaseWithCode {
   regions: string[] = [];
 
   isCostCalcEnable: boolean = false;
+
+  isItem: boolean = false;
 
   isKaichikuEnable: boolean = false;
 

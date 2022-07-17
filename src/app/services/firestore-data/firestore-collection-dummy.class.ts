@@ -9,12 +9,12 @@ import {
 } from './firestore-document.interface';
 
 export const fsAbilityTypesData: FsAbilityType[] = [
-  new FsAbilityType('aaDP1APcLDh2z7ud3NTk', '特技', 0),
-  new FsAbilityType('fZGsWgRvgqfMKqhLoBnR', '編成特技', 1),
-  new FsAbilityType('SrxjSPsy2StCIJxegVaz', '所持特技', 2),
-  new FsAbilityType('sFtaxbe7qsqYi6zG9Z7i', '大破特技', 3),
-  new FsAbilityType('OAdc5b0je3Vj7KXVJead', '特殊攻撃', 4),
-  new FsAbilityType('yjHNuIylWnqEf634dKJO', '計略', 5),
+  new FsAbilityType('aaDP1APcLDh2z7ud3NTk', '特技', 0, false),
+  new FsAbilityType('fZGsWgRvgqfMKqhLoBnR', '編成特技', 1, false),
+  new FsAbilityType('SrxjSPsy2StCIJxegVaz', '所持特技', 2, false),
+  new FsAbilityType('sFtaxbe7qsqYi6zG9Z7i', '大破特技', 3, false),
+  new FsAbilityType('OAdc5b0je3Vj7KXVJead', '特殊攻撃', 4, false),
+  new FsAbilityType('yjHNuIylWnqEf634dKJO', '計略', 5, true),
 ];
 
 export const fsFacilityTypesData: FsFacilityType[] = [

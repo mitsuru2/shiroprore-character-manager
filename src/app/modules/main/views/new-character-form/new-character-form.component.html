@@ -207,7 +207,7 @@
   <!---->
   <!-- Motif weapon -->
   <!---->
-  <div class="formgrid grid p-fluid">
+  <div class="formgrid grid p-fluid" *ngIf="!selectedCharacterType.isItem">
     <div class="field col">
       <label for="NewCharacterForm_MotifWeaponInput">モチーフ武器</label>
       <p-chips
@@ -222,7 +222,7 @@
   <!---->
   <!-- Motif facility -->
   <!---->
-  <div class="formgrid grid p-fluid">
+  <div class="formgrid grid p-fluid" *ngIf="!selectedCharacterType.isItem">
     <div class="field col">
       <label for="NewCharacterForm_MotifFacilityInput">モチーフ施設</label>
       <p-chips

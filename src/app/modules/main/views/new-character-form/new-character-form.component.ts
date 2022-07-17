@@ -245,7 +245,7 @@ export class NewCharacterFormComponent implements OnChanges {
 
     // Get keiryaku ability type.
     for (let i = 0; i < this.abilityTypes.length; ++i) {
-      if (this.abilityTypes[i].name === '計略') {
+      if (this.abilityTypes[i].isKeiryaku) {
         this.keiryakuTypeId = this.abilityTypes[i].id;
         break;
       }
@@ -1282,7 +1282,7 @@ export class NewCharacterFormComponent implements OnChanges {
       }
 
       // Token layout.
-      if (abilityType.name === '計略' && ability.tokenAvailable) {
+      if (abilityType.isKeiryaku && ability.tokenAvailable) {
         if (!ability.tokenLayouts || ability.tokenLayouts.length === 0) {
           this.logger.warn(location, 'No token layout option is selected.', { index: i, kaichiku: false });
           this.errorMessage = 'トークン計略の場合はトークンの配置マスタイプを選択してください。';

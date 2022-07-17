@@ -1,5 +1,6 @@
 import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { collection } from 'firebase/firestore';
 import { NGXLogger } from 'ngx-logger';
 import { CsCharacterImageTypeMax, csCharacterImageTypes } from 'src/app/services/cloud-storage/cloud-storage.interface';
 import { CloudStorageService } from 'src/app/services/cloud-storage/cloud-storage.service';
@@ -13,6 +14,7 @@ import {
   FsCharacter,
   FsCharacterTag,
   FsCharacterType,
+  FsDocumentBase,
   FsFacility,
   FsFacilityType,
   FsGeographType,
@@ -21,6 +23,7 @@ import {
   FsVoiceActor,
   FsWeaponType,
 } from 'src/app/services/firestore-data/firestore-document.interface';
+import { isMobileMode } from '../../utils/window-size/window-size.util';
 
 class CharacterImage {
   url = '';
@@ -107,6 +110,9 @@ export class CharacterComponent implements OnInit, AfterViewInit {
     } else {
       this.errorHandler.notifyError(ErrorCode.NotFound, 'No character ID.');
     }
+
+    // Sort ability type.
+    this.firestore.sortByOrder(this.abilityTypes);
   }
 
   async ngAfterViewInit(): Promise<void> {
@@ -120,10 +126,9 @@ export class CharacterComponent implements OnInit, AfterViewInit {
     }
 
     // Get character information by character ID.
-    const tmpCharacter = this.firestore.getDataById(FsCollectionName.Characters, this.id);
-    if (tmpCharacter) {
-      this.character = tmpCharacter;
-    } else {
+    try {
+      this.character = this.firestore.getDataById(FsCollectionName.Characters, this.id) as FsCharacter;
+    } catch {
       this.errorHandler.notifyError(ErrorCode.NotFound, `Invalid character ID: ${this.id}`);
     }
 
@@ -179,6 +184,10 @@ export class CharacterComponent implements OnInit, AfterViewInit {
     // Get tbody element.
     const t = document.getElementById('Character_Table') as HTMLTableElement;
 
+    // Get character type.
+    // const cType = this.getDoc<FsCharacterType>(this.character.type, FsCollectionName.CharacterTypes);
+    const cType = this.firestore.getDataById(FsCollectionName.CharacterTypes, this.character.type) as FsCharacterType;
+
     // 1st row: Chaption.
     let tr = t.insertRow();
     let td = tr.insertCell();
@@ -205,6 +214,13 @@ export class CharacterComponent implements OnInit, AfterViewInit {
     this.setTdStyle(td);
 
     // 4th row: Character cost.
+    tr = t.insertRow();
+    td = tr.insertCell();
+    td.textContent = '基本消費気';
+    this.setTdStyle(td);
+    td = tr.insertCell();
+    td.textContent = this.makeCharacterCostText(this.character.type, this.character.cost, this.character.costKai);
+    this.setTdStyle(td);
 
     // 5th row: Geograph type.
     tr = t.insertRow();
@@ -216,18 +232,20 @@ export class CharacterComponent implements OnInit, AfterViewInit {
     this.setTdStyle(td);
 
     // 6th row: Region.
-    tr = t.insertRow();
-    td = tr.insertCell();
-    td.textContent = '地域';
-    this.setTdStyle(td);
-    td = tr.insertCell();
-    td.textContent = this.makeRegionText(this.character.region);
-    this.setTdStyle(td);
+    if (cType.regions.length > 0) {
+      tr = t.insertRow();
+      td = tr.insertCell();
+      td.textContent = '地域';
+      this.setTdStyle(td);
+      td = tr.insertCell();
+      td.textContent = this.makeRegionText(this.character.region);
+      this.setTdStyle(td);
+    }
 
     // 7th row: CV.
     tr = t.insertRow();
     td = tr.insertCell();
-    td.textContent = 'CV';
+    td.textContent = 'ＣＶ';
     this.setTdStyle(td);
     td = tr.insertCell();
     td.textContent = this.makeVoicActorText(this.character.voiceActors);
@@ -241,6 +259,42 @@ export class CharacterComponent implements OnInit, AfterViewInit {
     td = tr.insertCell();
     td.textContent = this.makeIllustratorText(this.character.illustrators);
     this.setTdStyle(td);
+
+    // 9th row: Motif weapon.
+    if (!cType.isItem) {
+      tr = t.insertRow();
+      td = tr.insertCell();
+      td.textContent = 'モチーフ武器';
+      this.setTdStyle(td);
+      td = tr.insertCell();
+      td.textContent = this.makeMotifWeaponText(this.character.motifWeapons);
+      this.setTdStyle(td);
+    }
+
+    // 10th row: Motif facility.
+    if (!cType.isItem) {
+      tr = t.insertRow();
+      td = tr.insertCell();
+      td.textContent = 'モチーフ施設';
+      this.setTdStyle(td);
+      td = tr.insertCell();
+      td.textContent = this.makeMotifFacilityText(this.character.motifFacilities);
+      this.setTdStyle(td);
+    }
+
+    // 11th row: Tag.
+    tr = t.insertRow();
+    td = tr.insertCell();
+    td.textContent = 'タグ';
+    this.setTdStyle(td);
+    td = tr.insertCell();
+    td.textContent = this.makeCharacterTagText(this.character.tags);
+    this.setTdStyle(td);
+
+    // 12th row: Ability caption.
+    for (let i = 0; i < this.abilityTypes.length; ++i) {
+      this.makeAbilityInfoRows(t, this.character, this.abilityTypes[i]);
+    }
   }
 
   private setTdStyle(td: HTMLTableCellElement, type: TableCellType = TableCellType.data) {
@@ -255,64 +309,245 @@ export class CharacterComponent implements OnInit, AfterViewInit {
   }
 
   private makeWeaponTypeText(id: string): string {
-    return this.getDocName(id, FsCollectionName.WeaponTypes);
+    return this.firestore.getDataById(FsCollectionName.WeaponTypes, id).name;
+  }
+
+  private makeCharacterCostText(typeId: string, cost: number, costKai: number): string {
+    let result = `[無印] ${cost}`;
+
+    const type = this.firestore.getDataById(FsCollectionName.CharacterTypes, typeId) as FsCharacterType;
+    if (type.isKaichikuEnable) {
+      result += ` / [改壱] ${costKai}`;
+    }
+
+    return result;
   }
 
   private makeGeographTypeText(ids: string[]): string {
+    return this.makeTextFromIds(ids, FsCollectionName.GeographTypes);
+  }
+
+  private makeRegionText(id: string): string {
+    return this.firestore.getDataById(FsCollectionName.Regions, id).name;
+  }
+
+  private makeVoicActorText(ids: string[]): string {
+    return this.makeTextFromIds(ids, FsCollectionName.VoiceActors);
+  }
+
+  private makeIllustratorText(ids: string[]): string {
+    return this.makeTextFromIds(ids, FsCollectionName.Illustrators);
+  }
+
+  private makeMotifWeaponText(ids: string[]): string {
+    return this.makeTextFromIds(ids, FsCollectionName.Weapons);
+  }
+
+  private makeMotifFacilityText(ids: string[]): string {
+    return this.makeTextFromIds(ids, FsCollectionName.Facilities);
+  }
+
+  private makeCharacterTagText(ids: string[]): string {
+    return this.makeTextFromIds(ids, FsCollectionName.CharacterTags);
+  }
+
+  private makeTextFromIds(ids: string[], collectionName: FsCollectionName, separator: string = ', '): string {
     let result = '';
 
-    for (let i = 0; i < ids.length; ++i) {
-      const gType = this.getDocName(ids[i], FsCollectionName.GeographTypes);
-      if (gType !== '') {
-        if (i > 0) {
-          result += ' / ';
+    if (ids.length === 0) {
+      result = 'n.a.';
+    } else {
+      for (let i = 0; i < ids.length; ++i) {
+        const item = this.firestore.getDataById(collectionName, ids[i]).name;
+        if (item !== '') {
+          if (i > 0) {
+            result += separator;
+          }
+          result += item;
         }
-        result += gType;
       }
     }
 
     return result;
   }
 
-  private makeRegionText(id: string): string {
-    return this.getDocName(id, FsCollectionName.Regions);
+  private makeAbilityInfoRows(t: HTMLTableElement, character: FsCharacter, type: FsAbilityType) {
+    // Filter abilities and abilities(kai).
+    const abilities = this.abilities
+      .filter((item) => character.abilities.includes(item.id))
+      .filter((item) => item.type === type.id);
+    const abilitiesKai = this.abilities
+      .filter((item) => character.abilitiesKai.includes(item.id))
+      .filter((item) => item.type === type.id);
+
+    // CASE: No abilities. --> Do nothing.
+    if (abilities.length === 0 && abilitiesKai.length === 0) {
+      return;
+    }
+
+    // Make ability type caption.
+    let tr = t.insertRow();
+    let td = tr.insertCell();
+    td.textContent = type.name;
+    td.colSpan = 2;
+    this.setTdStyle(td, TableCellType.h1);
+
+    // Make ability name and description.
+    let prevAbilityName = '';
+    let prevAbilityDescCell: HTMLTableCellElement | undefined;
+    for (let i = 0; i < abilities.length; ++i) {
+      const ability = abilities[i];
+
+      // Make ability name text.
+      tr = t.insertRow();
+      td = tr.insertCell();
+      td.textContent = `[無印] ${ability.name}`;
+      this.setTdStyle(td);
+
+      // If previous ability is same, it expands row span.
+      if (ability.name === prevAbilityName) {
+        if (prevAbilityDescCell) {
+          prevAbilityDescCell.rowSpan = 2;
+        }
+      }
+
+      // Make ability description text.
+      else {
+        td = tr.insertCell();
+        let descText = this.makeAbilityDescriptionText(ability.descriptions);
+
+        // If the ability type is Keiryaku, add interval, cost, and token info.
+        if (type.isKeiryaku) {
+          if (ability.tokenLayouts.length === 0) {
+            descText += `\n(CT:${ability.interval}秒/消費気:${ability.cost})`;
+          } else {
+            let tokenLayoutText = '';
+            for (let j = 0; j < ability.tokenLayouts.length; ++j) {
+              tokenLayoutText += ability.tokenLayouts[j];
+            }
+            descText += `\n(CT:${ability.interval}秒/消費気:${ability.cost}/配置:${tokenLayoutText})`;
+          }
+        }
+
+        td.innerText = descText; // User 'innerText' property to activate line feed.
+        this.setTdStyle(td);
+      }
+
+      // Update prev*** variables.
+      prevAbilityName = ability.name;
+      prevAbilityDescCell = td;
+    }
+
+    // Make ability info (kaichiku)
+    for (let i = 0; i < abilitiesKai.length; ++i) {
+      const ability = abilitiesKai[i];
+
+      // Make ability name text.
+      tr = t.insertRow();
+      td = tr.insertCell();
+      td.textContent = `[改壱] ${ability.name}`;
+      this.setTdStyle(td);
+
+      // If previous ability is same, it expands row span.
+      if (ability.name === prevAbilityName) {
+        if (prevAbilityDescCell) {
+          prevAbilityDescCell.rowSpan = 2;
+        }
+      }
+
+      // Make ability description text.
+      else {
+        td = tr.insertCell();
+        let descText = this.makeAbilityDescriptionText(ability.descriptions);
+
+        // If the ability type is Keiryaku, add interval, cost, and token info.
+        if (type.isKeiryaku) {
+          if (ability.tokenLayouts.length === 0) {
+            descText += `\n(CT:${ability.interval}秒/消費気:${ability.cost})`;
+          } else {
+            let tokenLayoutText = '';
+            for (let j = 0; j < ability.tokenLayouts.length; ++j) {
+              tokenLayoutText += ability.tokenLayouts[j];
+            }
+            descText += `\n(CT:${ability.interval}秒/消費気:${ability.cost}/配置:${tokenLayoutText})`;
+          }
+        }
+
+        td.innerText = descText; // User 'innerText' property to activate line feed.
+        this.setTdStyle(td);
+      }
+
+      // Update prev*** variables.
+      prevAbilityName = ability.name;
+      prevAbilityDescCell = td;
+    }
   }
 
-  private makeVoicActorText(ids: string[]): string {
+  private getAbilityTypeId(typeName: string): string {
+    const location = `${this.className}.getAbilityTypeId()`;
     let result = '';
 
-    if (ids.length > 0) {
-      result = this.getDocName(ids[0], FsCollectionName.VoiceActors);
-    }
-    if (result === '') {
-      result = 'n.a.';
+    const ability = this.abilityTypes.find((item) => item.name === typeName);
+    if (ability) {
+      result = ability.id;
+    } else {
+      this.logger.error(location, 'Ability type ID not found.', {
+        typeName: typeName,
+        abilityTypes: this.abilityTypes,
+      });
     }
 
     return result;
   }
 
-  private makeIllustratorText(ids: string[]): string {
+  private makeAbilityDescriptionText(descriptions: string[]): string {
     let result = '';
 
-    if (ids.length > 0) {
-      result = this.getDocName(ids[0], FsCollectionName.Illustrators);
+    // CASE: Mobile mode.
+    // When text length > 18 full characters, no line feed is added.
+    if (isMobileMode()) {
+      result = descriptions[0];
+      let prevLine = descriptions[0];
+      for (let i = 1; i < descriptions.length; ++i) {
+        if (this.getTextLengthUtf8(prevLine) <= 18 * 2) {
+          result += '\n';
+        }
+        result += descriptions[i];
+        prevLine = descriptions[i];
+      }
     }
-    if (result === '') {
-      result = 'n.a.';
+
+    // CASE: PC mode.
+    // Connect all lines with line feeds.
+    else {
+      result = descriptions[0];
+      for (let i = 1; i < descriptions.length; ++i) {
+        result += '\n' + descriptions[i];
+      }
     }
 
     return result;
   }
 
-  private getDocName(id: string, collectionName: FsCollectionName): string {
-    let result = '';
+  /**
+   * It calculate text length.
+   * It counts a half character as 1, and counts a full character as 2.
+   * @param text Input text.
+   * @returns Text length.
+   */
+  private getTextLengthUtf8(text: string): number {
+    let count = 0;
+    let c = 0;
 
-    const collection = this.firestore.getData(collectionName);
-    const document = collection.find((item) => item.id === id);
-    if (document) {
-      result = document.name;
+    for (let i = 0, len = text.length; i < len; i++) {
+      c = text.charCodeAt(i);
+      if ((c >= 0x0 && c < 0x81) || c == 0xf8f0 || (c >= 0xff61 && c < 0xffa0) || (c >= 0xf8f1 && c < 0xf8f4)) {
+        count += 1;
+      } else {
+        count += 2;
+      }
     }
 
-    return result;
+    return count;
   }
 }

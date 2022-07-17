@@ -22,6 +22,7 @@ import {
   FsVoiceActor,
   FsWeapon,
   FsWeaponType,
+  FsDocumentBase,
 } from './firestore-document.interface';
 import { FirestoreCollectionWrapper } from './firestore-collection-wrapper.class';
 import { FirestoreCollectionDummy } from './firestore-collection-dummy.class';
@@ -162,11 +163,15 @@ export class FirestoreDataService {
    * @param id Document ID.
    * @returns Data document or 'undefined'.
    */
-  getDataById(name: FsCollectionName, id: string): any {
+  getDataById(name: FsCollectionName, id: string): FsDocumentBase {
     const location = `${this.className}.getDataById()`;
     this.logger.trace(location, { name: name, id: id });
 
-    return this.collections[name].data.find((item) => item.id === id);
+    const tmp = this.collections[name].data.find((item) => item.id === id);
+    if (!tmp) {
+      throw Error(`${location} No data is found.`);
+    }
+    return tmp;
   }
 
   /**

@@ -5,3 +5,10 @@
 table {
   border-collapse: collapse;
 }
+
+@media screen and (max-width: 959px) {
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+}
