@@ -34,10 +34,11 @@
 
 table {
   width: 80%;
-  font-size: small;
+  table-layout: fixed;
   border-collapse: collapse;
 
   .short-col {
+    width: 30%;
   }
 
   .long-col {}
@@ -51,16 +52,7 @@ table {
   // Table.
   table {
     width: 100%;
-    min-width: auto;
     font-size: xx-small;
-    table-layout: fixed;
-    border-collapse: collapse;
-
-    .short-col {
-      width: 30%;
-    }
-
-    .long-col {}
   }
 
   // Radio button.

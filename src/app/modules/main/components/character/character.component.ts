@@ -21,6 +21,7 @@ import {
   FsIllustrator,
   FsRegion,
   FsVoiceActor,
+  FsWeapon,
   FsWeaponType,
 } from 'src/app/services/firestore-data/firestore-document.interface';
 import { isMobileMode } from '../../utils/window-size/window-size.util';
@@ -343,11 +344,43 @@ export class CharacterComponent implements OnInit, AfterViewInit {
   }
 
   private makeMotifWeaponText(ids: string[]): string {
-    return this.makeTextFromIds(ids, FsCollectionName.Weapons);
+    let result = '';
+
+    if (ids.length === 0) {
+      result = 'n.a.';
+    } else {
+      for (let i = 0; i < ids.length; ++i) {
+        const item = this.firestore.getDataById(FsCollectionName.Weapons, ids[i]) as FsWeapon;
+        if (i > 0) {
+          result += ', ';
+        }
+        result += item.name;
+        if (item.rarerity > 0) {
+          result += ` (★${item.rarerity})`;
+        }
+      }
+    }
+
+    return result;
   }
 
   private makeMotifFacilityText(ids: string[]): string {
-    return this.makeTextFromIds(ids, FsCollectionName.Facilities);
+    let result = '';
+
+    if (ids.length === 0) {
+      result = 'n.a.';
+    } else {
+      for (let i = 0; i < ids.length; ++i) {
+        const item = this.firestore.getDataById(FsCollectionName.Facilities, ids[i]) as FsFacility;
+        const itemType = this.firestore.getDataById(FsCollectionName.FacilityTypes, item.type) as FsFacilityType;
+        if (i > 0) {
+          result += ', ';
+        }
+        result += `${item.name} (★${item.rarerity}|${itemType.name})`;
+      }
+    }
+
+    return result;
   }
 
   private makeCharacterTagText(ids: string[]): string {
@@ -486,71 +519,14 @@ export class CharacterComponent implements OnInit, AfterViewInit {
     }
   }
 
-  private getAbilityTypeId(typeName: string): string {
-    const location = `${this.className}.getAbilityTypeId()`;
-    let result = '';
-
-    const ability = this.abilityTypes.find((item) => item.name === typeName);
-    if (ability) {
-      result = ability.id;
-    } else {
-      this.logger.error(location, 'Ability type ID not found.', {
-        typeName: typeName,
-        abilityTypes: this.abilityTypes,
-      });
-    }
-
-    return result;
-  }
-
   private makeAbilityDescriptionText(descriptions: string[]): string {
     let result = '';
 
-    // // CASE: Mobile mode.
-    // // When text length > 18 full characters, no line feed is added.
-    // if (isMobileMode()) {
-    //   result = descriptions[0];
-    //   let prevLine = descriptions[0];
-    //   for (let i = 1; i < descriptions.length; ++i) {
-    //     if (this.getTextLengthUtf8(prevLine) <= 18 * 2) {
-    //       result += '\n';
-    //     }
-    //     result += descriptions[i];
-    //     prevLine = descriptions[i];
-    //   }
-    // }
-
-    // // CASE: PC mode.
-    // // Connect all lines with line feeds.
-    // else {
     result = descriptions[0];
     for (let i = 1; i < descriptions.length; ++i) {
       result += '\n' + descriptions[i];
     }
-    // }
 
     return result;
-  }
-
-  /**
-   * It calculate text length.
-   * It counts a half character as 1, and counts a full character as 2.
-   * @param text Input text.
-   * @returns Text length.
-   */
-  private getTextLengthUtf8(text: string): number {
-    let count = 0;
-    let c = 0;
-
-    for (let i = 0, len = text.length; i < len; i++) {
-      c = text.charCodeAt(i);
-      if ((c >= 0x0 && c < 0x81) || c == 0xf8f0 || (c >= 0xff61 && c < 0xffa0) || (c >= 0xf8f1 && c < 0xf8f4)) {
-        count += 1;
-      } else {
-        count += 2;
-      }
-    }
-
-    return count;
   }
 }
