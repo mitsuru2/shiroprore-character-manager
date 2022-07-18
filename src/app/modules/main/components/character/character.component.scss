@@ -1,14 +1,59 @@
+.character-header-container {
+  display: flex;
+
+  .left-side {
+    display: flex;
+
+    .radio-button {
+      margin-right: 1em;
+    }
+  }
+}
+
 .character-image {
   max-width: 100%;
 }
 
 table {
+  font-size: small;
   border-collapse: collapse;
+
+  .short-col {
+  }
+
+  .long-col {}
 }
 
 @media screen and (max-width: 959px) {
   table {
     width: 100%;
+    font-size: xx-small;
+    table-layout: fixed;
     border-collapse: collapse;
+
+    .short-col {
+      width: 30%;
+    }
+
+    .long-col {}
+  }
+
+  :host ::ng-deep .p-radiobutton {
+    width: 16px;
+    height: 16px;
+
+    .p-radiobutton-box {
+      width: 16px;
+      height: 16px;
+    }
+
+    .p-radiobutton-icon {
+      width: 10px;
+      height: 10px;
+    }
+  }
+
+  label {
+    font-size: small;
   }
 }

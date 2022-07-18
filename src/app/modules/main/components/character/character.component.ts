@@ -503,28 +503,28 @@ export class CharacterComponent implements OnInit, AfterViewInit {
   private makeAbilityDescriptionText(descriptions: string[]): string {
     let result = '';
 
-    // CASE: Mobile mode.
-    // When text length > 18 full characters, no line feed is added.
-    if (isMobileMode()) {
-      result = descriptions[0];
-      let prevLine = descriptions[0];
-      for (let i = 1; i < descriptions.length; ++i) {
-        if (this.getTextLengthUtf8(prevLine) <= 18 * 2) {
-          result += '\n';
-        }
-        result += descriptions[i];
-        prevLine = descriptions[i];
-      }
-    }
+    // // CASE: Mobile mode.
+    // // When text length > 18 full characters, no line feed is added.
+    // if (isMobileMode()) {
+    //   result = descriptions[0];
+    //   let prevLine = descriptions[0];
+    //   for (let i = 1; i < descriptions.length; ++i) {
+    //     if (this.getTextLengthUtf8(prevLine) <= 18 * 2) {
+    //       result += '\n';
+    //     }
+    //     result += descriptions[i];
+    //     prevLine = descriptions[i];
+    //   }
+    // }
 
-    // CASE: PC mode.
-    // Connect all lines with line feeds.
-    else {
-      result = descriptions[0];
-      for (let i = 1; i < descriptions.length; ++i) {
-        result += '\n' + descriptions[i];
-      }
+    // // CASE: PC mode.
+    // // Connect all lines with line feeds.
+    // else {
+    result = descriptions[0];
+    for (let i = 1; i < descriptions.length; ++i) {
+      result += '\n' + descriptions[i];
     }
+    // }
 
     return result;
   }
