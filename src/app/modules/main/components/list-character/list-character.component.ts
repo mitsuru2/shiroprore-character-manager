@@ -162,7 +162,8 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
 
     // Restore paginator if stored.
     if (this.navigator.paramStorage['list-character']) {
-      this.paginator = this.navigator.paramStorage['list-character'];
+      this.paginator = this.navigator.paramStorage['list-character'].paginator;
+      this.isListLayout = this.navigator.paramStorage['list-character'].isListLayout;
     }
 
     // Else, calculate num of thumbnails per page.
@@ -199,7 +200,7 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     this.logger.trace(location, { i: i });
 
     // Store paginator param.
-    this.navigator.paramStorage['list-character'] = this.paginator;
+    this.navigator.paramStorage['list-character'] = { paginator: this.paginator, isListLayout: this.isListLayout };
 
     // Go to character page.
     const iFilter = this.paginator.first + i;
