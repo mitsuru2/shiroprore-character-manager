@@ -84,6 +84,9 @@ export class CharacterComponent implements OnInit, AfterViewInit {
 
   images: CharacterImage[] = [];
 
+  /** Switch: own the character */
+  hasThisCharacter: boolean = false;
+
   //============================================================================
   // Class methods.
   //

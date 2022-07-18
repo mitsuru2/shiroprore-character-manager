@@ -18,6 +18,7 @@ import { PaginatorModule } from 'primeng/paginator';
 import { PanelModule } from 'primeng/panel';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { RadioButtonModule } from 'primeng/radiobutton';
+import { InputSwitchModule } from 'primeng/inputswitch';
 
 /** Application components. */
 import { MainRoutingModule } from './main-routing.module';
@@ -93,6 +94,7 @@ const firebaseUiAuthConfig: firebaseui.auth.Config = {
     DividerModule,
     DropdownModule,
     InputNumberModule,
+    InputSwitchModule,
     InputTextModule,
     MenuModule,
     PaginatorModule,

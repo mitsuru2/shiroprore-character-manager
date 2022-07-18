@@ -1,7 +1,7 @@
 <!---->
 <!-- Image preview -->
 <!---->
-<div class="character-header-container">
+<div class="header-container">
   <div class="left-side">
     <div *ngFor="let item of imageTypes" class="field-checkbox radio-button">
       <p-radioButton
@@ -13,6 +13,10 @@
       ></p-radioButton>
       <label [for]="'Character_ImageTypeInput_' + item.type">{{ item.label }}</label>
     </div>
+  </div>
+  <div class="right-side field-checkbox">
+    <label for="Character_HasSwitch" style="margin-right: 0.5rem">所持</label>
+    <p-inputSwitch id="Character_HasSwitch" [(ngModel)]="hasThisCharacter"></p-inputSwitch>
   </div>
 </div>
 <img id="Character_ImagePreview" class="character-image" />
@@ -27,4 +31,11 @@
       <col class="long-col" />
     </colgroup>
   </table>
+</div>
+
+<!---->
+<!-- Edit button. -->
+<!---->
+<div class="footer-container">
+  <p-button label="編集"></p-button>
 </div>
