@@ -40,6 +40,8 @@ export class Paginator {
 
   rowIndexes: number[] = [];
 
+  pageIndex: number = 0;
+
   constructor() {
     this.setRowNum(defaultGidRowNum);
   }
@@ -184,15 +186,21 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     const location = `${this.className}.onPageChange()`;
     this.logger.trace(location, event);
 
-    // Update paginate info.
-    this.paginator.first = event.first;
+    if (this.paginator.pageIndex !== event.page) {
+      // Update paginate info.
+      this.paginator.first = event.first;
+      this.paginator.pageIndex = event.page;
 
-    // Load thumbnail images.
-    await this.loadThumbImages();
+      // Load thumbnail images.
+      await this.loadThumbImages();
 
-    // Update thumbnail images.
-    this.updateThumbImages();
-    this.makeCharacterInfoTables();
+      // Update thumbnail images.
+      this.updateThumbImages();
+      this.makeCharacterInfoTables();
+
+      // Scroll.
+      this.scrollToTop();
+    }
   }
 
   onThumbnailClick(i: number) {
@@ -764,5 +772,13 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     }
 
     return height;
+  }
+
+  //----------------------------------------------------------------------------
+  // Other utilities.
+  //
+  private scrollToTop() {
+    this.logger.trace('scrollToTop()');
+    document.getElementById('ListCharacter_Content')?.scrollTo({ top: 0, behavior: 'auto' });
   }
 }
