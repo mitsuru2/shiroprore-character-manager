@@ -875,22 +875,6 @@ export class NewCharacterFormComponent implements OnChanges {
         content.subCharacterType = this.selectedSubCharacterType;
       }
 
-      // Character cost.
-      content.cost = this.calcCharacterCost(
-        this.selectedCharacterType,
-        this.selectedWeaponType,
-        this.inputAbilities,
-        this.inputAbilitiesKai,
-        false
-      );
-      content.costKai = this.calcCharacterCost(
-        this.selectedCharacterType,
-        this.selectedWeaponType,
-        this.inputAbilities,
-        this.inputAbilitiesKai,
-        true
-      );
-
       // Voice actor.
       if (this.inputVoiceActor.name !== '') {
         content.voiceActor.name = this.inputVoiceActor.name;
@@ -942,6 +926,22 @@ export class NewCharacterFormComponent implements OnChanges {
           );
         }
       }
+
+      // Character cost.
+      content.cost = this.calcCharacterCost(
+        content.characterType,
+        content.weaponType,
+        content.abilities,
+        content.abilitiesKai,
+        false
+      );
+      content.costKai = this.calcCharacterCost(
+        content.characterType,
+        content.weaponType,
+        content.abilities,
+        content.abilitiesKai,
+        true
+      );
 
       // Image files (include thumbnail).
       {
@@ -1013,7 +1013,7 @@ export class NewCharacterFormComponent implements OnChanges {
     // Calculate character cost.
     if (hasKeiryaku) {
       cost += 2;
-    } else if (hasKeiryakuKai) {
+    } else if (kaichiku && hasKeiryakuKai) {
       cost += 1;
     } else {
       // Do nothing.
