@@ -285,10 +285,11 @@
                 [(ngModel)]="selectedAbilityTypes[i]"
                 [style]="{ width: '100%' }"
                 [disabled]="inputAbilities[i].isExisting"
+                (onChange)="onAbilityTypeInputChange()"
               ></p-dropdown>
             </div>
           </div>
-          <div class="formgrid grid p-fluid" *ngIf="selectedAbilityTypes[i].name === '計略'">
+          <div class="formgrid grid p-fluid" *ngIf="selectedAbilityTypes[i].isKeiryaku">
             <div class="field col-12 lg:col-6">
               <label [for]="'NewCharacterForm_KeiryakuIntervalInput_' + i">使用間隔</label>
               <p-inputNumber
@@ -319,7 +320,7 @@
               </p-inputNumber>
             </div>
           </div>
-          <div class="formgrid grid" *ngIf="selectedAbilityTypes[i].name === '計略'">
+          <div class="formgrid grid" *ngIf="selectedAbilityTypes[i].isKeiryaku">
             <div class="field col">
               <label>トークン</label>
               <div class="formgroup-inline">
@@ -446,10 +447,11 @@
                 [(ngModel)]="selectedAbilityTypesKai[i]"
                 [style]="{ width: '100%' }"
                 [disabled]="inputAbilitiesKai[i].isExisting"
+                (onChange)="onAbilityTypeInputChange()"
               ></p-dropdown>
             </div>
           </div>
-          <div class="formgrid grid p-fluid" *ngIf="selectedAbilityTypesKai[i].name === '計略'">
+          <div class="formgrid grid p-fluid" *ngIf="selectedAbilityTypesKai[i].isKeiryaku">
             <div class="field col-12 lg:col-6">
               <label [for]="'NewCharacterForm_KeiryakuIntervalKaiInput_' + i">使用間隔</label>
               <p-inputNumber
@@ -480,7 +482,7 @@
               </p-inputNumber>
             </div>
           </div>
-          <div class="formgrid grid" *ngIf="selectedAbilityTypesKai[i].name === '計略'">
+          <div class="formgrid grid" *ngIf="selectedAbilityTypesKai[i].isKeiryaku">
             <div class="field col">
               <label>トークン</label>
               <div class="formgroup-inline">

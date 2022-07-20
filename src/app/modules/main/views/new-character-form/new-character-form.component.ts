@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, ElementRef } from '@angular/core';
 import { NGXLogger } from 'ngx-logger';
 import { CsCharacterImageTypeMax, csCharacterImageTypes } from 'src/app/services/cloud-storage/cloud-storage.interface';
 import { FirestoreDataService } from 'src/app/services/firestore-data/firestore-data.service';
@@ -22,6 +22,7 @@ import {
 } from 'src/app/services/firestore-data/firestore-document.interface';
 import { HtmlCanvas } from '../../utils/html-canvas/html-canvas.utility';
 import { loadImageFile } from '../../utils/image-file/image-file.utility';
+import { sleep } from '../../utils/sleep/sleep.utility';
 import { MakeThumbnailFormResult } from '../make-thumbnail-form/make-thumbnail-form.interface';
 import { NewFacilityFormMode, NewFacilityFormResult } from '../new-facility-form/new-facility-form.interafce';
 import { NewWeaponFormMode, NewWeaponFormResult } from '../new-weapon-form/new-weapon-form.interface';
@@ -198,16 +199,22 @@ export class NewCharacterFormComponent implements OnChanges {
   /** Output character data. */
   @Output() formResult = new EventEmitter<NewCharacterFormResult>();
 
+  /** Native element. */
+  private _el: HTMLElement;
+
   //============================================================================
   // Class methods.
   //
-  constructor(private logger: NGXLogger, private firestore: FirestoreDataService) {
+  constructor(private logger: NGXLogger, private firestore: FirestoreDataService, elemRef: ElementRef) {
     this.logger.trace(`new ${this.className}()`);
 
     // Initialize rarerity list.
     for (let i = 0; i < FsCharacterRarerityMax; ++i) {
       this.rarerityItems.push(i + 1);
     }
+
+    // Init native element.
+    this._el = elemRef.nativeElement;
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -285,6 +292,8 @@ export class NewCharacterFormComponent implements OnChanges {
         this.selectedRegion = this.regionItems[0];
       }
     }
+
+    this.disableSpinButtonFocusByTabKey();
   }
 
   onChipInputAdd(event: any) {
@@ -479,6 +488,10 @@ export class NewCharacterFormComponent implements OnChanges {
     }
   }
 
+  onAbilityTypeInputChange() {
+    this.disableSpinButtonFocusByTabKey();
+  }
+
   onNewWeaponDialogResult(formResult: NewWeaponFormResult) {
     const location = `${this.className}.onNewWeaponDialogResult()`;
     this.logger.trace(location, { formResult: formResult });
@@ -639,6 +652,9 @@ export class NewCharacterFormComponent implements OnChanges {
   //============================================================================
   // Class private methods.
   //
+  //----------------------------------------------------------------------------
+  // Input event handlers.
+  //
   private onMotifWeaponInputAdd(inputId: string, value: string) {
     // Get index.
     const index = this.inputMotifWeapons.findIndex((item) => item === value);
@@ -706,6 +722,9 @@ export class NewCharacterFormComponent implements OnChanges {
     }
   }
 
+  //----------------------------------------------------------------------------
+  // Form item control.
+  //
   private makeFilteredFormItems<T extends FsDocumentBase>(filter: string[], fsData: T[]): T[] {
     const location = `${this.className}.makeFilteredFormItems2()`;
     this.logger.trace(location);
@@ -824,6 +843,9 @@ export class NewCharacterFormComponent implements OnChanges {
     return suggests;
   }
 
+  //----------------------------------------------------------------------------
+  // Make result character info.
+  //
   private makeCharacterInfo(canceled: boolean): NewCharacterFormResult {
     const location = `${this.className}.makeCharacterInfo()`;
     const result: NewCharacterFormResult = <NewCharacterFormResult>{};
@@ -1169,6 +1191,9 @@ export class NewCharacterFormComponent implements OnChanges {
     return result;
   }
 
+  //----------------------------------------------------------------------------
+  // Form validation.
+  //
   private validateForm() {
     const location = `${this.className}.validateForm()`;
 
@@ -1313,8 +1338,23 @@ export class NewCharacterFormComponent implements OnChanges {
     return true;
   }
 
+  //----------------------------------------------------------------------------
+  // Other utilities.
+  //
   private scrollToTop() {
     this.logger.trace('scrollToTop()');
     document.getElementById('MainContents')?.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  private async disableSpinButtonFocusByTabKey() {
+    const location = `${this.className}.disableSpinButtonFocusByTabKey()`;
+
+    await sleep(20);
+
+    const buttons = this._el.querySelectorAll('.p-inputnumber-button');
+    this.logger.debug(location, { buttons: buttons.length });
+    for (let i = 0; i < buttons.length; ++i) {
+      buttons[i].setAttribute('tabindex', '-1');
+    }
   }
 }
