@@ -136,6 +136,9 @@ export class CharacterComponent implements OnInit, AfterViewInit {
       this.errorHandler.notifyError(ErrorCode.NotFound, `Invalid character ID: ${this.id}`);
     }
 
+    // Make character information table.
+    this.makeCharacterInfoTable();
+
     // Start loading of character images.
     for (let i = 0; i < csCharacterImageTypes.length; ++i) {
       const path = this.storage.makeCharacterImagePath(this.character.index, csCharacterImageTypes[i].type);
@@ -153,9 +156,6 @@ export class CharacterComponent implements OnInit, AfterViewInit {
         this.images[i].valid = false;
       }
     }
-
-    // Make character information table.
-    this.makeCharacterInfoTable();
   }
 
   onImageTypeClick() {
@@ -184,7 +184,7 @@ export class CharacterComponent implements OnInit, AfterViewInit {
   //----------------------------------------------------------------------------
   // Character informatin table.
   //
-  private makeCharacterInfoTable() {
+  private async makeCharacterInfoTable() {
     // Get tbody element.
     const t = document.getElementById('Character_Table') as HTMLTableElement;
 
