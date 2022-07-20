@@ -258,7 +258,7 @@ export class CharacterComponent implements OnInit, AfterViewInit {
     // 8th row: Illustrator.
     tr = t.insertRow();
     td = tr.insertCell();
-    td.textContent = 'イラストレーター';
+    td.textContent = 'イラスト';
     this.setTdStyle(td);
     td = tr.insertCell();
     td.textContent = this.makeIllustratorText(this.character.illustrators);
