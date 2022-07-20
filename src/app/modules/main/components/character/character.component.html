@@ -3,13 +3,14 @@
 <!---->
 <div class="header-container">
   <div class="left-side">
-    <div *ngFor="let item of imageTypes" class="field-checkbox radio-button">
+    <div *ngFor="let item of imageTypes; let i = index" class="field-checkbox radio-button">
       <p-radioButton
         [inputId]="'Character_ImageTypeInput_' + item.type"
         name="Character_ImageTypeInput"
         [value]="item"
         [(ngModel)]="selectedImageType"
         (onClick)="onImageTypeClick()"
+        [disabled]="!images[i].valid"
       ></p-radioButton>
       <label [for]="'Character_ImageTypeInput_' + item.type">{{ item.label }}</label>
     </div>
