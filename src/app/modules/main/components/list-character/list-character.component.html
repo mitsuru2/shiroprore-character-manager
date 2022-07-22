@@ -54,6 +54,7 @@
       [rows]="paginator.rowNum"
       [first]="paginator.first"
       [totalRecords]="filteredIndexes.length"
+      [pageLinkSize]="paginator.pageLinkSize"
       styleClass="paginator"
       (onPageChange)="onPageChange($event)"
     ></p-paginator>

@@ -42,6 +42,8 @@ export class Paginator {
 
   pageIndex: number = 0;
 
+  pageLinkSize: number = 5; // Default value.
+
   constructor() {
     this.setRowNum(defaultGidRowNum);
   }
@@ -171,6 +173,7 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     // Else, calculate num of thumbnails per page.
     else {
       this.paginator.setRowNum(this.calcGridRowNum());
+      this.paginator.pageLinkSize = this.calcPageLinkNum();
     }
 
     // Start loading of thumnail images.
@@ -772,6 +775,13 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     }
 
     return height;
+  }
+
+  //----------------------------------------------------------------------------
+  // Paginator apperance.
+  //
+  private calcPageLinkNum() {
+    return isMobileMode() ? 3 : 5;
   }
 
   //----------------------------------------------------------------------------
