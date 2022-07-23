@@ -8,6 +8,8 @@ import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { CheckboxModule } from 'primeng/checkbox';
 import { ChipsModule } from 'primeng/chips';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { ConfirmationService } from 'primeng/api';
 import { DialogModule } from 'primeng/dialog';
 import { DividerModule } from 'primeng/divider';
 import { DropdownModule } from 'primeng/dropdown';
@@ -90,6 +92,7 @@ const firebaseUiAuthConfig: firebaseui.auth.Config = {
     CardModule,
     CheckboxModule,
     ChipsModule,
+    ConfirmDialogModule,
     DialogModule,
     DividerModule,
     DropdownModule,
@@ -103,6 +106,6 @@ const firebaseUiAuthConfig: firebaseui.auth.Config = {
     RadioButtonModule,
   ],
   bootstrap: [MainComponent],
-  providers: [NavigatorService, UserAuthService],
+  providers: [NavigatorService, UserAuthService, ConfirmationService],
 })
 export class MainModule {}

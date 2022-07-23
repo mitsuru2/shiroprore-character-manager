@@ -17,7 +17,7 @@
   </div>
   <div class="right-side field-checkbox">
     <label for="Character_HasSwitch" style="margin-right: 0.5rem">所持</label>
-    <p-inputSwitch id="Character_HasSwitch" [(ngModel)]="hasThisCharacter"></p-inputSwitch>
+    <p-inputSwitch id="Character_HasSwitch" [(ngModel)]="hasThisCharacter" (onChange)="onHasSwitchChange($event)"></p-inputSwitch>
   </div>
 </div>
 <img id="Character_ImagePreview" class="character-image" />
@@ -40,3 +40,8 @@
 <div class="footer-container">
   <p-button label="編集"></p-button>
 </div>
+
+<!---->
+<!-- Confirmation Dialog -->
+<!---->
+<p-confirmDialog header="Confirmation" icon="pi pi-exclamation-triangle" [position]="'top'"></p-confirmDialog>

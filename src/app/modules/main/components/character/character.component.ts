@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { collection } from 'firebase/firestore';
 import { NGXLogger } from 'ngx-logger';
+import { ConfirmationService } from 'primeng/api';
 import { CsCharacterImageTypeMax, csCharacterImageTypes } from 'src/app/services/cloud-storage/cloud-storage.interface';
 import { CloudStorageService } from 'src/app/services/cloud-storage/cloud-storage.service';
 import { ErrorCode } from 'src/app/services/error-handler/error-code.enum';
@@ -14,7 +14,6 @@ import {
   FsCharacter,
   FsCharacterTag,
   FsCharacterType,
-  FsDocumentBase,
   FsFacility,
   FsFacilityType,
   FsGeographType,
@@ -24,7 +23,7 @@ import {
   FsWeapon,
   FsWeaponType,
 } from 'src/app/services/firestore-data/firestore-document.interface';
-import { isMobileMode } from '../../utils/window-size/window-size.util';
+import { UserAuthService } from '../../services/user-auth/user-auth.service';
 
 class CharacterImage {
   url = '';
@@ -96,7 +95,9 @@ export class CharacterComponent implements OnInit, AfterViewInit {
     private firestore: FirestoreDataService,
     private storage: CloudStorageService,
     private route: ActivatedRoute,
-    private errorHandler: ErrorHandlerService
+    private auth: UserAuthService,
+    private errorHandler: ErrorHandlerService,
+    private confirmationDialog: ConfirmationService
   ) {
     this.logger.trace(`new ${this.className}()`);
 
@@ -163,6 +164,25 @@ export class CharacterComponent implements OnInit, AfterViewInit {
     this.logger.trace(location, { type: this.selectedImageType.type });
 
     this.updateImage();
+  }
+
+  onHasSwitchChange(event: any) {
+    const location = `${this.className}.onCharacterHasSwitchChange()`;
+    this.logger.trace(location, { value: event.checked });
+
+    if (event.checked) {
+      if (!this.auth.signedIn) {
+        // Show warning message.
+        this.confirmationDialog.confirm({
+          message: 'キャラクター所持状況を管理するためにはログインが必要です。',
+          acceptLabel: 'ＯＫ',
+          rejectVisible: false,
+          accept: () => {
+            this.hasThisCharacter = false;
+          },
+        });
+      }
+    }
   }
 
   //============================================================================
