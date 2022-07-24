@@ -4,7 +4,7 @@
     <span class="title h2">{{ appInfo.title }} {{ appInfo.subTitle }} </span>
   </div>
   <div>
-    <p-button icon="pi pi-user" [style]="{ margin: '0 1rem' }"></p-button>
+    <!--<p-button icon="pi pi-user" [style]="{ margin: '0 1rem' }"></p-button>-->
     <p-button *ngIf="!signedIn" icon="pi pi-sign-in" (onClick)="onSignInClick()"></p-button>
     <p-button *ngIf="signedIn" icon="pi pi-sign-out" (onClick)="onSignOutClick()"></p-button>
   </div>

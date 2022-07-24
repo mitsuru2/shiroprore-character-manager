@@ -23,27 +23,7 @@ export class MainComponent /*implements OnInit*/ {
     {
       label: '新規キャラクター登録',
       command: () => {
-        if (this.userAuth.signedIn) {
-          this.router.navigateByUrl('/main/new-character').then(() => {
-            try {
-              this.newCharacterComponent.showNewCharacterForm = true;
-            } catch {
-              // do nothing.
-            }
-          });
-        } else {
-          this.confirmationDialog.confirm({
-            message: 'キャラクターデータの作成にはログインが必要です。',
-            acceptLabel: 'ＯＫ',
-            rejectVisible: false,
-            accept: () => {
-              this.router.navigateByUrl('/main/login');
-            },
-            reject: () => {
-              this.router.navigateByUrl('/main/login');
-            },
-          });
-        }
+        this.onNewCharacterMenuClick();
       },
       // disabled: !this.userAuth.signedIn,
     },
@@ -69,27 +49,9 @@ export class MainComponent /*implements OnInit*/ {
         {
           label: '新規キャラクター登録',
           command: () => {
-            if (this.userAuth.signedIn) {
-              this.router.navigateByUrl('/main/new-character').then(() => {
-                try {
-                  this.newCharacterComponent.showNewCharacterForm = true;
-                } catch {
-                  // do nothing.
-                }
-              });
-            } else {
-              // Show warning message.
-              this.confirmationDialog.confirm({
-                message: 'ログインユーザーのみ実行可能です。',
-                acceptLabel: 'ＯＫ',
-                rejectVisible: false,
-                accept: () => {
-                  this.router.navigateByUrl('/main/login');
-                },
-              });
-            }
+            this.onNewCharacterMenuClick();
           },
-          disabled: !this.userAuth.signedIn,
+          // disabled: !this.userAuth.signedIn,
         },
         {
           label: 'キャラクター一覧',
@@ -102,10 +64,6 @@ export class MainComponent /*implements OnInit*/ {
           command: () => {
             this.router.navigateByUrl('/main/legal');
           },
-        },
-        {
-          label: 'ユーザー設定',
-          command: () => {},
         },
         {
           separator: true,
@@ -172,17 +130,45 @@ export class MainComponent /*implements OnInit*/ {
     // if (menuItem) {
     //   menuItem.disabled = !this.userAuth.signedIn;
     // }
-    let menuItemM = this.sideMenuItemsM[0].items.find((item) => item.label && item.label === '新規キャラクター登録');
-    if (menuItemM) {
-      menuItemM.disabled = !this.userAuth.signedIn;
-    }
-    menuItemM = this.sideMenuItemsM[0].items.find((item) => item.label && item.label === 'ログイン');
+    // let menuItemM = this.sideMenuItemsM[0].items.find((item) => item.label && item.label === '新規キャラクター登録');
+    // if (menuItemM) {
+    //   menuItemM.disabled = !this.userAuth.signedIn;
+    // }
+    let menuItemM = this.sideMenuItemsM[0].items.find((item) => item.label && item.label === 'ログイン');
     if (menuItemM) {
       menuItemM.visible = !this.userAuth.signedIn;
     }
     menuItemM = this.sideMenuItemsM[0].items.find((item) => item.label && item.label === 'ログアウト');
     if (menuItemM) {
       menuItemM.visible = this.userAuth.signedIn;
+    }
+  }
+
+  //----------------------------------------------------------------------------
+  // Menu item handler.
+  //
+  private onNewCharacterMenuClick() {
+    if (this.userAuth.signedIn) {
+      this.router.navigateByUrl('/main/new-character').then(() => {
+        try {
+          this.newCharacterComponent.showNewCharacterForm = true;
+        } catch {
+          // do nothing.
+        }
+      });
+    } else {
+      // Show warning message.
+      this.confirmationDialog.confirm({
+        message: 'キャラクターデータの作成にはログインが必要です。',
+        acceptLabel: 'ＯＫ',
+        rejectVisible: false,
+        accept: () => {
+          this.router.navigateByUrl('/main/login');
+        },
+        reject: () => {
+          this.router.navigateByUrl('/main/login');
+        },
+      });
     }
   }
 }
