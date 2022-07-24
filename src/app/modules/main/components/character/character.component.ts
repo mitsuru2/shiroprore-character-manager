@@ -175,19 +175,10 @@ export class CharacterComponent implements OnInit, AfterViewInit {
     this.logger.trace(location, { value: event.checked });
 
     if (event.checked) {
+      // If switch is checked by annonymous user, it shows the confirmation dialog
+      // and reset the switch status.
       if (!this.auth.signedIn) {
-        // Show warning message.
-        this.confirmationDialog.confirm({
-          message: 'キャラクター所持状況を管理するためにはログインが必要です。',
-          acceptLabel: 'ＯＫ',
-          rejectVisible: false,
-          accept: () => {
-            this.hasThisCharacter = false;
-          },
-          reject: () => {
-            this.hasThisCharacter = false;
-          },
-        });
+        this.showConfirmationDialog();
       }
     }
   }
@@ -555,5 +546,22 @@ export class CharacterComponent implements OnInit, AfterViewInit {
     }
 
     return result;
+  }
+
+  //----------------------------------------------------------------------------
+  // Confirmation dialog.
+  //
+  private showConfirmationDialog() {
+    this.confirmationDialog.confirm({
+      message: 'キャラクター所持状況を管理するためにはログインが必要です。',
+      acceptLabel: 'ＯＫ',
+      rejectVisible: false,
+      accept: () => {
+        this.hasThisCharacter = false;
+      },
+      reject: () => {
+        this.hasThisCharacter = false;
+      },
+    });
   }
 }
