@@ -108,12 +108,16 @@ export class CharacterComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
+    const location = `${this.className}.ngOnInit()`;
+
     // Get character ID from URL.
     const tmpId = this.route.snapshot.paramMap.get('id');
     if (tmpId) {
       this.id = tmpId;
     } else {
-      this.errorHandler.notifyError(ErrorCode.NotFound, 'No character ID.');
+      const error = new Error(`${location} No character ID.`);
+      error.name = ErrorCode.Unexpected;
+      this.errorHandler.notifyError(error);
     }
 
     // Sort ability type.
@@ -124,38 +128,38 @@ export class CharacterComponent implements OnInit, AfterViewInit {
     const location = `${this.className}.ngAfterViewInit()`;
     this.logger.trace(location);
 
-    // Load data if data loading is not finished.
-    // Basically, this process is not needed. It's needed when user type URL directly.
-    if (!this.firestore.loaded) {
-      await this.firestore.loadAll();
-    }
-
-    // Get character information by character ID.
     try {
-      this.character = this.firestore.getDataById(FsCollectionName.Characters, this.id) as FsCharacter;
-    } catch {
-      this.errorHandler.notifyError(ErrorCode.NotFound, `Invalid character ID: ${this.id}`);
-    }
-
-    // Make character information table.
-    this.makeCharacterInfoTable();
-
-    // Start loading of character images.
-    for (let i = 0; i < csCharacterImageTypes.length; ++i) {
-      const path = this.storage.makeCharacterImagePath(this.character.index, csCharacterImageTypes[i].type);
-      const data = await this.storage.get(path);
-      if (data) {
-        this.images[i].data = data;
-        this.images[i].url = window.URL.createObjectURL(this.images[i].data);
-        this.images[i].valid = true;
-
-        // Draw 1st image.
-        if (i === 0) {
-          this.updateImage();
-        }
-      } else {
-        this.images[i].valid = false;
+      // Load data if data loading is not finished.
+      // Basically, this process is not needed. It's needed when user type URL directly.
+      if (!this.firestore.loaded) {
+        await this.firestore.loadAll();
       }
+
+      // Get character information by character ID.
+      this.character = this.firestore.getDataById(FsCollectionName.Characters, this.id) as FsCharacter;
+
+      // Make character information table.
+      this.makeCharacterInfoTable();
+
+      // Start loading of character images.
+      for (let i = 0; i < csCharacterImageTypes.length; ++i) {
+        const path = this.storage.makeCharacterImagePath(this.character.index, csCharacterImageTypes[i].type);
+        const data = await this.storage.get(path);
+        if (data) {
+          this.images[i].data = data;
+          this.images[i].url = window.URL.createObjectURL(this.images[i].data);
+          this.images[i].valid = true;
+
+          // Draw 1st image.
+          if (i === 0) {
+            this.updateImage();
+          }
+        } else {
+          this.images[i].valid = false;
+        }
+      }
+    } catch (error) {
+      this.logger.error(location, error);
     }
   }
 

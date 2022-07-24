@@ -26,6 +26,7 @@ import {
 } from '../../views/new-character-form/new-character-form.interface';
 import { csCharacterImageTypes } from 'src/app/services/cloud-storage/cloud-storage.interface';
 import { CloudStorageService } from 'src/app/services/cloud-storage/cloud-storage.service';
+import { ErrorHandlerService } from 'src/app/services/error-handler/error-handler.service';
 
 @Component({
   selector: 'app-new-character',
@@ -81,7 +82,8 @@ export class NewCharacterComponent /*implements OnInit*/ {
   constructor(
     private logger: NGXLogger,
     private firestore: FirestoreDataService,
-    private storage: CloudStorageService
+    private storage: CloudStorageService,
+    private errorHandler: ErrorHandlerService
   ) {
     this.logger.trace(`new ${this.className}()`);
   }
@@ -118,18 +120,23 @@ export class NewCharacterComponent /*implements OnInit*/ {
     this.showNewCharacterForm = true;
     this.showProgressDialog = true;
 
-    // Upload input data.
-    const index = await this.uploadCharacterInfo(this.newCharacterFormContent);
-    if (index.length > 0) {
-      await this.uploadCharacterImages(this.newCharacterFormContent, index);
-      this.logger.info(location, 'Finished.');
-    } else {
-      this.logger.error(location, 'Invalid character index.', { index: index });
+    try {
+      // Upload input data.
+      const index = await this.uploadCharacterInfo(this.newCharacterFormContent);
+      if (index.length > 0) {
+        await this.uploadCharacterImages(this.newCharacterFormContent, index);
+        this.logger.info(location, 'Finished.');
+      } else {
+        this.logger.error(location, 'Invalid character index.', { index: index });
+      }
+
+      // Reload firestore data.
+      await this.reloadFsData();
+    } catch (error) {
+      this.errorHandler.notifyError(error);
     }
 
-    // Reload firestore data.
-    await this.reloadFsData();
-
+    // Hide progress spinner.
     this.showProgressDialog = false;
     this.showNewCharacterForm = false;
   }

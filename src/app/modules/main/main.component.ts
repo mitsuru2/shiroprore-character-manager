@@ -158,8 +158,8 @@ export class MainComponent /*implements OnInit*/ {
           this.logger.debug(location, { docId: docId });
           await this.firestore.load(FsCollectionName.Users, this.userAuth.userId);
         }
-      } catch {
-        this.errorHandler.notifyError(ErrorCode.InternalServerError, 'Loading user data failed.');
+      } catch (error) {
+        this.errorHandler.notifyError(error);
       }
     }
   }

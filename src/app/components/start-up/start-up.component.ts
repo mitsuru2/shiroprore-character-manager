@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { NGXLogger } from 'ngx-logger';
 import { AppInfo } from 'src/app/app-info.enum';
+import { ErrorHandlerService } from 'src/app/services/error-handler/error-handler.service';
 import { FirestoreDataService } from 'src/app/services/firestore-data/firestore-data.service';
 
 @Component({
@@ -10,13 +11,20 @@ import { FirestoreDataService } from 'src/app/services/firestore-data/firestore-
   styleUrls: ['./start-up.component.scss'],
 })
 export class StartUpComponent implements OnInit {
+  readonly className = 'StartUpComponent';
+
+  readonly interval = 200; // ms.
+
   appInfo = AppInfo;
 
   loaded = false;
 
-  readonly className = 'StartUpComponent';
-
-  constructor(private logger: NGXLogger, private router: Router, private firestore: FirestoreDataService) {
+  constructor(
+    private logger: NGXLogger,
+    private errorHandler: ErrorHandlerService,
+    private router: Router,
+    private firestore: FirestoreDataService
+  ) {
     this.logger.trace(`new ${this.className}()`);
   }
 
@@ -24,12 +32,8 @@ export class StartUpComponent implements OnInit {
     const location = `${this.className}.ngOnInit()`;
     this.logger.trace(location);
 
-    const timer = setInterval(() => {
-      if (this.firestore.loaded) {
-        this.loaded = true;
-        clearInterval(timer);
-      }
-    }, 200);
+    // Wait until that the firestore data loading will be finished.
+    this.waitFirestoreDataLoading();
   }
 
   goToMain() {
@@ -37,5 +41,20 @@ export class StartUpComponent implements OnInit {
     this.logger.trace(location);
 
     this.router.navigateByUrl('/main');
+  }
+
+  //============================================================================
+  // Private methods.
+  //
+  //----------------------------------------------------------------------------
+  // Initialization.
+  //
+  private waitFirestoreDataLoading() {
+    const timer = setInterval(() => {
+      if (this.firestore.loaded) {
+        this.loaded = true;
+        clearInterval(timer);
+      }
+    }, this.interval);
   }
 }

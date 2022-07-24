@@ -1,6 +1,7 @@
 <h1 style="margin: 1rem">{{ errorCode }} {{ errorTitle }}</h1>
 <div style="margin: 1rem">
-  <div *ngFor="let message of errorHandler.errorMessages">
-    {{ message }}
-  </div>
+  {{ errorHandler.errorMessage }}
+</div>
+<div style="margin: 1rem">
+  {{ errorHandler.errorStack }}
 </div>

@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 // eslint-disable-next-line import/no-named-as-default
 import { Dexie, Table } from 'dexie';
+import { ErrorCode } from '../error-handler/error-code.enum';
 import { FsCollectionName } from './firestore-collection-name.enum';
 import {
   FsAbility,
@@ -38,6 +39,8 @@ export interface StoredAtTimestampMap {
 
 export class IndexedDbWrapper extends Dexie {
   static readonly dbName = 'shiroprore-character-manager-db';
+
+  static readonly className = 'IndexedDbWrapper';
 
   abilities!: Table<FsAbility, string>;
 
@@ -82,7 +85,9 @@ export class IndexedDbWrapper extends Dexie {
   }
 
   async storeDataCollection(name: string, data: FsDocumentBase[]) {
+    const location = `${IndexedDbWrapper.className}.storeDataCollection()`;
     const timestamp = new Date();
+
     if (name === FsCollectionName.Abilities) {
       await indexedDbWrapper.abilities.bulkPut(data as FsAbility[]);
       await indexedDbWrapper.timeStamps.put({ name: name, timestamp: timestamp });
@@ -113,10 +118,15 @@ export class IndexedDbWrapper extends Dexie {
     } else if (name === FsCollectionName.Weapons) {
       await indexedDbWrapper.weapons.bulkPut(data as FsWeapon[]);
       await indexedDbWrapper.timeStamps.put({ name: name, timestamp: timestamp });
+    } else {
+      const error = new Error(`${location} Unsupported collection name. { name: ${name} }`);
+      error.name = ErrorCode.BadRequest;
+      throw error;
     }
   }
 
   async retrieveDataCollection(name: string): Promise<FsDocumentBase[]> {
+    const location = `${IndexedDbWrapper.className}.retrieveDataCollection()`;
     let result: any[] = [];
 
     if (name === FsCollectionName.Abilities) {
@@ -139,14 +149,23 @@ export class IndexedDbWrapper extends Dexie {
       result = await indexedDbWrapper.voiceActors.toArray();
     } else if (name === FsCollectionName.Weapons) {
       result = await indexedDbWrapper.weapons.toArray();
+    } else {
+      const error = new Error(`${location} Unsupported collection name. { name: ${name} }`);
+      error.name = ErrorCode.BadRequest;
+      throw error;
     }
 
     return result;
   }
 
-  async getTimestamp(name: string): Promise<Date | undefined> {
+  async getTimestamp(name: string): Promise<Date> {
     let record = await indexedDbWrapper.timeStamps.get(name);
-    return record?.timestamp;
+
+    if (record) {
+      return record.timestamp;
+    } else {
+      return new Date('2022-07-13T00:00:00+0900');
+    }
   }
 
   //============================================================================

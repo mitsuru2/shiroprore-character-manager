@@ -78,7 +78,12 @@ export class FirestoreDataService {
   constructor(private logger: NGXLogger, private fs: Firestore, private errorHandler: ErrorHandlerService) {
     this.logger.trace('new FirestoreDataService()');
 
-    this.loadAll();
+    try {
+      this.loadAll();
+    } catch (error) {
+      this.logger.error(location, error);
+      this.errorHandler.notifyError(error);
+    }
   }
 
   /**
@@ -87,28 +92,24 @@ export class FirestoreDataService {
   async loadAll(): Promise<void> {
     const location = `${this.className}.loadAll()`;
 
-    try {
-      await Promise.all([
-        this.load(FsCollectionName.Abilities),
-        this.load(FsCollectionName.AbilityTypes),
-        this.load(FsCollectionName.CharacterTags),
-        this.load(FsCollectionName.CharacterTypes),
-        this.load(FsCollectionName.Characters),
-        this.load(FsCollectionName.Facilities),
-        this.load(FsCollectionName.FacilityTypes),
-        this.load(FsCollectionName.GeographTypes),
-        this.load(FsCollectionName.Illustrators),
-        this.load(FsCollectionName.Regions),
-        this.load(FsCollectionName.SubCharacterTypes),
-        this.load(FsCollectionName.VoiceActors),
-        this.load(FsCollectionName.Weapons),
-        this.load(FsCollectionName.WeaponTypes),
-      ]);
-      this.logger.info(location, 'Firestore data loading finished.');
-      this.loaded = true;
-    } catch {
-      this.logger.error(location, 'Firestore data loading failed.');
-    }
+    await Promise.all([
+      this.load(FsCollectionName.Abilities),
+      this.load(FsCollectionName.AbilityTypes),
+      this.load(FsCollectionName.CharacterTags),
+      this.load(FsCollectionName.CharacterTypes),
+      this.load(FsCollectionName.Characters),
+      this.load(FsCollectionName.Facilities),
+      this.load(FsCollectionName.FacilityTypes),
+      this.load(FsCollectionName.GeographTypes),
+      this.load(FsCollectionName.Illustrators),
+      this.load(FsCollectionName.Regions),
+      this.load(FsCollectionName.SubCharacterTypes),
+      this.load(FsCollectionName.VoiceActors),
+      this.load(FsCollectionName.Weapons),
+      this.load(FsCollectionName.WeaponTypes),
+    ]);
+    this.logger.info(location, 'Firestore data loading finished.');
+    this.loaded = true;
   }
 
   /**
@@ -126,29 +127,11 @@ export class FirestoreDataService {
 
     let result: number = 0;
 
-    try {
-      const collection = this.collections[name as FsCollectionName];
-      result = await collection.load(uid);
-    } catch (error) {
-      this.logger.error(location, error);
-      this.errorHandler.notifyError(ErrorCode.InternalServerError, [
-        'Firestore data loading failed.',
-        `Collection Name: ${name}`,
-      ]);
-    }
+    const collection = this.collections[name as FsCollectionName];
+    result = await collection.load(uid);
 
     return result;
   }
-
-  // startListening(name: FsCollectionName, errorFn?: (e: Error) => void) {
-  //   this.logger.trace(`FirestoreDataService.startListening(${name})`);
-  //   this.collections[name as FsCollectionName].startListening(errorFn);
-  // }
-
-  // stopListening(name: FsCollectionName) {
-  //   this.logger.trace(`FirestoreDataService.startListening(${name})`);
-  //   this.collections[name as FsCollectionName].stopListening();
-  // }
 
   /**
    * It returns data body of target data collection.
@@ -173,10 +156,14 @@ export class FirestoreDataService {
     const location = `${this.className}.getDataById()`;
     this.logger.trace(location, { name: name, id: id });
 
-    const tmp = this.collections[name].data.find((item) => item.id === id);
+    let tmp = this.collections[name].data.find((item) => item.id === id);
     if (!tmp) {
-      throw Error(`${location} No data is found.`);
+      const error = new Error(`No data is found. { name: ${name}, docId: ${id} }`);
+      error.name = ErrorCode.BadRequest;
+      this.logger.error(location, error);
+      throw error;
     }
+
     return tmp;
   }
 
@@ -202,7 +189,7 @@ export class FirestoreDataService {
     value: TField
   ): Promise<string> {
     const location = `${this.className}.pushToListField()`;
-    this.logger.trace(location, { name: name, docId: docId, field: fieldName });
+    this.logger.trace(location, { name: name, docId: docId, field: fieldName, value: value });
 
     const docIdResult = await this.collections[name].pushToListField<TField>(docId, fieldName, value);
     return docIdResult;

@@ -100,23 +100,18 @@ export class FirestoreCollectionDummy<T extends FsDocumentBase> {
     if (name === FsCollectionName.AbilityTypes) {
       this.data = fsAbilityTypesData;
       this.isLoaded = true;
-      console.log(`Dummy data is ready: ${name}`);
     } else if (name === FsCollectionName.FacilityTypes) {
       this.data = fsFacilityTypesData;
       this.isLoaded = true;
-      console.log(`Dummy data is ready: ${name}`);
     } else if (name === FsCollectionName.GeographTypes) {
       this.data = fsGeographTypesData;
       this.isLoaded = true;
-      console.log(`Dummy data is ready: ${name}`);
     } else if (name === FsCollectionName.Regions) {
       this.data = fsRegionsData;
       this.isLoaded = true;
-      console.log(`Dummy data is ready: ${name}`);
     } else if (name === FsCollectionName.WeaponTypes) {
       this.data = fsWeaponTypesData;
       this.isLoaded = true;
-      console.log(`Dummy data is ready: ${name}`);
     }
   }
 

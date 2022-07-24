@@ -8,31 +8,35 @@ import { ErrorCode } from './error-code.enum';
 export class ErrorHandlerService {
   errorTitle = '';
 
-  errorMessages: string[] = [];
+  errorCode = '';
+
+  errorMessage: string = '';
+
+  errorStack?: string;
 
   readonly errorTitleMap = {
     [ErrorCode.BadRequest]: 'Bad Request',
     [ErrorCode.NotFound]: 'Not Found',
     [ErrorCode.MethodNotAllowed]: 'Method Not Allowed',
     [ErrorCode.InternalServerError]: 'Internal Server Error',
+    [ErrorCode.Unexpected]: 'Unexpected Internal Error',
   };
 
   constructor(private router: Router) {}
 
-  notifyError(error: ErrorCode, message: string): void;
-
-  notifyError(error: ErrorCode, messages: string[]): void;
-
-  notifyError(error: ErrorCode, message: string | string[]): void {
+  notifyError(error: any): void {
     // Detail info.
-    if (typeof message === 'string') {
-      this.errorMessages = [message];
-    } else {
-      this.errorMessages = message;
+    this.errorCode = (error as Error).name;
+    this.errorMessage = (error as Error).message;
+    this.errorStack = (error as Error).stack;
+
+    // Overwrite error code when unsupported.
+    if (!Object.keys(this.errorTitleMap).includes(this.errorCode)) {
+      this.errorCode = ErrorCode.Unexpected;
     }
 
     // Go to error.
-    this.router.navigateByUrl(`/error/${error}`);
+    this.router.navigateByUrl(`/error/${this.errorCode}`);
   }
 
   getErrorTitle(error: string): string {

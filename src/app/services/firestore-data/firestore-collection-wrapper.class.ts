@@ -17,8 +17,11 @@ import { Unsubscribe } from '@angular/fire/app-check';
 import { FsDocumentBase } from './firestore-document.interface';
 import { indexedDbWrapper } from './indexed-db-wrapper.class';
 import { sleep } from 'src/app/modules/main/utils/sleep/sleep.utility';
+import { ErrorCode } from '../error-handler/error-code.enum';
 
 export class FirestoreCollectionWrapper<T extends FsDocumentBase> {
+  private readonly className = 'FirestoreCollectionWrapper';
+
   private collection: CollectionReference<T>;
 
   data: FsDocumentBase[];
@@ -52,9 +55,6 @@ export class FirestoreCollectionWrapper<T extends FsDocumentBase> {
   async load(uid = ''): Promise<number> {
     // Get timestamp of local storage.
     let timestamp = await indexedDbWrapper.getTimestamp(this.name);
-    if (!timestamp) {
-      timestamp = new Date('2022-07-13T00:00:00+0900'); // Default time stamp.
-    }
 
     // Clear existing data.
     this.clearData();
@@ -122,6 +122,7 @@ export class FirestoreCollectionWrapper<T extends FsDocumentBase> {
         return;
       });
     } catch (error) {
+      (error as Error).name = ErrorCode.InternalServerError;
       throw error;
     }
 
@@ -208,6 +209,7 @@ export class FirestoreCollectionWrapper<T extends FsDocumentBase> {
   // Load data from server.
   //
   private async loadQuery(q: Query): Promise<any[]> {
+    const location = `${this.className}.loadQuery()`;
     let result: any[] = [];
     let retryCnt = this.retryMax;
 
@@ -224,7 +226,9 @@ export class FirestoreCollectionWrapper<T extends FsDocumentBase> {
 
     // Check data.
     if (!snapshot) {
-      throw Error(`Data loading failed. { name: ${this.name} }`);
+      const error = new Error(`${location} { name: ${this.name}}`);
+      error.name = ErrorCode.InternalServerError;
+      throw error;
     }
 
     // Copy document ID and its data to "this.data" object.
@@ -246,8 +250,8 @@ export class FirestoreCollectionWrapper<T extends FsDocumentBase> {
 
     try {
       snapshot = await getDocs(collectionRef);
-    } catch (e) {
-      console.log(`${this.name} error: ${e}`);
+    } catch {
+      // Hide exception because retry procedure will be run at caller context.
       snapshot = undefined;
     }
 
@@ -279,17 +283,6 @@ export class FirestoreCollectionWrapper<T extends FsDocumentBase> {
       }
     }
   }
-
-  // private async getServerTimestamp(): Promise<Timestamp> {
-  //   let timestamp = Timestamp.fromDate(new Date('2020-01-01T00:00:00'));
-
-  //   // Do transaction.
-  //   await runTransaction(this.fs, async (transaction) => {
-  //     timestamp = serverTimestamp();
-  //   });
-
-  //   return timestamp;
-  // }
 
   //============================================================================
   // Removed class methods.
