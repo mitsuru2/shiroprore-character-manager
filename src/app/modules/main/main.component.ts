@@ -1,6 +1,7 @@
 import { Component, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { NGXLogger } from 'ngx-logger';
+import { ConfirmationService } from 'primeng/api';
 import { AppInfo } from 'src/app/app-info.enum';
 import { NewCharacterComponent } from './components/new-character/new-character.component';
 import { UserAuthService } from './services/user-auth/user-auth.service';
@@ -22,13 +23,27 @@ export class MainComponent /*implements OnInit*/ {
     {
       label: '新規キャラクター登録',
       command: () => {
-        this.router.navigateByUrl('/main/new-character').then(() => {
-          try {
-            this.newCharacterComponent.showNewCharacterForm = true;
-          } catch {
-            // do nothing.
-          }
-        });
+        if (this.userAuth.signedIn) {
+          this.router.navigateByUrl('/main/new-character').then(() => {
+            try {
+              this.newCharacterComponent.showNewCharacterForm = true;
+            } catch {
+              // do nothing.
+            }
+          });
+        } else {
+          this.confirmationDialog.confirm({
+            message: 'キャラクターデータの作成にはログインが必要です。',
+            acceptLabel: 'ＯＫ',
+            rejectVisible: false,
+            accept: () => {
+              this.router.navigateByUrl('/main/login');
+            },
+            reject: () => {
+              this.router.navigateByUrl('/main/login');
+            },
+          });
+        }
       },
       // disabled: !this.userAuth.signedIn,
     },
@@ -54,13 +69,25 @@ export class MainComponent /*implements OnInit*/ {
         {
           label: '新規キャラクター登録',
           command: () => {
-            this.router.navigateByUrl('/main/new-character').then(() => {
-              try {
-                this.newCharacterComponent.showNewCharacterForm = true;
-              } catch {
-                // do nothing.
-              }
-            });
+            if (this.userAuth.signedIn) {
+              this.router.navigateByUrl('/main/new-character').then(() => {
+                try {
+                  this.newCharacterComponent.showNewCharacterForm = true;
+                } catch {
+                  // do nothing.
+                }
+              });
+            } else {
+              // Show warning message.
+              this.confirmationDialog.confirm({
+                message: 'ログインユーザーのみ実行可能です。',
+                acceptLabel: 'ＯＫ',
+                rejectVisible: false,
+                accept: () => {
+                  this.router.navigateByUrl('/main/login');
+                },
+              });
+            }
           },
           disabled: !this.userAuth.signedIn,
         },
@@ -104,7 +131,12 @@ export class MainComponent /*implements OnInit*/ {
   //============================================================================
   // Class methods.
   //
-  constructor(private logger: NGXLogger, private router: Router, public userAuth: UserAuthService) {
+  constructor(
+    private logger: NGXLogger,
+    private router: Router,
+    public userAuth: UserAuthService,
+    private confirmationDialog: ConfirmationService
+  ) {
     this.logger.trace(`new ${this.className}()`);
 
     this.userAuth.addEventListener('signIn', this.onUserAuthChanged.bind(this));

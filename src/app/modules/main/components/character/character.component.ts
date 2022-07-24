@@ -180,6 +180,9 @@ export class CharacterComponent implements OnInit, AfterViewInit {
           accept: () => {
             this.hasThisCharacter = false;
           },
+          reject: () => {
+            this.hasThisCharacter = false;
+          },
         });
       }
     }
