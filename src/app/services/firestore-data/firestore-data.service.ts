@@ -23,6 +23,7 @@ import {
   FsWeapon,
   FsWeaponType,
   FsDocumentBase,
+  FsUser,
 } from './firestore-document.interface';
 import { FirestoreCollectionWrapper } from './firestore-collection-wrapper.class';
 import { FirestoreCollectionDummy } from './firestore-collection-dummy.class';
@@ -62,6 +63,7 @@ export class FirestoreDataService {
     [FsCollectionName.Illustrators]:      new FirestoreCollectionWrapper<FsIllustrator>      (this.fs, FsCollectionName.Illustrators), // eslint-disable-line
     [FsCollectionName.Regions]:           new FirestoreCollectionDummy<FsRegion>             (         FsCollectionName.Regions), // eslint-disable-line
     [FsCollectionName.SubCharacterTypes]: new FirestoreCollectionWrapper<FsSubCharacterType> (this.fs, FsCollectionName.SubCharacterTypes), // eslint-disable-line
+    [FsCollectionName.Users]:             new FirestoreCollectionWrapper<FsUser>             (this.fs, FsCollectionName.Users), // eslint-disable-line
     [FsCollectionName.VoiceActors]:       new FirestoreCollectionWrapper<FsVoiceActor>       (this.fs, FsCollectionName.VoiceActors), // eslint-disable-line
     [FsCollectionName.WeaponTypes]:       new FirestoreCollectionDummy<FsWeaponType>         (         FsCollectionName.WeaponTypes), // eslint-disable-line
     [FsCollectionName.Weapons]:           new FirestoreCollectionWrapper<FsWeapon>           (this.fs, FsCollectionName.Weapons), // eslint-disable-line
@@ -114,15 +116,19 @@ export class FirestoreDataService {
    * @param name Firestore collection name.
    * @returns Promise<number>. Return true if it succeeded.
    */
-  async load(name: FsCollectionName): Promise<number> {
+  async load(name: FsCollectionName, uid = ''): Promise<number> {
     const location = `${this.className}.load()`;
-    this.logger.trace(location, { name: name });
+    if (uid === '') {
+      this.logger.trace(location, { name: name });
+    } else {
+      this.logger.trace(location, { name: name, uid: uid });
+    }
 
     let result: number = 0;
 
     try {
       const collection = this.collections[name as FsCollectionName];
-      result = await collection.load();
+      result = await collection.load(uid);
     } catch (error) {
       this.logger.error(location, error);
       this.errorHandler.notifyError(ErrorCode.InternalServerError, [
@@ -183,7 +189,7 @@ export class FirestoreDataService {
    */
   async addData(name: FsCollectionName, data: any): Promise<string> {
     const location = `${this.className}.addData()`;
-    this.logger.trace(location, { name: name, data: data.name });
+    this.logger.trace(location, { name: name, data: data });
 
     const docId = await this.collections[name].add(data);
     return docId;

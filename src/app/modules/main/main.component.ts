@@ -3,6 +3,11 @@ import { Router } from '@angular/router';
 import { NGXLogger } from 'ngx-logger';
 import { ConfirmationService } from 'primeng/api';
 import { AppInfo } from 'src/app/app-info.enum';
+import { ErrorCode } from 'src/app/services/error-handler/error-code.enum';
+import { ErrorHandlerService } from 'src/app/services/error-handler/error-handler.service';
+import { FsCollectionName } from 'src/app/services/firestore-data/firestore-collection-name.enum';
+import { FirestoreDataService } from 'src/app/services/firestore-data/firestore-data.service';
+import { FsUser } from 'src/app/services/firestore-data/firestore-document.interface';
 import { NewCharacterComponent } from './components/new-character/new-character.component';
 import { UserAuthService } from './services/user-auth/user-auth.service';
 
@@ -93,7 +98,9 @@ export class MainComponent /*implements OnInit*/ {
     private logger: NGXLogger,
     private router: Router,
     public userAuth: UserAuthService,
-    private confirmationDialog: ConfirmationService
+    private confirmationDialog: ConfirmationService,
+    private firestore: FirestoreDataService,
+    private errorHandler: ErrorHandlerService
   ) {
     this.logger.trace(`new ${this.className}()`);
 
@@ -122,8 +129,8 @@ export class MainComponent /*implements OnInit*/ {
   //----------------------------------------------------------------------------
   // User sign in/out event listners.
   //
-  private onUserAuthChanged() {
-    const location = `${this.className}.onUserSignedIn()`;
+  private async onUserAuthChanged() {
+    const location = `${this.className}.onUserAuthChanged()`;
     this.logger.trace(location, { signedIn: this.userAuth.signedIn });
 
     // let menuItem = this.sideMenuItems.find((item) => item.label && item.label === '新規キャラクター登録');
@@ -141,6 +148,19 @@ export class MainComponent /*implements OnInit*/ {
     menuItemM = this.sideMenuItemsM[0].items.find((item) => item.label && item.label === 'ログアウト');
     if (menuItemM) {
       menuItemM.visible = this.userAuth.signedIn;
+    }
+
+    if (this.userAuth.signedIn) {
+      try {
+        const length = await this.firestore.load(FsCollectionName.Users, this.userAuth.userId);
+        if (length === 0) {
+          const docId = await this.firestore.addData(FsCollectionName.Users, new FsUser('', this.userAuth.userId));
+          this.logger.debug(location, { docId: docId });
+          await this.firestore.load(FsCollectionName.Users, this.userAuth.userId);
+        }
+      } catch {
+        this.errorHandler.notifyError(ErrorCode.InternalServerError, 'Loading user data failed.');
+      }
     }
   }
 

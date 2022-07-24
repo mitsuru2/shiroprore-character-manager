@@ -45,10 +45,11 @@ export class FirestoreCollectionWrapper<T extends FsDocumentBase> {
 
   /**
    * It loads data from server once. (not subscribing.)
-   * Offline cache will NOT used.
+   * IndexedDB is used as cache.
+   * @uid User ID.
    * @returns Promise<number>. Data length.
    */
-  async load(): Promise<number> {
+  async load(uid = ''): Promise<number> {
     // Get timestamp of local storage.
     let timestamp = await indexedDbWrapper.getTimestamp(this.name);
     if (!timestamp) {
@@ -64,7 +65,10 @@ export class FirestoreCollectionWrapper<T extends FsDocumentBase> {
     this.mergeData(localData);
 
     // Make query for firestore db.
-    const q = query(this.collection, where('updatedAt', '>', timestamp));
+    let q = query(this.collection, where('updatedAt', '>', timestamp));
+    if (uid !== '') {
+      q = query(this.collection, where('updatedAt', '>', timestamp), where('name', '==', uid));
+    }
 
     // Load data from firestore db.
     const remoteData = await this.loadQuery(q);

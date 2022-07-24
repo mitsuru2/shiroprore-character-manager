@@ -11,6 +11,7 @@ import {
   FsFacility,
   FsIllustrator,
   FsSubCharacterType,
+  FsUser,
   FsVoiceActor,
   FsWeapon,
 } from './firestore-document.interface';
@@ -52,6 +53,8 @@ export class IndexedDbWrapper extends Dexie {
 
   subCharacterTypes!: Table<FsSubCharacterType, string>;
 
+  users!: Table<FsUser, string>;
+
   voiceActors!: Table<FsVoiceActor, string>;
 
   weapons!: Table<FsWeapon, string>;
@@ -63,7 +66,7 @@ export class IndexedDbWrapper extends Dexie {
   //
   constructor() {
     super(IndexedDbWrapper.dbName);
-    this.version(1).stores({
+    this.version(2).stores({
       abilities: 'id',
       characterTags: 'id',
       characterTypes: 'id',
@@ -71,6 +74,7 @@ export class IndexedDbWrapper extends Dexie {
       facilities: 'id',
       illustrators: 'id',
       subCharacterTypes: 'id',
+      users: 'id',
       voiceActors: 'id',
       weapons: 'id',
       timeStamps: 'name',
@@ -100,6 +104,9 @@ export class IndexedDbWrapper extends Dexie {
     } else if (name === FsCollectionName.SubCharacterTypes) {
       await indexedDbWrapper.subCharacterTypes.bulkPut(data as FsSubCharacterType[]);
       await indexedDbWrapper.timeStamps.put({ name: name, timestamp: timestamp });
+    } else if (name === FsCollectionName.Users) {
+      await indexedDbWrapper.users.bulkPut(data as FsUser[]);
+      await indexedDbWrapper.timeStamps.put({ name: name, timestamp: timestamp });
     } else if (name === FsCollectionName.VoiceActors) {
       await indexedDbWrapper.voiceActors.bulkPut(data as FsVoiceActor[]);
       await indexedDbWrapper.timeStamps.put({ name: name, timestamp: timestamp });
@@ -126,6 +133,8 @@ export class IndexedDbWrapper extends Dexie {
       result = await indexedDbWrapper.illustrators.toArray();
     } else if (name === FsCollectionName.SubCharacterTypes) {
       result = await indexedDbWrapper.subCharacterTypes.toArray();
+    } else if (name === FsCollectionName.Users) {
+      result = await indexedDbWrapper.users.toArray();
     } else if (name === FsCollectionName.VoiceActors) {
       result = await indexedDbWrapper.voiceActors.toArray();
     } else if (name === FsCollectionName.Weapons) {

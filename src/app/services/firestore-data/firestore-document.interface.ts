@@ -145,6 +145,18 @@ export class FsIllustrator extends FsDocumentBase {}
 
 export class FsRegion extends FsDocumentBaseWithOrder {}
 
+export class FsUser extends FsDocumentBase {
+  characters: string[] = [];
+
+  facilities: string[] = [];
+
+  weapons: string[] = [];
+
+  constructor(id = '', name = '') {
+    super(id, name);
+  }
+}
+
 export class FsVoiceActor extends FsDocumentBase {}
 
 export class FsWeaponType extends FsDocumentBaseWithCode {
