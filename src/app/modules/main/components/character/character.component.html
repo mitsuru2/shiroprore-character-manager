@@ -45,3 +45,19 @@
 <!-- Confirmation Dialog -->
 <!---->
 <!--<p-confirmDialog header="Confirmation" icon="pi pi-exclamation-triangle" [position]="'top'"></p-confirmDialog>-->
+
+<!----------------------------------------------------------------------------->
+<!-- Progress spinner dialog -------------------------------------------------->
+<!----------------------------------------------------------------------------->
+<p-dialog
+  [(visible)]="showProgressDialog"
+  [modal]="true"
+  [draggable]="false"
+  [resizable]="false"
+  [closable]="false"
+  [showHeader]="false"
+  [contentStyle]="{ 'background-color': 'transparent' }"
+  styleClass="progress-dialog"
+>
+  <p-progressSpinner></p-progressSpinner>
+</p-dialog>

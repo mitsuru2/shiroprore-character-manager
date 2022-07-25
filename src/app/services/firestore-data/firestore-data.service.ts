@@ -182,16 +182,11 @@ export class FirestoreDataService {
     return docId;
   }
 
-  async pushToListField<TField>(
-    name: FsCollectionName,
-    docId: string,
-    fieldName: string,
-    value: TField
-  ): Promise<string> {
-    const location = `${this.className}.pushToListField()`;
+  async updateField(name: FsCollectionName, docId: string, fieldName: string, value: any): Promise<string> {
+    const location = `${this.className}.updateField()`;
     this.logger.trace(location, { name: name, docId: docId, field: fieldName, value: value });
 
-    const docIdResult = await this.collections[name].pushToListField<TField>(docId, fieldName, value);
+    const docIdResult = await this.collections[name].updateField(docId, fieldName, value);
     return docIdResult;
   }
 

@@ -142,7 +142,7 @@ export class FirestoreCollectionDummy<T extends FsDocumentBase> {
    * @param value Data to be pushed to the target list field.
    * @returns Document ID.
    */
-  async pushToListField<TField>(docId: string, fieldName: string, value: TField): Promise<string> {
+  async updateField(docId: string, fieldName: string, value: any): Promise<string> {
     return docId;
   }
 

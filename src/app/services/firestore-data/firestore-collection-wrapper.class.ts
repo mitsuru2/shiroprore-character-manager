@@ -130,34 +130,32 @@ export class FirestoreCollectionWrapper<T extends FsDocumentBase> {
   }
 
   /**
-   * It update target data document.
-   * It push input data to the specified field which is list type.
+   * It updates field value specified by document ID and field name.
    * @param docId Document ID.
-   * @param fieldName Target field name.
-   * @param value Data to be pushed to the target list field.
+   * @param fieldName Field name of target document.
+   * @param value Field value.
    * @returns Document ID.
    */
-  async pushToListField<TField>(docId: string, fieldName: string, value: TField): Promise<string> {
-    // Get document reference.
-    const docRef = doc(this.fs, `${this.name}/${docId}`);
+  async updateField(docId: string, fieldName: string, value: any): Promise<string> {
+    const location = `${this.className}.updateField()`;
 
-    // Do transaction.
+    // Get document reference.
+    const path = `${this.name}/${docId}`;
+    const docRef = doc(this.fs, path);
+
+    // Run transaction.
     await runTransaction(this.fs, async (transaction) => {
       // Get target document.
       // Throw error if the target document is not existing.
       const docBody = await transaction.get(docRef);
       if (!docBody.exists()) {
-        throw Error(
-          `FirestoreDataService.incrementCounter() | Document was not found. { path: ${this.name}/${docId} }`
-        );
+        const error = new Error(`${location} Document was not found. { path: ${path} }`);
+        error.name = ErrorCode.BadRequest;
+        throw error;
       }
 
       // Update specified field.
-      const docData = docBody.data() as any;
-      if (Object.keys(docData).includes(fieldName)) {
-        docData[fieldName].push(value);
-      }
-      transaction.update(docRef, { [fieldName]: docData[fieldName] });
+      transaction.update(docRef, { [fieldName]: value });
       transaction.update(docRef, { updatedAt: serverTimestamp() });
     });
 

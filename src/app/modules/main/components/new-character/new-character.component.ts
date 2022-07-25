@@ -241,11 +241,12 @@ export class NewCharacterComponent /*implements OnInit*/ {
         for (let j = 0; j < character.tags.length; ++j) {
           if (this.characterTags[i].id === character.tags[j]) {
             // Add character ID to the tag info.
-            await this.firestore.pushToListField<string>(
+            this.characterTags[i].characters.push(characterId);
+            await this.firestore.updateField(
               FsCollectionName.CharacterTags,
               this.characterTags[i].id,
               'characters',
-              characterId
+              this.characterTags[i].characters
             );
           }
         }

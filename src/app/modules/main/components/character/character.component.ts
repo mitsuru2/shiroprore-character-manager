@@ -25,6 +25,7 @@ import {
   FsWeaponType,
 } from 'src/app/services/firestore-data/firestore-document.interface';
 import { UserAuthService } from '../../services/user-auth/user-auth.service';
+import { sleep } from '../../utils/sleep/sleep.utility';
 
 class CharacterImage {
   url = '';
@@ -89,6 +90,9 @@ export class CharacterComponent implements OnInit, AfterViewInit {
 
   /** Switch: own the character */
   hasThisCharacter: boolean = false;
+
+  /** Progress spineer. */
+  showProgressDialog = false;
 
   //============================================================================
   // Class methods.
@@ -178,7 +182,7 @@ export class CharacterComponent implements OnInit, AfterViewInit {
     this.updateImage();
   }
 
-  onHasSwitchChange(event: any) {
+  async onHasSwitchChange(event: any) {
     const location = `${this.className}.onCharacterHasSwitchChange()`;
     this.logger.trace(location, { value: event.checked });
 
@@ -187,11 +191,24 @@ export class CharacterComponent implements OnInit, AfterViewInit {
       this.users = this.firestore.getData(FsCollectionName.Users) as FsUser[];
     }
 
+    // CASE: Switch is checked.
     if (event.checked) {
+      // If switch is checked by login user, update user information.
+      if (this.userAuth.signedIn) {
+        this.addToUserCharacterList(this.character.id);
+      }
+
       // If switch is checked by annonymous user, it shows the confirmation dialog
       // and reset the switch status.
-      if (!this.userAuth.signedIn) {
+      else {
         this.showConfirmationDialog();
+      }
+    }
+
+    // CASE: Switch is unchecked.
+    else {
+      if (this.userAuth.signedIn) {
+        this.removeFromUserCharacterList(this.character.id);
       }
     }
   }
@@ -610,5 +627,29 @@ export class CharacterComponent implements OnInit, AfterViewInit {
 
     // Set TRUE, if the user has this character.
     this.hasThisCharacter = this.users[0].characters.includes(this.character.id);
+  }
+
+  private async addToUserCharacterList(id: string): Promise<void> {
+    const location = `${this.className}.addToUserCharacterList`;
+    this.logger.trace(location, { id: id });
+
+    this.showProgressDialog = true;
+    this.users[0].characters.push(id);
+    this.logger.debug(location, { characters: this.users[0].characters });
+    await this.firestore.updateField(FsCollectionName.Users, this.users[0].id, 'characters', this.users[0].characters);
+    await sleep(1000);
+    this.showProgressDialog = false;
+  }
+
+  private async removeFromUserCharacterList(id: string): Promise<void> {
+    const location = `${this.className}.removeFromUserCharacterList`;
+    this.logger.trace(location, { id: id });
+
+    this.showProgressDialog = true;
+    this.users[0].characters = this.users[0].characters.filter((item) => item !== id);
+    this.logger.debug(location, { characters: this.users[0].characters });
+    await this.firestore.updateField(FsCollectionName.Users, this.users[0].id, 'characters', this.users[0].characters);
+    await sleep(1000);
+    this.showProgressDialog = false;
   }
 }
