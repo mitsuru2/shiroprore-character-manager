@@ -19,6 +19,7 @@ import {
   FsGeographType,
   FsIllustrator,
   FsRegion,
+  FsUser,
   FsVoiceActor,
   FsWeapon,
   FsWeaponType,
@@ -66,6 +67,8 @@ export class CharacterComponent implements OnInit, AfterViewInit {
 
   private regions = this.firestore.getData(FsCollectionName.Regions) as FsRegion[];
 
+  private users = this.firestore.getData(FsCollectionName.Users) as FsUser[];
+
   private voiceActors = this.firestore.getData(FsCollectionName.VoiceActors) as FsVoiceActor[];
 
   private weaponTypes = this.firestore.getData(FsCollectionName.WeaponTypes) as FsWeaponType[];
@@ -95,12 +98,13 @@ export class CharacterComponent implements OnInit, AfterViewInit {
     private firestore: FirestoreDataService,
     private storage: CloudStorageService,
     private route: ActivatedRoute,
-    private auth: UserAuthService,
+    private userAuth: UserAuthService,
     private errorHandler: ErrorHandlerService,
     private confirmationDialog: ConfirmationService
   ) {
     this.logger.trace(`new ${this.className}()`);
 
+    // Initialize image array (dummy).
     this.images = [];
     for (let i = 0; i < CsCharacterImageTypeMax; ++i) {
       this.images.push(new CharacterImage());
@@ -122,6 +126,10 @@ export class CharacterComponent implements OnInit, AfterViewInit {
 
     // Sort ability type.
     this.firestore.sortByOrder(this.abilityTypes);
+
+    // Get user info.
+    this.userAuth.addEventListener('signIn', this.onUserSignedIn.bind(this));
+    this.userAuth.addEventListener('signOut', this.onUserSignedOut.bind(this));
   }
 
   async ngAfterViewInit(): Promise<void> {
@@ -174,10 +182,15 @@ export class CharacterComponent implements OnInit, AfterViewInit {
     const location = `${this.className}.onCharacterHasSwitchChange()`;
     this.logger.trace(location, { value: event.checked });
 
+    // If user data is empty, try to get user data again.
+    if (this.userAuth.signedIn && this.users.length === 0) {
+      this.users = this.firestore.getData(FsCollectionName.Users) as FsUser[];
+    }
+
     if (event.checked) {
       // If switch is checked by annonymous user, it shows the confirmation dialog
       // and reset the switch status.
-      if (!this.auth.signedIn) {
+      if (!this.userAuth.signedIn) {
         this.showConfirmationDialog();
       }
     }
@@ -563,5 +576,39 @@ export class CharacterComponent implements OnInit, AfterViewInit {
         this.hasThisCharacter = false;
       },
     });
+  }
+
+  //----------------------------------------------------------------------------
+  // User character information.
+  //
+  private async onUserSignedIn() {
+    const location = `${this.className}.onUserSignedIn()`;
+    this.logger.trace(location);
+
+    await this.firestore.load(FsCollectionName.Users, this.userAuth.userId);
+    this.users = this.firestore.getData(FsCollectionName.Users) as FsUser[];
+    this.updateHasCharacterSwitch();
+  }
+
+  private async onUserSignedOut() {
+    const location = `${this.className}.onUserSignedOut()`;
+    this.logger.trace(location);
+
+    this.users = [];
+    this.updateHasCharacterSwitch();
+  }
+
+  private updateHasCharacterSwitch() {
+    const location = `${this.className}.updateHasCharacterSwitch()`;
+    this.logger.trace(location);
+
+    // User information is empty, it always false.
+    if (this.users.length === 0) {
+      this.hasThisCharacter = false;
+      return;
+    }
+
+    // Set TRUE, if the user has this character.
+    this.hasThisCharacter = this.users[0].characters.includes(this.character.id);
   }
 }

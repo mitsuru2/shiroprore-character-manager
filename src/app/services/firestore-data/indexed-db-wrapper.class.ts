@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 // eslint-disable-next-line import/no-named-as-default
 import { Dexie, Table } from 'dexie';
+import { sleep } from 'src/app/modules/main/utils/sleep/sleep.utility';
 import { ErrorCode } from '../error-handler/error-code.enum';
 import { FsCollectionName } from './firestore-collection-name.enum';
 import {
@@ -110,8 +111,9 @@ export class IndexedDbWrapper extends Dexie {
       await indexedDbWrapper.subCharacterTypes.bulkPut(data as FsSubCharacterType[]);
       await indexedDbWrapper.timeStamps.put({ name: name, timestamp: timestamp });
     } else if (name === FsCollectionName.Users) {
-      await indexedDbWrapper.users.bulkPut(data as FsUser[]);
-      await indexedDbWrapper.timeStamps.put({ name: name, timestamp: timestamp });
+      // Do nothing.
+      // await indexedDbWrapper.users.bulkPut(data as FsUser[]);
+      // await indexedDbWrapper.timeStamps.put({ name: name, timestamp: timestamp });
     } else if (name === FsCollectionName.VoiceActors) {
       await indexedDbWrapper.voiceActors.bulkPut(data as FsVoiceActor[]);
       await indexedDbWrapper.timeStamps.put({ name: name, timestamp: timestamp });

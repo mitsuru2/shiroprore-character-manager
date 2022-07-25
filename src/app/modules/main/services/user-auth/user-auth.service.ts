@@ -2,9 +2,13 @@ import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { NGXLogger } from 'ngx-logger';
 
+type UserAuthCallbackFunctionType = () => Promise<void>;
+
 @Injectable()
 export class UserAuthService {
   readonly className = 'UserAuthService';
+
+  initialized = false;
 
   signedIn = false;
 
@@ -12,7 +16,7 @@ export class UserAuthService {
 
   userName = '';
 
-  private eventListeners: { event: string; cbFn: () => void }[] = [];
+  private eventListeners: { event: string; cbFn: () => Promise<void> }[] = [];
 
   //============================================================================
   // Class methods.
@@ -48,16 +52,18 @@ export class UserAuthService {
     }
   }
 
-  addEventListener(event: 'signIn' | 'signOut', cbFn: () => void) {
+  async addEventListener(event: 'signIn' | 'signOut', cbFn: () => Promise<void>) {
     const location = `${this.className}.addEventListener()`;
     this.logger.trace(location, { event: event, cbFn: cbFn });
 
     this.eventListeners.push({ event: event, cbFn: cbFn });
 
-    if (event === 'signIn' && this.signedIn) {
-      cbFn();
-    } else if (event === 'signOut' && !this.signedIn) {
-      cbFn();
+    if (this.initialized) {
+      if (event === 'signIn' && this.signedIn) {
+        await cbFn();
+      } else if (event === 'signOut' && !this.signedIn) {
+        await cbFn();
+      }
     }
   }
 
@@ -79,8 +85,9 @@ export class UserAuthService {
   private async checkAuth() {
     const location = `${this.className}.checkAuthInfo()`;
 
-    const subscription = this.afAuth.authState.subscribe((user) => {
+    const subscription = this.afAuth.authState.subscribe(async (user) => {
       if (user) {
+        this.initialized = true;
         this.userId = user.uid;
         this.userName = user.displayName ? user.displayName : '';
         this.signedIn = true;
@@ -90,7 +97,7 @@ export class UserAuthService {
         // Run callback functions.
         for (let i = 0; i < this.eventListeners.length; ++i) {
           if (this.eventListeners[i].event === 'signIn') {
-            this.eventListeners[i].cbFn();
+            await this.eventListeners[i].cbFn();
           }
         }
       }

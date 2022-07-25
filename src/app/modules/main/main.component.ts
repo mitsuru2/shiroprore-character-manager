@@ -154,6 +154,7 @@ export class MainComponent /*implements OnInit*/ {
       try {
         const length = await this.firestore.load(FsCollectionName.Users, this.userAuth.userId);
         if (length === 0) {
+          this.logger.warn(location, `Make new user: ${this.userAuth.userId}`);
           const docId = await this.firestore.addData(FsCollectionName.Users, new FsUser('', this.userAuth.userId));
           this.logger.debug(location, { docId: docId });
           await this.firestore.load(FsCollectionName.Users, this.userAuth.userId);
