@@ -24,6 +24,10 @@ import {
 import { NavigatorService } from '../../services/navigator/navigator.service';
 import { sleep } from '../../utils/sleep/sleep.utility';
 import { isMobileMode } from '../../utils/window-size/window-size.util';
+import {
+  CharacterFilterSettings,
+  CharacterOwnershipStatusType,
+} from '../../views/character-filter-settings-form/character-filter-settings-form.interface';
 
 export class ThumbImageWrapper {
   url: string = '';
@@ -121,6 +125,11 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
   /** Data view: footer. */
   paginator = new Paginator();
 
+  /** Filter dialog */
+  showFilterDialog: boolean = false;
+
+  filterSettings = new CharacterFilterSettings();
+
   //============================================================================
   // Class methods.
   //
@@ -217,6 +226,11 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     const iFilter = this.paginator.first + i;
     const id = this.characters[this.filteredIndexes[iFilter]].id;
     this.router.navigateByUrl(`main/character/${id}`);
+  }
+
+  onFilterButtonClick() {
+    this.filterSettings = new CharacterFilterSettings();
+    this.showFilterDialog = true;
   }
 
   //============================================================================

@@ -5,7 +5,7 @@
   <div class="header">
     <!-- Filter button -->
     <div class="header-left-div">
-      <button pButton type="button" icon="pi pi-filter"></button>
+      <button pButton type="button" icon="pi pi-filter" (click)="onFilterButtonClick()"></button>
     </div>
 
     <!-- Text search input. -->
@@ -60,3 +60,10 @@
     ></p-paginator>
   </div>
 </div>
+
+<!----------------------------------------------------------------------------->
+<!-- Filter setting dialog ---------------------------------------------------->
+<!----------------------------------------------------------------------------->
+<p-dialog header="フィルタ設定" [(visible)]="showFilterDialog" [modal]="true" [draggable]="false" [resizable]="false">
+  <app-character-filter-settings-form [(filterSettings)]="filterSettings"></app-character-filter-settings-form>
+</p-dialog>

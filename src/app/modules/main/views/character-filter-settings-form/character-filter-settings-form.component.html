@@ -1,0 +1,18 @@
+<form>
+  <div class="formgrid grid">
+    <div class="field col">
+      <label>所持状況</label>
+      <div class="formgroup-inline">
+        <div *ngFor="let item of ownershipStatusTypeItems" class="field-checkbox">
+          <p-radioButton
+            [inputId]="'CharacterFilterSettingsForm_OwnershipStatusInput_' + item.value"
+            name="CharacterFilterSettingsForm_OwnershipStatusInput"
+            [value]="item.value"
+            [(ngModel)]="filterSettings.ownershipStatusType"
+          ></p-radioButton>
+          <label [for]="'CharacterFilterSettingsForm_OwnershipStatusInput_' + item.value">{{ item.label }}</label>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
