@@ -64,6 +64,6 @@
 <!----------------------------------------------------------------------------->
 <!-- Filter setting dialog ---------------------------------------------------->
 <!----------------------------------------------------------------------------->
-<p-dialog header="フィルタ設定" [(visible)]="showFilterDialog" [modal]="true" [draggable]="false" [resizable]="false">
-  <app-character-filter-settings-form [(filterSettings)]="filterSettings"></app-character-filter-settings-form>
+<p-dialog header="フィルタ設定" [(visible)]="showFilterDialog" [modal]="true" [draggable]="false" [resizable]="false" styleClass="dialog">
+  <app-character-filter-settings-form [(filterSettings)]="filterSettings" buttonStyleClass="p-button-text"></app-character-filter-settings-form>
 </p-dialog>

@@ -19,5 +19,5 @@ export class CharacterFilterSettings {
 
   geographTypes: string[] = [];
 
-  regins: string[] = [];
+  regions: string[] = [];
 }

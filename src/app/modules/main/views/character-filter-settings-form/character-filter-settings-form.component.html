@@ -15,4 +15,82 @@
       </div>
     </div>
   </div>
+  <div class="formgrid grid">
+    <div class="field col">
+      <label>レアリティ</label>
+      <div class="formgroup-inline">
+        <div *ngFor="let item of rarerityItems" class="field-checkbox">
+          <p-checkbox
+            [inputId]="'CharacterFilterSettingsForm_RarerityInput_' + item"
+            name="CharacterFilterSettingsForm_RarerityInput"
+            [value]="item"
+            [(ngModel)]="filterSettings.rarerities"
+          ></p-checkbox>
+          <label [for]="'CharacterFilterSettingsForm_RarerityInput_' + item">★{{ item }}</label>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="formgrid grid">
+    <div class="field col">
+      <label>武器タイプ</label>
+      <div class="formgroup-inline">
+        <div *ngFor="let item of weaponTypeItems" class="field-checkbox">
+          <p-checkbox
+            [inputId]="'CharacterFilterSettingsForm_WeaponTypeInput_' + item.name"
+            name="CharacterFilterSettingsForm_WeaponTypeInput"
+            [value]="item.id"
+            [(ngModel)]="filterSettings.weaponTypes"
+          ></p-checkbox>
+          <label [for]="'CharacterFilterSettingsForm_WeaponTypeInput_' + item.name">{{ item.name }}</label>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="formgrid grid">
+    <div class="field col">
+      <label>地形タイプ</label>
+      <div class="formgroup-inline">
+        <div *ngFor="let item of geographTypeItems" class="field-checkbox">
+          <p-checkbox
+            [inputId]="'CharacterFilterSettingsForm_GeographTypeInput_' + item.name"
+            name="CharacterFilterSettingsForm_GeographTypeInput"
+            [value]="item.id"
+            [(ngModel)]="filterSettings.geographTypes"
+          ></p-checkbox>
+          <label [for]="'CharacterFilterSettingsForm_GeographTypeInput_' + item.name">{{ item.name }}</label>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="formgrid grid">
+    <div class="field col">
+      <label>地域</label>
+      <div class="formgroup-inline">
+        <div *ngFor="let item of regionItems" class="field-checkbox">
+          <p-checkbox
+            [inputId]="'CharacterFilterSettingsForm_RegionInput_' + item.name"
+            name="CharacterFilterSettingsForm_RegionInput"
+            [value]="item.id"
+            [(ngModel)]="filterSettings.regions"
+          ></p-checkbox>
+          <label [for]="'CharacterFilterSettingsForm_RegionInput_' + item.name">{{ item.name }}</label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!--------------------------------------------------------------------------->
+  <!-- Footer ----------------------------------------------------------------->
+  <!--------------------------------------------------------------------------->
+  <div style="margin-top: 1rem">
+    <p-button label="ＯＫ" icon="pi pi-check" (onClick)="onOkClick()" [styleClass]="buttonStyleClass"></p-button>
+    <p-button
+      label="キャンセル"
+      icon="pi pi-times"
+      [style]="{ 'margin-left': '.5rem' }"
+      (onClick)="onCancelClick()"
+      [styleClass]="'p-button-secondary ' + buttonStyleClass"
+    ></p-button>
+  </div>
 </form>
