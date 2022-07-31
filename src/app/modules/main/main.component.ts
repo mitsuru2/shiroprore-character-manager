@@ -30,7 +30,6 @@ export class MainComponent /*implements OnInit*/ {
       command: () => {
         this.onNewCharacterMenuClick();
       },
-      // disabled: !this.userAuth.signedIn,
     },
     {
       label: 'キャラクター一覧',
@@ -56,7 +55,6 @@ export class MainComponent /*implements OnInit*/ {
           command: () => {
             this.onNewCharacterMenuClick();
           },
-          // disabled: !this.userAuth.signedIn,
         },
         {
           label: 'キャラクター一覧',
@@ -129,18 +127,10 @@ export class MainComponent /*implements OnInit*/ {
   //----------------------------------------------------------------------------
   // User sign in/out event listners.
   //
-  private async onUserAuthChanged() {
+  private onUserAuthChanged() {
     const location = `${this.className}.onUserAuthChanged()`;
     this.logger.trace(location, { signedIn: this.userAuth.signedIn });
 
-    // let menuItem = this.sideMenuItems.find((item) => item.label && item.label === '新規キャラクター登録');
-    // if (menuItem) {
-    //   menuItem.disabled = !this.userAuth.signedIn;
-    // }
-    // let menuItemM = this.sideMenuItemsM[0].items.find((item) => item.label && item.label === '新規キャラクター登録');
-    // if (menuItemM) {
-    //   menuItemM.disabled = !this.userAuth.signedIn;
-    // }
     let menuItemM = this.sideMenuItemsM[0].items.find((item) => item.label && item.label === 'ログイン');
     if (menuItemM) {
       menuItemM.visible = !this.userAuth.signedIn;
@@ -148,20 +138,6 @@ export class MainComponent /*implements OnInit*/ {
     menuItemM = this.sideMenuItemsM[0].items.find((item) => item.label && item.label === 'ログアウト');
     if (menuItemM) {
       menuItemM.visible = this.userAuth.signedIn;
-    }
-
-    if (this.userAuth.signedIn) {
-      try {
-        const length = await this.firestore.load(FsCollectionName.Users, this.userAuth.userId);
-        if (length === 0) {
-          this.logger.warn(location, `Make new user: ${this.userAuth.userId}`);
-          const docId = await this.firestore.addData(FsCollectionName.Users, new FsUser('', this.userAuth.userId));
-          this.logger.debug(location, { docId: docId });
-          await this.firestore.load(FsCollectionName.Users, this.userAuth.userId);
-        }
-      } catch (error) {
-        this.errorHandler.notifyError(error);
-      }
     }
   }
 

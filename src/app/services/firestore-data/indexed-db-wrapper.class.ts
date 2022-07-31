@@ -146,7 +146,8 @@ export class IndexedDbWrapper extends Dexie {
     } else if (name === FsCollectionName.SubCharacterTypes) {
       result = await indexedDbWrapper.subCharacterTypes.toArray();
     } else if (name === FsCollectionName.Users) {
-      result = await indexedDbWrapper.users.toArray();
+      // Do nothing.
+      //   result = await indexedDbWrapper.users.toArray();
     } else if (name === FsCollectionName.VoiceActors) {
       result = await indexedDbWrapper.voiceActors.toArray();
     } else if (name === FsCollectionName.Weapons) {

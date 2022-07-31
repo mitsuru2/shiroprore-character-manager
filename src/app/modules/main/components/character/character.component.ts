@@ -598,16 +598,15 @@ export class CharacterComponent implements OnInit, AfterViewInit {
   //----------------------------------------------------------------------------
   // User character information.
   //
-  private async onUserSignedIn() {
+  private onUserSignedIn() {
     const location = `${this.className}.onUserSignedIn()`;
     this.logger.trace(location);
 
-    await this.firestore.load(FsCollectionName.Users, this.userAuth.userId);
     this.users = this.firestore.getData(FsCollectionName.Users) as FsUser[];
     this.updateHasCharacterSwitch();
   }
 
-  private async onUserSignedOut() {
+  private onUserSignedOut() {
     const location = `${this.className}.onUserSignedOut()`;
     this.logger.trace(location);
 
