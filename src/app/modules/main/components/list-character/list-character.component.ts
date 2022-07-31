@@ -750,8 +750,8 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     const mobileMode = isMobileMode();
 
     // Get div size.
-    const dw = this.getHtmlElementWidth('ListCharacter_Content');
-    const dh = this.getHtmlElementHeight('ListCharacter_Content');
+    const dw = this.getHtmlElementWidth('ListCharacter_Content') - 1;
+    const dh = this.getHtmlElementHeight('ListCharacter_Content') - 1;
 
     // Calc image size and gaps.
     let iw = mobileMode ? 80 : 160;
