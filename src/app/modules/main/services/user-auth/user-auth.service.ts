@@ -72,7 +72,7 @@ export class UserAuthService {
     }
   }
 
-  async addEventListener(event: 'signIn' | 'signOut', cbFn: () => void) {
+  addEventListener(event: 'signIn' | 'signOut', cbFn: () => void) {
     const location = `${this.className}.addEventListener()`;
     this.logger.trace(location, { event: event, cbFn: cbFn });
 
@@ -82,9 +82,9 @@ export class UserAuthService {
     // Is the class has already been _initialized, it calls the registered function right now.
     if (this._initialized) {
       if (event === 'signIn' && this._signedIn) {
-        await cbFn();
+        cbFn();
       } else if (event === 'signOut' && !this._signedIn) {
-        await cbFn();
+        cbFn();
       }
     }
   }

@@ -136,7 +136,7 @@ export class CharacterComponent implements OnInit, AfterViewInit {
 
   async ngAfterViewInit(): Promise<void> {
     const location = `${this.className}.ngAfterViewInit()`;
-    this.logger.trace(location);
+    this.logger.trace(location, { hasThisCharacter: this.hasThisCharacter });
 
     try {
       // Load data if data loading is not finished.
@@ -593,7 +593,7 @@ export class CharacterComponent implements OnInit, AfterViewInit {
   //
   private onUserSignedIn() {
     const location = `${this.className}.onUserSignedIn()`;
-    this.logger.trace(location);
+    this.logger.trace(location, { userData: this.userAuth.userData });
 
     this.updateHasCharacterSwitch();
   }
@@ -618,7 +618,7 @@ export class CharacterComponent implements OnInit, AfterViewInit {
     this.logger.debug(location, { signedIn: this.userAuth.signedIn, userData: this.userAuth.userData });
 
     // Set TRUE, if the user has this character.
-    this.hasThisCharacter = this.userAuth.userData.characters.includes(this.character.id);
+    this.hasThisCharacter = this.userAuth.userData.characters.includes(this.id);
   }
 
   private async addToUserCharacterList(id: string): Promise<void> {
