@@ -804,18 +804,24 @@ export class NewCharacterFormComponent implements OnChanges {
 
     if (base) {
       // Base FsAbility info.
-      result.id = base.id;
-      result.type = base.type;
-      result.name = base.name;
-      result.descriptions = base.descriptions;
+      result.id = base.id.slice();
+      result.type = base.type.slice();
+      result.name = base.name.slice();
+      result.descriptions = [];
+      for (let i = 0; i < base.descriptions.length; ++i) {
+        result.descriptions.push(base.descriptions[i].slice());
+      }
       result.interval = base.interval;
       result.cost = base.cost;
-      result.tokenLayouts = base.tokenLayouts;
+      result.tokenLayouts = [];
+      for (let i = 0; i < base.tokenLayouts.length; ++i) {
+        result.tokenLayouts.push(base.tokenLayouts[i].slice());
+      }
 
       // Extended info.
       for (let i = 0; i < this.abilityTypes.length; ++i) {
         if (base.type === this.abilityTypes[i].id) {
-          result.typeName = this.abilityTypes[i].name;
+          result.typeName = this.abilityTypes[i].name.slice();
           break;
         }
       }
