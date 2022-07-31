@@ -112,8 +112,6 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
 
   weapons = this.firestore.getData(FsCollectionName.Weapons) as FsWeapon[];
 
-  users = this.firestore.getData(FsCollectionName.Users) as FsUser[];
-
   /** Data view: header. */
   isListLayout = false;
 

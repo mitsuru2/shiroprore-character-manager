@@ -68,8 +68,6 @@ export class CharacterComponent implements OnInit, AfterViewInit {
 
   private regions = this.firestore.getData(FsCollectionName.Regions) as FsRegion[];
 
-  private users = this.firestore.getData(FsCollectionName.Users) as FsUser[];
-
   private voiceActors = this.firestore.getData(FsCollectionName.VoiceActors) as FsVoiceActor[];
 
   private weaponTypes = this.firestore.getData(FsCollectionName.WeaponTypes) as FsWeaponType[];
@@ -185,11 +183,6 @@ export class CharacterComponent implements OnInit, AfterViewInit {
   async onHasSwitchChange(event: any) {
     const location = `${this.className}.onCharacterHasSwitchChange()`;
     this.logger.trace(location, { value: event.checked });
-
-    // If user data is empty, try to get user data again.
-    if (this.userAuth.signedIn && this.users.length === 0) {
-      this.users = this.firestore.getData(FsCollectionName.Users) as FsUser[];
-    }
 
     // CASE: Switch is checked.
     if (event.checked) {
@@ -602,7 +595,6 @@ export class CharacterComponent implements OnInit, AfterViewInit {
     const location = `${this.className}.onUserSignedIn()`;
     this.logger.trace(location);
 
-    this.users = this.firestore.getData(FsCollectionName.Users) as FsUser[];
     this.updateHasCharacterSwitch();
   }
 
@@ -610,7 +602,6 @@ export class CharacterComponent implements OnInit, AfterViewInit {
     const location = `${this.className}.onUserSignedOut()`;
     this.logger.trace(location);
 
-    this.users = [];
     this.updateHasCharacterSwitch();
   }
 
@@ -619,36 +610,52 @@ export class CharacterComponent implements OnInit, AfterViewInit {
     this.logger.trace(location);
 
     // User information is empty, it always false.
-    if (this.users.length === 0) {
+    if (!this.userAuth.signedIn) {
       this.hasThisCharacter = false;
       return;
     }
 
+    this.logger.debug(location, { signedIn: this.userAuth.signedIn, userData: this.userAuth.userData });
+
     // Set TRUE, if the user has this character.
-    this.hasThisCharacter = this.users[0].characters.includes(this.character.id);
+    this.hasThisCharacter = this.userAuth.userData.characters.includes(this.character.id);
   }
 
   private async addToUserCharacterList(id: string): Promise<void> {
     const location = `${this.className}.addToUserCharacterList`;
     this.logger.trace(location, { id: id });
 
-    this.showProgressDialog = true;
-    this.users[0].characters.push(id);
-    this.logger.debug(location, { characters: this.users[0].characters });
-    await this.firestore.updateField(FsCollectionName.Users, this.users[0].id, 'characters', this.users[0].characters);
-    await sleep(1000);
-    this.showProgressDialog = false;
+    if (this.userAuth.signedIn) {
+      this.showProgressDialog = true;
+      this.userAuth.userData.characters.push(id);
+      this.logger.debug(location, { characters: this.userAuth.userData.characters });
+      await this.firestore.updateField(
+        FsCollectionName.Users,
+        this.userAuth.userData.id,
+        'characters',
+        this.userAuth.userData.characters
+      );
+      await sleep(1000);
+      this.showProgressDialog = false;
+    }
   }
 
   private async removeFromUserCharacterList(id: string): Promise<void> {
     const location = `${this.className}.removeFromUserCharacterList`;
     this.logger.trace(location, { id: id });
 
-    this.showProgressDialog = true;
-    this.users[0].characters = this.users[0].characters.filter((item) => item !== id);
-    this.logger.debug(location, { characters: this.users[0].characters });
-    await this.firestore.updateField(FsCollectionName.Users, this.users[0].id, 'characters', this.users[0].characters);
-    await sleep(1000);
-    this.showProgressDialog = false;
+    if (this.userAuth.signedIn) {
+      this.showProgressDialog = true;
+      this.userAuth.userData.characters = this.userAuth.userData.characters.filter((item) => item !== id);
+      this.logger.debug(location, { characters: this.userAuth.userData.characters });
+      await this.firestore.updateField(
+        FsCollectionName.Users,
+        this.userAuth.userData.id,
+        'characters',
+        this.userAuth.userData.characters
+      );
+      await sleep(1000);
+      this.showProgressDialog = false;
+    }
   }
 }
