@@ -17,11 +17,13 @@ import {
   FsGeographType,
   FsIllustrator,
   FsRegion,
+  FsUser,
   FsVoiceActor,
   FsWeapon,
   FsWeaponType,
 } from 'src/app/services/firestore-data/firestore-document.interface';
 import { NavigatorService } from '../../services/navigator/navigator.service';
+import { UserAuthService } from '../../services/user-auth/user-auth.service';
 import { sleep } from '../../utils/sleep/sleep.utility';
 import { isMobileMode } from '../../utils/window-size/window-size.util';
 import {
@@ -110,6 +112,8 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
 
   weapons = this.firestore.getData(FsCollectionName.Weapons) as FsWeapon[];
 
+  users = this.firestore.getData(FsCollectionName.Users) as FsUser[];
+
   /** Data view: header. */
   isListLayout = false;
 
@@ -138,7 +142,8 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     private firestore: FirestoreDataService,
     private storage: CloudStorageService,
     private router: Router,
-    private navigator: NavigatorService
+    private navigator: NavigatorService,
+    private userAuth: UserAuthService
   ) {
     this.logger.trace(`new ${this.className}()`);
 
@@ -231,6 +236,14 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
   onFilterButtonClick() {
     this.filterSettings = new CharacterFilterSettings();
     this.showFilterDialog = true;
+  }
+
+  onFilterSettingsDialogResult() {
+    const location = `${this.className}.onFilterSettingsDialogResult()`;
+    this.logger.trace(location, { filter: this.filterSettings });
+
+    // Close dialog.
+    this.showFilterDialog = false;
   }
 
   //============================================================================
@@ -796,6 +809,21 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
   //
   private calcPageLinkNum() {
     return isMobileMode() ? 3 : 5;
+  }
+
+  //----------------------------------------------------------------------------
+  // Filter and sorting.
+  //
+  private filterCharacterList(filter: CharacterFilterSettings) {
+    this.filteredIndexes = [];
+
+    for (let i = 0; i < this.characters.length; ++i) {
+      // Ownership status.
+      if (filter.ownershipStatusType === CharacterOwnershipStatusType.All) {
+        // Do nothing. Go to next filter.
+      } else if (filter.ownershipStatusType === CharacterOwnershipStatusType.HasOnly) {
+      }
+    }
   }
 
   //----------------------------------------------------------------------------

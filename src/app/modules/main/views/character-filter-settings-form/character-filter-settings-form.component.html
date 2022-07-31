@@ -9,6 +9,7 @@
             name="CharacterFilterSettingsForm_OwnershipStatusInput"
             [value]="item.value"
             [(ngModel)]="filterSettings.ownershipStatusType"
+            (onClick)="onOwnershipStatusTypeClick(item.value)"
           ></p-radioButton>
           <label [for]="'CharacterFilterSettingsForm_OwnershipStatusInput_' + item.value">{{ item.label }}</label>
         </div>
