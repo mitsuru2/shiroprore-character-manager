@@ -115,6 +115,7 @@ export class MainComponent /*implements OnInit*/ {
     this.logger.trace(location);
 
     this.userAuth.signOut();
+    this.router.navigateByUrl('/main/login');
   }
 
   goToStartupScreen() {
