@@ -178,10 +178,7 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
 
     // Restore paginator if stored.
     if (this.navigator.paramStorage['list-character']) {
-      this.paginator = this.navigator.paramStorage['list-character'].paginator;
-      this.isListLayout = this.navigator.paramStorage['list-character'].isListLayout;
-      this.filterSettings = this.navigator.paramStorage['list-character'].filterSettings;
-      this.filterCharacterList(this.filterSettings);
+      this.restorePageParameter();
     }
 
     // Else, calculate num of thumbnails per page.
@@ -189,12 +186,10 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
       this.paginator.setRowNum(this.calcGridRowNum());
       this.paginator.pageLinkSize = this.calcPageLinkNum();
     }
-
-    // Start loading of thumnail images.
     await sleep(10);
-    await this.loadThumbImages();
 
     // Update thumbnail images.
+    await this.loadThumbImages();
     this.updateThumbImages();
     this.makeCharacterInfoTables();
   }
@@ -208,10 +203,8 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
       this.paginator.first = event.first;
       this.paginator.pageIndex = event.page;
 
-      // Load thumbnail images.
-      await this.loadThumbImages();
-
       // Update thumbnail images.
+      await this.loadThumbImages();
       this.updateThumbImages();
       this.makeCharacterInfoTables();
 
@@ -225,11 +218,7 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     this.logger.trace(location, { i: i });
 
     // Store paginator param.
-    this.navigator.paramStorage['list-character'] = {
-      paginator: this.paginator,
-      isListLayout: this.isListLayout,
-      filterSettings: this.filterSettings,
-    };
+    this.storePageParameter();
 
     // Go to character page.
     const iFilter = this.paginator.first + i;
@@ -251,16 +240,13 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
 
     // Filter characters.
     this.filterCharacterList(this.filterSettings);
-    this.logger.debug(location, this.filteredIndexes);
 
     // Update paginate info.
     this.paginator.first = 0;
     this.paginator.pageIndex = 0;
 
-    // Load thumbnail images.
-    await this.loadThumbImages();
-
     // Update thumbnail images.
+    await this.loadThumbImages();
     this.updateThumbImages();
     this.makeCharacterInfoTables();
   }
@@ -830,8 +816,6 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     return isMobileMode() ? 3 : 5;
   }
 
-  private updatePaginatorSettings() {}
-
   //----------------------------------------------------------------------------
   // Filter and sorting.
   //
@@ -912,5 +896,20 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
   private scrollToTop() {
     this.logger.trace('scrollToTop()');
     document.getElementById('ListCharacter_Content')?.scrollTo({ top: 0, behavior: 'auto' });
+  }
+
+  private storePageParameter() {
+    this.navigator.paramStorage['list-character'] = {
+      paginator: this.paginator,
+      isListLayout: this.isListLayout,
+      filterSettings: this.filterSettings,
+    };
+  }
+
+  private restorePageParameter() {
+    this.paginator = this.navigator.paramStorage['list-character'].paginator;
+    this.isListLayout = this.navigator.paramStorage['list-character'].isListLayout;
+    this.filterSettings = this.navigator.paramStorage['list-character'].filterSettings;
+    this.filterCharacterList(this.filterSettings);
   }
 }
