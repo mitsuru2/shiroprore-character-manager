@@ -23,7 +23,7 @@ import {
 import { NavigatorService } from '../../services/navigator/navigator.service';
 import { UserAuthService } from '../../services/user-auth/user-auth.service';
 import { sleep } from '../../utils/sleep/sleep.utility';
-import { TextSearch } from '../../utils/text-search/text-search.class';
+import { TextSearch, TextSearchResult } from '../../utils/text-search/text-search.class';
 import { isMobileMode } from '../../utils/window-size/window-size.util';
 import {
   CharacterFilterSettings,
@@ -132,10 +132,13 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
   filterSettings = new CharacterFilterSettings();
 
   /** Text search engine. */
-  textSearch = new TextSearch();
+  textSearchResult: TextSearchResult[] = [];
 
   //============================================================================
   // Class methods.
+  //
+  //----------------------------------------------------------------------------
+  // Life-cycle hooks.
   //
   constructor(
     private logger: NGXLogger,
@@ -196,6 +199,9 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     this.makeCharacterInfoTables();
   }
 
+  //----------------------------------------------------------------------------
+  // Pagenator.
+  //
   async onPageChange(event: any) {
     const location = `${this.className}.onPageChange()`;
     this.logger.trace(location, event);
@@ -215,6 +221,9 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     }
   }
 
+  //----------------------------------------------------------------------------
+  // Contents.
+  //
   onThumbnailClick(i: number) {
     const location = `${this.className}.onThumbnailClick()`;
     this.logger.trace(location, { i: i });
@@ -228,6 +237,9 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     this.router.navigateByUrl(`main/character/${id}`);
   }
 
+  //----------------------------------------------------------------------------
+  // Filtering and sorting.
+  //
   onFilterButtonClick() {
     // this.filterSettings = new CharacterFilterSettings();
     this.showFilterDialog = true;
@@ -251,6 +263,16 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     await this.loadThumbImages();
     this.updateThumbImages();
     this.makeCharacterInfoTables();
+  }
+
+  onTextSearchButtonClick() {
+    const location = `${this.className}.onTextSearchButtonClick()`;
+    this.logger.trace(location, { text: this.inputSearchText });
+  }
+
+  onSortButtonClick() {
+    const location = `${this.className}.onSortButtonClick()`;
+    this.logger.trace(location);
   }
 
   //============================================================================

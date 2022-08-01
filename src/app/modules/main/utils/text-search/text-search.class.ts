@@ -54,7 +54,7 @@ export class TextSearch {
 
     let tokens: string[];
     if (typeof token === 'string') {
-      tokens = [token];
+      tokens = this.parseInputText(token);
     } else {
       tokens = token;
     }
@@ -155,6 +155,89 @@ export class TextSearch {
 
       // Update total text length.
       totalLength += textLines[i].length;
+    }
+
+    return result;
+  }
+
+  private parseInputText(text: string): string[] {
+    let result: string[] = [];
+    let start = 0;
+    let end = 0;
+    let status: 'none' | 'normalText' | 'singleQuote' | 'doubleQuote' = 'none';
+
+    for (let i = 0; i < text.length; ++i) {
+      const char = text.charAt(i);
+
+      // CASE: Last character.
+      if (i + 1 >= text.length) {
+        if (status === 'normalText') {
+          end = i + 1;
+          result.push(text.slice(start, end));
+          break;
+        }
+      }
+
+      // CASE: White space.
+      if (char === ' ' || char === '　') {
+        // End normal text.
+        if (status === 'normalText') {
+          end = i;
+          result.push(text.slice(start, end));
+          status = 'none';
+        }
+      }
+
+      // CASE: Single quote.
+      else if (char === "'") {
+        // Begin text if not started.
+        if (status === 'none') {
+          if (text.indexOf("'", i + 1) > 0) {
+            start = i + 1;
+            status = 'singleQuote';
+          } else {
+            start = i;
+            status = 'normalText';
+          }
+        }
+
+        // Close single quote text.
+        else if (status === 'singleQuote') {
+          end = i;
+          result.push(text.slice(start, end));
+          status = 'none';
+        }
+      }
+
+      // CASE: Double quote.
+      else if (char === '"') {
+        // Begin text if not started.
+        if (status === 'none') {
+          if (text.indexOf('"', i + 1) > 0) {
+            start = i + 1;
+            status = 'doubleQuote';
+          } else {
+            start = i;
+            status = 'normalText';
+          }
+        }
+
+        // Close double quote text.
+        else if (status === 'doubleQuote') {
+          end = i;
+          result.push(text.slice(start, end));
+          status = 'none';
+        }
+      }
+
+      // CASE: Other character.
+      else {
+        // Begin text if not started.
+        if (status === 'none') {
+          start = i;
+          status = 'normalText';
+        }
+      }
     }
 
     return result;
