@@ -180,6 +180,8 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     if (this.navigator.paramStorage['list-character']) {
       this.paginator = this.navigator.paramStorage['list-character'].paginator;
       this.isListLayout = this.navigator.paramStorage['list-character'].isListLayout;
+      this.filterSettings = this.navigator.paramStorage['list-character'].filterSettings;
+      this.filterCharacterList(this.filterSettings);
     }
 
     // Else, calculate num of thumbnails per page.
@@ -223,7 +225,11 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     this.logger.trace(location, { i: i });
 
     // Store paginator param.
-    this.navigator.paramStorage['list-character'] = { paginator: this.paginator, isListLayout: this.isListLayout };
+    this.navigator.paramStorage['list-character'] = {
+      paginator: this.paginator,
+      isListLayout: this.isListLayout,
+      filterSettings: this.filterSettings,
+    };
 
     // Go to character page.
     const iFilter = this.paginator.first + i;
@@ -232,16 +238,31 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
   }
 
   onFilterButtonClick() {
-    this.filterSettings = new CharacterFilterSettings();
+    // this.filterSettings = new CharacterFilterSettings();
     this.showFilterDialog = true;
   }
 
-  onFilterSettingsDialogResult() {
+  async onFilterSettingsDialogResult() {
     const location = `${this.className}.onFilterSettingsDialogResult()`;
     this.logger.trace(location, { filter: this.filterSettings });
 
     // Close dialog.
     this.showFilterDialog = false;
+
+    // Filter characters.
+    this.filterCharacterList(this.filterSettings);
+    this.logger.debug(location, this.filteredIndexes);
+
+    // Update paginate info.
+    this.paginator.first = 0;
+    this.paginator.pageIndex = 0;
+
+    // Load thumbnail images.
+    await this.loadThumbImages();
+
+    // Update thumbnail images.
+    this.updateThumbImages();
+    this.makeCharacterInfoTables();
   }
 
   //============================================================================
@@ -803,11 +824,13 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
   }
 
   //----------------------------------------------------------------------------
-  // Paginator apperance.
+  // Paginator.
   //
   private calcPageLinkNum() {
     return isMobileMode() ? 3 : 5;
   }
+
+  private updatePaginatorSettings() {}
 
   //----------------------------------------------------------------------------
   // Filter and sorting.
@@ -816,11 +839,70 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     this.filteredIndexes = [];
 
     for (let i = 0; i < this.characters.length; ++i) {
+      let character = this.characters[i];
+
       // Ownership status.
       if (filter.ownershipStatusType === CharacterOwnershipStatusType.All) {
         // Do nothing. Go to next filter.
       } else if (filter.ownershipStatusType === CharacterOwnershipStatusType.HasOnly) {
+        if (this.userAuth.signedIn) {
+          if (!this.userAuth.userData.characters.includes(character.id)) {
+            continue;
+          }
+        }
+      } else {
+        if (this.userAuth.signedIn) {
+          if (this.userAuth.userData.characters.includes(character.id)) {
+            continue;
+          }
+        }
       }
+
+      // Rarerity.
+      if (filter.rarerities.length === 0) {
+        // Do nothing. Go to next filter.
+      } else {
+        if (!filter.rarerities.includes(character.rarerity)) {
+          continue;
+        }
+      }
+
+      // Weapon type.
+      if (filter.weaponTypes.length === 0) {
+        // Do nothing. Go to next filter.
+      } else {
+        if (!filter.weaponTypes.includes(character.weaponType)) {
+          continue;
+        }
+      }
+
+      // Geograph type.
+      if (filter.geographTypes.length === 0) {
+        // Do nothing. Go to next filter.
+      } else {
+        let found = false;
+        for (let j = 0; j < character.geographTypes.length; ++j) {
+          if (filter.geographTypes.includes(character.geographTypes[j])) {
+            found = true;
+            continue;
+          }
+        }
+        if (!found) {
+          continue;
+        }
+      }
+
+      // Region.
+      if (filter.regions.length === 0) {
+        // Do nothing. Go to next filter.
+      } else {
+        if (!filter.regions.includes(character.region)) {
+          continue;
+        }
+      }
+
+      // Add character to the filtered index.
+      this.filteredIndexes.push(i);
     }
   }
 
