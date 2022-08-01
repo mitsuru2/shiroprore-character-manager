@@ -47,6 +47,7 @@ import { NavigatorService } from './services/navigator/navigator.service';
 import { UserAuthService } from './services/user-auth/user-auth.service';
 import { CharacterComponent } from './components/character/character.component';
 import { CharacterFilterSettingsFormComponent } from './views/character-filter-settings-form/character-filter-settings-form.component';
+import { SpinnerService } from './services/spinner/spinner.service';
 
 const firebaseUiAuthConfig: firebaseui.auth.Config = {
   autoUpgradeAnonymousUsers: false, // Disable annymouse users.
@@ -108,6 +109,6 @@ const firebaseUiAuthConfig: firebaseui.auth.Config = {
     RadioButtonModule,
   ],
   bootstrap: [MainComponent],
-  providers: [NavigatorService, UserAuthService, ConfirmationService],
+  providers: [NavigatorService, UserAuthService, ConfirmationService, SpinnerService],
 })
 export class MainModule {}

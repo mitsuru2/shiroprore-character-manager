@@ -19,11 +19,11 @@ import {
   FsGeographType,
   FsIllustrator,
   FsRegion,
-  FsUser,
   FsVoiceActor,
   FsWeapon,
   FsWeaponType,
 } from 'src/app/services/firestore-data/firestore-document.interface';
+import { SpinnerService } from '../../services/spinner/spinner.service';
 import { UserAuthService } from '../../services/user-auth/user-auth.service';
 import { sleep } from '../../utils/sleep/sleep.utility';
 
@@ -89,9 +89,6 @@ export class CharacterComponent implements OnInit, AfterViewInit {
   /** Switch: own the character */
   hasThisCharacter: boolean = false;
 
-  /** Progress spineer. */
-  showProgressDialog = false;
-
   //============================================================================
   // Class methods.
   //
@@ -102,7 +99,8 @@ export class CharacterComponent implements OnInit, AfterViewInit {
     private route: ActivatedRoute,
     private userAuth: UserAuthService,
     private errorHandler: ErrorHandlerService,
-    private confirmationDialog: ConfirmationService
+    private confirmationDialog: ConfirmationService,
+    private spinner: SpinnerService
   ) {
     this.logger.trace(`new ${this.className}()`);
 
@@ -626,7 +624,7 @@ export class CharacterComponent implements OnInit, AfterViewInit {
     this.logger.trace(location, { id: id });
 
     if (this.userAuth.signedIn) {
-      this.showProgressDialog = true;
+      this.spinner.show();
       this.userAuth.userData.characters.push(id);
       this.logger.debug(location, { characters: this.userAuth.userData.characters });
       await this.firestore.updateField(
@@ -636,7 +634,7 @@ export class CharacterComponent implements OnInit, AfterViewInit {
         this.userAuth.userData.characters
       );
       await sleep(1000);
-      this.showProgressDialog = false;
+      this.spinner.hide();
     }
   }
 
@@ -645,7 +643,7 @@ export class CharacterComponent implements OnInit, AfterViewInit {
     this.logger.trace(location, { id: id });
 
     if (this.userAuth.signedIn) {
-      this.showProgressDialog = true;
+      this.spinner.show();
       this.userAuth.userData.characters = this.userAuth.userData.characters.filter((item) => item !== id);
       this.logger.debug(location, { characters: this.userAuth.userData.characters });
       await this.firestore.updateField(
@@ -655,7 +653,7 @@ export class CharacterComponent implements OnInit, AfterViewInit {
         this.userAuth.userData.characters
       );
       await sleep(1000);
-      this.showProgressDialog = false;
+      this.spinner.hide();
     }
   }
 }

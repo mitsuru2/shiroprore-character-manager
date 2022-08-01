@@ -3,12 +3,8 @@ import { Router } from '@angular/router';
 import { NGXLogger } from 'ngx-logger';
 import { ConfirmationService } from 'primeng/api';
 import { AppInfo } from 'src/app/app-info.enum';
-import { ErrorCode } from 'src/app/services/error-handler/error-code.enum';
-import { ErrorHandlerService } from 'src/app/services/error-handler/error-handler.service';
-import { FsCollectionName } from 'src/app/services/firestore-data/firestore-collection-name.enum';
-import { FirestoreDataService } from 'src/app/services/firestore-data/firestore-data.service';
-import { FsUser } from 'src/app/services/firestore-data/firestore-document.interface';
 import { NewCharacterComponent } from './components/new-character/new-character.component';
+import { SpinnerService } from './services/spinner/spinner.service';
 import { UserAuthService } from './services/user-auth/user-auth.service';
 
 @Component({
@@ -23,6 +19,8 @@ export class MainComponent /*implements OnInit*/ {
   private newCharacterComponent!: NewCharacterComponent;
 
   appInfo = AppInfo;
+
+  spinnerShown = false;
 
   sideMenuItems = [
     {
@@ -97,13 +95,21 @@ export class MainComponent /*implements OnInit*/ {
     private router: Router,
     public userAuth: UserAuthService,
     private confirmationDialog: ConfirmationService,
-    private firestore: FirestoreDataService,
-    private errorHandler: ErrorHandlerService
+    private spinner: SpinnerService
   ) {
     this.logger.trace(`new ${this.className}()`);
 
+    // Register user authorization event handler.
     this.userAuth.addEventListener('signIn', this.onUserAuthChanged.bind(this));
     this.userAuth.addEventListener('signOut', this.onUserAuthChanged.bind(this));
+
+    // Register spinner dialog on/off control.
+    this.spinner.addSpinnerControlFunction('show', () => {
+      this.spinnerShown = true;
+    });
+    this.spinner.addSpinnerControlFunction('hide', () => {
+      this.spinnerShown = false;
+    });
   }
 
   signIn() {

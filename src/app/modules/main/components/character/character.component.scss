@@ -48,10 +48,6 @@ table {
   margin: 1rem 0;
 }
 
-:host ::ng-deep .progress-dialog.p-dialog {
-  box-shadow: none;
-}
-
 @media screen and (max-width: 959px) {
   // Table.
   table {

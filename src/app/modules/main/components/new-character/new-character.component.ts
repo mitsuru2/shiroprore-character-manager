@@ -27,6 +27,7 @@ import {
 import { csCharacterImageTypes } from 'src/app/services/cloud-storage/cloud-storage.interface';
 import { CloudStorageService } from 'src/app/services/cloud-storage/cloud-storage.service';
 import { ErrorHandlerService } from 'src/app/services/error-handler/error-handler.service';
+import { SpinnerService } from '../../services/spinner/spinner.service';
 
 @Component({
   selector: 'app-new-character',
@@ -73,9 +74,6 @@ export class NewCharacterComponent /*implements OnInit*/ {
   /** New character confirmation dialog. */
   showConfirmationDialog = false;
 
-  /** Progress spinner dialog. */
-  showProgressDialog = false;
-
   //============================================================================
   // Class methods.
   //
@@ -83,7 +81,8 @@ export class NewCharacterComponent /*implements OnInit*/ {
     private logger: NGXLogger,
     private firestore: FirestoreDataService,
     private storage: CloudStorageService,
-    private errorHandler: ErrorHandlerService
+    private errorHandler: ErrorHandlerService,
+    private spinner: SpinnerService
   ) {
     this.logger.trace(`new ${this.className}()`);
   }
@@ -118,7 +117,7 @@ export class NewCharacterComponent /*implements OnInit*/ {
 
     // Show progress spinner.
     this.showNewCharacterForm = true;
-    this.showProgressDialog = true;
+    this.spinner.show();
 
     try {
       // Upload input data.
@@ -137,7 +136,7 @@ export class NewCharacterComponent /*implements OnInit*/ {
     }
 
     // Hide progress spinner.
-    this.showProgressDialog = false;
+    this.spinner.hide();
     this.showNewCharacterForm = false;
   }
 
