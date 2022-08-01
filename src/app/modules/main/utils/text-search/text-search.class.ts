@@ -1,4 +1,6 @@
-export class TextParseInfo {
+type SearchMode = 'normal' | 'quick';
+
+class TextParseInfo {
   prop: any = {};
 
   line: number = 0;
@@ -10,8 +12,10 @@ export class TextParseInfo {
   finished: boolean = true;
 }
 
-export class TextParseInfoWithToken {
+class TextParseInfoWithToken {
   token: string = '';
+
+  found: boolean = false;
 
   parseInfo: TextParseInfo[] = [];
 }
@@ -46,11 +50,10 @@ export class TextSearch {
     this.textLines = [];
   }
 
-  search(token: string): TextSearchResult;
-  search(token: string[]): TextSearchResult;
-  search(token: string | string[]): TextSearchResult {
+  quickSearch(token: string): TextSearchResult;
+  quickSearch(token: string[]): TextSearchResult;
+  quickSearch(token: string | string[]): TextSearchResult {
     const result: TextSearchResult = new TextSearchResult();
-    let allTokensFound = true;
 
     let tokens: string[];
     if (typeof token === 'string') {
@@ -60,15 +63,40 @@ export class TextSearch {
     }
 
     // Run search process for each text token.
+    result.allTokensFound = true;
     for (let i = 0; i < tokens.length; ++i) {
-      const tmpResult = this.searchTextToken(tokens[i]);
+      const tmpResult = this.searchTextToken(tokens[i], 'quick');
       result.details.push(tmpResult);
-      if (tmpResult.parseInfo.length === 0) {
-        allTokensFound = false;
+      if (!tmpResult.found) {
+        result.allTokensFound = false;
+        break;
       }
     }
 
-    result.allTokensFound = allTokensFound;
+    return result;
+  }
+
+  search(token: string): TextSearchResult;
+  search(token: string[]): TextSearchResult;
+  search(token: string | string[]): TextSearchResult {
+    const result: TextSearchResult = new TextSearchResult();
+
+    let tokens: string[];
+    if (typeof token === 'string') {
+      tokens = this.parseInputText(token);
+    } else {
+      tokens = token;
+    }
+
+    // Run search process for each text token.
+    result.allTokensFound = true;
+    for (let i = 0; i < tokens.length; ++i) {
+      const tmpResult = this.searchTextToken(tokens[i], 'normal');
+      result.details.push(tmpResult);
+      if (!tmpResult.found) {
+        result.allTokensFound = false;
+      }
+    }
 
     return result;
   }
@@ -76,8 +104,9 @@ export class TextSearch {
   //============================================================================
   // Private methods.
   //
-  private searchTextToken(token: string): TextParseInfoWithToken {
-    let result: TextParseInfoWithToken = { token: token, parseInfo: [] };
+  private searchTextToken(token: string, mode: SearchMode): TextParseInfoWithToken {
+    let result: TextParseInfoWithToken = new TextParseInfoWithToken();
+    result.token = token;
 
     // Search token from registered text line.
     for (let i = 0; i < this.textLines.length; ++i) {
@@ -87,20 +116,32 @@ export class TextSearch {
       // Search token.
       let iStart = 0;
       let iEnd = 0;
-      while (iStart >= 0) {
+      while (true) {
         iStart = margedText.indexOf(token, iStart); // Return '-1' if not found.
-        if (iStart >= 0) {
-          // Calc text parse info.
-          iEnd = iStart + token.length;
-          const parseInfo = this.calcParseInfo(this.textLines[i].texts, iStart, iEnd, this.textLines[i].prop);
-          for (let j = 0; j < parseInfo.length; ++j) {
-            result.parseInfo.push(parseInfo[j]);
-          }
-          console.log(result);
-
-          // Update iStart. Next search point.
-          iStart = iEnd;
+        if (iStart < 0) {
+          break; // Exit while loop if not found.
         }
+
+        // Set found flag.
+        result.found = true;
+        if (mode === 'quick') {
+          break;
+        }
+
+        // Calc text parse info. (Normal mode only.)
+        iEnd = iStart + token.length;
+        const parseInfo = this.calcParseInfo(this.textLines[i].texts, iStart, iEnd, this.textLines[i].prop);
+        for (let j = 0; j < parseInfo.length; ++j) {
+          result.parseInfo.push(parseInfo[j]);
+        }
+
+        // Update iStart. Next search point.
+        iStart = iEnd;
+      }
+
+      // Exit loop if the token is found and it runs in quick mode.
+      if (result.found && mode === 'quick') {
+        break;
       }
     }
 
