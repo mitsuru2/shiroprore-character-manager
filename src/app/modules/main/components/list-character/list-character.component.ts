@@ -1,4 +1,3 @@
-import { TypeModifier } from '@angular/compiler';
 import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { NGXLogger } from 'ngx-logger';
