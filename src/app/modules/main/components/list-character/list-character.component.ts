@@ -17,7 +17,6 @@ import {
   FsGeographType,
   FsIllustrator,
   FsRegion,
-  FsUser,
   FsVoiceActor,
   FsWeapon,
   FsWeaponType,
@@ -25,6 +24,7 @@ import {
 import { NavigatorService } from '../../services/navigator/navigator.service';
 import { UserAuthService } from '../../services/user-auth/user-auth.service';
 import { sleep } from '../../utils/sleep/sleep.utility';
+import { TextSearch } from '../../utils/text-search/text-search.class';
 import { isMobileMode } from '../../utils/window-size/window-size.util';
 import {
   CharacterFilterSettings,
@@ -131,6 +131,9 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
   showFilterDialog: boolean = false;
 
   filterSettings = new CharacterFilterSettings();
+
+  /** Text search engine. */
+  textSearch = new TextSearch();
 
   //============================================================================
   // Class methods.

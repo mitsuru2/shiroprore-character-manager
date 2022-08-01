@@ -3,17 +3,20 @@
   <!-- Header Area -->
   <!---->
   <div class="header">
-    <!-- Filter button -->
-    <div class="header-left-div">
+    <!-- Left side -->
+    <div>
+      <!-- Filter button -->
       <button pButton type="button" icon="pi pi-filter" (click)="onFilterButtonClick()"></button>
-    </div>
 
-    <!-- Text search input. -->
-    <div class="search-text-input">
-      <span [class.p-input-icon-left]="inputSearchText === ''" [class.p-input-icon-right]="inputSearchText !== ''">
-        <i class="pi" [class.pi-search]="inputSearchText === ''" [class.pi-times]="inputSearchText !== ''" (click)="inputSearchText = ''"></i>
-        <input type="text" pInputText [(ngModel)]="inputSearchText" placeholder="Search" style="width: 100%" />
+      <!-- Sort button -->
+      <button pButton type="button" icon="pi pi-sort" style="margin: 0 0.5rem"></button>
+
+      <!-- Text search input. -->
+      <span class="p-input-icon-right">
+        <i class="pi" [class.pi-times]="inputSearchText !== ''" (click)="inputSearchText = ''"></i>
+        <input type="text" pInputText [(ngModel)]="inputSearchText" placeholder="Search" style="width: 380px; max-width: 30vw" />
       </span>
+      <button pButton type="button" icon="pi pi-search"></button>
     </div>
 
     <!-- Layout mode switch. -->
