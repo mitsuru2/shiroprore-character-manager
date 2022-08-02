@@ -13,8 +13,15 @@
 
       <!-- Text search input. -->
       <span class="p-input-icon-right">
-        <i class="pi" [class.pi-times]="inputSearchText !== ''" (click)="inputSearchText = ''"></i>
-        <input type="text" pInputText [(ngModel)]="inputSearchText" placeholder="Search" style="width: 380px; max-width: 30vw" />
+        <i class="pi" [class.pi-times]="inputSearchText !== ''" (click)="onSearchTextClearButtonClick()"></i>
+        <input
+          type="text"
+          pInputText
+          [(ngModel)]="inputSearchText"
+          placeholder="Search"
+          style="width: 380px; max-width: 30vw"
+          (keydown.enter)="onTextSearchButtonClick()"
+        />
       </span>
       <button pButton type="button" icon="pi pi-search" [disabled]="inputSearchText === ''" (click)="onTextSearchButtonClick()"></button>
     </div>

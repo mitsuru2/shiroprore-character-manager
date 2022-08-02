@@ -54,26 +54,6 @@ export class CharacterComponent implements OnInit, AfterViewInit {
 
   private abilityTypes = this.firestore.getData(FsCollectionName.AbilityTypes) as FsAbilityType[];
 
-  private characterTags = this.firestore.getData(FsCollectionName.CharacterTags) as FsCharacterTag[];
-
-  private characterTypes = this.firestore.getData(FsCollectionName.CharacterTypes) as FsCharacterType[];
-
-  private facilities = this.firestore.getData(FsCollectionName.Facilities) as FsFacility[];
-
-  private facilityTypes = this.firestore.getData(FsCollectionName.FacilityTypes) as FsFacilityType[];
-
-  private geographTypes = this.firestore.getData(FsCollectionName.GeographTypes) as FsGeographType[];
-
-  private illustrators = this.firestore.getData(FsCollectionName.Illustrators) as FsIllustrator[];
-
-  private regions = this.firestore.getData(FsCollectionName.Regions) as FsRegion[];
-
-  private voiceActors = this.firestore.getData(FsCollectionName.VoiceActors) as FsVoiceActor[];
-
-  private weaponTypes = this.firestore.getData(FsCollectionName.WeaponTypes) as FsWeaponType[];
-
-  private weapons = this.firestore.getData(FsCollectionName.Weapons) as FsWeaponType[];
-
   /** Character information. */
   id = ''; // Character ID from URL paramter.
 

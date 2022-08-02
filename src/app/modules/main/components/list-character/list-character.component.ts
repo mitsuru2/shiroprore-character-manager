@@ -21,6 +21,7 @@ import {
   FsWeaponType,
 } from 'src/app/services/firestore-data/firestore-document.interface';
 import { NavigatorService } from '../../services/navigator/navigator.service';
+import { SpinnerService } from '../../services/spinner/spinner.service';
 import { UserAuthService } from '../../services/user-auth/user-auth.service';
 import { sleep } from '../../utils/sleep/sleep.utility';
 import { TextSearch, TextSearchResult } from '../../utils/text-search/text-search.class';
@@ -67,6 +68,11 @@ export enum TableCellType {
   h2,
   h3,
   data,
+}
+
+interface TextPropertyMap {
+  cate: 'name' | 'voice' | 'illust' | 'tag' | 'ability' | 'abilityKai';
+  index?: number;
 }
 
 @Component({
@@ -146,7 +152,8 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     private storage: CloudStorageService,
     private router: Router,
     private navigator: NavigatorService,
-    private userAuth: UserAuthService
+    private userAuth: UserAuthService,
+    private spinner: SpinnerService
   ) {
     this.logger.trace(`new ${this.className}()`);
 
@@ -252,8 +259,12 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     // Close dialog.
     this.showFilterDialog = false;
 
+    // Show spinner.
+    this.spinner.show();
+
     // Filter characters.
     this.filterCharacterList(this.filterSettings);
+    this.filterCharacterListBySearchText(this.inputSearchText);
 
     // Update paginate info.
     this.paginator.first = 0;
@@ -263,11 +274,18 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     await this.loadThumbImages();
     this.updateThumbImages();
     this.makeCharacterInfoTables();
+
+    // Hide spinner.
+    this.spinner.hide();
   }
 
   onTextSearchButtonClick() {
-    const location = `${this.className}.onTextSearchButtonClick()`;
-    this.logger.trace(location, { text: this.inputSearchText });
+    this.onFilterSettingsDialogResult();
+  }
+
+  onSearchTextClearButtonClick() {
+    this.inputSearchText = '';
+    this.onTextSearchButtonClick();
   }
 
   onSortButtonClick() {
@@ -912,6 +930,79 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
       // Add character to the filtered index.
       this.filteredIndexes.push(i);
     }
+  }
+
+  private filterCharacterListBySearchText(queryText: string) {
+    // Do nothing if query text is blank.
+    if (queryText === '') {
+      return;
+    }
+
+    // Check each characters.
+    // It skips characters which is already filtered.
+    for (let i = this.filteredIndexes.length - 1; i >= 0; --i) {
+      // Get target character.
+      const character = this.characters[this.filteredIndexes[i]];
+
+      // Make text search object and register text properties of the character.
+      const textSearch = this.makeTextSearch(character);
+
+      // Run quick search.
+      const searchResult = textSearch.quickSearch(queryText);
+
+      // Remove index if the query text is not found.
+      if (!searchResult.allTokensFound) {
+        this.filteredIndexes.splice(i, 1);
+      }
+    }
+  }
+
+  private makeTextSearch(character: FsCharacter): TextSearch {
+    const ts = new TextSearch();
+    let text = '';
+
+    // Character name.
+    ts.add(character.name, { cate: 'name' } as TextPropertyMap);
+
+    // CV and illustrator.
+    for (let i = 0; i < character.voiceActors.length; ++i) {
+      text = this.firestore.getDataById(FsCollectionName.VoiceActors, character.voiceActors[i]).name;
+      if (text !== '') {
+        ts.add(text, { cate: 'voice' } as TextPropertyMap);
+      }
+    }
+    for (let i = 0; i < character.illustrators.length; ++i) {
+      text = this.firestore.getDataById(FsCollectionName.Illustrators, character.illustrators[i]).name;
+      if (text !== '') {
+        ts.add(text, { cate: 'illust' } as TextPropertyMap);
+      }
+    }
+
+    // Tag.
+    for (let i = 0; i < character.tags.length; ++i) {
+      text = this.firestore.getDataById(FsCollectionName.CharacterTags, character.tags[i]).name;
+      if (text !== '') {
+        ts.add(text, { cate: 'tag', index: i } as TextPropertyMap);
+      }
+    }
+
+    // Abilities.
+    for (let i = 0; i < character.abilities.length; ++i) {
+      const ability = this.firestore.getDataById(FsCollectionName.Abilities, character.abilities[i]) as FsAbility;
+      if (ability.descriptions.length > 0) {
+        ts.add(ability.descriptions, { cate: 'ability', index: i } as TextPropertyMap);
+      }
+    }
+
+    // Abilities (Kaichiku).
+    for (let i = 0; i < character.abilitiesKai.length; ++i) {
+      const ability = this.firestore.getDataById(FsCollectionName.Abilities, character.abilitiesKai[i]) as FsAbility;
+      if (ability.descriptions.length > 0) {
+        ts.add(ability.descriptions, { cate: 'abilityKai', index: i } as TextPropertyMap);
+      }
+    }
+
+    return ts;
   }
 
   //----------------------------------------------------------------------------
