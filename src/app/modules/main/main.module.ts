@@ -48,6 +48,7 @@ import { UserAuthService } from './services/user-auth/user-auth.service';
 import { CharacterComponent } from './components/character/character.component';
 import { CharacterFilterSettingsFormComponent } from './views/character-filter-settings-form/character-filter-settings-form.component';
 import { SpinnerService } from './services/spinner/spinner.service';
+import { CharacterSortSettingsFormComponent } from './views/character-sort-settings-form/character-sort-settings-form.component';
 
 const firebaseUiAuthConfig: firebaseui.auth.Config = {
   autoUpgradeAnonymousUsers: false, // Disable annymouse users.
@@ -81,6 +82,7 @@ const firebaseUiAuthConfig: firebaseui.auth.Config = {
     LoginComponent,
     CharacterComponent,
     CharacterFilterSettingsFormComponent,
+    CharacterSortSettingsFormComponent,
   ],
   imports: [
     CommonModule,

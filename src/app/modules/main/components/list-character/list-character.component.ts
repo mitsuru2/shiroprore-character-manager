@@ -30,6 +30,7 @@ import {
   CharacterFilterSettings,
   CharacterOwnershipStatusType,
 } from '../../views/character-filter-settings-form/character-filter-settings-form.interface';
+import { CharacterSortSettings } from '../../views/character-sort-settings-form/character-sort-settings-form.interface';
 
 export class ThumbImageWrapper {
   url: string = '';
@@ -136,6 +137,15 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
   showFilterDialog: boolean = false;
 
   filterSettings = new CharacterFilterSettings();
+
+  filterSettingsCopy = new CharacterFilterSettings();
+
+  /** Sort dialog */
+  showSortDialog: boolean = false;
+
+  sortSettings = new CharacterSortSettings();
+
+  sortSettingsCopy = new CharacterSortSettings();
 
   /** Text search engine. */
   textSearchResult: TextSearchResult[] = [];
@@ -249,16 +259,25 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
   // Filtering and sorting.
   //
   onFilterButtonClick() {
-    // this.filterSettings = new CharacterFilterSettings();
+    // Copy filter settings.
+    this.filterSettingsCopy = { ...this.filterSettings };
+
     this.showFilterDialog = true;
   }
 
-  async onFilterSettingsDialogResult() {
+  async onFilterSettingsDialogResult(canceled: boolean) {
     const location = `${this.className}.onFilterSettingsDialogResult()`;
-    this.logger.trace(location, { filter: this.filterSettings });
 
     // Close dialog.
     this.showFilterDialog = false;
+
+    // Restore filter settings if canceled.
+    if (canceled) {
+      this.filterSettings = { ...this.filterSettingsCopy };
+      this.logger.trace(location, { filter: this.filterSettings, queryText: this.inputSearchText });
+      return;
+    }
+    this.logger.trace(location, { filter: this.filterSettings, queryText: this.inputSearchText });
 
     // Show spinner.
     this.spinner.show();
@@ -281,7 +300,7 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
   }
 
   onTextSearchButtonClick() {
-    this.onFilterSettingsDialogResult();
+    this.onFilterSettingsDialogResult(false);
   }
 
   onSearchTextClearButtonClick() {
@@ -290,12 +309,43 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
   }
 
   onSortButtonClick() {
-    const location = `${this.className}.onSortButtonClick()`;
-    this.logger.trace(location);
+    // Copy sort settings.
+    this.sortSettingsCopy = { ...this.sortSettings };
 
-    const dw = this.getHtmlElementWidth('ListCharacter_Content') - 1;
-    const dh = this.getHtmlElementHeight('ListCharacter_Content') - 1;
-    this.logger.debug(location, { dw: dw, dh: dh });
+    this.showSortDialog = true;
+  }
+
+  async onSortSettingsDialogResult(canceled: boolean) {
+    const location = `${this.className}.onSortSettingsDialogResult()`;
+
+    // Close dialog.
+    this.showSortDialog = false;
+
+    // Restore original setting if canceled.
+    if (canceled) {
+      this.sortSettings = { ...this.sortSettingsCopy };
+      this.logger.trace(location, { filter: this.sortSettings });
+      return;
+    }
+    this.logger.trace(location, { filter: this.sortSettings });
+
+    // Show spinner.
+    this.spinner.show();
+
+    // Sort characters and filtered index list.
+    this.sortCharacterListAndFilteredIndexList(this.sortSettings);
+
+    // Update paginate info.
+    this.paginator.first = 0;
+    this.paginator.pageIndex = 0;
+
+    // Update thumbnail images.
+    await this.loadThumbImages();
+    this.updateThumbImages();
+    this.makeCharacterInfoTables();
+
+    // Hide spinner.
+    this.spinner.hide();
   }
 
   //============================================================================
@@ -1010,6 +1060,58 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     }
 
     return ts;
+  }
+
+  private sortCharacterListAndFilteredIndexList(sortSettings: CharacterSortSettings) {
+    // Make filtered character id list.
+    const filteredIds = [];
+    for (let i = 0; i < this.filteredIndexes.length; ++i) {
+      filteredIds.push(this.characters[this.filteredIndexes[i]].id);
+    }
+
+    // Sort character list.
+    this.sortCharacterList({ indexType: 'identifier', direction: 'asc' });
+    this.sortCharacterList(sortSettings);
+
+    // Make filtered index list.
+    this.filteredIndexes = [];
+    for (let i = 0; i < this.characters.length; ++i) {
+      if (filteredIds.includes(this.characters[i].id)) {
+        this.filteredIndexes.push(i);
+      }
+    }
+  }
+
+  private sortCharacterList(settings: CharacterSortSettings) {
+    if (settings.indexType === 'identifier') {
+      this.characters.sort((a, b) => {
+        if (settings.direction === 'asc') {
+          return a.index < b.index ? -1 : 1;
+        } else {
+          return b.index < a.index ? -1 : 1;
+        }
+      });
+    } else if (settings.indexType === 'rarerity') {
+      this.characters.sort((a, b) => {
+        if (settings.direction === 'asc') {
+          return a.rarerity < b.rarerity ? -1 : 1;
+        } else {
+          return b.rarerity < a.rarerity ? -1 : 1;
+        }
+      });
+    } /* if (settings.indexType === 'weaponType') */ else {
+      const weaponTypes = this.firestore.getData(FsCollectionName.WeaponTypes) as FsWeaponType[];
+      this.firestore.sortByCode(weaponTypes);
+      this.characters.sort((a, b) => {
+        const iA = weaponTypes.findIndex((item) => item.id === a.weaponType);
+        const iB = weaponTypes.findIndex((item) => item.id === b.weaponType);
+        if (settings.direction === 'asc') {
+          return iA < iB ? -1 : 1;
+        } else {
+          return iB < iA ? -1 : 1;
+        }
+      });
+    }
   }
 
   //----------------------------------------------------------------------------

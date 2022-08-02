@@ -1,0 +1,48 @@
+<form>
+  <div class="formgrid grid">
+    <div class="field col">
+      <label>ソート基準</label>
+      <div class="formgroup-inline">
+        <div *ngFor="let item of sortIndexTypes" class="field-checkbox">
+          <p-radioButton
+            [inputId]="'CharacterSortSettingsForm_IndexTypeInput_' + item.value"
+            name="CharacterSortSettingsForm_IndexTypeInput"
+            [value]="item.value"
+            [(ngModel)]="sortSettings.indexType"
+          ></p-radioButton>
+          <label [for]="'CharacterSortSettingsForm_IndexTypeInput_' + item.value">{{ item.label }}</label>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="formgrid grid">
+    <div class="field col">
+      <label>昇順/降順</label>
+      <div class="formgroup-inline">
+        <div *ngFor="let item of sortDirectionTypes" class="field-checkbox">
+          <p-radioButton
+            [inputId]="'CharacterSortSettingsForm_DirectionInput_' + item.value"
+            name="CharacterSortSettingsForm_DirectionInput"
+            [value]="item.value"
+            [(ngModel)]="sortSettings.direction"
+          ></p-radioButton>
+          <label [for]="'CharacterSortSettingsForm_DirectionInput_' + item.value">{{ item.label }}</label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!--------------------------------------------------------------------------->
+  <!-- Footer ----------------------------------------------------------------->
+  <!--------------------------------------------------------------------------->
+  <div style="margin-top: 1rem">
+    <p-button label="ＯＫ" icon="pi pi-check" (onClick)="onOkClick()" [styleClass]="buttonStyleClass"></p-button>
+    <p-button
+      label="キャンセル"
+      icon="pi pi-times"
+      [style]="{ 'margin-left': '.5rem' }"
+      (onClick)="onCancelClick()"
+      [styleClass]="'p-button-secondary ' + buttonStyleClass"
+    ></p-button>
+  </div>
+</form>
