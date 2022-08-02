@@ -3,36 +3,26 @@
   <!-- Header Area -->
   <!---->
   <div class="header">
-    <!-- Left side -->
-    <div>
-      <!-- Filter button -->
-      <button pButton type="button" icon="pi pi-filter" (click)="onFilterButtonClick()"></button>
+    <!-- Filter button -->
+    <button pButton type="button" icon="pi pi-filter" (click)="onFilterButtonClick()" style="flex: none"></button>
 
-      <!-- Sort button -->
-      <button pButton type="button" icon="pi pi-sort" style="margin: 0 0.5rem" (click)="onSortButtonClick()"></button>
+    <!-- Sort button -->
+    <button pButton type="button" icon="pi pi-sort" (click)="onSortButtonClick()" style="flex: none"></button>
 
-      <!-- Text search input. -->
-      <span class="p-input-icon-right">
+    <!-- Text search input. -->
+    <div style="flex: auto">
+      <span class="p-input-icon-right search-text-input">
         <i class="pi" [class.pi-times]="inputSearchText !== ''" (click)="onSearchTextClearButtonClick()"></i>
-        <input
-          type="text"
-          pInputText
-          [(ngModel)]="inputSearchText"
-          placeholder="Search"
-          style="width: 380px; max-width: 30vw"
-          (keydown.enter)="onTextSearchButtonClick()"
-        />
+        <input type="text" pInputText [(ngModel)]="inputSearchText" placeholder="Search" style="width: 100%" (keydown.enter)="onTextSearchButtonClick()" />
       </span>
       <button pButton type="button" icon="pi pi-search" [disabled]="inputSearchText === ''" (click)="onTextSearchButtonClick()"></button>
     </div>
 
     <!-- Layout mode switch. -->
-    <div>
-      <span class="p-buttonset">
-        <button pButton type="button" icon="pi pi-list" [class.p-button-outlined]="!isListLayout" (click)="isListLayout = true"></button>
-        <button pButton type="button" icon="pi pi-th-large" [class.p-button-outlined]="isListLayout" (click)="isListLayout = false"></button>
-      </span>
-    </div>
+    <span class="p-buttonset button-group" style="flex: none">
+      <button pButton type="button" icon="pi pi-list" [class.p-button-outlined]="!isListLayout" (click)="isListLayout = true"></button>
+      <button pButton type="button" icon="pi pi-th-large" [class.p-button-outlined]="isListLayout" (click)="isListLayout = false"></button>
+    </span>
   </div>
 
   <!---->

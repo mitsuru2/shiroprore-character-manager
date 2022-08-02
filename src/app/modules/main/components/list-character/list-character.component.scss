@@ -5,10 +5,12 @@
 
   .header {
     display: flex;
-    justify-content: space-between;
+    gap: 0.5rem;
     margin-bottom: 0.5rem;
 
     .search-text-input {
+      width: calc(100% - 38px);
+      max-width: 380px;
     }
   }
 
@@ -99,7 +101,7 @@ table {
       }
 
       .search-text-input {
-        width: 40%;
+        max-width: none;
       }
     }
 
