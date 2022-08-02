@@ -175,6 +175,8 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     this.characters.sort((a, b) => {
       return a.index < b.index ? -1 : 1;
     });
+
+    this.paginator.pageLinkSize = this.calcPageLinkNum();
   }
 
   async ngAfterViewInit(): Promise<void> {
@@ -183,7 +185,6 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
 
     // Set view initialized flag.
     this.viewInited = true;
-    await sleep(10);
 
     // Sort ability types.
     this.firestore.sortByOrder(this.abilityTypes);
@@ -195,8 +196,8 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
 
     // Else, calculate num of thumbnails per page.
     else {
+      await sleep(10);
       this.paginator.setRowNum(this.calcGridRowNum());
-      this.paginator.pageLinkSize = this.calcPageLinkNum();
     }
     await sleep(10);
 
@@ -291,6 +292,10 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
   onSortButtonClick() {
     const location = `${this.className}.onSortButtonClick()`;
     this.logger.trace(location);
+
+    const dw = this.getHtmlElementWidth('ListCharacter_Content') - 1;
+    const dh = this.getHtmlElementHeight('ListCharacter_Content') - 1;
+    this.logger.debug(location, { dw: dw, dh: dh });
   }
 
   //============================================================================
@@ -804,6 +809,7 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
   // Grid layout control.
   //
   private calcGridRowNum(): number {
+    const location = `${this.className}.calcGridRowNum()`;
     let result = defaultGidRowNum;
 
     // Get screen mode.
@@ -812,11 +818,12 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     // Get div size.
     const dw = this.getHtmlElementWidth('ListCharacter_Content') - 1;
     const dh = this.getHtmlElementHeight('ListCharacter_Content') - 1;
+    this.logger.debug(location, { dw: dw, dh: dh });
 
     // Calc image size and gaps.
     let iw = mobileMode ? 80 : 160;
     let ih = mobileMode ? iw + 3 : iw + 4;
-    let gw = mobileMode ? 6 : 12;
+    let gw = mobileMode ? 4 : 12;
     let gh = gw;
 
     // Calc number of images.

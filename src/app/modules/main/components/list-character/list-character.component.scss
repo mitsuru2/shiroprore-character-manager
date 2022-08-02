@@ -109,12 +109,13 @@ table {
     // Please be careful when you change these properties.
     // You shall check ListCharacterComponent::calcGridRowNum() too.
     .content {
+      margin: 0;
       font-size: xx-small;
       font-weight: lighter;
 
       .grid-layout {
         grid-template-columns: repeat(auto-fill, 80px);  // 60px: Thumbnail image size.
-        gap: 6px;
+        gap: 4px;
         justify-content: space-around;
       }
 
@@ -127,6 +128,10 @@ table {
       .list-image {
         margin-right: 0.2rem;
       }
+    }
+
+    .footer {
+      margin: 0;
     }
   }
 }
