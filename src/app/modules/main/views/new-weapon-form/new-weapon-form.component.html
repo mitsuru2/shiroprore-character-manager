@@ -3,12 +3,12 @@
     <div class="field col">
       <label>武器タイプ</label>
       <div class="formgroup-inline">
-        <div *ngFor="let item of weaponTypes" class="field-checkbox">
+        <div *ngFor="let item of weaponTypeItems" class="field-checkbox">
           <p-radioButton
             [inputId]="'NewWeaponForm_WeaponTypeInput_' + item.name"
             name="NewWeaponForm_WeaponTypeInput"
             [value]="item"
-            [(ngModel)]="selectedType"
+            [(ngModel)]="weaponData.type"
             (onClick)="onWeaponTypeClick()"
           ></p-radioButton>
           <label [for]="'NewWeaponForm_WeaponTypeInput_' + item.name">{{ item.name }}</label>
@@ -21,12 +21,12 @@
     <div class="field col">
       <label for="NewWeaponForm_WeaponNameInput">武器名</label>
       <span class="p-input-icon-right" [style]="{ width: '100%' }">
-        <i *ngIf="inputName !== ''" class="pi pi-times" (click)="inputName = ''"></i>
+        <i *ngIf="weaponData.name !== ''" class="pi pi-times" (click)="weaponData.name = ''"></i>
         <input
           type="text"
           id="NewWeaponForm_WeaponNameInput"
           name="NewWeaponForm_WeaponNameInput"
-          [(ngModel)]="inputName"
+          [(ngModel)]="weaponData.name"
           pInputText
           [style]="{ width: '100%' }"
           (change)="onNameInputChange()"
@@ -42,24 +42,24 @@
       <div class="formgroup-inline">
         <div *ngFor="let item of rarerityItems" class="field-checkbox">
           <p-radioButton
-            [inputId]="'NewWeaponForm_RarerityInput_' + item.toString()"
+            [inputId]="'NewWeaponForm_RarerityInput_' + item"
             name="NewWeaponForm_RarerityInput"
             [value]="item"
-            [(ngModel)]="selectedRarerity"
+            [(ngModel)]="weaponData.rarerity"
           ></p-radioButton>
-          <label [for]="'NewWeaponForm_RarerityInput_' + item.toString()">★{{ item }}</label>
+          <label [for]="'NewWeaponForm_RarerityInput_' + item">★{{ item }}</label>
         </div>
       </div>
     </div>
   </div>
 
-  <div class="formgrid grid" *ngIf="mode === normalMode" style="margin-bottom: 1rem">
+  <div class="formgrid grid" *ngIf="mode === 'normal'" style="margin-bottom: 1rem">
     <div class="field col-12 lg:col-6 p-fluid">
       <label for="NewWeaponForm_AttackInput">攻撃</label>
       <p-inputNumber
         inputId="NewWeaponForm_AttackInput"
         name="NewWeaponForm_AttackInput"
-        [(ngModel)]="inputAttack"
+        [(ngModel)]="weaponData.attack"
         mode="decimal"
         [showButtons]="true"
         [min]="0"
@@ -67,12 +67,12 @@
       >
       </p-inputNumber>
     </div>
-    <div class="field col-12 lg:col-6 p-fluid" *ngIf="selectedRarerity === 4">
+    <div class="field col-12 lg:col-6 p-fluid" *ngIf="weaponData.rarerity === 4">
       <label for="NewWeaponForm_AttackKaiInput">攻撃［改］</label>
       <p-inputNumber
         inputId="NewWeaponForm_AttackKaiInput"
         name="NewWeaponForm_AttackKaiInput"
-        [(ngModel)]="inputAttackKai"
+        [(ngModel)]="weaponData.attackKai"
         mode="decimal"
         [showButtons]="true"
         [min]="0"
@@ -82,7 +82,7 @@
     </div>
   </div>
 
-  <div class="formgrid grid" *ngIf="mode === normalMode" style="margin-bottom: 1rem">
+  <div class="formgrid grid" *ngIf="mode === 'normal'" style="margin-bottom: 1rem">
     <div class="field col">
       <label>説明</label>
       <div *ngFor="let desc of inputDescriptions; trackBy: trackByItem; let i = index">
@@ -101,7 +101,7 @@
     </div>
   </div>
 
-  <div class="formgrid grid" *ngIf="mode === normalMode" style="margin-bottom: 1rem">
+  <div class="formgrid grid" *ngIf="mode === 'normal'" style="margin-bottom: 1rem">
     <div class="field col">
       <label>効果</label>
       <div *ngFor="let desc of inputEffects; trackBy: trackByItem; let i = index">
@@ -120,8 +120,8 @@
     </div>
   </div>
 
-  <div class="formgrid grid" *ngIf="mode === normalMode" style="margin-bottom: 1rem">
-    <div class="field col" *ngIf="selectedRarerity === 4">
+  <div class="formgrid grid" *ngIf="mode === 'normal'" style="margin-bottom: 1rem">
+    <div class="field col" *ngIf="weaponData.rarerity === 4">
       <label>効果［改］</label>
       <div *ngFor="let desc of inputEffectsKai; trackBy: trackByItem; let i = index">
         <span class="p-input-icon-right" [style]="{ width: '100%' }">
@@ -142,7 +142,7 @@
   <p-button
     [label]="okLabel"
     icon="pi pi-check"
-    [disabled]="!selectedType || inputName === '' || errorMessage !== '' || (rarerityShown && !selectedRarerity)"
+    [disabled]="weaponData.type.name === '' || weaponData.name === '' || errorMessage !== '' || (rarerityShown && weaponData.rarerity === 0)"
     (onClick)="onOkClick()"
     [styleClass]="buttonStyleClass"
   ></p-button>

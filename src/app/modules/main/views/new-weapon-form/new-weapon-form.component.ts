@@ -1,67 +1,50 @@
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { NGXLogger } from 'ngx-logger';
+import { FsCollectionName } from 'src/app/services/firestore-data/firestore-collection-name.enum';
+import { FirestoreDataService } from 'src/app/services/firestore-data/firestore-data.service';
 import {
   FsWeapon,
   FsWeaponRarerityMax,
   FsWeaponType,
 } from 'src/app/services/firestore-data/firestore-document.interface';
-import { NewWeaponFormContent, NewWeaponFormMode, NewWeaponFormResult } from './new-weapon-form.interface';
+import { NewWeaponFormData, NewWeaponFormMode } from './new-weapon-form.interface';
 
 @Component({
   selector: 'app-new-weapon-form',
   templateUrl: './new-weapon-form.component.html',
   styleUrls: ['./new-weapon-form.component.scss'],
 })
-export class NewWeaponFormComponent implements OnChanges {
+export class NewWeaponFormComponent implements OnInit {
   //============================================================================
   // Class members.
   //
-  private className = 'NewWeaponFormComponent';
-
-  /** Lifecycle. */
-  @Input() shown = false;
+  private readonly className = 'NewWeaponFormComponent';
 
   /** Appearance. */
-  @Input() mode: NewWeaponFormMode = NewWeaponFormMode.normal;
-
-  minimumMode = NewWeaponFormMode.minimum;
-
-  normalMode = NewWeaponFormMode.normal;
+  @Input() mode: NewWeaponFormMode = 'normal';
 
   @Input() styleClass = '';
 
-  /** Button label and style. */
   @Input() okLabel = 'Ok';
 
   @Input() cancelLabel = 'Cancel';
 
   @Input() buttonStyleClass = '';
 
-  /** Weapon type */
-  @Input() weaponTypes!: FsWeaponType[];
+  /** Form data. */
+  @Input() weaponData!: NewWeaponFormData;
 
-  selectedType?: FsWeaponType;
+  @Output() weaponDataChange = new EventEmitter<NewWeaponFormData>();
 
-  /** Weapon name */
-  @Input() initialWeaponName = '';
+  @Output() canceled = new EventEmitter<boolean>();
 
-  inputName = '';
-
-  @Input() weapons!: FsWeapon[];
-
-  errorMessage = '';
+  /** Weapon types. */
+  weaponTypeItems = this.firestore.getData(FsCollectionName.WeaponTypes) as FsWeaponType[];
 
   /** Rarerity */
   rarerityItems: number[] = [];
 
-  selectedRarerity?: number;
-
   rarerityShown = true;
-
-  /** Attack */
-  inputAttack = 0;
-
-  inputAttackKai = 0;
 
   /** Description */
   inputDescriptions: string[] = [''];
@@ -71,13 +54,13 @@ export class NewWeaponFormComponent implements OnChanges {
 
   inputEffectsKai: string[] = ['', '', ''];
 
-  /** Result weapon info. */
-  @Output() formResult = new EventEmitter<NewWeaponFormResult>();
+  /** Error message. */
+  errorMessage = '';
 
   //============================================================================
   // Class methods.
   //
-  constructor(private logger: NGXLogger) {
+  constructor(private logger: NGXLogger, private firestore: FirestoreDataService) {
     this.logger.trace(`new ${this.className}()`);
 
     // Initialize rarerity list.
@@ -86,23 +69,23 @@ export class NewWeaponFormComponent implements OnChanges {
     }
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    // Clear input values when dialog is shown.
-    if (changes['shown']) {
-      if (changes['shown'].currentValue === true) {
-        this.clearInputs();
-      }
+  ngOnInit(): void {
+    const location = `${this.className}.ngOnInit()`;
+    this.logger.trace(location);
+
+    /** Copy description and effect text. */
+    for (let i = 0; i < this.weaponData.descriptions.length; ++i) {
+      this.inputDescriptions[i] = this.weaponData.descriptions[i].slice();
+    }
+    for (let i = 0; i < this.weaponData.effects.length; ++i) {
+      this.inputEffects[i] = this.weaponData.effects[i].slice();
+    }
+    for (let i = 0; i < this.weaponData.effectsKai.length; ++i) {
+      this.inputEffectsKai[i] = this.weaponData.effectsKai[i].slice();
     }
 
-    if (!changes['initialWeaponName'] || changes['initialWeaponName'].previousValue !== this.initialWeaponName) {
-      // Set input weapon name if initial value is set by parent component.
-      this.inputName = this.initialWeaponName;
-    }
-
-    // Sort input weapon types.
-    this.weaponTypes.sort((a, b) => {
-      return a.code < b.code ? -1 : 1;
-    });
+    /** Sort weapon type. */
+    this.firestore.sortByCode(this.weaponTypeItems);
   }
 
   /**
@@ -121,18 +104,17 @@ export class NewWeaponFormComponent implements OnChanges {
     const location = `${this.className}.onWeaponTypeClick()`;
     this.logger.trace(location);
 
-    if (this.selectedType) {
-      this.rarerityShown = !this.selectedType.isFixed;
-    }
+    this.rarerityShown = !this.weaponData.type.isFixed;
   }
 
   onNameInputChange() {
     const location = `${this.className}.onNameInputChange()`;
     this.logger.trace(location);
 
-    for (let weapon of this.weapons) {
-      if (weapon.name === this.inputName) {
-        this.logger.warn(location, 'Existing weapon name.', { name: this.inputName });
+    const weapons = this.firestore.getData(FsCollectionName.Weapons) as FsWeapon[];
+    for (let weapon of weapons) {
+      if (weapon.name === this.weaponData.name) {
+        this.logger.warn(location, 'Existing weapon name.', { name: this.weaponData.name });
         this.errorMessage = '既に登録済の名前です。';
         return;
       }
@@ -141,79 +123,35 @@ export class NewWeaponFormComponent implements OnChanges {
     this.errorMessage = '';
   }
 
-  clearNameInput() {
-    const location = `${this.className}.clearNameInput()`;
+  onOkClick() {
+    const location = `${this.className}.onOkClick()`;
     this.logger.trace(location);
 
-    this.inputName = '';
-    this.errorMessage = '';
-  }
-
-  onOkClick() {
-    this.formResult.emit(this.makeWeaponInfo(false));
+    this.makeWeaponData();
+    this.weaponDataChange.emit(this.weaponData);
+    this.canceled.emit(false);
   }
 
   onCancelClick() {
-    this.formResult.emit(this.makeWeaponInfo(true));
+    const location = `${this.className}.onCancelClick()`;
+    this.logger.trace(location);
+    this.canceled.emit(true);
   }
 
   //============================================================================
   // Private methods.
   //
-  private clearInputs() {
-    this.selectedType = undefined;
-    this.inputName = '';
-    this.errorMessage = '';
-    this.selectedRarerity = undefined;
-    this.inputAttack = 0;
-    this.inputAttackKai = 0;
-    this.inputDescriptions = [''];
-    this.inputEffects = ['', '', ''];
-    this.inputEffectsKai = ['', '', ''];
-  }
-
-  private makeWeaponInfo(canceled: boolean) {
-    const location = `${this.className}.makeWeaponInfo()`;
-    const result: NewWeaponFormResult = <NewWeaponFormResult>{};
-
-    // When the form is canceled, it returns canceled flag only.
-    if (canceled) {
-      result.canceled = true;
+  private makeWeaponData() {
+    // Update rarerity value if fixed weapon.
+    if (this.weaponData.type.isFixed) {
+      this.weaponData.rarerity = -1;
     }
 
-    // When the form is input, it returns input weapon data.
-    else {
-      // The mandatory input fields must not be null or undefined.
-      // Input value validation shall be implemented at template.
-      if (!this.selectedType || this.inputName === '' || (this.rarerityShown && !this.selectedRarerity)) {
-        this.logger.error(location, 'Necessary field is not input.', {
-          type: this.selectedType,
-          name: this.inputName,
-          rarerity: this.selectedRarerity,
-        });
-        throw Error(`${location} Necessary field is not input.`);
-      }
-
-      // Make weapon data to be returned.
-      result.canceled = false;
-      const content = new NewWeaponFormContent();
-      content.type = this.selectedType;
-      content.name = this.inputName;
-      if (this.selectedType.isFixed || !this.selectedRarerity) {
-        content.rarerity = -1;
-      } else {
-        content.rarerity = this.selectedRarerity;
-      }
-      content.attack = this.inputAttack;
-      if (content.rarerity === 4) {
-        content.attackKai = this.inputAttackKai;
-      }
-      content.descriptions = this.inputDescriptions.filter((text) => text.length > 0);
-      content.effects = this.inputEffects.filter((text) => text.length > 0);
-      content.effectsKai = this.inputEffectsKai.filter((text) => text.length > 0);
-      result.content = content;
+    // Copy weapon and effect description text.
+    if (this.mode === 'normal') {
+      this.weaponData.descriptions = this.inputDescriptions.filter((text) => text.length > 0);
+      this.weaponData.effects = this.inputEffects.filter((text) => text.length > 0);
+      this.weaponData.effectsKai = this.inputEffectsKai.filter((text) => text.length > 0);
     }
-
-    return result;
   }
 }

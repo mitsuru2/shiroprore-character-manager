@@ -1,11 +1,8 @@
 import { FsWeaponType } from 'src/app/services/firestore-data/firestore-document.interface';
 
-export enum NewWeaponFormMode {
-  minimum,
-  normal,
-}
+export type NewWeaponFormMode = 'normal' | 'minimum';
 
-export class NewWeaponFormContent {
+export class NewWeaponFormData {
   type: FsWeaponType = new FsWeaponType();
 
   name: string = '';
@@ -14,17 +11,11 @@ export class NewWeaponFormContent {
 
   attack: number = 0;
 
-  attackKai?: number;
+  attackKai: number = 0;
 
   descriptions: string[] = [];
 
   effects: string[] = [];
 
   effectsKai: string[] = [];
-}
-
-export class NewWeaponFormResult {
-  canceled: boolean = true;
-
-  content?: NewWeaponFormContent;
 }
