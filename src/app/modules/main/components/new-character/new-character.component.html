@@ -27,13 +27,12 @@
 <!----------------------------------------------------------------------------->
 <p-dialog header="入力内容を確認してください。" [(visible)]="showConfirmationDialog" [modal]="true" [draggable]="false" [resizable]="false">
   <app-new-character-confirmation
+    *ngIf="showConfirmationDialog"
     styleClass="dialog"
     okLabel="ＯＫ"
     cancelLabel="キャンセル"
     buttonStyleClass="p-button-text"
-    [dialogMode]="true"
-    [shown]="showConfirmationDialog"
     [character]="newCharacterFormContent"
-    (confirmationResult)="onNewCharacterConfirmResult($event)"
+    (canceled)="onNewCharacterConfirmResult($event)"
   ></app-new-character-confirmation>
 </p-dialog>

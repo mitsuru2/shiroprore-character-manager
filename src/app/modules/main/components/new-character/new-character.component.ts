@@ -103,15 +103,15 @@ export class NewCharacterComponent /*implements OnInit*/ {
     this.showNewCharacterForm = false;
   }
 
-  async onNewCharacterConfirmResult(result: boolean) {
+  async onNewCharacterConfirmResult(canceled: boolean) {
     const location = `${this.className}.onNewCharacterConfirmResult()`;
-    this.logger.trace(location, { confirmationResult: result });
+    this.logger.trace(location, { canceled: canceled });
 
     // Close dialog.
     this.showConfirmationDialog = false;
 
     // If canceled, process stop here.
-    if (!result) {
+    if (canceled) {
       return;
     }
 

@@ -1,7 +1,8 @@
+import { ErrorCode } from 'src/app/services/error-handler/error-code.enum';
 import { Point2D } from './html-canvas.interface';
 
 export class HtmlCanvas {
-  className: string = 'HtmlCanvas';
+  readonly className: string = 'HtmlCanvas';
 
   /** Canvas */
   canvas?: HTMLCanvasElement;
@@ -12,25 +13,28 @@ export class HtmlCanvas {
   //============================================================================
   // Class methods.
   //
-  // constructor() {}
+  constructor(elemId: string) {
+    const location = `new ${this.className}()`;
 
-  static createCanvas(canvasId: string): HtmlCanvas | undefined {
     // Get canvas.
-    const canvas = document.getElementById(canvasId) as HTMLCanvasElement;
+    const canvas = document.getElementById(elemId) as HTMLCanvasElement;
     if (!canvas) {
-      return undefined;
+      const error = new Error(`${location} Canvas element is not available.`);
+      error.name = ErrorCode.Unexpected;
+      throw error;
     }
 
     // Get context.
     const context = canvas.getContext('2d') as CanvasRenderingContext2D;
     if (!context) {
-      return undefined;
+      const error = new Error(`${location} Canvas context is not available.`);
+      error.name = ErrorCode.Unexpected;
+      throw error;
     }
 
-    const canvasClass = new HtmlCanvas();
-    canvasClass.canvas = canvas;
-    canvasClass.context = context;
-    return canvasClass;
+    // Save canvas and context.
+    this.canvas = canvas;
+    this.context = context;
   }
 
   drawImage(image: HTMLImageElement, dx: number, dy: number, dw?: number, dh?: number) {

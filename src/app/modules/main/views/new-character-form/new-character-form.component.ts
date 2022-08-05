@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, ElementRef } from '@angular/core';
 import { NGXLogger } from 'ngx-logger';
 import { CsCharacterImageTypeMax, csCharacterImageTypes } from 'src/app/services/cloud-storage/cloud-storage.interface';
+import { ErrorHandlerService } from 'src/app/services/error-handler/error-handler.service';
 import { FirestoreDataService } from 'src/app/services/firestore-data/firestore-data.service';
 import {
   FsCharacterType,
@@ -23,7 +24,7 @@ import {
 import { HtmlCanvas } from '../../utils/html-canvas/html-canvas.utility';
 import { loadImageFile } from '../../utils/image-file/image-file.utility';
 import { sleep } from '../../utils/sleep/sleep.utility';
-import { MakeThumbnailFormResult } from '../make-thumbnail-form/make-thumbnail-form.interface';
+import { MakeThumbnailFormResult, ThumbnailMakeInfo, XY } from '../make-thumbnail-form/make-thumbnail-form.interface';
 import { NewFacilityFormMode, NewFacilityFormResult } from '../new-facility-form/new-facility-form.interafce';
 import { NewWeaponFormMode, NewWeaponFormResult } from '../new-weapon-form/new-weapon-form.interface';
 import {
@@ -48,7 +49,7 @@ export class NewCharacterFormComponent implements OnChanges {
 
   iconButtonWidth = 50; // px
 
-  previewCanvasWidth = '300px';
+  previewCanvasWidth = 300;
 
   previewCanvasHeight = this.previewCanvasWidth;
 
@@ -196,6 +197,10 @@ export class NewCharacterFormComponent implements OnChanges {
 
   thumbnailBlob?: Blob;
 
+  thumbInfo: ThumbnailMakeInfo = new ThumbnailMakeInfo();
+
+  thumbCanceled = false;
+
   /** Output character data. */
   @Output() formResult = new EventEmitter<NewCharacterFormResult>();
 
@@ -205,8 +210,17 @@ export class NewCharacterFormComponent implements OnChanges {
   //============================================================================
   // Class methods.
   //
-  constructor(private logger: NGXLogger, private firestore: FirestoreDataService, elemRef: ElementRef) {
+  constructor(
+    private logger: NGXLogger,
+    private firestore: FirestoreDataService,
+    elemRef: ElementRef,
+    private errorHandler: ErrorHandlerService
+  ) {
     this.logger.trace(`new ${this.className}()`);
+
+    // Initialize thumbnail settings.
+    this.thumbInfo.imageSize = new XY(160, 160);
+    this.thumbInfo.scale = 75;
 
     // Initialize rarerity list.
     for (let i = 0; i < FsCharacterRarerityMax; ++i) {
@@ -535,7 +549,7 @@ export class NewCharacterFormComponent implements OnChanges {
     this.showFacilityForm = false;
   }
 
-  onInputImageFileChange(index: number, kaichiku: boolean, event: Event) {
+  async onInputImageFileChange(index: number, kaichiku: boolean, event: Event) {
     const location = `${this.className}.onInputImageFileChange()`;
     this.logger.trace(location, { index: index, kaichiku: kaichiku, event: event });
 
@@ -556,14 +570,9 @@ export class NewCharacterFormComponent implements OnChanges {
       this.inputImageFilesKai[index] = input.files[0];
     }
 
-    let promise = loadImageFile(input.files[0]);
-    promise.then((result) => {
-      const canvas = HtmlCanvas.createCanvas(elemId);
-      if (!canvas) {
-        this.logger.error(location, 'Canvas is not available.');
-        return;
-      }
-
+    try {
+      const result = await loadImageFile(input.files[0]);
+      const canvas = new HtmlCanvas(elemId);
       canvas.width = result.height;
       canvas.height = result.height;
       const offsetX = (result.height - result.width) / 2;
@@ -575,9 +584,18 @@ export class NewCharacterFormComponent implements OnChanges {
         this.imageLoadFlagsKai[index] = true;
       }
 
+      if (index === 0 && !kaichiku) {
+        this.thumbInfo.image = input.files[0];
+        this.thumbInfo.offset = new XY(0, 0);
+        this.thumbInfo.scale = 75;
+      }
+
       // Clear element value in order to trigger events even if user select the same file.
       input.value = '';
-    });
+    } catch (error) {
+      this.errorHandler.notifyError(error);
+      return;
+    }
   }
 
   onRemoveImageFileClick(index: number, kaichiku: boolean) {
@@ -600,24 +618,25 @@ export class NewCharacterFormComponent implements OnChanges {
     this.showMakeThumbnailDialog = true;
   }
 
-  onMakeThumbnailFormResult(thumbResult: MakeThumbnailFormResult) {
+  async onMakeThumbnailFormResult(canceled: boolean) {
     const location = `${this.className}.onMakeThumbnailFormResult()`;
-    this.logger.trace(location, { canceld: thumbResult.canceled });
+    this.logger.trace(location, { canceld: canceled });
+    this.logger.debug(location, {
+      ofsX: this.thumbInfo.offset.x,
+      ofsY: this.thumbInfo.offset.y,
+      scale: this.thumbInfo.scale,
+    });
 
-    if (!thumbResult.canceled) {
-      this.thumbnailBlob = thumbResult.thumb;
-      if (this.thumbnailBlob) {
-        const promise = loadImageFile(this.thumbnailBlob);
-        promise.then((result) => {
-          let canvas = HtmlCanvas.createCanvas('NewCharacterForm_ThumbnailPreview');
-          if (!canvas) {
-            this.logger.error(location, 'Canvas is not availale.');
-            return;
-          }
-          canvas.width = result.width;
-          canvas.height = result.height;
-          canvas.drawImage(result, 0, 0);
-        });
+    if (!canceled) {
+      try {
+        this.thumbnailBlob = this.thumbInfo.thumb;
+        const result = await loadImageFile(this.thumbnailBlob);
+        const canvas = new HtmlCanvas('NewCharacterForm_ThumbnailPreview');
+        canvas.width = result.width;
+        canvas.height = result.height;
+        canvas.drawImage(result, 0, 0);
+      } catch (error) {
+        this.errorHandler.notifyError(error);
       }
     }
 

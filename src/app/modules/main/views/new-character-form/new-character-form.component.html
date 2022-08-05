@@ -592,7 +592,7 @@
         <canvas
           [hidden]="!imageLoadFlags[i]"
           [id]="'NewCharacterForm_' + imageType.type + 'Preview'"
-          [style]="{ 'max-width': previewCanvasWidth, 'max-height': previewCanvasHeight }"
+          [style]="{ 'max-width': previewCanvasWidth + 'px', 'max-height': previewCanvasHeight + 'px' }"
         ></canvas>
       </div>
       <div *ngIf="imageLoadFlags[i]" [style]="{ 'justify-content': 'center', 'align-items': 'center', display: 'flex' }">
@@ -741,14 +741,12 @@
 <!---->
 <!-- Make thumbnail image dialog -->
 <!---->
-<p-dialog header="サムネイル画像を作成します。" [(visible)]="showMakeThumbnailDialog" [modal]="true" [draggable]="false" [resizable]="false">
+<p-dialog header="サムネイル画像を作成します。" [(visible)]="showMakeThumbnailDialog" [modal]="true" [draggable]="false" [resizable]="false" [closable]="false">
   <app-make-thumbnail-form
-    [dialogMode]="true"
+    *ngIf="showMakeThumbnailDialog"
     styleClass="dialog"
-    [shown]="showMakeThumbnailDialog"
-    [inputFile]="inputImageFiles[0]"
     [buttonStyleClass]="'p-button-text'"
-    [imageScale]="75"
-    (thumbResult)="onMakeThumbnailFormResult($event)"
+    [(thumbMakeInfo)]="thumbInfo"
+    (canceled)="onMakeThumbnailFormResult($event)"
   ></app-make-thumbnail-form>
 </p-dialog>

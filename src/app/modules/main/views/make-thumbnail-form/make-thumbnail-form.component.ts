@@ -1,24 +1,19 @@
-import { AfterViewInit, Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { NGXLogger } from 'ngx-logger';
+import { ErrorCode } from 'src/app/services/error-handler/error-code.enum';
+import { ErrorHandlerService } from 'src/app/services/error-handler/error-handler.service';
 import { HtmlCanvas } from '../../utils/html-canvas/html-canvas.utility';
 import { loadImageFile } from '../../utils/image-file/image-file.utility';
-import { MakeThumbnailFormResult, XY } from './make-thumbnail-form.interface';
+import { sleep } from '../../utils/sleep/sleep.utility';
+import { ThumbnailMakeInfo, XY } from './make-thumbnail-form.interface';
 
 @Component({
   selector: 'app-make-thumbnail-form',
   templateUrl: './make-thumbnail-form.component.html',
   styleUrls: ['./make-thumbnail-form.component.scss'],
 })
-export class MakeThumbnailFormComponent implements OnChanges, AfterViewInit {
+export class MakeThumbnailFormComponent implements OnInit, AfterViewInit {
   readonly className = 'MakeThumbnailFormComponent';
-
-  /** Status. */
-  @Input() dialogMode: boolean = false;
-
-  @Input() shown: boolean = false;
-
-  /** Timer */
-  timerId: any; // For interval timer control.
 
   /** Appearance. */
   @Input() styleClass = '';
@@ -29,25 +24,30 @@ export class MakeThumbnailFormComponent implements OnChanges, AfterViewInit {
 
   @Input() buttonStyleClass = '';
 
-  /** Input image file. */
-  @Input() inputFile!: File;
+  /** Form result. */
+  @Input() thumbMakeInfo!: ThumbnailMakeInfo;
 
+  @Output() thumbMakeInfoChange = new EventEmitter<ThumbnailMakeInfo>();
+
+  @Output() canceled = new EventEmitter<boolean>();
+
+  /** Input image work. */
   inputImage?: any;
 
   /** Thumbnail and canvas size. */
-  @Input() thumbSize = new XY(160, 160); // px.
+  thumbSize!: XY; // Initialized at ngOnInit()
 
   margin = new XY(50, 50);
 
-  canvasSize = this.thumbSize.add(this.margin.multi(2));
+  canvasSize!: XY; // Initialized at ngOnInit()
 
   /** Image info. */
-  imagePos = new XY();
+  imagePos!: XY; // Initialized at ngOnInit()
 
   scaledImageSize = new XY();
 
   /** Canvas. */
-  canvas?: HtmlCanvas;
+  canvas!: HtmlCanvas;
 
   readonly canvasId = 'MakeThumbnailForm_Preview';
 
@@ -57,12 +57,7 @@ export class MakeThumbnailFormComponent implements OnChanges, AfterViewInit {
   mouseLastPos: XY = new XY();
 
   /** Scale factor. */
-  @Input() imageScale = 100;
-
-  /** Output. */
-  @Output() thumbResult = new EventEmitter<MakeThumbnailFormResult>();
-
-  thumbData?: Blob;
+  imageScale!: number; // Initialized at ngOnInit()
 
   //============================================================================
   // Class methods.
@@ -71,63 +66,44 @@ export class MakeThumbnailFormComponent implements OnChanges, AfterViewInit {
    * Constructor. Nothing to do.
    * @param logger NGX logger instance injection.
    */
-  constructor(private logger: NGXLogger) {
+  constructor(private logger: NGXLogger, private errorHandler: ErrorHandlerService) {
     this.logger.trace(`new ${this.className}()`);
   }
 
-  /**
-   * Lifecycle hook called on input parameter changes.
-   * (1) Under the dialog mode, it init canvas element after the dialog is shown.
-   * (2) It loads input image.
-   * @param changes Change information of input parameters.
-   */
-  ngOnChanges(changes: SimpleChanges): void {
-    const location = `${this.className}.ngOnChanges()`;
+  ngOnInit(): void {
+    const location = `${this.className}.ngOnInit()`;
+    this.logger.trace(location, {
+      ofsX: this.thumbMakeInfo.offset.x,
+      ofsY: this.thumbMakeInfo.offset.y,
+      scale: this.thumbMakeInfo.scale,
+    });
 
-    // CASE: The shown flag is changed.
-    // If it's in dialog mode, start interval to get canvas.
-    if (changes['shown']) {
-      this.logger.trace(location, 'shown', this.shown);
-      const shownChange = changes['shown'];
-      if (shownChange.previousValue === false && shownChange.currentValue === true) {
-        if (this.dialogMode) {
-          this.timerId = setInterval(() => {
-            this.canvas = HtmlCanvas.createCanvas(this.canvasId);
-            if (this.canvas) {
-              clearInterval(this.timerId);
-              this.initCanvas(this.canvas);
-            } else {
-              this.logger.info(location, 'Canvas is not ready.');
-            }
-          }, 200);
-        }
-      }
-      if (shownChange.previousValue === true && shownChange.currentValue === false) {
-        clearInterval(this.timerId);
-      }
-    }
-
-    // CASE: The source image file is changed.
-    // It load input source image.
-    if (changes['inputFile']) {
-      this.logger.trace(location, 'inputFile');
-      if (this.inputFile) {
-        this.loadImage(this.inputFile);
-      }
-    }
+    // Initialize member variables from input parameter
+    this.thumbSize = this.thumbMakeInfo.imageSize;
+    this.canvasSize = this.thumbSize.add(this.margin.multi(2));
+    this.imagePos = this.thumbMakeInfo.offset;
+    this.imageScale = this.thumbMakeInfo.scale;
   }
 
   /**
    * Lifecycle hook called on view is initialized.
    * If it is normal page (not dialog), canvas is available after view is initialized.
    */
-  ngAfterViewInit(): void {
-    if (!this.dialogMode) {
-      this.canvas = HtmlCanvas.createCanvas(this.canvasId);
-      if (this.canvas) {
-        this.initCanvas(this.canvas);
-      }
+  async ngAfterViewInit(): Promise<void> {
+    const location = `${this.className}.ngAfterViewInit()`;
+    this.logger.trace(location);
+
+    // Get canvas element.
+    try {
+      await sleep(100);
+      this.canvas = new HtmlCanvas(this.canvasId);
+      this.initCanvas(this.canvas);
+    } catch (error) {
+      this.errorHandler.notifyError(error);
     }
+
+    // Load image file.
+    this.loadImage(this.thumbMakeInfo.image);
   }
 
   /**
@@ -155,9 +131,16 @@ export class MakeThumbnailFormComponent implements OnChanges, AfterViewInit {
     const location = `${this.className}.onOkClick()`;
     this.logger.trace(location);
 
-    this.MakeThumbnailFormData();
+    try {
+      this.thumbMakeInfo.thumb = this.MakeThumbnailImageData();
+      this.thumbMakeInfo.offset = this.imagePos;
+      this.thumbMakeInfo.scale = this.imageScale;
+    } catch (error) {
+      this.errorHandler.notifyError(error);
+    }
 
-    this.thumbResult.emit({ canceled: false, thumb: this.thumbData });
+    this.thumbMakeInfoChange.emit(this.thumbMakeInfo);
+    this.canceled.emit(false);
   }
 
   /**
@@ -167,8 +150,7 @@ export class MakeThumbnailFormComponent implements OnChanges, AfterViewInit {
   onCancelClick() {
     const location = `${this.className}.onCancelClick()`;
     this.logger.trace(location);
-
-    this.thumbResult.emit({ canceled: true });
+    this.canceled.emit(true);
   }
 
   //============================================================================
@@ -202,42 +184,41 @@ export class MakeThumbnailFormComponent implements OnChanges, AfterViewInit {
     }
   }
 
-  private loadImage(inputFile: File) {
-    const promise = loadImageFile(inputFile);
-    promise.then((result) => {
-      this.inputImage = result;
+  private async loadImage(inputFile: File) {
+    // Load image.
+    const result = await loadImageFile(inputFile);
+    this.inputImage = result;
+    if (this.imagePos.x === 0 && this.imagePos.y === 0) {
       this.imagePos.x = (this.canvasSize.x - this.inputImage.width) / 2;
       this.imagePos.y = (this.canvasSize.y - this.inputImage.height) / 2;
       this.scaledImageSize = this.calcScaledImageSize(100);
-      if (this.canvas) {
-        this.onImageScaleInputChange({ value: this.imageScale });
-        this.draw();
-      }
-    });
+    } else {
+      this.scaledImageSize = this.calcScaledImageSize(this.imageScale);
+    }
+
+    // Draw image.
+    this.onImageScaleInputChange({ value: this.imageScale });
+    this.draw();
   }
 
   //----------------------------------------------------------------------------
   // Drawing methods.
   //
   private draw() {
-    if (this.canvas) {
-      this.canvas.clear();
-      this.drawImage();
-      this.drawMarginFrame();
-      this.drawCenterLine();
-    }
+    this.canvas.clear();
+    this.drawImage();
+    this.drawMarginFrame();
+    this.drawCenterLine();
   }
 
   private drawImage() {
-    if (this.canvas) {
-      this.canvas.drawImage(
-        this.inputImage,
-        this.imagePos.x,
-        this.imagePos.y,
-        this.scaledImageSize.x,
-        this.scaledImageSize.y
-      );
-    }
+    this.canvas.drawImage(
+      this.inputImage,
+      this.imagePos.x,
+      this.imagePos.y,
+      this.scaledImageSize.x,
+      this.scaledImageSize.y
+    );
   }
 
   /**
@@ -254,21 +235,17 @@ export class MakeThumbnailFormComponent implements OnChanges, AfterViewInit {
    * +-----------------+
    */
   private drawMarginFrame() {
-    if (this.canvas) {
-      this.canvas.fillStyle = 'rgba(128, 128, 128, 0.5)'; // 50% gray.
-      this.canvas.drawRect(0, 0, this.canvasSize.x, this.margin.y);
-      this.canvas.drawRect(0, this.margin.y, this.margin.x, this.canvasSize.y - this.margin.y * 2);
-      this.canvas.drawRect(this.canvasSize.x - this.margin.x, this.margin.y, this.margin.x, this.canvasSize.y - this.margin.y * 2); // eslint-disable-line
-      this.canvas.drawRect(0, this.canvasSize.y - this.margin.y, this.canvasSize.x, this.margin.y);
-    }
+    this.canvas.fillStyle = 'rgba(128, 128, 128, 0.5)'; // 50% gray.
+    this.canvas.drawRect(0, 0, this.canvasSize.x, this.margin.y);
+    this.canvas.drawRect(0, this.margin.y, this.margin.x, this.canvasSize.y - this.margin.y * 2);
+    this.canvas.drawRect(this.canvasSize.x - this.margin.x, this.margin.y, this.margin.x, this.canvasSize.y - this.margin.y * 2); // eslint-disable-line
+    this.canvas.drawRect(0, this.canvasSize.y - this.margin.y, this.canvasSize.x, this.margin.y);
   }
 
   private drawCenterLine() {
-    if (this.canvas) {
-      this.canvas.strokeStyle = 'rgba(0, 0, 255, 0.5)'; // 50% Blue.
-      this.canvas.drawLine(0, Math.ceil(this.canvasSize.y / 2), this.canvasSize.x, Math.ceil(this.canvasSize.y / 2));
-      this.canvas.drawLine(Math.ceil(this.canvasSize.x / 2), 0, Math.ceil(this.canvasSize.x / 2), this.canvasSize.y);
-    }
+    this.canvas.strokeStyle = 'rgba(0, 0, 255, 0.5)'; // 50% Blue.
+    this.canvas.drawLine(0, Math.ceil(this.canvasSize.y / 2), this.canvasSize.x, Math.ceil(this.canvasSize.y / 2));
+    this.canvas.drawLine(Math.ceil(this.canvasSize.x / 2), 0, Math.ceil(this.canvasSize.x / 2), this.canvasSize.y);
   }
 
   //----------------------------------------------------------------------------
@@ -355,19 +332,21 @@ export class MakeThumbnailFormComponent implements OnChanges, AfterViewInit {
   //----------------------------------------------------------------------------
   // Making output data.
   //
-  private MakeThumbnailFormData() {
-    const location = `${this.className}.MakeThumbnailFormData()`;
+  private MakeThumbnailImageData(): Blob {
+    const location = `${this.className}.MakeThumbnailImageData()`;
 
     // Make dummy canvas to crop image.
     const tmpCanvas = document.createElement('canvas');
     if (!tmpCanvas) {
-      this.logger.error(location, 'Temporary canvas is not available.');
-      return;
+      const error = new Error(`${location} Temporary canvas creation failed.`);
+      error.name = ErrorCode.Unexpected;
+      throw error;
     }
     const context = tmpCanvas.getContext('2d');
     if (!context) {
-      this.logger.error(location, 'Context is not avaiable.');
-      return;
+      const error = new Error(`${location} Temporary canvas context is not available.`);
+      error.name = ErrorCode.Unexpected;
+      throw error;
     }
 
     // Set temporary canvas size.
@@ -390,7 +369,6 @@ export class MakeThumbnailFormComponent implements OnChanges, AfterViewInit {
       binaryData[i] = bin.charCodeAt(i);
     }
 
-    this.thumbData = new Blob([binaryData], { type: 'image/jpeg' });
-    return;
+    return new Blob([binaryData], { type: 'image/jpeg' });
   }
 }

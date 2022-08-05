@@ -29,3 +29,15 @@ export interface MakeThumbnailFormResult {
   canceled: boolean;
   thumb?: Blob;
 }
+
+export class ThumbnailMakeInfo {
+  image: File = new File([], ''); // Dummy file.
+
+  imageSize: XY = new XY(80, 80);
+
+  offset: XY = new XY(0, 0);
+
+  scale: number = 100;
+
+  thumb: Blob = new Blob();
+}
