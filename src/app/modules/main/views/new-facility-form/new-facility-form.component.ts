@@ -1,55 +1,41 @@
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { NGXLogger } from 'ngx-logger';
-import {
-  FsFacility,
-  FsFacilityRarerityMax,
-  FsFacilityType,
-} from 'src/app/services/firestore-data/firestore-document.interface';
-import { NewFacilityFormContent, NewFacilityFormMode, NewFacilityFormResult } from './new-facility-form.interafce';
+import { FsCollectionName } from 'src/app/services/firestore-data/firestore-collection-name.enum';
+import { FirestoreDataService } from 'src/app/services/firestore-data/firestore-data.service';
+import { FsFacilityRarerityMax, FsFacilityType } from 'src/app/services/firestore-data/firestore-document.interface';
+import { NewFacilityFormData, NewFacilityFormMode } from './new-facility-form.interafce';
 
 @Component({
   selector: 'app-new-facility-form',
   templateUrl: './new-facility-form.component.html',
   styleUrls: ['./new-facility-form.component.scss'],
 })
-export class NewFacilityFormComponent implements OnChanges {
+export class NewFacilityFormComponent implements OnInit {
   //============================================================================
   // Class members.
   //
-  private className = 'NewFacilityFormComponent';
-
-  /** Status */
-  @Input() shown = false;
+  private readonly className = 'NewFacilityFormComponent';
 
   /** Appearance. */
-  @Input() mode = NewFacilityFormMode.normal;
-
-  minimumMode = NewFacilityFormMode.minimum;
-
-  normalMode = NewFacilityFormMode.normal;
+  @Input() mode: NewFacilityFormMode = 'normal';
 
   @Input() styleClass = '';
 
-  /** Button label and style. */
   @Input() okLabel = 'Ok';
 
   @Input() cancelLabel = 'Cancel';
 
   @Input() buttonStyleClass = '';
 
+  /** Form data. */
+  @Input() facilityData!: NewFacilityFormData;
+
+  @Output() facilityDataChange = new EventEmitter<NewFacilityFormData>();
+
+  @Output() canceled = new EventEmitter<boolean>();
+
   /** Facility type */
-  @Input() facilityTypes!: FsFacilityType[];
-
-  selectedType?: FsFacilityType;
-
-  /** Facility name */
-  @Input() initialFacilityName = '';
-
-  inputName = '';
-
-  @Input() facilities!: FsFacility[];
-
-  errorMessage = '';
+  facilityTypeItems = this.firestore.getData(FsCollectionName.FacilityTypes) as FsFacilityType[];
 
   /** Facility Rarerity */
   rarerityItems: number[] = [];
@@ -65,13 +51,13 @@ export class NewFacilityFormComponent implements OnChanges {
   /** Facility details */
   inputDetails: string[] = ['', '', ''];
 
-  /** Result weapon info. */
-  @Output() formResult = new EventEmitter<NewFacilityFormResult>();
+  /** Error message */
+  errorMessage = '';
 
   //============================================================================
   // Class methods.
   //
-  constructor(private logger: NGXLogger) {
+  constructor(private logger: NGXLogger, private firestore: FirestoreDataService) {
     this.logger.trace(`new ${this.className}()`);
 
     // Initialize rarerity list.
@@ -80,45 +66,38 @@ export class NewFacilityFormComponent implements OnChanges {
     }
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    // Clear input values when dialog is shown.
-    if (changes['shown']) {
-      if (changes['shown'].currentValue === true) {
-        this.clearInputs();
-      }
+  ngOnInit(): void {
+    const location = `${this.className}.ngOnInit()`;
+    this.logger.trace(location);
+
+    // Copy description texts.
+    for (let i = 0; i < this.facilityData.descriptions.length; ++i) {
+      this.inputDescriptions[i] = this.facilityData.descriptions[i].slice();
+    }
+    for (let i = 0; i < this.facilityData.effects.length; ++i) {
+      this.inputEffects[i] = this.facilityData.effects[i].slice();
+    }
+    for (let i = 0; i < this.facilityData.details.length; ++i) {
+      this.inputDetails[i] = this.facilityData.details[i].slice();
     }
 
-    // Set input weapon name if initial value is set by parent component.
-    if (!changes['initialFacilityName'] || changes['initialFacilityName'].previousValue !== this.initialFacilityName) {
-      this.inputName = this.initialFacilityName;
-    }
-
-    // Sort input weapon types.
-    this.facilityTypes.sort((a, b) => {
-      return a.code < b.code ? -1 : 1;
-    });
+    // Sort facility types.
+    this.firestore.sortByCode(this.facilityTypeItems);
   }
 
   onNameInputChange() {
     const location = `${this.className}.onNameInputChange()`;
     this.logger.trace(location);
 
-    for (let facility of this.facilities) {
-      if (facility.name === this.inputName) {
-        this.logger.warn(location, 'Existing facility name.', { name: this.inputName });
+    const facilities = this.firestore.getData(FsCollectionName.Facilities);
+    for (let facility of facilities) {
+      if (facility.name === this.facilityData.name) {
+        this.logger.warn(location, 'Existing facility name.', { name: this.facilityData.name });
         this.errorMessage = '既に登録済の名前です。';
         return;
       }
     }
 
-    this.errorMessage = '';
-  }
-
-  clearNameInput() {
-    const location = `${this.className}.clearInputName()`;
-    this.logger.trace(location);
-
-    this.inputName = '';
     this.errorMessage = '';
   }
 
@@ -138,60 +117,25 @@ export class NewFacilityFormComponent implements OnChanges {
     const location = `${this.className}.onOkClick()`;
     this.logger.trace(location);
 
-    this.formResult.emit(this.makeFacilityInfo(false));
+    this.makeFacilityData();
+    this.facilityDataChange.emit(this.facilityData);
+    this.canceled.emit(false);
   }
 
   onCancelClick() {
     const location = `${this.className}.onCancelClick()`;
     this.logger.trace(location);
 
-    this.formResult.emit(this.makeFacilityInfo(true));
+    this.canceled.emit(true);
   }
 
-  private clearInputs() {
-    this.selectedType = undefined;
-    this.inputName = '';
-    this.errorMessage = '';
-    this.selectedRarerity = undefined;
-    this.inputDescriptions = [''];
-    this.inputEffects = [];
-    this.inputDetails = ['', '', ''];
-  }
-
-  private makeFacilityInfo(canceled: boolean) {
-    const location = `${this.className}.makeFacilityInfo()`;
-    const result: NewFacilityFormResult = new NewFacilityFormResult();
-
-    // When the form is canceled, it returns canceled flag only.
-    if (canceled) {
-      result.canceled = true;
-    }
-
-    // When the form is input, it returns input weapon data.
-    else {
-      // The mandatory input fields must not be null or undefined.
-      // Input value validation shall be implemented at template.
-      if (!this.selectedType || this.inputName === '' || !this.selectedRarerity) {
-        this.logger.error(location, 'Necessary field is not input.', {
-          type: this.selectedType,
-          name: this.inputName,
-          rarerity: this.selectedRarerity,
-        });
-        throw Error(`${location} Necessary field is not input.`);
-      }
-
-      // Make weapon data to be returned.
-      result.canceled = false;
-      const content = new NewFacilityFormContent();
-      content.type = this.selectedType;
-      content.name = this.inputName;
-      content.rarerity = this.selectedRarerity;
-      content.descriptions = this.inputDescriptions.filter((text) => text.length > 0);
-      content.effects = this.inputEffects.filter((text) => text.length > 0);
-      content.details = this.inputDetails.filter((text) => text.length > 0);
-      result.content = content;
-    }
-
-    return result;
+  //============================================================================
+  // Private methods.
+  //
+  private makeFacilityData() {
+    // Copy description texts.
+    this.facilityData.descriptions = this.inputDescriptions.filter((text) => text.length > 0);
+    this.facilityData.effects = this.inputEffects.filter((text) => text.length > 0);
+    this.facilityData.details = this.inputDetails.filter((text) => text.length > 0);
   }
 }

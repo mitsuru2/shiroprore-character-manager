@@ -729,17 +729,23 @@
 <!---->
 <!-- New Facility Form Dialog -->
 <!---->
-<p-dialog header="未登録の施設です。必須情報を入力してください。" [(visible)]="showFacilityForm" [modal]="true" [draggable]="false" [resizable]="false">
+<p-dialog
+  header="未登録の施設です。必須情報を入力してください。"
+  [(visible)]="showFacilityForm"
+  [modal]="true"
+  [draggable]="false"
+  [resizable]="false"
+  [closable]="false"
+>
   <app-new-facility-form
-    [mode]="facilityFormMode"
+    *ngIf="showFacilityForm"
+    mode="minimum"
     styleClass="dialog"
-    [facilities]="facilities"
-    [facilityTypes]="facilityTypes"
-    [initialFacilityName]="initialFacilityName"
     [okLabel]="'ＯＫ'"
     [cancelLabel]="'キャンセル'"
     [buttonStyleClass]="'p-button-text'"
-    (formResult)="onNewFacilityFormResult($event)"
+    [(facilityData)]="facilityForm"
+    (canceled)="onNewFacilityFormResult($event)"
   ></app-new-facility-form>
 </p-dialog>
 

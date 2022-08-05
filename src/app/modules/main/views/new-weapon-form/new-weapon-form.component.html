@@ -21,7 +21,7 @@
     <div class="field col">
       <label for="NewWeaponForm_WeaponNameInput">武器名</label>
       <span class="p-input-icon-right" [style]="{ width: '100%' }">
-        <i *ngIf="weaponData.name !== ''" class="pi pi-times" (click)="weaponData.name = ''"></i>
+        <i *ngIf="weaponData.name !== ''" class="pi pi-times" (click)="weaponData.name = ''; errorMessage = ''"></i>
         <input
           type="text"
           id="NewWeaponForm_WeaponNameInput"

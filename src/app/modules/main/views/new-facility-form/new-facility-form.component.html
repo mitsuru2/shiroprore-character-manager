@@ -3,12 +3,12 @@
     <div class="field col">
       <label>施設タイプ</label>
       <div class="formgroup-inline">
-        <div *ngFor="let item of facilityTypes" class="field-checkbox">
+        <div *ngFor="let item of facilityTypeItems" class="field-checkbox">
           <p-radioButton
             [inputId]="'NewFacilityForm_FacilityTypeInput_' + item.name"
             name="NewFacilityForm_FacilityTypeInput"
             [value]="item"
-            [(ngModel)]="selectedType"
+            [(ngModel)]="facilityData.type"
           ></p-radioButton>
           <label [for]="'NewFacilityForm_FacilityTypeInput_' + item.name">{{ item.name }}</label>
         </div>
@@ -20,12 +20,12 @@
     <div class="field col">
       <label for="NewFacilityForm_FacilityNameInput">施設名</label>
       <span class="p-input-icon-right" [style]="{ width: '100%' }">
-        <i *ngIf="inputName !== ''" class="pi pi-times" (click)="clearNameInput()"></i>
+        <i *ngIf="facilityData.name !== ''" class="pi pi-times" (click)="facilityData.name = ''; errorMessage = ''"></i>
         <input
           type="text"
           id="NewFacilityForm_FacilityNameInput"
           name="NewFacilityForm_FacilityNameInput"
-          [(ngModel)]="inputName"
+          [(ngModel)]="facilityData.name"
           pInputText
           [style]="{ width: '100%' }"
           (change)="onNameInputChange()"
@@ -41,18 +41,18 @@
       <div class="formgroup-inline">
         <div *ngFor="let item of rarerityItems" class="field-checkbox">
           <p-radioButton
-            [inputId]="'NewFacilityForm_RarerityInput_' + item.toString()"
+            [inputId]="'NewFacilityForm_RarerityInput_' + item"
             name="NewFacilityForm_RarerityInput_"
             [value]="item"
-            [(ngModel)]="selectedRarerity"
+            [(ngModel)]="facilityData.rarerity"
           ></p-radioButton>
-          <label [for]="'NewFacilityForm_RarerityInput_' + item.toString()">★{{ item }}</label>
+          <label [for]="'NewFacilityForm_RarerityInput_' + item">★{{ item }}</label>
         </div>
       </div>
     </div>
   </div>
 
-  <div class="formgrid grid" *ngIf="mode !== minimumMode" style="margin-bottom: 1rem">
+  <div class="formgrid grid" *ngIf="mode === 'normal'" style="margin-bottom: 1rem">
     <div class="field col">
       <label>説明</label>
       <div *ngFor="let desc of inputDescriptions; trackBy: trackByItem; let i = index">
@@ -71,14 +71,14 @@
     </div>
   </div>
 
-  <div class="formgrid grid p-fluid" *ngIf="mode !== minimumMode" style="margin-bottom: 1rem">
+  <div class="formgrid grid p-fluid" *ngIf="mode === 'normal'" style="margin-bottom: 1rem">
     <div class="field col">
       <label>効果</label>
       <p-chips inputId="NewFacilityForm_FacilityEffectInput" name="NewFacilityForm_FacilityEffectInput" [(ngModel)]="inputEffects" [max]="4"></p-chips>
     </div>
   </div>
 
-  <div class="formgrid grid" *ngIf="mode !== minimumMode" style="margin-bottom: 1rem">
+  <div class="formgrid grid" *ngIf="mode === 'normal'" style="margin-bottom: 1rem">
     <div class="field col">
       <label>詳細</label>
       <div *ngFor="let desc of inputDetails; trackBy: trackByItem; let i = index">
@@ -101,7 +101,7 @@
     [label]="okLabel"
     icon="pi pi-check"
     (onClick)="onOkClick()"
-    [disabled]="!selectedType || inputName === '' || errorMessage !== '' || !selectedRarerity"
+    [disabled]="facilityData.type.name === '' || facilityData.name === '' || errorMessage !== '' || facilityData.rarerity === 0"
     [styleClass]="buttonStyleClass"
   ></p-button>
   <p-button

@@ -1,11 +1,8 @@
 import { FsFacilityType } from 'src/app/services/firestore-data/firestore-document.interface';
 
-export enum NewFacilityFormMode {
-  minimum,
-  normal,
-}
+export type NewFacilityFormMode = 'normal' | 'minimum';
 
-export class NewFacilityFormContent {
+export class NewFacilityFormData {
   type: FsFacilityType = new FsFacilityType();
 
   name: string = '';
@@ -17,10 +14,4 @@ export class NewFacilityFormContent {
   effects: string[] = [];
 
   details: string[] = [];
-}
-
-export class NewFacilityFormResult {
-  canceled: boolean = true;
-
-  content?: NewFacilityFormContent;
 }

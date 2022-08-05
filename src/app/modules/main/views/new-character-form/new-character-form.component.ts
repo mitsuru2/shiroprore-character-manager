@@ -25,7 +25,7 @@ import { HtmlCanvas } from '../../utils/html-canvas/html-canvas.utility';
 import { loadImageFile } from '../../utils/image-file/image-file.utility';
 import { sleep } from '../../utils/sleep/sleep.utility';
 import { ThumbnailMakeInfo, XY } from '../make-thumbnail-form/make-thumbnail-form.interface';
-import { NewFacilityFormMode, NewFacilityFormResult } from '../new-facility-form/new-facility-form.interafce';
+import { NewFacilityFormData } from '../new-facility-form/new-facility-form.interafce';
 import { NewWeaponFormData } from '../new-weapon-form/new-weapon-form.interface';
 import {
   FsAbilityForNewCharacterForm,
@@ -126,7 +126,6 @@ export class NewCharacterFormComponent implements OnChanges {
 
   inputMotifWeapons: string[] = [];
 
-  /** New weapon form. */
   weaponForm = new NewWeaponFormData();
 
   showWeaponForm = false;
@@ -136,12 +135,9 @@ export class NewCharacterFormComponent implements OnChanges {
 
   inputMotifFacilities: string[] = [];
 
-  /** New facility form. */
   @Input() facilityTypes!: FsFacilityType[];
 
-  facilityFormMode = NewFacilityFormMode.minimum;
-
-  initialFacilityName = '';
+  facilityForm = new NewFacilityFormData();
 
   showFacilityForm = false;
 
@@ -525,14 +521,13 @@ export class NewCharacterFormComponent implements OnChanges {
     this.showWeaponForm = false;
   }
 
-  onNewFacilityFormResult(formResult: NewFacilityFormResult) {
+  onNewFacilityFormResult(canceled: boolean) {
     const location = `${this.className}.onNewFacilityFormResult()`;
-    this.logger.trace(location, { formResult: formResult });
+    this.logger.trace(location, { formResult: canceled });
 
     // Import form result to motif weapon field.
-    if (!formResult.canceled && formResult.content) {
-      const content = formResult.content;
-      const facilityText = `${content.rarerity.toString()}|${content.type.name}|${content.name}`;
+    if (!canceled) {
+      const facilityText = `${this.facilityForm.rarerity}|${this.facilityForm.type.name}|${this.facilityForm.name}`;
       this.inputMotifFacilities.push(facilityText);
     }
 
@@ -712,8 +707,9 @@ export class NewCharacterFormComponent implements OnChanges {
 
     // Open new weapon form if input motif weapon name is new.
     if (this.facilities.findIndex((item) => item.name === value) < 0) {
-      this.inputMotifFacilities.splice(index);
-      this.initialFacilityName = value;
+      this.inputMotifFacilities.splice(index); // Remove text chip.
+      this.facilityForm = new NewFacilityFormData();
+      this.facilityForm.name = value;
       this.showFacilityForm = true;
     }
   }
