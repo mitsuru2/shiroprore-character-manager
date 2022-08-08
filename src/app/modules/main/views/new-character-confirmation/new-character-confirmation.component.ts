@@ -4,7 +4,7 @@ import { CsCharacterImageTypeMax } from 'src/app/services/cloud-storage/cloud-st
 import { HtmlCanvas } from '../../utils/html-canvas/html-canvas.utility';
 import { loadImageFile } from '../../utils/image-file/image-file.utility';
 import { sleep } from '../../utils/sleep/sleep.utility';
-import { NewCharacterFormContent } from '../new-character-form/new-character-form.interface';
+import { NewCharacterFormData } from '../new-character-form/new-character-form.interface';
 
 @Component({
   selector: 'app-new-character-confirmation',
@@ -30,7 +30,7 @@ export class NewCharacterConfirmationComponent implements AfterViewInit {
   readonly imagePreviewH = this.imagePreviewW;
 
   /** Character data. */
-  @Input() character!: NewCharacterFormContent;
+  @Input() character!: NewCharacterFormData;
 
   /** Images. */
   images: HTMLImageElement[] = new Array(CsCharacterImageTypeMax);

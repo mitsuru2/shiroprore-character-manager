@@ -12,6 +12,8 @@ import {
   FsWeaponType,
 } from 'src/app/services/firestore-data/firestore-document.interface';
 
+export type NewCharacterFormMode = 'normal' | 'dataOnly' | 'imageOnly';
+
 export class FsAbilityForNewCharacterForm extends FsAbility {
   typeName: string = '';
 
@@ -20,7 +22,7 @@ export class FsAbilityForNewCharacterForm extends FsAbility {
   isExisting: boolean = false;
 }
 
-export class NewCharacterFormContent {
+export class NewCharacterFormData {
   characterType: FsCharacterType = new FsCharacterType();
 
   subCharacterType: FsSubCharacterType = new FsSubCharacterType();
@@ -58,10 +60,4 @@ export class NewCharacterFormContent {
   imageFilesKai: File[] = [];
 
   thumbnailImage?: Blob; // Only binary data and files can be undefined.
-}
-
-export class NewCharacterFormResult {
-  canceled: boolean = true;
-
-  content?: NewCharacterFormContent;
 }

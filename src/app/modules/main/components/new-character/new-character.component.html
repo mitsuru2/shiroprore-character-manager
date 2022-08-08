@@ -2,24 +2,11 @@
 <!-- New character form ------------------------------------------------------->
 <!----------------------------------------------------------------------------->
 <app-new-character-form
-  [shown]="showNewCharacterForm"
+  [mode]="'normal'"
   [okLabel]="'入力内容確認'"
   [cancelLabel]="'キャンセル'"
-  [characterTypes]="characterTypes"
-  [subCharacterTypes]="subCharacterTypes"
-  [characters]="characters"
-  [characterTags]="characterTags"
-  [weaponTypes]="weaponTypes"
-  [geographTypes]="geographTypes"
-  [regions]="regions"
-  [voiceActors]="voiceActors"
-  [illustrators]="illustrators"
-  [weapons]="weapons"
-  [facilities]="facilities"
-  [facilityTypes]="facilityTypes"
-  [abilityTypes]="abilityTypes"
-  [abilities]="abilities"
-  (formResult)="onNewCharacterFormResult($event)"
+  [(characterData)]="characterData"
+  (canceled)="onNewCharacterFormResult($event)"
 ></app-new-character-form>
 
 <!----------------------------------------------------------------------------->
@@ -32,7 +19,7 @@
     okLabel="ＯＫ"
     cancelLabel="キャンセル"
     buttonStyleClass="p-button-text"
-    [character]="newCharacterFormContent"
+    [character]="characterData"
     (canceled)="onNewCharacterConfirmResult($event)"
   ></app-new-character-confirmation>
 </p-dialog>

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { NGXLogger } from 'ngx-logger';
 import {
   FsAbility,
@@ -21,13 +21,13 @@ import { FirestoreDataService } from 'src/app/services/firestore-data/firestore-
 import { FsCollectionName } from 'src/app/services/firestore-data/firestore-collection-name.enum';
 import {
   FsAbilityForNewCharacterForm,
-  NewCharacterFormContent,
-  NewCharacterFormResult,
+  NewCharacterFormData,
 } from '../../views/new-character-form/new-character-form.interface';
 import { csCharacterImageTypes } from 'src/app/services/cloud-storage/cloud-storage.interface';
 import { CloudStorageService } from 'src/app/services/cloud-storage/cloud-storage.service';
 import { ErrorHandlerService } from 'src/app/services/error-handler/error-handler.service';
 import { SpinnerService } from '../../services/spinner/spinner.service';
+import { NewCharacterFormComponent } from '../../views/new-character-form/new-character-form.component';
 
 @Component({
   selector: 'app-new-character',
@@ -36,6 +36,9 @@ import { SpinnerService } from '../../services/spinner/spinner.service';
 })
 export class NewCharacterComponent /*implements OnInit*/ {
   className: string = 'NewCharacterComponent';
+
+  /** New character form. */
+  @ViewChild(NewCharacterFormComponent) private newCharacterForm!: NewCharacterFormComponent;
 
   /** Firestore data */
   abilities = this.firestore.getData(FsCollectionName.Abilities) as FsAbility[];
@@ -67,9 +70,7 @@ export class NewCharacterComponent /*implements OnInit*/ {
   weapons = this.firestore.getData(FsCollectionName.Weapons) as FsWeapon[];
 
   /** New character form. */
-  showNewCharacterForm = true;
-
-  newCharacterFormContent = new NewCharacterFormContent();
+  characterData = new NewCharacterFormData();
 
   /** New character confirmation dialog. */
   showConfirmationDialog = false;
@@ -89,18 +90,14 @@ export class NewCharacterComponent /*implements OnInit*/ {
 
   // ngOnInit(): void {}
 
-  onNewCharacterFormResult(formResult: NewCharacterFormResult) {
+  onNewCharacterFormResult(canceled: boolean) {
     const location = `${this.className}.onNewCharacterFormResult()`;
-    this.logger.trace(location, { formResult: formResult });
+    this.logger.trace(location, { canceld: canceled, characterData: this.characterData });
 
     /** If valid data input, open the confirmation dialog. */
-    if (!formResult.canceled && formResult.content) {
-      this.newCharacterFormContent = formResult.content;
+    if (!canceled) {
       this.showConfirmationDialog = true;
     }
-
-    /** Clear shown flag. */
-    this.showNewCharacterForm = false;
   }
 
   async onNewCharacterConfirmResult(canceled: boolean) {
@@ -116,14 +113,13 @@ export class NewCharacterComponent /*implements OnInit*/ {
     }
 
     // Show progress spinner.
-    this.showNewCharacterForm = true;
     this.spinner.show();
 
     try {
       // Upload input data.
-      const index = await this.uploadCharacterInfo(this.newCharacterFormContent);
+      const index = await this.uploadCharacterInfo(this.characterData);
       if (index.length > 0) {
-        await this.uploadCharacterImages(this.newCharacterFormContent, index);
+        await this.uploadCharacterImages(this.characterData, index);
         this.logger.info(location, 'Finished.');
       } else {
         this.logger.error(location, 'Invalid character index.', { index: index });
@@ -135,15 +131,21 @@ export class NewCharacterComponent /*implements OnInit*/ {
       this.errorHandler.notifyError(error);
     }
 
+    // Clear character form.
+    this.newCharacterForm.clearForm();
+    this.scrollToTop();
+
     // Hide progress spinner.
     this.spinner.hide();
-    this.showNewCharacterForm = false;
   }
 
   //============================================================================
   // Private methods.
   //
-  private async uploadCharacterInfo(formContent: NewCharacterFormContent): Promise<string> {
+  //----------------------------------------------------------------------------
+  // Upload character information.
+  //
+  private async uploadCharacterInfo(formContent: NewCharacterFormData): Promise<string> {
     const location = `${this.className}.uploadCharacterInfo()`;
 
     // Make character info to be registered.
@@ -255,7 +257,7 @@ export class NewCharacterComponent /*implements OnInit*/ {
     return character.index;
   }
 
-  private makeCharacterInfo(formContent?: NewCharacterFormContent): FsCharacter {
+  private makeCharacterInfo(formContent: NewCharacterFormData): FsCharacter {
     // Make blank character info.
     const character = new FsCharacter();
 
@@ -335,7 +337,7 @@ export class NewCharacterComponent /*implements OnInit*/ {
     return index;
   }
 
-  private async uploadCharacterImages(formContent: NewCharacterFormContent, index: string) {
+  private async uploadCharacterImages(formContent: NewCharacterFormData, index: string) {
     // const location = `${this.className}.uploadCharacterImages()`;
 
     // Upload images before kaichiku.
@@ -369,5 +371,12 @@ export class NewCharacterComponent /*implements OnInit*/ {
       this.firestore.load(FsCollectionName.Illustrators),
       this.firestore.load(FsCollectionName.Weapons),
     ]);
+  }
+
+  //----------------------------------------------------------------------------
+  // Window control
+  //
+  private scrollToTop() {
+    document.getElementById('MainContents')?.scrollTo({ top: 0, behavior: 'auto' });
   }
 }

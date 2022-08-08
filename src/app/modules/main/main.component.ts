@@ -153,13 +153,7 @@ export class MainComponent /*implements OnInit*/ {
   //
   private onNewCharacterMenuClick() {
     if (this.userAuth.signedIn) {
-      this.router.navigateByUrl('/main/new-character').then(() => {
-        try {
-          this.newCharacterComponent.showNewCharacterForm = true;
-        } catch {
-          // do nothing.
-        }
-      });
+      this.router.navigateByUrl('/main/new-character');
     } else {
       // Show warning message.
       this.confirmationDialog.confirm({

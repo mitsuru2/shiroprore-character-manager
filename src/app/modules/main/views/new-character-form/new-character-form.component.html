@@ -1,4 +1,4 @@
-<form [style]="{ 'max-width': maxWidth, 'margin-bottom': '1rem' }">
+<form [style]="{ 'margin-bottom': '1rem' }" [ngClass]="styleClass">
   <!------------------------------------------------------------------------->
   <!-- ERROR MESSAGE -------------------------------------------------------->
   <!------------------------------------------------------------------------->
@@ -9,616 +9,625 @@
   <!------------------------------------------------------------------------->
   <!-- BASIC INFORMATION ---------------------------------------------------->
   <!------------------------------------------------------------------------->
-  <p-divider align="center"><span>基本情報</span></p-divider>
+  <div *ngIf="mode === 'normal' || mode === 'dataOnly'">
+    <p-divider align="center"><span>基本情報</span></p-divider>
 
-  <!---->
-  <!-- Character type & name -->
-  <!---->
-  <div class="formgrid grid" style="margin-bottom: 1rem">
-    <div class="field col-12 lg:col-6">
-      <label for="NewCharacterForm_CharacterTypeInput">キャラクタータイプ</label>
-      <p-dropdown
-        id="NewCharacterForm_CharacterTypeInput"
-        name="NewCharacterForm_CharacterTypeInput"
-        [(ngModel)]="selectedCharacterType"
-        [options]="characterTypes"
-        optionLabel="name"
-        [style]="{ width: '100%' }"
-        (onChange)="onCharacterTypeChanged()"
-      ></p-dropdown>
-    </div>
-    <div class="field col-12 lg:col-6" *ngIf="selectedCharacterType.hasSubTypes">
-      <label for="NewCharacterForm_SubCharacterTypeInput">サブキャラクタータイプ</label>
-      <p-dropdown
-        id="NewCharacterForm_SubCharacterTypeInput"
-        name="NewCharacterForm_SubCharacterTypeInput"
-        [(ngModel)]="selectedSubCharacterType"
-        [options]="subCharacterTypeItems"
-        optionLabel="name"
-        [style]="{ width: '100%' }"
-      ></p-dropdown>
-    </div>
-  </div>
-
-  <div class="formgrid grid">
-    <div class="field col">
-      <label for="NewCharacterForm_CharacterNameInput">キャラクター名</label>
-      <span class="p-input-icon-right" [style]="{ width: '100%' }">
-        <i *ngIf="inputCharacterName !== ''" class="pi pi-times" (click)="inputCharacterName = ''"></i>
-        <input
-          type="text"
-          id="NewCharacterForm_CharacterNameInput"
-          name="NewCharacterForm_CharacterNameInput"
-          [(ngModel)]="inputCharacterName"
-          pInputText
-          [required]="true"
+    <!---->
+    <!-- Character type & name -->
+    <!---->
+    <div class="formgrid grid" style="margin-bottom: 1rem">
+      <div class="field col-12 lg:col-6">
+        <label for="NewCharacterForm_CharacterTypeInput">キャラクタータイプ</label>
+        <p-dropdown
+          id="NewCharacterForm_CharacterTypeInput"
+          name="NewCharacterForm_CharacterTypeInput"
+          [(ngModel)]="characterData.characterType"
+          [options]="characterTypes"
+          optionLabel="name"
           [style]="{ width: '100%' }"
-        />
-      </span>
+          (onChange)="onCharacterTypeChanged()"
+        ></p-dropdown>
+      </div>
+      <div class="field col-12 lg:col-6" *ngIf="characterData.characterType.hasSubTypes">
+        <label for="NewCharacterForm_SubCharacterTypeInput">サブキャラクタータイプ</label>
+        <p-dropdown
+          id="NewCharacterForm_SubCharacterTypeInput"
+          name="NewCharacterForm_SubCharacterTypeInput"
+          [(ngModel)]="characterData.subCharacterType"
+          [options]="subCharacterTypeItems"
+          optionLabel="name"
+          [style]="{ width: '100%' }"
+        ></p-dropdown>
+      </div>
     </div>
-  </div>
 
-  <!---->
-  <!-- Character rarerity -->
-  <!---->
-  <div class="formgrid">
-    <div class="field col">
-      <label>レアリティ</label>
-      <div class="formgroup-inline">
-        <div *ngFor="let item of rarerityItems" class="field-checkbox">
-          <p-radioButton
-            [inputId]="'NewCharacterForm_RarerityInput_' + item.toString()"
-            name="NewCharacterForm_RarerityInput"
-            [value]="item"
-            [(ngModel)]="selectedRarerity"
-          ></p-radioButton>
-          <label [for]="'NewCharacterForm_RarerityInput_' + item.toString()">★{{ item }}</label>
+    <div class="formgrid grid">
+      <div class="field col">
+        <label for="NewCharacterForm_CharacterNameInput">キャラクター名</label>
+        <span class="p-input-icon-right" [style]="{ width: '100%' }">
+          <i *ngIf="characterData.characterName !== ''" class="pi pi-times" (click)="characterData.characterName = ''"></i>
+          <input
+            type="text"
+            id="NewCharacterForm_CharacterNameInput"
+            name="NewCharacterForm_CharacterNameInput"
+            [(ngModel)]="characterData.characterName"
+            pInputText
+            [style]="{ width: '100%' }"
+          />
+        </span>
+      </div>
+    </div>
+
+    <!---->
+    <!-- Character rarerity -->
+    <!---->
+    <div class="formgrid">
+      <div class="field col">
+        <label>レアリティ</label>
+        <div class="formgroup-inline">
+          <div *ngFor="let item of rarerityItems" class="field-checkbox">
+            <p-radioButton
+              [inputId]="'NewCharacterForm_RarerityInput_' + item"
+              name="NewCharacterForm_RarerityInput"
+              [value]="item"
+              [(ngModel)]="characterData.rarerity"
+            ></p-radioButton>
+            <label [for]="'NewCharacterForm_RarerityInput_' + item">★{{ item }}</label>
+          </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <!---->
-  <!-- Weapon type -->
-  <!---->
-  <div class="formgrid grid">
-    <div class="field col">
-      <label>武器タイプ</label>
-      <div class="formgroup-inline">
-        <div *ngFor="let item of weaponTypeItems" class="field-checkbox">
-          <p-radioButton
-            [inputId]="'NewCharacterForm_WeaponTypeInput_' + item.name"
-            name="NewCharacterForm_WeaponTypeInput"
-            [value]="item"
-            [(ngModel)]="selectedWeaponType"
-          ></p-radioButton>
-          <label [for]="'NewCharacterForm_WeaponTypeInput_' + item.name">{{ item.name }}</label>
+    <!---->
+    <!-- Weapon type -->
+    <!---->
+    <div class="formgrid grid">
+      <div class="field col">
+        <label>武器タイプ</label>
+        <div class="formgroup-inline">
+          <div *ngFor="let item of weaponTypeItems" class="field-checkbox">
+            <p-radioButton
+              [inputId]="'NewCharacterForm_WeaponTypeInput_' + item.name"
+              name="NewCharacterForm_WeaponTypeInput"
+              [value]="item"
+              [(ngModel)]="characterData.weaponType"
+            ></p-radioButton>
+            <label [for]="'NewCharacterForm_WeaponTypeInput_' + item.name">{{ item.name }}</label>
+          </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <!---->
-  <!-- Geograph type -->
-  <!---->
-  <div class="formgrid grid">
-    <div class="field col">
-      <label>地形タイプ</label>
-      <div class="formgroup-inline">
-        <div *ngFor="let item of geographTypeItems" class="field-checkbox">
-          <p-checkbox
-            [inputId]="'NewCharacterForm_GeographTypeInput_' + item.name"
-            name="NewCharacterForm_GeographTypeInput"
-            [value]="item"
-            [(ngModel)]="selectedGeographTypes"
-          ></p-checkbox>
-          <label [for]="'NewCharacterForm_GeographTypeInput_' + item.name">{{ item.name }}</label>
+    <!---->
+    <!-- Geograph type -->
+    <!---->
+    <div class="formgrid grid">
+      <div class="field col">
+        <label>地形タイプ</label>
+        <div class="formgroup-inline">
+          <div *ngFor="let item of geographTypeItems" class="field-checkbox">
+            <p-checkbox
+              [inputId]="'NewCharacterForm_GeographTypeInput_' + item.name"
+              name="NewCharacterForm_GeographTypeInput"
+              [value]="item"
+              [(ngModel)]="characterData.geographTypes"
+            ></p-checkbox>
+            <label [for]="'NewCharacterForm_GeographTypeInput_' + item.name">{{ item.name }}</label>
+          </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <!---->
-  <!-- Region -->
-  <!---->
-  <div class="formgrid grid" *ngIf="selectedCharacterType.regions.length > 0">
-    <div class="field col">
-      <label>地域</label>
-      <div class="formgroup-inline">
-        <div *ngFor="let item of regionItems" class="field-checkbox">
-          <p-radioButton
-            [inputId]="'NewCharacterForm_RegionInput_' + item.name"
-            name="NewCharacterForm_RegionInput"
-            [value]="item"
-            [(ngModel)]="selectedRegion"
-          ></p-radioButton>
-          <label [for]="'NewCharacterForm_RegionInput_' + item.name">{{ item.name }}</label>
+    <!---->
+    <!-- Region -->
+    <!---->
+    <div class="formgrid grid" *ngIf="characterData.characterType.regions.length > 0">
+      <div class="field col">
+        <label>地域</label>
+        <div class="formgroup-inline">
+          <div *ngFor="let item of regionItems" class="field-checkbox">
+            <p-radioButton
+              [inputId]="'NewCharacterForm_RegionInput_' + item.name"
+              name="NewCharacterForm_RegionInput"
+              [value]="item"
+              [(ngModel)]="characterData.region"
+            ></p-radioButton>
+            <label [for]="'NewCharacterForm_RegionInput_' + item.name">{{ item.name }}</label>
+          </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <!---->
-  <!-- Character cost & kai -->
-  <!---->
-  <div class="formgrid grid" *ngIf="!selectedCharacterType.isCostCalcEnable">
-    <div class="field col-12 lg:col-6 p-fluid">
-      <label for="NewCharacterForm_CharacterCostInput">基本消費気</label>
-      <p-inputNumber
-        inputId="NewCharacterForm_CharacterCostInput"
-        name="NewCharacterForm_CharacterCostInput"
-        [(ngModel)]="inputCharacterCost"
-        mode="decimal"
-        [showButtons]="true"
-        [min]="0"
-        [max]="99"
-      >
-      </p-inputNumber>
+    <!---->
+    <!-- Character cost & kai -->
+    <!---->
+    <div class="formgrid grid" *ngIf="!characterData.characterType.isCostCalcEnable">
+      <div class="field col-12 lg:col-6 p-fluid">
+        <label for="NewCharacterForm_CharacterCostInput">基本消費気</label>
+        <p-inputNumber
+          inputId="NewCharacterForm_CharacterCostInput"
+          name="NewCharacterForm_CharacterCostInput"
+          [(ngModel)]="characterData.cost"
+          mode="decimal"
+          [showButtons]="true"
+          [min]="0"
+          [max]="99"
+        >
+        </p-inputNumber>
+      </div>
+      <div class="field col-12 lg:col-6 p-fluid" *ngIf="characterData.characterType.isKaichikuEnable">
+        <label for="NewCharacterForm_CharacterCostKaiInput">基本消費気 (改壱)</label>
+        <p-inputNumber
+          inputId="NewCharacterForm_CharacterCostKaiInput"
+          name="NewCharacterForm_CharacterCostKaiInput"
+          [(ngModel)]="characterData.costKai"
+          mode="decimal"
+          [showButtons]="true"
+          [min]="0"
+          [max]="99"
+        >
+        </p-inputNumber>
+      </div>
     </div>
-    <div class="field col-12 lg:col-6 p-fluid" *ngIf="selectedCharacterType.isKaichikuEnable">
-      <label for="NewCharacterForm_CharacterCostKaiInput">基本消費気 (改壱)</label>
-      <p-inputNumber
-        inputId="NewCharacterForm_CharacterCostKaiInput"
-        name="NewCharacterForm_CharacterCostKaiInput"
-        [(ngModel)]="inputCharacterCostKai"
-        mode="decimal"
-        [showButtons]="true"
-        [min]="0"
-        [max]="99"
-      >
-      </p-inputNumber>
-    </div>
-  </div>
 
-  <!---->
-  <!-- CV & Illustrator -->
-  <!---->
-  <div class="formgrid grid">
-    <div class="field col-12 lg:col-6">
-      <label for="NewCharacterForm_VoiceActorInput">ＣＶ</label>
-      <p-autoComplete
-        inputId="NewCharacterForm_VoiceActorInput"
-        name="NewCharacterForm_VoiceActorInput"
-        [(ngModel)]="inputVoiceActor.name"
-        [suggestions]="suggestVoiceActorNames"
-        (completeMethod)="onAutofillInputChange($event)"
-        [minLength]="1"
-        [style]="{ width: '100%' }"
-        [inputStyle]="{ width: '100%' }"
-        [showClear]="true"
-      ></p-autoComplete>
+    <!---->
+    <!-- CV & Illustrator -->
+    <!---->
+    <div class="formgrid grid">
+      <div class="field col-12 lg:col-6">
+        <label for="NewCharacterForm_VoiceActorInput">ＣＶ</label>
+        <p-autoComplete
+          inputId="NewCharacterForm_VoiceActorInput"
+          name="NewCharacterForm_VoiceActorInput"
+          [(ngModel)]="characterData.voiceActor.name"
+          [suggestions]="suggestVoiceActorNames"
+          (completeMethod)="onAutofillInputChange($event)"
+          [minLength]="1"
+          [style]="{ width: '100%' }"
+          [inputStyle]="{ width: '100%' }"
+          [showClear]="true"
+        ></p-autoComplete>
+      </div>
+      <div class="field col-12 lg:col-6">
+        <label for="NewCharacterForm_IllustratorInput">イラスト</label>
+        <p-autoComplete
+          inputId="NewCharacterForm_IllustratorInput"
+          name="NewCharacterForm_IllustratorInput"
+          [(ngModel)]="characterData.illustrator.name"
+          [suggestions]="suggestIllustratorNames"
+          (completeMethod)="onAutofillInputChange($event)"
+          [minLength]="1"
+          [style]="{ width: '100%' }"
+          [inputStyle]="{ width: '100%' }"
+          [showClear]="true"
+        ></p-autoComplete>
+      </div>
     </div>
-    <div class="field col-12 lg:col-6">
-      <label for="NewCharacterForm_IllustratorInput">イラスト</label>
-      <p-autoComplete
-        inputId="NewCharacterForm_IllustratorInput"
-        name="NewCharacterForm_IllustratorInput"
-        [(ngModel)]="inputIllustrator.name"
-        [suggestions]="suggestIllustratorNames"
-        (completeMethod)="onAutofillInputChange($event)"
-        [minLength]="1"
-        [style]="{ width: '100%' }"
-        [inputStyle]="{ width: '100%' }"
-        [showClear]="true"
-      ></p-autoComplete>
-    </div>
-  </div>
 
-  <!---->
-  <!-- Motif weapon -->
-  <!---->
-  <div class="formgrid grid p-fluid" *ngIf="!selectedCharacterType.isItem">
-    <div class="field col">
-      <label for="NewCharacterForm_MotifWeaponInput">モチーフ武器</label>
-      <p-chips
-        inputId="NewCharacterForm_MotifWeaponInput"
-        name="NewCharacterForm_MotifWeaponInput"
-        [(ngModel)]="inputMotifWeapons"
-        (onAdd)="onChipInputAdd($event)"
-      ></p-chips>
+    <!---->
+    <!-- Motif weapon -->
+    <!---->
+    <div class="formgrid grid p-fluid" *ngIf="!characterData.characterType.isItem">
+      <div class="field col">
+        <label for="NewCharacterForm_MotifWeaponInput">モチーフ武器</label>
+        <p-chips
+          inputId="NewCharacterForm_MotifWeaponInput"
+          name="NewCharacterForm_MotifWeaponInput"
+          [(ngModel)]="inputMotifWeapons"
+          (onAdd)="onChipInputAdd($event)"
+        ></p-chips>
+      </div>
     </div>
-  </div>
 
-  <!---->
-  <!-- Motif facility -->
-  <!---->
-  <div class="formgrid grid p-fluid" *ngIf="!selectedCharacterType.isItem">
-    <div class="field col">
-      <label for="NewCharacterForm_MotifFacilityInput">モチーフ施設</label>
-      <p-chips
-        inputId="NewCharacterForm_MotifFacilityInput"
-        name="NewCharacterForm_MotifFacilityInput"
-        [(ngModel)]="inputMotifFacilities"
-        (onAdd)="onChipInputAdd($event)"
-      ></p-chips>
+    <!---->
+    <!-- Motif facility -->
+    <!---->
+    <div class="formgrid grid p-fluid" *ngIf="!characterData.characterType.isItem">
+      <div class="field col">
+        <label for="NewCharacterForm_MotifFacilityInput">モチーフ施設</label>
+        <p-chips
+          inputId="NewCharacterForm_MotifFacilityInput"
+          name="NewCharacterForm_MotifFacilityInput"
+          [(ngModel)]="inputMotifFacilities"
+          (onAdd)="onChipInputAdd($event)"
+        ></p-chips>
+      </div>
     </div>
-  </div>
 
-  <!---->
-  <!-- Character tag -->
-  <!---->
-  <div class="formgrid grid">
-    <div class="field col p-fluid">
-      <label for="NewCharacterForm_CharacterTagInput">タグ</label>
-      <p-chips
-        inputId="NewCharacterForm_CharacterTagInput"
-        name="NewCharacterForm_CharacterTagInput"
-        [(ngModel)]="inputCharacterTags"
-        (onAdd)="onChipInputAdd($event)"
-      ></p-chips>
+    <!---->
+    <!-- Character tag -->
+    <!---->
+    <div class="formgrid grid">
+      <div class="field col p-fluid">
+        <label for="NewCharacterForm_CharacterTagInput">タグ</label>
+        <p-chips
+          inputId="NewCharacterForm_CharacterTagInput"
+          name="NewCharacterForm_CharacterTagInput"
+          [(ngModel)]="inputCharacterTags"
+          (onAdd)="onChipInputAdd($event)"
+        ></p-chips>
+      </div>
     </div>
   </div>
 
   <!------------------------------------------------------------------------->
   <!-- Ability -------------------------------------------------------------->
   <!------------------------------------------------------------------------->
-  <p-divider align="center"><span>特技 / 計略</span></p-divider>
+  <div *ngIf="mode === 'normal' || mode === 'dataOnly'">
+    <p-divider align="center"><span>特技 / 計略</span></p-divider>
 
-  <div>
-    <div class="formgrid grid" *ngFor="let item of selectedAbilityTypes; trackBy: trackByItem; let i = index">
-      <div class="col" [style]="{ 'margin-bottom': '1rem' }">
-        <p-card>
-          <div class="formgrid grid">
-            <div class="field col-12 lg:col-6" [style]="{ 'margin-top': '2px' }">
-              <label [for]="'NewCharacterForm_AbilityNameInput_' + i">特技/計略名</label>
-              <p-autoComplete
-                [inputId]="'NewCharacterForm_AbilityNameInput_' + i"
-                [name]="'NewCharacterForm_AbilityNameInput_' + i"
-                [(ngModel)]="inputAbilities[i].name"
-                [suggestions]="suggestAbilityNames[i]"
-                (completeMethod)="onAutofillInputChange($event)"
-                (onSelect)="onAutofillInputSelect($event, 'NewCharacterForm_AbilityNameInput_' + i)"
-                (onClear)="inputAbilities[i].isExisting = false"
-                [minLength]="1"
-                [style]="{ width: '100%' }"
-                [inputStyle]="{ width: '100%' }"
-                [showClear]="true"
-              ></p-autoComplete>
+    <div>
+      <div class="formgrid grid" *ngFor="let item of selectedAbilityTypes; trackBy: trackByItem; let i = index">
+        <div class="col" [style]="{ 'margin-bottom': '1rem' }">
+          <p-card>
+            <div class="formgrid grid">
+              <div class="field col-12 lg:col-6" [style]="{ 'margin-top': '2px' }">
+                <label [for]="'NewCharacterForm_AbilityNameInput_' + i">特技/計略名</label>
+                <p-autoComplete
+                  [inputId]="'NewCharacterForm_AbilityNameInput_' + i"
+                  [name]="'NewCharacterForm_AbilityNameInput_' + i"
+                  [(ngModel)]="inputAbilities[i].name"
+                  [suggestions]="suggestAbilityNames[i]"
+                  (completeMethod)="onAutofillInputChange($event)"
+                  (onSelect)="onAutofillInputSelect($event, 'NewCharacterForm_AbilityNameInput_' + i)"
+                  (onClear)="inputAbilities[i].isExisting = false"
+                  [minLength]="1"
+                  [style]="{ width: '100%' }"
+                  [inputStyle]="{ width: '100%' }"
+                  [showClear]="true"
+                ></p-autoComplete>
+              </div>
+              <div class="field col-12 lg:col-6">
+                <label [for]="'NewCharacterForm_AbilityTypeInput_' + i">特技/計略タイプ</label>
+                <p-dropdown
+                  [id]="'NewCharacterForm_AbilityTypeInput_' + i"
+                  [name]="'NewCharacterForm_AbilityTypeInput_' + i"
+                  [options]="abilityTypes"
+                  optionLabel="name"
+                  [(ngModel)]="selectedAbilityTypes[i]"
+                  [style]="{ width: '100%' }"
+                  [disabled]="inputAbilities[i].isExisting"
+                  (onChange)="onAbilityTypeInputChange()"
+                ></p-dropdown>
+              </div>
             </div>
-            <div class="field col-12 lg:col-6">
-              <label [for]="'NewCharacterForm_AbilityTypeInput_' + i">特技/計略タイプ</label>
-              <p-dropdown
-                [id]="'NewCharacterForm_AbilityTypeInput_' + i"
-                [name]="'NewCharacterForm_AbilityTypeInput_' + i"
-                [options]="abilityTypes"
-                optionLabel="name"
-                [(ngModel)]="selectedAbilityTypes[i]"
-                [style]="{ width: '100%' }"
-                [disabled]="inputAbilities[i].isExisting"
-                (onChange)="onAbilityTypeInputChange()"
-              ></p-dropdown>
+            <div class="formgrid grid p-fluid" *ngIf="selectedAbilityTypes[i].isKeiryaku">
+              <div class="field col-12 lg:col-6">
+                <label [for]="'NewCharacterForm_KeiryakuIntervalInput_' + i">使用間隔</label>
+                <p-inputNumber
+                  [inputId]="'NewCharacterForm_KeiryakuIntervalInput_' + i"
+                  [name]="'NewCharacterForm_KeiryakuIntervalInput_' + i"
+                  [(ngModel)]="inputAbilities[i].interval"
+                  mode="decimal"
+                  [showButtons]="true"
+                  suffix="秒"
+                  [min]="0"
+                  [max]="255"
+                  [disabled]="inputAbilities[i].isExisting"
+                >
+                </p-inputNumber>
+              </div>
+              <div class="field col-12 lg:col-6">
+                <label [for]="'NewCharacterForm_KeiryakuCostInput_' + i">消費気</label>
+                <p-inputNumber
+                  [inputId]="'NewCharacterForm_KeiryakuCostInput_' + i"
+                  [name]="'NewCharacterForm_KeiryakuCostInput_' + i"
+                  [(ngModel)]="inputAbilities[i].cost"
+                  mode="decimal"
+                  [showButtons]="true"
+                  [min]="0"
+                  [max]="99"
+                  [disabled]="inputAbilities[i].isExisting"
+                >
+                </p-inputNumber>
+              </div>
             </div>
-          </div>
-          <div class="formgrid grid p-fluid" *ngIf="selectedAbilityTypes[i].isKeiryaku">
-            <div class="field col-12 lg:col-6">
-              <label [for]="'NewCharacterForm_KeiryakuIntervalInput_' + i">使用間隔</label>
-              <p-inputNumber
-                [inputId]="'NewCharacterForm_KeiryakuIntervalInput_' + i"
-                [name]="'NewCharacterForm_KeiryakuIntervalInput_' + i"
-                [(ngModel)]="inputAbilities[i].interval"
-                mode="decimal"
-                [showButtons]="true"
-                suffix="秒"
-                [min]="0"
-                [max]="255"
-                [disabled]="inputAbilities[i].isExisting"
-              >
-              </p-inputNumber>
-            </div>
-            <div class="field col-12 lg:col-6">
-              <label [for]="'NewCharacterForm_KeiryakuCostInput_' + i">消費気</label>
-              <p-inputNumber
-                [inputId]="'NewCharacterForm_KeiryakuCostInput_' + i"
-                [name]="'NewCharacterForm_KeiryakuCostInput_' + i"
-                [(ngModel)]="inputAbilities[i].cost"
-                mode="decimal"
-                [showButtons]="true"
-                [min]="0"
-                [max]="99"
-                [disabled]="inputAbilities[i].isExisting"
-              >
-              </p-inputNumber>
-            </div>
-          </div>
-          <div class="formgrid grid" *ngIf="selectedAbilityTypes[i].isKeiryaku">
-            <div class="field col">
-              <label>トークン</label>
-              <div class="formgroup-inline">
-                <div class="field-checkbox">
-                  <p-radioButton
-                    [inputId]="'NewCharacterForm_HasTokenInput_' + i + '_false'"
-                    [name]="'NewCharacterForm_HasTokenInput' + i"
-                    [value]="false"
-                    [(ngModel)]="inputAbilities[i].tokenAvailable"
-                    [disabled]="inputAbilities[i].isExisting"
-                  ></p-radioButton>
-                  <label [for]="'NewCharacterForm_HasTokenInput_' + i + '_false'">なし</label>
-                </div>
-                <div class="field-checkbox">
-                  <p-radioButton
-                    [inputId]="'NewCharacterForm_HasTokenInput_' + i + '_true'"
-                    [name]="'NewCharacterForm_HasTokenInput_' + i"
-                    [value]="true"
-                    [(ngModel)]="inputAbilities[i].tokenAvailable"
-                    [disabled]="inputAbilities[i].isExisting"
-                  ></p-radioButton>
-                  <label [for]="'NewCharacterForm_HasTokenInput_' + i + '_true'">あり</label>
-                </div>
-                <div class="field-checkbox">
-                  <p-checkbox
-                    [inputId]="'NewCharacterForm_TokenLayoutInput_' + i + '_0'"
-                    [name]="'NewCharacterForm_TokenLayoutInput_' + i"
-                    value="赤"
-                    [(ngModel)]="inputAbilities[i].tokenLayouts"
-                    [disabled]="inputAbilities[i].isExisting || !inputAbilities[i].tokenAvailable"
-                  ></p-checkbox>
-                  <label [for]="'NewCharacterForm_TokenLayoutInput_' + i + '_0'">赤配置</label>
-                </div>
-                <div class="field-checkbox">
-                  <p-checkbox
-                    [inputId]="'NewCharacterForm_TokenLayoutInput_' + i + '_1'"
-                    [name]="'NewCharacterForm_TokenLayoutInput_' + i"
-                    value="青"
-                    [(ngModel)]="inputAbilities[i].tokenLayouts"
-                    [disabled]="inputAbilities[i].isExisting || !inputAbilities[i].tokenAvailable"
-                  ></p-checkbox>
-                  <label [for]="'NewCharacterForm_TokenLayoutInput_' + i + '_1'">青配置</label>
+            <div class="formgrid grid" *ngIf="selectedAbilityTypes[i].isKeiryaku">
+              <div class="field col">
+                <label>トークン</label>
+                <div class="formgroup-inline">
+                  <div class="field-checkbox">
+                    <p-radioButton
+                      [inputId]="'NewCharacterForm_HasTokenInput_' + i + '_false'"
+                      [name]="'NewCharacterForm_HasTokenInput' + i"
+                      [value]="false"
+                      [(ngModel)]="inputAbilities[i].tokenAvailable"
+                      [disabled]="inputAbilities[i].isExisting"
+                    ></p-radioButton>
+                    <label [for]="'NewCharacterForm_HasTokenInput_' + i + '_false'">なし</label>
+                  </div>
+                  <div class="field-checkbox">
+                    <p-radioButton
+                      [inputId]="'NewCharacterForm_HasTokenInput_' + i + '_true'"
+                      [name]="'NewCharacterForm_HasTokenInput_' + i"
+                      [value]="true"
+                      [(ngModel)]="inputAbilities[i].tokenAvailable"
+                      [disabled]="inputAbilities[i].isExisting"
+                    ></p-radioButton>
+                    <label [for]="'NewCharacterForm_HasTokenInput_' + i + '_true'">あり</label>
+                  </div>
+                  <div class="field-checkbox">
+                    <p-checkbox
+                      [inputId]="'NewCharacterForm_TokenLayoutInput_' + i + '_0'"
+                      [name]="'NewCharacterForm_TokenLayoutInput_' + i"
+                      value="赤"
+                      [(ngModel)]="inputAbilities[i].tokenLayouts"
+                      [disabled]="inputAbilities[i].isExisting || !inputAbilities[i].tokenAvailable"
+                    ></p-checkbox>
+                    <label [for]="'NewCharacterForm_TokenLayoutInput_' + i + '_0'">赤配置</label>
+                  </div>
+                  <div class="field-checkbox">
+                    <p-checkbox
+                      [inputId]="'NewCharacterForm_TokenLayoutInput_' + i + '_1'"
+                      [name]="'NewCharacterForm_TokenLayoutInput_' + i"
+                      value="青"
+                      [(ngModel)]="inputAbilities[i].tokenLayouts"
+                      [disabled]="inputAbilities[i].isExisting || !inputAbilities[i].tokenAvailable"
+                    ></p-checkbox>
+                    <label [for]="'NewCharacterForm_TokenLayoutInput_' + i + '_1'">青配置</label>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-          <div class="formgid grid">
-            <div class="col">
-              <label>説明</label>
-              <div *ngFor="let desc of inputAbilities[i].descriptions; trackBy: trackByItem; let j = index">
-                <span class="p-input-icon-right" [style]="{ width: '100%' }">
-                  <i *ngIf="inputAbilities[i].descriptions[j] !== ''" class="pi pi-times" (click)="inputAbilities[i].descriptions[j] = ''"></i>
-                  <input
-                    type="text"
-                    [id]="'NewCharacterForm_AbilityDescriptionInput_' + i + '_' + j"
-                    [name]="'NewCharacterForm_AbilityDescriptionInput_' + i + '_' + j"
-                    [(ngModel)]="inputAbilities[i].descriptions[j]"
-                    pInputText
-                    [style]="{ width: '100%', 'margin-bottom': '2px' }"
-                    [disabled]="inputAbilities[i].isExisting"
-                  />
-                </span>
+            <div class="formgid grid">
+              <div class="col">
+                <label>説明</label>
+                <div *ngFor="let desc of inputAbilities[i].descriptions; trackBy: trackByItem; let j = index">
+                  <span class="p-input-icon-right" [style]="{ width: '100%' }">
+                    <i *ngIf="inputAbilities[i].descriptions[j] !== ''" class="pi pi-times" (click)="inputAbilities[i].descriptions[j] = ''"></i>
+                    <input
+                      type="text"
+                      [id]="'NewCharacterForm_AbilityDescriptionInput_' + i + '_' + j"
+                      [name]="'NewCharacterForm_AbilityDescriptionInput_' + i + '_' + j"
+                      [(ngModel)]="inputAbilities[i].descriptions[j]"
+                      pInputText
+                      [style]="{ width: '100%', 'margin-bottom': '2px' }"
+                      [disabled]="inputAbilities[i].isExisting"
+                    />
+                  </span>
+                </div>
               </div>
             </div>
-          </div>
-        </p-card>
+          </p-card>
+        </div>
+        <div class="col-fix" [style]="{ width: '50px', 'justify-content': 'center', 'align-items': 'center', display: 'flex' }">
+          <button
+            pButton
+            pRipple
+            type="button"
+            icon="pi pi-times"
+            class="p-button-rounded p-button-danger p-button-outlined"
+            (click)="onRemoveAbilityButtonClick(false, i)"
+          ></button>
+        </div>
       </div>
-      <div class="col-fix" [style]="{ width: '50px', 'justify-content': 'center', 'align-items': 'center', display: 'flex' }">
-        <button
-          pButton
-          pRipple
-          type="button"
-          icon="pi pi-times"
-          class="p-button-rounded p-button-danger p-button-outlined"
-          (click)="onRemoveAbilityButtonClick(false, i)"
-        ></button>
-      </div>
+      <button
+        pButton
+        pRipple
+        type="button"
+        icon="pi pi-plus"
+        label="追加"
+        class="p-button-outlined p-button-rounded"
+        (click)="onAddAbilityButtonClick(false)"
+        [disabled]="inputAbilities.length >= abilityFormMax"
+      ></button>
     </div>
-    <button
-      pButton
-      pRipple
-      type="button"
-      icon="pi pi-plus"
-      label="追加"
-      class="p-button-outlined p-button-rounded"
-      (click)="onAddAbilityButtonClick(false)"
-      [disabled]="inputAbilities.length >= abilityFormMax"
-    ></button>
   </div>
 
   <!------------------------------------------------------------------------->
   <!-- Ability (Kaichiku) --------------------------------------------------->
   <!------------------------------------------------------------------------->
-  <p-divider align="center" *ngIf="selectedCharacterType.isKaichikuEnable"><span>特技 / 計略 (改壱)</span></p-divider>
+  <div *ngIf="mode === 'normal' || mode === 'dataOnly'">
+    <p-divider align="center" *ngIf="characterData.characterType.isKaichikuEnable"><span>特技 / 計略 (改壱)</span></p-divider>
 
-  <div *ngIf="selectedCharacterType.isKaichikuEnable">
-    <div class="formgrid grid" *ngFor="let item of selectedAbilityTypesKai; trackBy: trackByItem; let i = index">
-      <div class="col" [style]="{ 'margin-bottom': '1rem' }">
-        <p-card>
-          <div class="formgrid grid">
-            <div class="field col-12 lg:col-6" [style]="{ 'margin-top': '2px' }">
-              <label [for]="'NewCharacterForm_AbilityNameKaiInput_' + i">特技/計略名</label>
-              <p-autoComplete
-                [inputId]="'NewCharacterForm_AbilityNameKaiInput_' + i"
-                [name]="'NewCharacterForm_AbilityNameKaiInput_' + i"
-                [(ngModel)]="inputAbilitiesKai[i].name"
-                [suggestions]="suggestAbilityNamesKai[i]"
-                (completeMethod)="onAutofillInputChange($event)"
-                (onSelect)="onAutofillInputSelect($event, 'NewCharacterForm_AbilityNameKaiInput_' + i)"
-                (onClear)="inputAbilitiesKai[i].isExisting = false"
-                [minLength]="1"
-                [style]="{ width: '100%' }"
-                [inputStyle]="{ width: '100%' }"
-                [showClear]="true"
-              ></p-autoComplete>
+    <div *ngIf="characterData.characterType.isKaichikuEnable">
+      <div class="formgrid grid" *ngFor="let item of selectedAbilityTypesKai; trackBy: trackByItem; let i = index">
+        <div class="col" [style]="{ 'margin-bottom': '1rem' }">
+          <p-card>
+            <div class="formgrid grid">
+              <div class="field col-12 lg:col-6" [style]="{ 'margin-top': '2px' }">
+                <label [for]="'NewCharacterForm_AbilityNameKaiInput_' + i">特技/計略名</label>
+                <p-autoComplete
+                  [inputId]="'NewCharacterForm_AbilityNameKaiInput_' + i"
+                  [name]="'NewCharacterForm_AbilityNameKaiInput_' + i"
+                  [(ngModel)]="inputAbilitiesKai[i].name"
+                  [suggestions]="suggestAbilityNamesKai[i]"
+                  (completeMethod)="onAutofillInputChange($event)"
+                  (onSelect)="onAutofillInputSelect($event, 'NewCharacterForm_AbilityNameKaiInput_' + i)"
+                  (onClear)="inputAbilitiesKai[i].isExisting = false"
+                  [minLength]="1"
+                  [style]="{ width: '100%' }"
+                  [inputStyle]="{ width: '100%' }"
+                  [showClear]="true"
+                ></p-autoComplete>
+              </div>
+              <div class="field col-12 lg:col-6">
+                <label [for]="'NewCharacterForm_AbilityTypeKaiInput_' + i">特技/計略タイプ</label>
+                <p-dropdown
+                  [id]="'NewCharacterForm_AbilityTypeKaiInput_' + i"
+                  [name]="'NewCharacterForm_AbilityTypeKaiInput_' + i"
+                  [options]="abilityTypes"
+                  optionLabel="name"
+                  [(ngModel)]="selectedAbilityTypesKai[i]"
+                  [style]="{ width: '100%' }"
+                  [disabled]="inputAbilitiesKai[i].isExisting"
+                  (onChange)="onAbilityTypeInputChange()"
+                ></p-dropdown>
+              </div>
             </div>
-            <div class="field col-12 lg:col-6">
-              <label [for]="'NewCharacterForm_AbilityTypeKaiInput_' + i">特技/計略タイプ</label>
-              <p-dropdown
-                [id]="'NewCharacterForm_AbilityTypeKaiInput_' + i"
-                [name]="'NewCharacterForm_AbilityTypeKaiInput_' + i"
-                [options]="abilityTypes"
-                optionLabel="name"
-                [(ngModel)]="selectedAbilityTypesKai[i]"
-                [style]="{ width: '100%' }"
-                [disabled]="inputAbilitiesKai[i].isExisting"
-                (onChange)="onAbilityTypeInputChange()"
-              ></p-dropdown>
+            <div class="formgrid grid p-fluid" *ngIf="selectedAbilityTypesKai[i].isKeiryaku">
+              <div class="field col-12 lg:col-6">
+                <label [for]="'NewCharacterForm_KeiryakuIntervalKaiInput_' + i">使用間隔</label>
+                <p-inputNumber
+                  [inputId]="'NewCharacterForm_KeiryakuIntervalKaiInput_' + i"
+                  [name]="'NewCharacterForm_KeiryakuIntervalKaiInput_' + i"
+                  [(ngModel)]="inputAbilitiesKai[i].interval"
+                  mode="decimal"
+                  [showButtons]="true"
+                  suffix="秒"
+                  [min]="0"
+                  [max]="255"
+                  [disabled]="inputAbilitiesKai[i].isExisting"
+                >
+                </p-inputNumber>
+              </div>
+              <div class="field col-12 lg:col-6">
+                <label [for]="'NewCharacterForm_KeiryakuCostKaiInput_' + i">消費気</label>
+                <p-inputNumber
+                  [inputId]="'NewCharacterForm_KeiryakuCostKaiInput_' + i"
+                  [name]="'NewCharacterForm_KeiryakuCostKaiInput_' + i"
+                  [(ngModel)]="inputAbilitiesKai[i].cost"
+                  mode="decimal"
+                  [showButtons]="true"
+                  [min]="0"
+                  [max]="99"
+                  [disabled]="inputAbilitiesKai[i].isExisting"
+                >
+                </p-inputNumber>
+              </div>
             </div>
-          </div>
-          <div class="formgrid grid p-fluid" *ngIf="selectedAbilityTypesKai[i].isKeiryaku">
-            <div class="field col-12 lg:col-6">
-              <label [for]="'NewCharacterForm_KeiryakuIntervalKaiInput_' + i">使用間隔</label>
-              <p-inputNumber
-                [inputId]="'NewCharacterForm_KeiryakuIntervalKaiInput_' + i"
-                [name]="'NewCharacterForm_KeiryakuIntervalKaiInput_' + i"
-                [(ngModel)]="inputAbilitiesKai[i].interval"
-                mode="decimal"
-                [showButtons]="true"
-                suffix="秒"
-                [min]="0"
-                [max]="255"
-                [disabled]="inputAbilitiesKai[i].isExisting"
-              >
-              </p-inputNumber>
-            </div>
-            <div class="field col-12 lg:col-6">
-              <label [for]="'NewCharacterForm_KeiryakuCostKaiInput_' + i">消費気</label>
-              <p-inputNumber
-                [inputId]="'NewCharacterForm_KeiryakuCostKaiInput_' + i"
-                [name]="'NewCharacterForm_KeiryakuCostKaiInput_' + i"
-                [(ngModel)]="inputAbilitiesKai[i].cost"
-                mode="decimal"
-                [showButtons]="true"
-                [min]="0"
-                [max]="99"
-                [disabled]="inputAbilitiesKai[i].isExisting"
-              >
-              </p-inputNumber>
-            </div>
-          </div>
-          <div class="formgrid grid" *ngIf="selectedAbilityTypesKai[i].isKeiryaku">
-            <div class="field col">
-              <label>トークン</label>
-              <div class="formgroup-inline">
-                <div class="field-checkbox">
-                  <p-radioButton
-                    [inputId]="'NewCharacterForm_HasTokenKaiInput_' + i + '_false'"
-                    [name]="'NewCharacterForm_HasTokenKaiInput' + i"
-                    [value]="false"
-                    [(ngModel)]="inputAbilitiesKai[i].tokenAvailable"
-                    [disabled]="inputAbilitiesKai[i].isExisting"
-                  ></p-radioButton>
-                  <label [for]="'NewCharacterForm_HasTokenKaiInput_' + i + '_false'">なし</label>
-                </div>
-                <div class="field-checkbox">
-                  <p-radioButton
-                    [inputId]="'NewCharacterForm_HasTokenKaiInput_' + i + '_true'"
-                    [name]="'NewCharacterForm_HasTokenKaiInput_' + i"
-                    [value]="true"
-                    [(ngModel)]="inputAbilitiesKai[i].tokenAvailable"
-                    [disabled]="inputAbilitiesKai[i].isExisting"
-                  ></p-radioButton>
-                  <label [for]="'NewCharacterForm_HasTokenKaiInput_' + i + '_true'">あり</label>
-                </div>
-                <div class="field-checkbox">
-                  <p-checkbox
-                    [inputId]="'NewCharacterForm_TokenLayoutKaiInput_' + i + '_0'"
-                    [name]="'NewCharacterForm_TokenLayoutKaiInput_' + i"
-                    value="赤"
-                    [(ngModel)]="inputAbilitiesKai[i].tokenLayouts"
-                    [disabled]="inputAbilitiesKai[i].isExisting || !inputAbilitiesKai[i].tokenAvailable"
-                  ></p-checkbox>
-                  <label [for]="'NewCharacterForm_TokenLayoutKaiInput_' + i + '_0'">赤配置</label>
-                </div>
-                <div class="field-checkbox">
-                  <p-checkbox
-                    [inputId]="'NewCharacterForm_TokenLayoutKaiInput_' + i + '_1'"
-                    [name]="'NewCharacterForm_TokenLayoutKaiInput_' + i"
-                    value="青"
-                    [(ngModel)]="inputAbilitiesKai[i].tokenLayouts"
-                    [disabled]="inputAbilitiesKai[i].isExisting || !inputAbilitiesKai[i].tokenAvailable"
-                  ></p-checkbox>
-                  <label [for]="'NewCharacterForm_TokenLayoutKaiInput_' + i + '_1'">青配置</label>
+            <div class="formgrid grid" *ngIf="selectedAbilityTypesKai[i].isKeiryaku">
+              <div class="field col">
+                <label>トークン</label>
+                <div class="formgroup-inline">
+                  <div class="field-checkbox">
+                    <p-radioButton
+                      [inputId]="'NewCharacterForm_HasTokenKaiInput_' + i + '_false'"
+                      [name]="'NewCharacterForm_HasTokenKaiInput' + i"
+                      [value]="false"
+                      [(ngModel)]="inputAbilitiesKai[i].tokenAvailable"
+                      [disabled]="inputAbilitiesKai[i].isExisting"
+                    ></p-radioButton>
+                    <label [for]="'NewCharacterForm_HasTokenKaiInput_' + i + '_false'">なし</label>
+                  </div>
+                  <div class="field-checkbox">
+                    <p-radioButton
+                      [inputId]="'NewCharacterForm_HasTokenKaiInput_' + i + '_true'"
+                      [name]="'NewCharacterForm_HasTokenKaiInput_' + i"
+                      [value]="true"
+                      [(ngModel)]="inputAbilitiesKai[i].tokenAvailable"
+                      [disabled]="inputAbilitiesKai[i].isExisting"
+                    ></p-radioButton>
+                    <label [for]="'NewCharacterForm_HasTokenKaiInput_' + i + '_true'">あり</label>
+                  </div>
+                  <div class="field-checkbox">
+                    <p-checkbox
+                      [inputId]="'NewCharacterForm_TokenLayoutKaiInput_' + i + '_0'"
+                      [name]="'NewCharacterForm_TokenLayoutKaiInput_' + i"
+                      value="赤"
+                      [(ngModel)]="inputAbilitiesKai[i].tokenLayouts"
+                      [disabled]="inputAbilitiesKai[i].isExisting || !inputAbilitiesKai[i].tokenAvailable"
+                    ></p-checkbox>
+                    <label [for]="'NewCharacterForm_TokenLayoutKaiInput_' + i + '_0'">赤配置</label>
+                  </div>
+                  <div class="field-checkbox">
+                    <p-checkbox
+                      [inputId]="'NewCharacterForm_TokenLayoutKaiInput_' + i + '_1'"
+                      [name]="'NewCharacterForm_TokenLayoutKaiInput_' + i"
+                      value="青"
+                      [(ngModel)]="inputAbilitiesKai[i].tokenLayouts"
+                      [disabled]="inputAbilitiesKai[i].isExisting || !inputAbilitiesKai[i].tokenAvailable"
+                    ></p-checkbox>
+                    <label [for]="'NewCharacterForm_TokenLayoutKaiInput_' + i + '_1'">青配置</label>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-          <div class="formgid grid">
-            <div class="col">
-              <label>説明</label>
-              <div *ngFor="let desc of inputAbilitiesKai[i].descriptions; trackBy: trackByItem; let j = index">
-                <span class="p-input-icon-right" [style]="{ width: '100%' }">
-                  <i *ngIf="inputAbilitiesKai[i].descriptions[j] !== ''" class="pi pi-times" (click)="inputAbilitiesKai[i].descriptions[j] = ''"></i>
-                  <input
-                    type="text"
-                    [id]="'NewCharacterForm_AbilityDescriptionKaiInput_' + i + '_' + j"
-                    [name]="'NewCharacterForm_AbilityDescriptionKaiInput_' + i + '_' + j"
-                    [(ngModel)]="inputAbilitiesKai[i].descriptions[j]"
-                    pInputText
-                    [style]="{ width: '100%', 'margin-bottom': '2px' }"
-                    [disabled]="inputAbilitiesKai[i].isExisting"
-                  />
-                </span>
+            <div class="formgid grid">
+              <div class="col">
+                <label>説明</label>
+                <div *ngFor="let desc of inputAbilitiesKai[i].descriptions; trackBy: trackByItem; let j = index">
+                  <span class="p-input-icon-right" [style]="{ width: '100%' }">
+                    <i *ngIf="inputAbilitiesKai[i].descriptions[j] !== ''" class="pi pi-times" (click)="inputAbilitiesKai[i].descriptions[j] = ''"></i>
+                    <input
+                      type="text"
+                      [id]="'NewCharacterForm_AbilityDescriptionKaiInput_' + i + '_' + j"
+                      [name]="'NewCharacterForm_AbilityDescriptionKaiInput_' + i + '_' + j"
+                      [(ngModel)]="inputAbilitiesKai[i].descriptions[j]"
+                      pInputText
+                      [style]="{ width: '100%', 'margin-bottom': '2px' }"
+                      [disabled]="inputAbilitiesKai[i].isExisting"
+                    />
+                  </span>
+                </div>
               </div>
             </div>
-          </div>
-        </p-card>
+          </p-card>
+        </div>
+        <div class="col-fix" [style]="{ width: '50px', 'justify-content': 'center', 'align-items': 'center', display: 'flex' }">
+          <button
+            pButton
+            pRipple
+            type="button"
+            icon="pi pi-times"
+            class="p-button-rounded p-button-danger p-button-outlined"
+            (click)="onRemoveAbilityButtonClick(true, i)"
+          ></button>
+        </div>
       </div>
-      <div class="col-fix" [style]="{ width: '50px', 'justify-content': 'center', 'align-items': 'center', display: 'flex' }">
-        <button
-          pButton
-          pRipple
-          type="button"
-          icon="pi pi-times"
-          class="p-button-rounded p-button-danger p-button-outlined"
-          (click)="onRemoveAbilityButtonClick(true, i)"
-        ></button>
+      <button
+        pButton
+        pRipple
+        type="button"
+        icon="pi pi-plus"
+        label="追加"
+        class="p-button-outlined p-button-rounded"
+        (click)="onAddAbilityButtonClick(true)"
+        [disabled]="inputAbilitiesKai.length >= abilityFormMax"
+      ></button>
+    </div>
+  </div>
+
+  <!------------------------------------------------------------------------->
+  <!-- Image files ---------------------------------------------------------->
+  <!------------------------------------------------------------------------->
+  <div *ngIf="mode === 'normal'">
+    <p-divider align="center"><span>画像</span></p-divider>
+  </div>
+  <div *ngIf="mode === 'normal' || mode === 'imageOnly'">
+    <div class="formgrid grid p-fluid">
+      <div class="field col-12 lg:col-6" *ngFor="let imageType of imageTypesAndLabels; let i = index">
+        <label [for]="'NewCharacterForm_' + imageType.type + 'ImageInput'" pButton [label]="imageType.label" class="p-button-rounded p-button-outlined">
+          <input
+            type="file"
+            [id]="'NewCharacterForm_' + imageType.type + 'ImageInput'"
+            [style]="{ display: 'none' }"
+            (change)="onInputImageFileChange(i, false, $event)"
+          />
+        </label>
+        <div [style]="{ 'justify-content': 'center', 'align-items': 'center', display: 'flex', 'margin-bottom': '0.5rem' }">
+          <div *ngIf="inputImageFiles[i] && !imageLoadFlags[i]"><p-progressSpinner></p-progressSpinner></div>
+          <canvas
+            [hidden]="!imageLoadFlags[i]"
+            [id]="'NewCharacterForm_' + imageType.type + 'Preview'"
+            [style]="{ 'max-width': previewCanvasWidth + 'px', 'max-height': previewCanvasHeight + 'px' }"
+          ></canvas>
+        </div>
+        <div *ngIf="imageLoadFlags[i]" [style]="{ 'justify-content': 'center', 'align-items': 'center', display: 'flex' }">
+          <button
+            pButton
+            pRipple
+            type="button"
+            icon="pi pi-times"
+            class="p-button-rounded p-button-danger p-button-outlined"
+            (click)="onRemoveImageFileClick(i, false)"
+          ></button>
+        </div>
       </div>
     </div>
     <button
       pButton
       pRipple
       type="button"
-      icon="pi pi-plus"
-      label="追加"
+      icon="pi pi-image"
+      label="サムネイル作成"
       class="p-button-outlined p-button-rounded"
-      (click)="onAddAbilityButtonClick(true)"
-      [disabled]="inputAbilitiesKai.length >= abilityFormMax"
+      (click)="onMakeThumbnailFormClick()"
+      [disabled]="!inputImageFiles[0]"
     ></button>
-  </div>
-
-  <!------------------------------------------------------------------------->
-  <!-- Image files ---------------------------------------------------------->
-  <!------------------------------------------------------------------------->
-  <p-divider align="center"><span>画像</span></p-divider>
-  <div class="formgrid grid p-fluid">
-    <div class="field col-12 lg:col-6" *ngFor="let imageType of imageTypesAndLabels; let i = index">
-      <label [for]="'NewCharacterForm_' + imageType.type + 'ImageInput'" pButton [label]="imageType.label" class="p-button-rounded p-button-outlined">
-        <input
-          type="file"
-          [id]="'NewCharacterForm_' + imageType.type + 'ImageInput'"
-          [style]="{ display: 'none' }"
-          (change)="onInputImageFileChange(i, false, $event)"
-        />
-      </label>
-      <div [style]="{ 'justify-content': 'center', 'align-items': 'center', display: 'flex', 'margin-bottom': '0.5rem' }">
-        <div *ngIf="inputImageFiles[i] && !imageLoadFlags[i]"><p-progressSpinner></p-progressSpinner></div>
-        <canvas
-          [hidden]="!imageLoadFlags[i]"
-          [id]="'NewCharacterForm_' + imageType.type + 'Preview'"
-          [style]="{ 'max-width': previewCanvasWidth + 'px', 'max-height': previewCanvasHeight + 'px' }"
-        ></canvas>
-      </div>
-      <div *ngIf="imageLoadFlags[i]" [style]="{ 'justify-content': 'center', 'align-items': 'center', display: 'flex' }">
-        <button
-          pButton
-          pRipple
-          type="button"
-          icon="pi pi-times"
-          class="p-button-rounded p-button-danger p-button-outlined"
-          (click)="onRemoveImageFileClick(i, false)"
-        ></button>
-      </div>
+    <div *ngIf="this.thumbnailBlob" style="margin-top: 1rem">
+      <canvas id="NewCharacterForm_ThumbnailPreview"></canvas>
     </div>
-  </div>
-  <button
-    pButton
-    pRipple
-    type="button"
-    icon="pi pi-image"
-    label="サムネイル作成"
-    class="p-button-outlined p-button-rounded"
-    (click)="onMakeThumbnailFormClick()"
-    [disabled]="!inputImageFiles[0]"
-  ></button>
-  <div *ngIf="this.thumbnailBlob" style="margin-top: 1rem">
-    <canvas id="NewCharacterForm_ThumbnailPreview"></canvas>
   </div>
 
   <!------------------------------------------------------------------------->
@@ -682,12 +691,13 @@
       (onClick)="onOkClick()"
       [styleClass]="buttonStyleClass"
       [disabled]="
-        !selectedCharacterType ||
-        inputCharacterName === '' ||
-        !selectedRarerity ||
-        !selectedWeaponType ||
-        selectedGeographTypes.length === 0 ||
-        !this.thumbnailBlob
+        (mode !== 'imageOnly' &&
+          (characterData.characterType.name === '' ||
+            characterData.characterName === '' ||
+            characterData.rarerity === 0 ||
+            characterData.weaponType.name === '' ||
+            characterData.geographTypes.length === 0)) ||
+        (mode !== 'dataOnly' && !thumbnailBlob)
       "
     ></p-button>
     <p-button
