@@ -12,16 +12,10 @@ import {
   FsAbility,
   FsAbilityType,
   FsCharacter,
-  FsCharacterTag,
   FsCharacterType,
   FsFacility,
   FsFacilityType,
-  FsGeographType,
-  FsIllustrator,
-  FsRegion,
-  FsVoiceActor,
   FsWeapon,
-  FsWeaponType,
 } from 'src/app/services/firestore-data/firestore-document.interface';
 import { SpinnerService } from '../../services/spinner/spinner.service';
 import { UserAuthService } from '../../services/user-auth/user-auth.service';

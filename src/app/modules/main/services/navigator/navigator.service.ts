@@ -24,7 +24,7 @@ export class NavigatorService implements CanActivateChild {
     this.logger.trace(`new ${this.className}()`);
   }
 
-  async canActivateChild(childRoute: ActivatedRouteSnapshot, state: RouterStateSnapshot): Promise<boolean | UrlTree> {
+  async canActivateChild(childRoute: ActivatedRouteSnapshot, state: RouterStateSnapshot): Promise<boolean | UrlTree> { // eslint-disable-line
     const location = `${this.className}.canActivateChild()`;
     const path = childRoute.url[0].path;
 

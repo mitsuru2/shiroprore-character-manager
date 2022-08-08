@@ -3,7 +3,7 @@
 //
 import { Injectable } from '@angular/core';
 import { NGXLogger } from 'ngx-logger';
-import { Firestore, doc, runTransaction, serverTimestamp } from '@angular/fire/firestore';
+import { Firestore } from '@angular/fire/firestore';
 import { FsCollectionName } from './firestore-collection-name.enum';
 import {
   FsAbility,

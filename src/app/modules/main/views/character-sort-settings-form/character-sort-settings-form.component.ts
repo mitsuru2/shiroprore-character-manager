@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { NGXLogger } from 'ngx-logger';
 import {
   CharacterSortDirectionTypes,
@@ -11,7 +11,7 @@ import {
   templateUrl: './character-sort-settings-form.component.html',
   styleUrls: ['./character-sort-settings-form.component.scss'],
 })
-export class CharacterSortSettingsFormComponent implements OnInit {
+export class CharacterSortSettingsFormComponent {
   private readonly className = 'CharacterSortSettingsFormComponent';
 
   /** Appearance. */
@@ -38,8 +38,6 @@ export class CharacterSortSettingsFormComponent implements OnInit {
     const location = `new ${this.className}()`;
     this.logger.trace(location);
   }
-
-  ngOnInit(): void {}
 
   onOkClick() {
     const location = `${this.className}.onOkClick()`;

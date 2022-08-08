@@ -130,7 +130,7 @@ export class FirestoreCollectionDummy<T extends FsDocumentBase> {
    * @param data Target data.
    * @returns Promise<string>. New document ID.
    */
-  async add(data: T): Promise<string> {
+  async add(data: T): Promise<string> {  // eslint-disable-line
     return '';
   }
 
@@ -142,7 +142,7 @@ export class FirestoreCollectionDummy<T extends FsDocumentBase> {
    * @param value Data to be pushed to the target list field.
    * @returns Document ID.
    */
-  async updateField(docId: string, fieldName: string, value: any): Promise<string> {
+  async updateField(docId: string, fieldName: string, value: any): Promise<string> { // eslint-disable-line
     return docId;
   }
 
@@ -151,7 +151,7 @@ export class FirestoreCollectionDummy<T extends FsDocumentBase> {
    * @param docId Document ID.
    * @returns Counter value after increment.
    */
-  async incrementCounter(docId: string): Promise<number> {
+  async incrementCounter(docId: string): Promise<number> { // eslint-disable-line
     return 0;
   }
 }

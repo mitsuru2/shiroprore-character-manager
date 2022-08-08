@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { NGXLogger } from 'ngx-logger';
 import { ConfirmationService } from 'primeng/api';
 import { FsCollectionName } from 'src/app/services/firestore-data/firestore-collection-name.enum';
@@ -21,7 +21,7 @@ import {
   templateUrl: './character-filter-settings-form.component.html',
   styleUrls: ['./character-filter-settings-form.component.scss'],
 })
-export class CharacterFilterSettingsFormComponent implements OnInit {
+export class CharacterFilterSettingsFormComponent {
   private readonly className = 'CharacterFilterSettingsFormComponent';
 
   /** Appearance. */
@@ -69,7 +69,7 @@ export class CharacterFilterSettingsFormComponent implements OnInit {
     }
   }
 
-  ngOnInit(): void {}
+  // ngOnInit(): void {}
 
   onOwnershipStatusTypeClick(value: string) {
     const location = `${this.className}.onOwnershipStatusTypeClick()`;

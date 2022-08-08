@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 // eslint-disable-next-line import/no-named-as-default
 import { Dexie, Table } from 'dexie';
-import { sleep } from 'src/app/modules/main/utils/sleep/sleep.utility';
 import { ErrorCode } from '../error-handler/error-code.enum';
 import { FsCollectionName } from './firestore-collection-name.enum';
 import {

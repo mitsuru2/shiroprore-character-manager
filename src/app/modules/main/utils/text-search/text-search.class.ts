@@ -34,7 +34,7 @@ export class TextSearch {
   //============================================================================
   // Class methods.
   //
-  constructor() {}
+  // constructor() {}
 
   add(text: string, prop?: any): void;
   add(text: string[], prop?: any): void;
