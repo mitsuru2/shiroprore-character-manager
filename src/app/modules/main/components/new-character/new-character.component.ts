@@ -41,33 +41,7 @@ export class NewCharacterComponent /*implements OnInit*/ {
   @ViewChild(NewCharacterFormComponent) private newCharacterForm!: NewCharacterFormComponent;
 
   /** Firestore data */
-  abilities = this.firestore.getData(FsCollectionName.Abilities) as FsAbility[];
-
-  abilityTypes = this.firestore.getData(FsCollectionName.AbilityTypes) as FsAbilityType[];
-
-  characterTypes = this.firestore.getData(FsCollectionName.CharacterTypes) as FsCharacterType[];
-
   characterTags = this.firestore.getData(FsCollectionName.CharacterTags) as FsCharacterTag[];
-
-  characters = this.firestore.getData(FsCollectionName.Characters) as FsCharacter[];
-
-  facilityTypes = this.firestore.getData(FsCollectionName.FacilityTypes) as FsFacilityType[];
-
-  facilities = this.firestore.getData(FsCollectionName.Facilities) as FsFacility[];
-
-  geographTypes = this.firestore.getData(FsCollectionName.GeographTypes) as FsGeographType[];
-
-  illustrators = this.firestore.getData(FsCollectionName.Illustrators) as FsIllustrator[];
-
-  regions = this.firestore.getData(FsCollectionName.Regions) as FsRegion[];
-
-  subCharacterTypes = this.firestore.getData(FsCollectionName.SubCharacterTypes) as FsSubCharacterType[];
-
-  voiceActors = this.firestore.getData(FsCollectionName.VoiceActors) as FsVoiceActor[];
-
-  weaponTypes = this.firestore.getData(FsCollectionName.WeaponTypes) as FsWeaponType[];
-
-  weapons = this.firestore.getData(FsCollectionName.Weapons) as FsWeapon[];
 
   /** New character form. */
   characterData = new NewCharacterFormData();
