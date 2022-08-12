@@ -38,5 +38,39 @@
 <!-- Edit button. -->
 <!---->
 <div class="footer-container">
-  <p-button label="編集"></p-button>
+  <p-button label="データ編集" (onClick)="onDataEditButtonClick()"></p-button>
+  <p-button label="画像編集" (onClick)="onImageEditButtonClick()" [style]="{ 'margin-left': '1rem' }"></p-button>
 </div>
+
+<!----------------------------------------------------------------------------->
+<!-- Dialogs. ----------------------------------------------------------------->
+<!----------------------------------------------------------------------------->
+<!---->
+<!-- Character data edit dialog. -->
+<!---->
+<p-dialog header="キャラクターデータ編集" [(visible)]="dataEditFormShown" [modal]="true" [draggable]="false" [resizable]="false" [closable]="false">
+  <app-new-character-form
+    *ngIf="dataEditFormShown"
+    styleClass="dialog"
+    [mode]="'dataOnly'"
+    [okLabel]="'入力内容確認'"
+    [cancelLabel]="'キャンセル'"
+    [(characterData)]="characterFormData"
+    (canceled)="onDataEditFormResult($event)"
+  ></app-new-character-form>
+</p-dialog>
+
+<!---->
+<!-- Character image edit dialog. -->
+<!---->
+<p-dialog header="キャラクターデータ編集" [(visible)]="imageEditFormShown" [modal]="true" [draggable]="false" [resizable]="false" [closable]="false">
+  <app-new-character-form
+    *ngIf="imageEditFormShown"
+    styleClass="dialog"
+    [mode]="'imageOnly'"
+    [okLabel]="'入力内容確認'"
+    [cancelLabel]="'キャンセル'"
+    [(characterData)]="characterFormData"
+    (canceled)="onImageEditFormResult($event)"
+  ></app-new-character-form>
+</p-dialog>

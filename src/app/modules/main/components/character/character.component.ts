@@ -12,14 +12,22 @@ import {
   FsAbility,
   FsAbilityType,
   FsCharacter,
+  FsCharacterTag,
   FsCharacterType,
   FsFacility,
   FsFacilityType,
+  FsGeographType,
+  FsIllustrator,
+  FsRegion,
+  FsSubCharacterType,
+  FsVoiceActor,
   FsWeapon,
+  FsWeaponType,
 } from 'src/app/services/firestore-data/firestore-document.interface';
 import { SpinnerService } from '../../services/spinner/spinner.service';
 import { UserAuthService } from '../../services/user-auth/user-auth.service';
 import { sleep } from '../../utils/sleep/sleep.utility';
+import { NewCharacterFormData } from '../../views/new-character-form/new-character-form.interface';
 
 class CharacterImage {
   url = '';
@@ -62,6 +70,14 @@ export class CharacterComponent implements OnInit, AfterViewInit {
 
   /** Switch: own the character */
   hasThisCharacter: boolean = false;
+
+  /** Data edit dialog. */
+  dataEditFormShown = false;
+
+  characterFormData = new NewCharacterFormData();
+
+  /** Image edit dialog. */
+  imageEditFormShown = false;
 
   //============================================================================
   // Class methods.
@@ -106,6 +122,11 @@ export class CharacterComponent implements OnInit, AfterViewInit {
     this.userAuth.addEventListener('signOut', this.onUserSignedOut.bind(this));
   }
 
+  /**
+   * 1. Get character information.
+   * 2. Make character information table.
+   * 3. Draw character image.
+   */
   async ngAfterViewInit(): Promise<void> {
     const location = `${this.className}.ngAfterViewInit()`;
     this.logger.trace(location, { hasThisCharacter: this.hasThisCharacter });
@@ -119,6 +140,7 @@ export class CharacterComponent implements OnInit, AfterViewInit {
 
       // Get character information by character ID.
       this.character = this.firestore.getDataById(FsCollectionName.Characters, this.id) as FsCharacter;
+      this.logger.info(location, { character: this.character });
 
       // Make character information table.
       this.makeCharacterInfoTable();
@@ -176,6 +198,36 @@ export class CharacterComponent implements OnInit, AfterViewInit {
         this.removeFromUserCharacterList(this.character.id);
       }
     }
+  }
+
+  onDataEditButtonClick() {
+    const location = `${this.className}.onDataEditButtonClick()`;
+    this.logger.trace(location);
+
+    this.characterFormData = this.convCharacterDataToFormData(this.character);
+
+    this.dataEditFormShown = true;
+  }
+
+  onDataEditFormResult(canceled: boolean) {
+    const location = `${this.className}.onDataEditFormResult()`;
+    this.logger.trace(location, { canceled: canceled });
+
+    this.dataEditFormShown = false;
+  }
+
+  onImageEditButtonClick() {
+    const location = `${this.className}.onImageEditButtonClick()`;
+    this.logger.trace(location);
+
+    this.imageEditFormShown = true;
+  }
+
+  onImageEditFormResult(canceled: boolean) {
+    const location = `${this.className}.onImageEditFormResult()`;
+    this.logger.trace(location, { canceled: canceled });
+
+    this.imageEditFormShown = false;
   }
 
   //============================================================================
@@ -629,5 +681,66 @@ export class CharacterComponent implements OnInit, AfterViewInit {
       await sleep(1000);
       this.spinner.hide();
     }
+  }
+
+  //----------------------------------------------------------------------------
+  // Character data edit.
+  //
+  private convCharacterDataToFormData(src: FsCharacter): NewCharacterFormData {
+    let result = new NewCharacterFormData();
+
+    // Basic information.
+    result.characterType = this.firestore.getDataById(FsCollectionName.CharacterTypes, src.type) as FsCharacterType;
+    if (result.characterType.hasSubTypes) {
+      result.subCharacterType = this.firestore.getDataById(
+        FsCollectionName.SubCharacterTypes,
+        src.subType
+      ) as FsSubCharacterType;
+    }
+    result.characterName = src.name;
+    result.rarerity = src.rarerity;
+    result.weaponType = this.firestore.getDataById(FsCollectionName.WeaponTypes, src.weaponType) as FsWeaponType;
+    result.geographTypes = [];
+    for (let i = 0; i < src.geographTypes.length; ++i) {
+      result.geographTypes.push(
+        this.firestore.getDataById(FsCollectionName.GeographTypes, src.geographTypes[i]) as FsGeographType
+      );
+    }
+    result.region = this.firestore.getDataById(FsCollectionName.Regions, src.region) as FsRegion;
+    result.cost = src.cost;
+    result.costKai = src.costKai;
+
+    // Voice and illustration.
+    if (src.voiceActors.length > 0) {
+      result.voiceActor = this.firestore.getDataById(FsCollectionName.VoiceActors, src.voiceActors[0]) as FsVoiceActor;
+    }
+    if (src.illustrators.length > 0) {
+      result.illustrator = this.firestore.getDataById(
+        FsCollectionName.Illustrators,
+        src.illustrators[0]
+      ) as FsIllustrator;
+    }
+
+    // Motif weapons and facilities.
+    result.motifWeapons = [];
+    for (let i = 0; i < src.motifWeapons.length; ++i) {
+      result.motifWeapons.push(this.firestore.getDataById(FsCollectionName.Weapons, src.motifWeapons[i]) as FsWeapon);
+    }
+    result.motifFacilities = [];
+    for (let i = 0; i < src.motifFacilities.length; ++i) {
+      result.motifFacilities.push(
+        this.firestore.getDataById(FsCollectionName.Facilities, src.motifFacilities[i]) as FsFacility
+      );
+    }
+
+    // Character tags.
+    result.characterTags = [];
+    for (let i = 0; i < src.tags.length; ++i) {
+      result.characterTags.push(
+        this.firestore.getDataById(FsCollectionName.CharacterTags, src.tags[i]) as FsCharacterTag
+      );
+    }
+
+    return result;
   }
 }

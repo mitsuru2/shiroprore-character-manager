@@ -241,6 +241,25 @@ export class NewCharacterFormComponent implements OnInit {
       this.firestore.sortByOrder(this.regionItems);
     }
 
+    // Copy motif weapon.
+    try {
+      for (let i = 0; i < this.characterData.motifWeapons.length; ++i) {
+        const textChip = this.makeTextChipForMotifWeapon(this.characterData.motifWeapons[i]);
+        this.inputMotifWeapons.push(textChip);
+      }
+      for (let i = 0; i < this.characterData.motifFacilities.length; ++i) {
+        const textChip = this.makeTextChipForMotifFacility(this.characterData.motifFacilities[i]);
+        this.inputMotifFacilities.push(textChip);
+      }
+    } catch (err) {
+      this.errorHandler.notifyError(err);
+    }
+
+    // Character tags.
+    for (let i = 0; i < this.characterData.characterTags.length; ++i) {
+      this.inputCharacterTags.push(this.characterData.characterTags[i].name);
+    }
+
     // Ability type.
     this.firestore.sortByOrder(this.abilityTypes);
 
@@ -775,6 +794,40 @@ export class NewCharacterFormComponent implements OnInit {
       error.name = ErrorCode.Unexpected;
       throw error;
     }
+
+    return result;
+  }
+
+  private makeTextChipForMotifWeapon(src: FsWeapon): string {
+    let result = '';
+    let rarerity = '';
+
+    if (src.rarerity < 0) {
+      rarerity = '-';
+    } else {
+      rarerity = src.rarerity.toString();
+    }
+
+    const type = this.firestore.getDataById(FsCollectionName.WeaponTypes, src.type) as FsWeaponType;
+
+    result = `${rarerity}|${type.name}|${src.name}`;
+
+    return result;
+  }
+
+  private makeTextChipForMotifFacility(src: FsFacility): string {
+    let result = '';
+    let rarerity = '';
+
+    if (src.rarerity < 0) {
+      rarerity = '-';
+    } else {
+      rarerity = src.rarerity.toString();
+    }
+
+    const type = this.firestore.getDataById(FsCollectionName.FacilityTypes, src.type) as FsFacilityType;
+
+    result = `${rarerity}|${type.name}|${src.name}`;
 
     return result;
   }
