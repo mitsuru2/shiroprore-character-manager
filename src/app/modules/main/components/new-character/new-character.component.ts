@@ -2,20 +2,11 @@ import { Component, ViewChild } from '@angular/core';
 import { NGXLogger } from 'ngx-logger';
 import {
   FsAbility,
-  FsAbilityType,
   FsCharacter,
   FsCharacterTag,
   FsCharacterType,
   FsDocumentBase,
-  FsFacility,
-  FsFacilityType,
-  FsGeographType,
-  FsIllustrator,
-  FsRegion,
   FsSubCharacterType,
-  FsVoiceActor,
-  FsWeapon,
-  FsWeaponType,
 } from 'src/app/services/firestore-data/firestore-document.interface';
 import { FirestoreDataService } from 'src/app/services/firestore-data/firestore-data.service';
 import { FsCollectionName } from 'src/app/services/firestore-data/firestore-collection-name.enum';

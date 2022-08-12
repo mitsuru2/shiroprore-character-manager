@@ -11,6 +11,7 @@ import {
   QuerySnapshot,
   runTransaction,
   serverTimestamp,
+  Timestamp,
   where,
 } from '@angular/fire/firestore';
 import { Unsubscribe } from '@angular/fire/app-check';
@@ -275,8 +276,19 @@ export class FirestoreCollectionWrapper<T extends FsDocumentBase> {
 
       // If there is already an item sharing the same ID, update item if it's new.
       else {
-        if (this.data[index].updatedAt < items[i].updatedAt) {
+        // Get timestamps from all base and input lists.
+        const timestampA = this.data[index].updatedAt as Timestamp;
+        const timestampB = items[i].updatedAt as Timestamp;
+
+        // Compare timestamps.
+        if (timestampA.seconds < timestampB.seconds) {
           this.data[index] = items[i];
+        } else if (timestampA.seconds === timestampB.seconds) {
+          if (timestampA.nanoseconds < timestampB.nanoseconds) {
+            this.data[index] = items[i];
+          }
+        } else {
+          // Do nothing.
         }
       }
     }
