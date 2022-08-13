@@ -12,7 +12,7 @@ import {
   FsWeaponType,
 } from 'src/app/services/firestore-data/firestore-document.interface';
 
-export type NewCharacterFormMode = 'normal' | 'dataOnly' | 'imageOnly';
+export type NewCharacterFormMode = 'normal' | 'dataEdit' | 'imageEdit';
 
 export class FsAbilityForNewCharacterForm extends FsAbility {
   typeName: string = '';
@@ -20,6 +20,8 @@ export class FsAbilityForNewCharacterForm extends FsAbility {
   tokenAvailable: boolean = false;
 
   isExisting: boolean = false;
+
+  linkTo: number = -1;
 }
 
 export class NewCharacterFormData {

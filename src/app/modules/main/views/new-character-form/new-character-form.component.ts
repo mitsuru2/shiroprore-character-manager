@@ -278,6 +278,7 @@ export class NewCharacterFormComponent implements OnInit {
       const ability = this.characterData.abilities[i];
       this.inputAbilities.push(this.initInputAbilityInfo(ability));
       this.selectedAbilityTypes.push(this.initSelectedAbilityType(ability));
+      this.onAutofillInputSelect(ability.name, `NewCharacterForm_AbilityNameInput_${i}`);
     }
 
     // Copy ability info (kaichiku).
@@ -287,6 +288,7 @@ export class NewCharacterFormComponent implements OnInit {
       const ability = this.characterData.abilitiesKai[i];
       this.inputAbilitiesKai.push(this.initInputAbilityInfo(ability));
       this.selectedAbilityTypesKai.push(this.initSelectedAbilityType(ability));
+      this.onAutofillInputSelect(ability.name, `NewCharacterForm_AbilityNameKaiInput_${i}`);
     }
   }
 
@@ -454,6 +456,11 @@ export class NewCharacterFormComponent implements OnInit {
               break;
             }
           }
+
+          // Turn off 'isExisting' in the 'dataEdit' mode.
+          if (this.mode === 'dataEdit') {
+            this.inputAbilities[index].isExisting = false;
+          }
           break;
         }
       }
@@ -464,28 +471,33 @@ export class NewCharacterFormComponent implements OnInit {
       const index = Number(inputId.substring(inputId.lastIndexOf('_') + 1));
       let found = false;
 
-      // Search ability info and copy it to input ability info.
-      for (let ability of this.abilities) {
-        if (ability.name === value) {
-          this.inputAbilitiesKai[index] = this.makeFsAbilityForNewCharacterForm(ability);
-          // Search ablity type and copy it to selected ability type.
-          for (let abilityType of this.abilityTypes) {
-            if (ability.type === abilityType.id) {
-              this.selectedAbilityTypesKai[index] = abilityType;
-              break;
-            }
-          }
+      // Search ability from input ability list.
+      for (let i = 0; i < this.inputAbilities.length; ++i) {
+        if (this.inputAbilities[i].name === value) {
+          this.inputAbilitiesKai[index] = this.makeFsAbilityForNewCharacterForm(this.inputAbilities[i]);
+          this.selectedAbilityTypesKai[index] = this.selectedAbilityTypes[i];
           found = true;
-          break;
         }
       }
 
-      // Search ability from input ability list.
+      // Search ability info and copy it to input ability info.
       if (!found) {
-        for (let i = 0; i < this.inputAbilities.length; ++i) {
-          if (this.inputAbilities[i].name === value) {
-            this.inputAbilitiesKai[index] = this.makeFsAbilityForNewCharacterForm(this.inputAbilities[i]);
-            this.selectedAbilityTypesKai[index] = this.selectedAbilityTypes[i];
+        for (let ability of this.abilities) {
+          if (ability.name === value) {
+            this.inputAbilitiesKai[index] = this.makeFsAbilityForNewCharacterForm(ability);
+            // Search ablity type and copy it to selected ability type.
+            for (let abilityType of this.abilityTypes) {
+              if (ability.type === abilityType.id) {
+                this.selectedAbilityTypesKai[index] = abilityType;
+                break;
+              }
+            }
+
+            // Turn off 'isExisting' in the 'dataEdit' mode.
+            if (this.mode === 'dataEdit') {
+              this.inputAbilitiesKai[index].isExisting = false;
+            }
+            break;
           }
         }
       }

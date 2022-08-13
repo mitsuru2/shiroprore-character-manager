@@ -27,7 +27,10 @@ import {
 import { SpinnerService } from '../../services/spinner/spinner.service';
 import { UserAuthService } from '../../services/user-auth/user-auth.service';
 import { sleep } from '../../utils/sleep/sleep.utility';
-import { NewCharacterFormData } from '../../views/new-character-form/new-character-form.interface';
+import {
+  FsAbilityForNewCharacterForm,
+  NewCharacterFormData,
+} from '../../views/new-character-form/new-character-form.interface';
 
 class CharacterImage {
   url = '';
@@ -706,7 +709,9 @@ export class CharacterComponent implements OnInit, AfterViewInit {
         this.firestore.getDataById(FsCollectionName.GeographTypes, src.geographTypes[i]) as FsGeographType
       );
     }
-    result.region = this.firestore.getDataById(FsCollectionName.Regions, src.region) as FsRegion;
+    if (src.region !== '') {
+      result.region = this.firestore.getDataById(FsCollectionName.Regions, src.region) as FsRegion;
+    }
     result.cost = src.cost;
     result.costKai = src.costKai;
 
@@ -739,6 +744,32 @@ export class CharacterComponent implements OnInit, AfterViewInit {
       result.characterTags.push(
         this.firestore.getDataById(FsCollectionName.CharacterTags, src.tags[i]) as FsCharacterTag
       );
+    }
+
+    // Abilities.
+    result.abilities = [];
+    for (let i = 0; i < src.abilities.length; ++i) {
+      const ability = this.firestore.getDataById(
+        FsCollectionName.Abilities,
+        src.abilities[i]
+      ) as FsAbilityForNewCharacterForm;
+      ability.isExisting = false;
+      ability.tokenAvailable = ability.tokenLayouts.length > 0 ? true : false;
+      ability.typeName = this.firestore.getDataById(FsCollectionName.AbilityTypes, ability.type).name;
+      result.abilities.push(ability);
+    }
+
+    // Abilities. (kaihchiku)
+    result.abilitiesKai = [];
+    for (let i = 0; i < src.abilitiesKai.length; ++i) {
+      const ability = this.firestore.getDataById(
+        FsCollectionName.Abilities,
+        src.abilitiesKai[i]
+      ) as FsAbilityForNewCharacterForm;
+      ability.isExisting = false;
+      ability.tokenAvailable = ability.tokenLayouts.length > 0 ? true : false;
+      ability.typeName = this.firestore.getDataById(FsCollectionName.AbilityTypes, ability.type).name;
+      result.abilitiesKai.push(ability);
     }
 
     return result;

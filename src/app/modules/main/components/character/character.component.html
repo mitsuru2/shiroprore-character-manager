@@ -52,7 +52,7 @@
   <app-new-character-form
     *ngIf="dataEditFormShown"
     styleClass="dialog"
-    [mode]="'dataOnly'"
+    [mode]="'dataEdit'"
     [okLabel]="'入力内容確認'"
     [cancelLabel]="'キャンセル'"
     [(characterData)]="characterFormData"
@@ -67,7 +67,7 @@
   <app-new-character-form
     *ngIf="imageEditFormShown"
     styleClass="dialog"
-    [mode]="'imageOnly'"
+    [mode]="'imageEdit'"
     [okLabel]="'入力内容確認'"
     [cancelLabel]="'キャンセル'"
     [(characterData)]="characterFormData"

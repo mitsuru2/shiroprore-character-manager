@@ -9,7 +9,7 @@
   <!------------------------------------------------------------------------->
   <!-- BASIC INFORMATION ---------------------------------------------------->
   <!------------------------------------------------------------------------->
-  <div *ngIf="mode === 'normal' || mode === 'dataOnly'">
+  <div *ngIf="mode === 'normal' || mode === 'dataEdit'">
     <p-divider align="center"><span>基本情報</span></p-divider>
 
     <!---->
@@ -253,7 +253,7 @@
   <!------------------------------------------------------------------------->
   <!-- Ability -------------------------------------------------------------->
   <!------------------------------------------------------------------------->
-  <div *ngIf="mode === 'normal' || mode === 'dataOnly'">
+  <div *ngIf="mode === 'normal' || mode === 'dataEdit'">
     <p-divider align="center"><span>特技 / 計略</span></p-divider>
 
     <div>
@@ -417,7 +417,7 @@
   <!------------------------------------------------------------------------->
   <!-- Ability (Kaichiku) --------------------------------------------------->
   <!------------------------------------------------------------------------->
-  <div *ngIf="mode === 'normal' || mode === 'dataOnly'">
+  <div *ngIf="mode === 'normal' || mode === 'dataEdit'">
     <p-divider align="center" *ngIf="characterData.characterType.isKaichikuEnable"><span>特技 / 計略 (改壱)</span></p-divider>
 
     <div *ngIf="characterData.characterType.isKaichikuEnable">
@@ -584,7 +584,7 @@
   <div *ngIf="mode === 'normal'">
     <p-divider align="center"><span>画像</span></p-divider>
   </div>
-  <div *ngIf="mode === 'normal' || mode === 'imageOnly'">
+  <div *ngIf="mode === 'normal' || mode === 'imageEdit'">
     <div class="formgrid grid p-fluid">
       <div class="field col-12 lg:col-6" *ngFor="let imageType of imageTypesAndLabels; let i = index">
         <label [for]="'NewCharacterForm_' + imageType.type + 'ImageInput'" pButton [label]="imageType.label" class="p-button-rounded p-button-outlined">
@@ -691,13 +691,13 @@
       (onClick)="onOkClick()"
       [styleClass]="buttonStyleClass"
       [disabled]="
-        (mode !== 'imageOnly' &&
+        (mode !== 'imageEdit' &&
           (characterData.characterType.name === '' ||
             characterData.characterName === '' ||
             characterData.rarerity === 0 ||
             characterData.weaponType.name === '' ||
             characterData.geographTypes.length === 0)) ||
-        (mode !== 'dataOnly' && !thumbnailBlob)
+        (mode !== 'dataEdit' && !thumbnailBlob)
       "
     ></p-button>
     <p-button
