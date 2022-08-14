@@ -181,6 +181,8 @@ export class NewCharacterFormComponent implements OnInit, AfterViewInit {
 
   thumbInfo: ThumbnailMakeInfo = new ThumbnailMakeInfo();
 
+  readonly defaultThumbScale = 80;
+
   thumbCanceled = true;
 
   /** Native element for control spin button focus. */
@@ -199,7 +201,7 @@ export class NewCharacterFormComponent implements OnInit, AfterViewInit {
 
     // Initialize thumbnail settings.
     this.thumbInfo.imageSize = new XY(160, 160);
-    this.thumbInfo.scale = 75;
+    this.thumbInfo.scale = this.defaultThumbScale;
 
     // Initialize rarerity list.
     for (let i = 0; i < FsCharacterRarerityMax; ++i) {
@@ -310,7 +312,7 @@ export class NewCharacterFormComponent implements OnInit, AfterViewInit {
           if (i === 0) {
             this.thumbInfo.image = this.inputImageFiles[i];
             this.thumbInfo.offset = new XY(0, 0);
-            this.thumbInfo.scale = 75;
+            this.thumbInfo.scale = this.defaultThumbScale;
           }
         }
       }
@@ -654,7 +656,7 @@ export class NewCharacterFormComponent implements OnInit, AfterViewInit {
       if (index === 0 && !kaichiku) {
         this.thumbInfo.image = input.files[0];
         this.thumbInfo.offset = new XY(0, 0);
-        this.thumbInfo.scale = 75;
+        this.thumbInfo.scale = this.defaultThumbScale;
       }
 
       // Clear element value in order to trigger events even if user select the same file.
@@ -1338,6 +1340,12 @@ export class NewCharacterFormComponent implements OnInit, AfterViewInit {
     // Clear status and error message.
     this.isFormValid = false;
     this.errorMessage = '';
+
+    // Nothing to do when it runs in image mode
+    if (this.mode === 'imageEdit') {
+      this.isFormValid = true;
+      return;
+    }
 
     // Basic information.
     {

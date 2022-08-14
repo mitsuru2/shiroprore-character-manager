@@ -154,8 +154,8 @@ export class CharacterComponent implements OnInit, AfterViewInit {
       // Start loading of character images.
       for (let i = 0; i < csCharacterImageTypes.length; ++i) {
         const path = this.storage.makeCharacterImagePath(this.character.index, csCharacterImageTypes[i].type);
-        const data = await this.storage.get(path);
-        if (data) {
+        try {
+          const data = await this.storage.get(path);
           this.images[i].data = data;
           this.images[i].url = window.URL.createObjectURL(this.images[i].data);
           this.images[i].valid = true;
@@ -164,7 +164,7 @@ export class CharacterComponent implements OnInit, AfterViewInit {
           if (i === 0) {
             this.updateImage();
           }
-        } else {
+        } catch (error) {
           this.images[i].valid = false;
         }
       }
@@ -244,11 +244,15 @@ export class CharacterComponent implements OnInit, AfterViewInit {
     this.imageEditFormShown = true;
   }
 
-  onImageEditFormResult(canceled: boolean) {
+  async onImageEditFormResult(canceled: boolean) {
     const location = `${this.className}.onImageEditFormResult()`;
     this.logger.trace(location, { canceled: canceled });
 
     if (!canceled) {
+      this.spinner.show();
+      await this.uploadImages();
+      this.updateImage();
+      this.spinner.hide();
     }
 
     this.imageEditFormShown = false;
@@ -984,5 +988,29 @@ export class CharacterComponent implements OnInit, AfterViewInit {
     result.thumbnailImage = this.thumbnail;
 
     return result;
+  }
+
+  private async uploadImages() {
+    const location = `${this.className}.uploadImages()`;
+
+    let path = '';
+
+    // Character images.
+    for (let i = 0; i < this.characterFormData.imageFiles.length; ++i) {
+      const image = this.characterFormData.imageFiles[i];
+      if (image && image.size > 0) {
+        path = this.storage.makeCharacterImagePath(this.character.index, csCharacterImageTypes[i].type);
+        this.logger.info(location, { path: path });
+        await this.storage.upload(path, image);
+      }
+    }
+
+    // Thumbnail images.
+    const thumb = this.characterFormData.thumbnailImage;
+    if (thumb && thumb.size > 0) {
+      path = this.storage.makeCharacterThumbnailPath(this.character.index);
+      this.logger.info(location, { path: path });
+      await this.storage.upload(path, thumb);
+    }
   }
 }

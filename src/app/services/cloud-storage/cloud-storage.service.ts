@@ -38,6 +38,12 @@ export class CloudStorageService {
       (error as Error).name = ErrorCode.InternalServerError;
       throw error;
     }
+
+    // Clear image pool, if the uploaded data has been downloaded before.
+    const index = this.dataPool.findIndex((item) => item.path === path);
+    if (index >= 0) {
+      this.dataPool.splice(index, 1);
+    }
   }
 
   async get(path: string): Promise<Blob> {
