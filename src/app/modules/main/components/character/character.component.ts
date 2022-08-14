@@ -55,6 +55,11 @@ export enum TableCellType {
 export class CharacterComponent implements OnInit, AfterViewInit {
   readonly className = 'CharacterComponent';
 
+  /** Warning message. */
+  readonly changeOwnershipWarning = 'キャラクター所持状況の管理にはログインが必要です。';
+
+  readonly editCharacterInfoWarning = 'キャラクター情報の編集にはログインが必要です。';
+
   /** Firestore data. */
   private abilities = this.firestore.getData(FsCollectionName.Abilities) as FsAbility[];
 
@@ -197,7 +202,7 @@ export class CharacterComponent implements OnInit, AfterViewInit {
       // If switch is checked by annonymous user, it shows the confirmation dialog
       // and reset the switch status.
       else {
-        this.showConfirmationDialog();
+        this.showConfirmationDialog(this.changeOwnershipWarning);
       }
     }
 
@@ -213,9 +218,16 @@ export class CharacterComponent implements OnInit, AfterViewInit {
     const location = `${this.className}.onDataEditButtonClick()`;
     this.logger.trace(location);
 
-    this.characterFormData = this.convCharacterDataToFormData(this.character);
+    // Check user login.
+    if (this.userAuth.signedIn) {
+      // Open edit dialog.
+      this.characterFormData = this.convCharacterDataToFormData(this.character);
 
-    this.dataEditFormShown = true;
+      this.dataEditFormShown = true;
+    } else {
+      // Show confirmation dialog if user is not signed in.
+      this.showConfirmationDialog(this.editCharacterInfoWarning);
+    }
   }
 
   async onDataEditFormResult(canceled: boolean) {
@@ -239,9 +251,14 @@ export class CharacterComponent implements OnInit, AfterViewInit {
     const location = `${this.className}.onImageEditButtonClick()`;
     this.logger.trace(location);
 
-    this.characterFormData = this.convCharacterImageToFormData();
-
-    this.imageEditFormShown = true;
+    // Check user login.
+    if (this.userAuth.signedIn) {
+      this.characterFormData = this.convCharacterImageToFormData();
+      this.imageEditFormShown = true;
+    } else {
+      // Show confirmation dialog if user is not signed in.
+      this.showConfirmationDialog(this.editCharacterInfoWarning);
+    }
   }
 
   async onImageEditFormResult(canceled: boolean) {
@@ -631,9 +648,9 @@ export class CharacterComponent implements OnInit, AfterViewInit {
   //----------------------------------------------------------------------------
   // Confirmation dialog.
   //
-  private showConfirmationDialog() {
+  private showConfirmationDialog(message: string) {
     this.confirmationDialog.confirm({
-      message: 'キャラクター所持状況を管理するためにはログインが必要です。',
+      message: message,
       acceptLabel: 'ＯＫ',
       rejectVisible: false,
       accept: () => {
