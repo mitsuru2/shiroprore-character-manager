@@ -40,7 +40,7 @@ export class CloudStorageService {
     }
   }
 
-  async get(path: string): Promise<Blob | undefined> {
+  async get(path: string): Promise<Blob> {
     const location = `${this.className}.get()`;
     this.logger.trace(location, { path: path });
 
@@ -52,8 +52,9 @@ export class CloudStorageService {
     // Return data.
     const index = this.dataPool.findIndex((item) => item.path === path);
     if (index < 0) {
-      this.logger.error(location, 'Data is not found.', { path: path });
-      return undefined;
+      const error = new Error(`${location} Data is not found. { path: ${path} }`);
+      error.name = ErrorCode.Unexpected;
+      throw error;
     }
 
     return this.dataPool[index].data;

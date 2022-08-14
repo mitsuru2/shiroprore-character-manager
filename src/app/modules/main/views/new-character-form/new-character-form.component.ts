@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, ElementRef, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, Output, ElementRef, OnInit, AfterViewInit } from '@angular/core';
 import { NGXLogger } from 'ngx-logger';
 import { CsCharacterImageTypeMax, csCharacterImageTypes } from 'src/app/services/cloud-storage/cloud-storage.interface';
 import { ErrorCode } from 'src/app/services/error-handler/error-code.enum';
@@ -40,7 +40,7 @@ import {
   templateUrl: './new-character-form.component.html',
   styleUrls: ['./new-character-form.component.scss'],
 })
-export class NewCharacterFormComponent implements OnInit {
+export class NewCharacterFormComponent implements OnInit, AfterViewInit {
   private readonly className = 'NewCharacterFormComponent';
 
   /** Appearance. */
@@ -168,9 +168,9 @@ export class NewCharacterFormComponent implements OnInit {
 
   imageTypeMax: number = CsCharacterImageTypeMax;
 
-  inputImageFiles: any[] = Array(this.imageTypeMax);
+  inputImageFiles: Blob[] = Array(this.imageTypeMax);
 
-  inputImageFilesKai: any[] = Array(this.imageTypeMax);
+  inputImageFilesKai: Blob[] = Array(this.imageTypeMax);
 
   imageLoadFlags: boolean[] = Array(this.imageTypeMax);
 
@@ -179,11 +179,9 @@ export class NewCharacterFormComponent implements OnInit {
   /** Thumbnail image dialog. */
   showMakeThumbnailDialog = false;
 
-  thumbnailBlob?: Blob;
-
   thumbInfo: ThumbnailMakeInfo = new ThumbnailMakeInfo();
 
-  thumbCanceled = false;
+  thumbCanceled = true;
 
   /** Native element for control spin button focus. */
   private _el: HTMLElement;
@@ -289,6 +287,41 @@ export class NewCharacterFormComponent implements OnInit {
       this.inputAbilitiesKai.push(this.initInputAbilityInfo(ability));
       this.selectedAbilityTypesKai.push(this.initSelectedAbilityType(ability));
       this.onAutofillInputSelect(ability.name, `NewCharacterForm_AbilityNameKaiInput_${i}`);
+    }
+  }
+
+  async ngAfterViewInit(): Promise<void> {
+    await sleep(100);
+
+    // Copy character images.
+    try {
+      // Character images.
+      for (let i = 0; i < this.characterData.imageFiles.length; ++i) {
+        this.inputImageFiles[i] = this.characterData.imageFiles[i];
+        if (this.inputImageFiles[i].size > 0) {
+          await this.loadImageFileAndDrawImage(
+            this.inputImageFiles[i],
+            `NewCharacterForm_${this.imageTypesAndLabels[i].type}Preview`
+          );
+          this.imageLoadFlags[i] = true;
+
+          // Set up thumb info.
+          if (i === 0) {
+            this.thumbInfo.image = this.inputImageFiles[i];
+            this.thumbInfo.offset = new XY(0, 0);
+            this.thumbInfo.scale = 75;
+          }
+        }
+      }
+
+      // Thumbnail image.
+      this.thumbInfo.thumb = this.characterData.thumbnailImage;
+      if (this.thumbInfo.thumb.size > 0) {
+        await this.loadImageFileAndDrawImage(this.thumbInfo.thumb, 'NewCharacterForm_ThumbnailPreview');
+        this.thumbCanceled = false;
+      }
+    } catch (error) {
+      this.errorHandler.notifyError(error);
     }
   }
 
@@ -609,12 +642,7 @@ export class NewCharacterFormComponent implements OnInit {
     }
 
     try {
-      const result = await loadImageFile(input.files[0]);
-      const canvas = new HtmlCanvas(elemId);
-      canvas.width = result.height;
-      canvas.height = result.height;
-      const offsetX = (result.height - result.width) / 2;
-      canvas.drawImage(result, offsetX, 0);
+      await this.loadImageFileAndDrawImage(input.files[0], elemId);
 
       if (!kaichiku) {
         this.imageLoadFlags[index] = true;
@@ -641,10 +669,10 @@ export class NewCharacterFormComponent implements OnInit {
     this.logger.trace(location, { index: index, kaichiku: kaichiku });
 
     if (!kaichiku) {
-      this.inputImageFiles[index] = undefined;
+      this.inputImageFiles[index] = new Blob();
       this.imageLoadFlags[index] = false;
     } else {
-      this.inputImageFilesKai[index] = undefined;
+      this.inputImageFilesKai[index] = new Blob();
       this.imageLoadFlagsKai[index] = false;
     }
   }
@@ -664,15 +692,11 @@ export class NewCharacterFormComponent implements OnInit {
       ofsY: this.thumbInfo.offset.y,
       scale: this.thumbInfo.scale,
     });
+    this.thumbCanceled = canceled;
 
     if (!canceled) {
       try {
-        this.thumbnailBlob = this.thumbInfo.thumb;
-        const result = await loadImageFile(this.thumbnailBlob);
-        const canvas = new HtmlCanvas('NewCharacterForm_ThumbnailPreview');
-        canvas.width = result.width;
-        canvas.height = result.height;
-        canvas.drawImage(result, 0, 0);
+        await this.loadImageFileAndDrawImage(this.thumbInfo.thumb, 'NewCharacterForm_ThumbnailPreview');
       } catch (error) {
         this.errorHandler.notifyError(error);
       }
@@ -753,14 +777,14 @@ export class NewCharacterFormComponent implements OnInit {
     if (exceptItems.includes('images') === false) {
       for (let i = 0; i < this.imageTypeMax; ++i) {
         this.imageLoadFlags[i] = false;
-        this.inputImageFiles[i] = undefined;
+        this.inputImageFiles[i] = new Blob();
         this.imageLoadFlagsKai[i] = false;
-        this.inputImageFilesKai[i] = undefined;
+        this.inputImageFilesKai[i] = new Blob();
       }
-      this.thumbnailBlob = undefined;
+      this.thumbInfo.thumb = new Blob();
       this.characterData.imageFiles = [];
       this.characterData.imageFilesKai = [];
-      this.characterData.thumbnailImage = undefined;
+      this.characterData.thumbnailImage = new Blob();
     }
   }
 
@@ -995,6 +1019,18 @@ export class NewCharacterFormComponent implements OnInit {
   }
 
   //----------------------------------------------------------------------------
+  // Image file control.
+  //
+  private async loadImageFileAndDrawImage(file: Blob, elemId: string) {
+    const result = await loadImageFile(file);
+    const canvas = new HtmlCanvas(elemId);
+    canvas.width = result.height;
+    canvas.height = result.height;
+    const offsetX = (result.height - result.width) / 2;
+    canvas.drawImage(result, offsetX, 0);
+  }
+
+  //----------------------------------------------------------------------------
   // Make result character info.
   //
   private makeCharacterInfo() {
@@ -1051,8 +1087,6 @@ export class NewCharacterFormComponent implements OnInit {
       }
     }
 
-    // TODO: Cost calculation doesn't work when ability is changed.
-
     // Character cost.
     this.characterData.cost = this.calcCharacterCost(
       this.characterData.characterType,
@@ -1086,8 +1120,8 @@ export class NewCharacterFormComponent implements OnInit {
       }
 
       // Thumbnail.
-      if (this.thumbnailBlob) {
-        this.characterData.thumbnailImage = this.thumbnailBlob;
+      if (!this.thumbCanceled) {
+        this.characterData.thumbnailImage = this.thumbInfo.thumb;
       }
     }
   }

@@ -625,8 +625,8 @@
       (click)="onMakeThumbnailFormClick()"
       [disabled]="!inputImageFiles[0]"
     ></button>
-    <div *ngIf="this.thumbnailBlob" style="margin-top: 1rem">
-      <canvas id="NewCharacterForm_ThumbnailPreview"></canvas>
+    <div style="margin-top: 1rem">
+      <canvas id="NewCharacterForm_ThumbnailPreview" [hidden]="this.thumbCanceled"></canvas>
     </div>
   </div>
 
@@ -697,7 +697,7 @@
             characterData.rarerity === 0 ||
             characterData.weaponType.name === '' ||
             characterData.geographTypes.length === 0)) ||
-        (mode !== 'dataEdit' && !thumbnailBlob)
+        (mode !== 'dataEdit' && thumbCanceled)
       "
     ></p-button>
     <p-button

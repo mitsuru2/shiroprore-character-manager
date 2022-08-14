@@ -19,6 +19,7 @@ export class HtmlCanvas {
     // Get canvas.
     const canvas = document.getElementById(elemId) as HTMLCanvasElement;
     if (!canvas) {
+      console.log('elemId: ' + elemId);
       const error = new Error(`${location} Canvas element is not available.`);
       error.name = ErrorCode.Unexpected;
       throw error;

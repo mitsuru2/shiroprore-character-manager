@@ -72,6 +72,8 @@ export class CharacterComponent implements OnInit, AfterViewInit {
 
   images: CharacterImage[] = [];
 
+  thumbnail: Blob = new Blob();
+
   /** Switch: own the character */
   hasThisCharacter: boolean = false;
 
@@ -166,6 +168,9 @@ export class CharacterComponent implements OnInit, AfterViewInit {
           this.images[i].valid = false;
         }
       }
+
+      // Load thumbnail image.
+      this.thumbnail = await this.storage.get(this.storage.makeCharacterThumbnailPath(this.character.index));
     } catch (error) {
       this.logger.error(location, error);
     }
@@ -234,12 +239,17 @@ export class CharacterComponent implements OnInit, AfterViewInit {
     const location = `${this.className}.onImageEditButtonClick()`;
     this.logger.trace(location);
 
+    this.characterFormData = this.convCharacterImageToFormData();
+
     this.imageEditFormShown = true;
   }
 
   onImageEditFormResult(canceled: boolean) {
     const location = `${this.className}.onImageEditFormResult()`;
     this.logger.trace(location, { canceled: canceled });
+
+    if (!canceled) {
+    }
 
     this.imageEditFormShown = false;
   }
@@ -959,5 +969,20 @@ export class CharacterComponent implements OnInit, AfterViewInit {
     }
 
     return false;
+  }
+
+  //----------------------------------------------------------------------------
+  // Character image edit.
+  //
+  private convCharacterImageToFormData(): NewCharacterFormData {
+    let result = new NewCharacterFormData();
+
+    for (let i = 0; i < this.images.length; ++i) {
+      result.imageFiles[i] = this.images[i].data;
+    }
+
+    result.thumbnailImage = this.thumbnail;
+
+    return result;
   }
 }

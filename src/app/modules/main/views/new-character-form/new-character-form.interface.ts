@@ -55,9 +55,9 @@ export class NewCharacterFormData {
 
   abilitiesKai: FsAbilityForNewCharacterForm[] = [];
 
-  imageFiles: File[] = [];
+  imageFiles: Blob[] = [];
 
-  imageFilesKai: File[] = [];
+  imageFilesKai: Blob[] = [];
 
-  thumbnailImage?: Blob; // Only binary data and files can be undefined.
+  thumbnailImage: Blob = new Blob();
 }

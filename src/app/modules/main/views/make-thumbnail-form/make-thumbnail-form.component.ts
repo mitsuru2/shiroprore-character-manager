@@ -184,7 +184,7 @@ export class MakeThumbnailFormComponent implements OnInit, AfterViewInit {
     }
   }
 
-  private async loadImage(inputFile: File) {
+  private async loadImage(inputFile: Blob) {
     // Load image.
     const result = await loadImageFile(inputFile);
     this.inputImage = result;

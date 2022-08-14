@@ -31,7 +31,7 @@ export interface MakeThumbnailFormResult {
 }
 
 export class ThumbnailMakeInfo {
-  image: File = new File([], ''); // Dummy file.
+  image: Blob = new Blob();
 
   imageSize: XY = new XY(80, 80);
 
