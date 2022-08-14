@@ -1051,6 +1051,8 @@ export class NewCharacterFormComponent implements OnInit {
       }
     }
 
+    // TODO: Cost calculation doesn't work when ability is changed.
+
     // Character cost.
     this.characterData.cost = this.calcCharacterCost(
       this.characterData.characterType,
@@ -1097,7 +1099,7 @@ export class NewCharacterFormComponent implements OnInit {
     abilitiesKai: FsAbility[],
     kaichiku: boolean
   ): number {
-    // const location = `${this.className}.calcCharacterCost()`;
+    const location = `${this.className}.calcCharacterCost()`;
 
     // CASE: Cost calcuration is disable.
     // It returns input cost value.
@@ -1112,6 +1114,7 @@ export class NewCharacterFormComponent implements OnInit {
     // CASE: Cost calcuration is enable.
     // Get the base cost from weapon type.
     let cost = weaponType.baseCost;
+    this.logger.debug(location, { baseCost: weaponType.baseCost });
 
     // Check the character has keiryaku or not.
     let hasKeiryaku = false;
@@ -1128,6 +1131,8 @@ export class NewCharacterFormComponent implements OnInit {
         break;
       }
     }
+
+    this.logger.debug(location, { kaichiku: kaichiku, hasKeiryaku: hasKeiryaku, hasKeiryakuKai: hasKeiryakuKai });
 
     // Calculate character cost.
     if (hasKeiryaku) {
@@ -1320,11 +1325,13 @@ export class NewCharacterFormComponent implements OnInit {
         this.errorMessage = 'キャラクター名を入力してください。';
         return;
       }
-      for (let i = 0; i < this.characters.length; ++i) {
-        if (this.characters[i].name === this.characterData.characterName) {
-          this.logger.warn(location, 'Existing character name.');
-          this.errorMessage = '登録済のキャラクター名です。';
-          return;
+      if (this.mode === 'normal') {
+        for (let i = 0; i < this.characters.length; ++i) {
+          if (this.characters[i].name === this.characterData.characterName) {
+            this.logger.warn(location, 'Existing character name.');
+            this.errorMessage = '登録済のキャラクター名です。';
+            return;
+          }
         }
       }
 

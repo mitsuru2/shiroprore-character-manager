@@ -20,8 +20,6 @@ export class FsAbilityForNewCharacterForm extends FsAbility {
   tokenAvailable: boolean = false;
 
   isExisting: boolean = false;
-
-  linkTo: number = -1;
 }
 
 export class NewCharacterFormData {

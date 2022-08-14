@@ -14,6 +14,7 @@ import {
   FsCharacter,
   FsCharacterTag,
   FsCharacterType,
+  FsDocumentBase,
   FsFacility,
   FsFacilityType,
   FsGeographType,
@@ -212,9 +213,19 @@ export class CharacterComponent implements OnInit, AfterViewInit {
     this.dataEditFormShown = true;
   }
 
-  onDataEditFormResult(canceled: boolean) {
+  async onDataEditFormResult(canceled: boolean) {
     const location = `${this.className}.onDataEditFormResult()`;
-    this.logger.trace(location, { canceled: canceled });
+    this.logger.trace(location, { canceled: canceled, formData: this.characterFormData });
+
+    if (!canceled) {
+      // Update firebase data.
+      this.spinner.show();
+      await this.updateCharacterData();
+      await this.firestore.loadAll();
+      this.character = this.firestore.getDataById(FsCollectionName.Characters, this.id) as FsCharacter;
+      this.makeCharacterInfoTable();
+      this.spinner.hide();
+    }
 
     this.dataEditFormShown = false;
   }
@@ -255,6 +266,11 @@ export class CharacterComponent implements OnInit, AfterViewInit {
   private async makeCharacterInfoTable() {
     // Get tbody element.
     const t = document.getElementById('Character_Table') as HTMLTableElement;
+
+    // Clear existing table
+    while (t.rows.length > 0) {
+      t.deleteRow(0);
+    }
 
     // Get character type.
     // const cType = this.getDoc<FsCharacterType>(this.character.type, FsCollectionName.CharacterTypes);
@@ -773,5 +789,175 @@ export class CharacterComponent implements OnInit, AfterViewInit {
     }
 
     return result;
+  }
+
+  private async updateCharacterData(): Promise<void> {
+    const original = this.character;
+    const modified = this.characterFormData;
+    let changed = false;
+
+    // Name.
+    if (original.name !== modified.characterName) {
+      await this.firestore.updateField(FsCollectionName.Characters, original.id, 'name', modified.characterName);
+    }
+
+    // Character type
+    if (original.type !== modified.characterType.id) {
+      await this.firestore.updateField(FsCollectionName.Characters, original.id, 'type', modified.characterType.id);
+    }
+
+    // Sub character type.
+    if (original.subType !== modified.subCharacterType.id) {
+      await this.firestore.updateField(
+        FsCollectionName.SubCharacterTypes,
+        original.id,
+        'subType',
+        modified.subCharacterType.id
+      );
+    }
+
+    // Rarerity.
+    if (original.rarerity !== modified.rarerity) {
+      await this.firestore.updateField(FsCollectionName.Characters, original.id, 'rarerity', modified.rarerity);
+    }
+
+    // Weapon type.
+    if (original.weaponType !== modified.weaponType.id) {
+      await this.firestore.updateField(FsCollectionName.Characters, original.id, 'weaponType', modified.weaponType.id);
+    }
+
+    // Geograph types.
+    changed = this.isListFieldChanged(original.geographTypes, modified.geographTypes);
+    if (changed) {
+      await this.firestore.updateField(
+        FsCollectionName.Characters,
+        original.id,
+        'geographTypes',
+        modified.geographTypes.map((item) => item.id)
+      );
+    }
+
+    // Region.
+    if (original.region !== modified.region.id) {
+      await this.firestore.updateField(FsCollectionName.Characters, original.id, 'region', modified.region.id);
+    }
+
+    // Cost.
+    if (original.cost !== modified.cost) {
+      await this.firestore.updateField(FsCollectionName.Characters, original.id, 'cost', modified.cost);
+    }
+    if (original.costKai !== modified.costKai) {
+      await this.firestore.updateField(FsCollectionName.Characters, original.id, 'costKai', modified.costKai);
+    }
+
+    // Abilities.
+    const abilities = await this.updateAbilities(original.abilities, modified.abilities);
+    await this.firestore.updateField(FsCollectionName.Characters, original.id, 'abilities', abilities);
+    const abilitiesKai = await this.updateAbilities(original.abilitiesKai, modified.abilitiesKai);
+    await this.firestore.updateField(FsCollectionName.Characters, original.id, 'abilitiesKai', abilitiesKai);
+  }
+
+  private isListFieldChanged(a: string[], b: FsDocumentBase[]) {
+    let result = false;
+
+    if (a.length !== b.length) {
+      result = true;
+    }
+    if (!result) {
+      for (let i = 0; i < a.length; i++) {
+        if (a[i] !== b[i].id) {
+          result = true;
+          break;
+        }
+      }
+    }
+
+    return result;
+  }
+
+  private async updateAbilities(original: string[], modified: FsAbility[]): Promise<string[]> {
+    const abilityIdList: string[] = [];
+
+    // Scan original ability info.
+    for (let i = 0; i < original.length; ++i) {
+      // If ability ID is not found, it removes ability.
+      const modAbility = modified.find((item) => item.id === original[i]);
+      if (!modAbility) {
+        continue;
+      }
+
+      // Get ability information.
+      const orgAbility = this.firestore.getDataById(FsCollectionName.Abilities, original[i]) as FsAbility;
+
+      // If ability name is changed, make new ability.
+      if (orgAbility.name !== modAbility.name) {
+        const docId = await this.firestore.addData(FsCollectionName.Abilities, modAbility);
+        abilityIdList.push(docId);
+        continue;
+      }
+
+      // Add ability ID to the ID list.
+      abilityIdList.push(orgAbility.id);
+
+      // Ability type.
+      if (orgAbility.type !== modAbility.type) {
+        await this.firestore.updateField(FsCollectionName.Abilities, orgAbility.id, 'type', modAbility.type);
+      }
+
+      // Descriptions.
+      if (this.isStringsChanged(orgAbility.descriptions, modAbility.descriptions)) {
+        await this.firestore.updateField(
+          FsCollectionName.Abilities,
+          orgAbility.id,
+          'descriptions',
+          modAbility.descriptions
+        );
+      }
+
+      // Interval.
+      if (orgAbility.interval !== modAbility.interval) {
+        await this.firestore.updateField(FsCollectionName.Abilities, orgAbility.id, 'interval', modAbility.interval);
+      }
+
+      // Cost.
+      if (orgAbility.cost !== modAbility.cost) {
+        await this.firestore.updateField(FsCollectionName.Abilities, orgAbility.id, 'cost', modAbility.cost);
+      }
+
+      // Token layouts.
+      if (this.isStringsChanged(orgAbility.tokenLayouts, modAbility.tokenLayouts)) {
+        await this.firestore.updateField(
+          FsCollectionName.Abilities,
+          orgAbility.id,
+          'tokenLayouts',
+          modAbility.tokenLayouts
+        );
+      }
+    }
+
+    // Scan modified ability info.
+    for (let i = 0; i < modified.length; ++i) {
+      if (modified[i].id === '') {
+        const docId = await this.firestore.addData(FsCollectionName.Abilities, modified[i]);
+        abilityIdList.push(docId);
+        modified[i].id = docId;
+      }
+    }
+
+    // Update ability ID list.
+    return abilityIdList;
+  }
+
+  private isStringsChanged(a: string[], b: string[]): boolean {
+    if (a.length !== b.length) {
+      return true;
+    }
+    for (let i = 0; i < a.length; ++i) {
+      if (a[i] !== b[i]) {
+        return true;
+      }
+    }
+
+    return false;
   }
 }
