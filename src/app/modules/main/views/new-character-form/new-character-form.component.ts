@@ -172,9 +172,9 @@ export class NewCharacterFormComponent implements OnInit, AfterViewInit {
 
   inputImageFilesKai: Blob[] = Array(this.imageTypeMax);
 
-  imageLoadFlags: boolean[] = Array(this.imageTypeMax);
+  imageLoadStatus: ('empty' | 'loading' | 'loaded')[] = Array(this.imageTypeMax);
 
-  imageLoadFlagsKai: boolean[] = Array(this.imageTypeMax);
+  imageLoadStatusKai: ('empty' | 'loading' | 'loaded')[] = Array(this.imageTypeMax);
 
   /** Thumbnail image dialog. */
   showMakeThumbnailDialog = false;
@@ -299,11 +299,12 @@ export class NewCharacterFormComponent implements OnInit, AfterViewInit {
       for (let i = 0; i < this.characterData.imageFiles.length; ++i) {
         this.inputImageFiles[i] = this.characterData.imageFiles[i];
         if (this.inputImageFiles[i].size > 0) {
+          this.imageLoadStatus[i] = 'loading';
           await this.loadImageFileAndDrawImage(
             this.inputImageFiles[i],
             `NewCharacterForm_${this.imageTypesAndLabels[i].type}Preview`
           );
-          this.imageLoadFlags[i] = true;
+          this.imageLoadStatus[i] = 'loaded';
 
           // Set up thumb info.
           if (i === 0) {
@@ -634,10 +635,10 @@ export class NewCharacterFormComponent implements OnInit, AfterViewInit {
     }
 
     if (!kaichiku) {
-      this.imageLoadFlags[index] = false;
+      this.imageLoadStatus[index] = 'loading';
       this.inputImageFiles[index] = input.files[0];
     } else {
-      this.imageLoadFlagsKai[index] = false;
+      this.imageLoadStatusKai[index] = 'loading';
       this.inputImageFilesKai[index] = input.files[0];
     }
 
@@ -645,9 +646,9 @@ export class NewCharacterFormComponent implements OnInit, AfterViewInit {
       await this.loadImageFileAndDrawImage(input.files[0], elemId);
 
       if (!kaichiku) {
-        this.imageLoadFlags[index] = true;
+        this.imageLoadStatus[index] = 'loaded';
       } else {
-        this.imageLoadFlagsKai[index] = true;
+        this.imageLoadStatusKai[index] = 'loaded';
       }
 
       if (index === 0 && !kaichiku) {
@@ -670,10 +671,10 @@ export class NewCharacterFormComponent implements OnInit, AfterViewInit {
 
     if (!kaichiku) {
       this.inputImageFiles[index] = new Blob();
-      this.imageLoadFlags[index] = false;
+      this.imageLoadStatus[index] = 'empty';
     } else {
       this.inputImageFilesKai[index] = new Blob();
-      this.imageLoadFlagsKai[index] = false;
+      this.imageLoadStatusKai[index] = 'empty';
     }
   }
 
@@ -776,12 +777,13 @@ export class NewCharacterFormComponent implements OnInit, AfterViewInit {
 
     if (exceptItems.includes('images') === false) {
       for (let i = 0; i < this.imageTypeMax; ++i) {
-        this.imageLoadFlags[i] = false;
+        this.imageLoadStatus[i] = 'empty';
         this.inputImageFiles[i] = new Blob();
-        this.imageLoadFlagsKai[i] = false;
+        this.imageLoadStatusKai[i] = 'empty';
         this.inputImageFilesKai[i] = new Blob();
       }
       this.thumbInfo.thumb = new Blob();
+      this.thumbCanceled = true;
       this.characterData.imageFiles = [];
       this.characterData.imageFilesKai = [];
       this.characterData.thumbnailImage = new Blob();

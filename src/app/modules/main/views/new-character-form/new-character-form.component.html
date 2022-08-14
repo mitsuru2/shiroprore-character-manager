@@ -596,14 +596,14 @@
           />
         </label>
         <div [style]="{ 'justify-content': 'center', 'align-items': 'center', display: 'flex', 'margin-bottom': '0.5rem' }">
-          <div *ngIf="inputImageFiles[i] && !imageLoadFlags[i]"><p-progressSpinner></p-progressSpinner></div>
+          <div *ngIf="imageLoadStatus[i] === 'loading'"><p-progressSpinner></p-progressSpinner></div>
           <canvas
-            [hidden]="!imageLoadFlags[i]"
+            [hidden]="imageLoadStatus[i] !== 'loaded'"
             [id]="'NewCharacterForm_' + imageType.type + 'Preview'"
             [style]="{ 'max-width': previewCanvasWidth + 'px', 'max-height': previewCanvasHeight + 'px' }"
           ></canvas>
         </div>
-        <div *ngIf="imageLoadFlags[i]" [style]="{ 'justify-content': 'center', 'align-items': 'center', display: 'flex' }">
+        <div *ngIf="imageLoadStatus[i] === 'loaded'" [style]="{ 'justify-content': 'center', 'align-items': 'center', display: 'flex' }">
           <button
             pButton
             pRipple
@@ -660,14 +660,14 @@
         disabled="true"
       ></button>
       <div [style]="{ 'justify-content': 'center', 'align-items': 'center', display: 'flex', 'margin-bottom': '0.5rem' }">
-        <div *ngIf="inputImageFilesKai[i] && !imageLoadFlagsKai[i]"><p-progressSpinner></p-progressSpinner></div>
+        <div *ngIf="imageLoadStatusKai[i] === 'loading'"><p-progressSpinner></p-progressSpinner></div>
         <canvas
-          [hidden]="!imageLoadFlagsKai[i]"
+          [hidden]="imageLoadStatusKai[i] !== 'loaded'"
           [id]="'NewCharacterForm_' + imageType.type + 'PreviewKai'"
           [style]="{ 'max-width': previewCanvasWidth, 'max-height': previewCanvasHeight }"
         ></canvas>
       </div>
-      <div *ngIf="imageLoadFlagsKai[i]" [style]="{ 'justify-content': 'center', 'align-items': 'center', display: 'flex' }">
+      <div *ngIf="imageLoadStatusKai[i] === 'loaded'" [style]="{ 'justify-content': 'center', 'align-items': 'center', display: 'flex' }">
         <button
           pButton
           pRipple

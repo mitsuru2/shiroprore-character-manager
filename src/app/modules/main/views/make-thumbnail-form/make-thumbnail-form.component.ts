@@ -37,9 +37,11 @@ export class MakeThumbnailFormComponent implements OnInit, AfterViewInit {
   /** Thumbnail and canvas size. */
   thumbSize!: XY; // Initialized at ngOnInit()
 
-  margin = new XY(50, 50);
+  readonly margin = new XY(20, 20);
 
   canvasSize!: XY; // Initialized at ngOnInit()
+
+  readonly scaleRate = 0.125; // Draw scale line at 10%.
 
   /** Image info. */
   imagePos!: XY; // Initialized at ngOnInit()
@@ -209,6 +211,7 @@ export class MakeThumbnailFormComponent implements OnInit, AfterViewInit {
     this.drawImage();
     this.drawMarginFrame();
     this.drawCenterLine();
+    this.drawScaleLine();
   }
 
   private drawImage() {
@@ -246,6 +249,34 @@ export class MakeThumbnailFormComponent implements OnInit, AfterViewInit {
     this.canvas.strokeStyle = 'rgba(0, 0, 255, 0.5)'; // 50% Blue.
     this.canvas.drawLine(0, Math.ceil(this.canvasSize.y / 2), this.canvasSize.x, Math.ceil(this.canvasSize.y / 2));
     this.canvas.drawLine(Math.ceil(this.canvasSize.x / 2), 0, Math.ceil(this.canvasSize.x / 2), this.canvasSize.y);
+  }
+
+  private drawScaleLine() {
+    this.canvas.strokeStyle = 'rgba(0, 0, 255, 0.5)'; // 50% Blue.
+    this.canvas.drawLine(
+      Math.ceil(this.canvasSize.x / 2 - 5),
+      Math.ceil(this.thumbSize.y * this.scaleRate + this.margin.y),
+      Math.ceil(this.canvasSize.x / 2 + 5),
+      Math.ceil(this.thumbSize.y * this.scaleRate + this.margin.y)
+    );
+    this.canvas.drawLine(
+      Math.ceil(this.canvasSize.x / 2 - 5),
+      Math.ceil(this.thumbSize.y * (1.0 - this.scaleRate) + this.margin.y),
+      Math.ceil(this.canvasSize.x / 2 + 5),
+      Math.ceil(this.thumbSize.y * (1.0 - this.scaleRate) + this.margin.y)
+    );
+    this.canvas.drawLine(
+      Math.ceil(this.thumbSize.x * this.scaleRate + this.margin.x),
+      Math.ceil(this.canvasSize.y / 2 - 5),
+      Math.ceil(this.thumbSize.x * this.scaleRate + this.margin.x),
+      Math.ceil(this.canvasSize.y / 2 + 5)
+    );
+    this.canvas.drawLine(
+      Math.ceil(this.thumbSize.x * (1.0 - this.scaleRate) + this.margin.x),
+      Math.ceil(this.canvasSize.y / 2 - 5),
+      Math.ceil(this.thumbSize.x * (1.0 - this.scaleRate) + this.margin.x),
+      Math.ceil(this.canvasSize.y / 2 + 5)
+    );
   }
 
   //----------------------------------------------------------------------------

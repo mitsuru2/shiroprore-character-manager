@@ -140,9 +140,12 @@
   <p-divider align="center"><span>画像</span></p-divider>
   <div class="col">
     <span *ngFor="let image of character.imageFiles; let i = index" style="margin-right: 0.5rem">
-      <p-progressSpinner *ngIf="image && !imagesLoaded" [style]="{ 'max-width': imagePreviewW + 'px', 'max-height': imagePreviewH + 'px' }"></p-progressSpinner>
+      <p-progressSpinner
+        *ngIf="image && image.size > 0 && !imagesLoaded"
+        [style]="{ 'max-width': imagePreviewW + 'px', 'max-height': imagePreviewH + 'px' }"
+      ></p-progressSpinner>
       <canvas
-        [hidden]="!image || !imagesLoaded"
+        [hidden]="!image || image.size === 0 || !imagesLoaded"
         [id]="'NewCharacterConfirmation_ImagePreview_' + i"
         [style]="{ 'max-width': imagePreviewW + 'px', 'max-height': imagePreviewH + 'px' }"
       ></canvas>
@@ -162,17 +165,20 @@
   <!--------------------------------------------------------------------------->
   <!-- Disable uploading image files (kai)
   <p-divider align="center"><span>画像 (改壱)</span></p-divider>
-  -->
   <div class="col">
     <span *ngFor="let image of character.imageFilesKai; let i = index" style="margin-right: 0.5rem">
-      <p-progressSpinner *ngIf="image && !imagesLoaded" [style]="{ 'max-width': imagePreviewW + 'px', 'max-height': imagePreviewH + 'px' }"></p-progressSpinner>
+      <p-progressSpinner
+        *ngIf="image.size > 0 && !imagesLoaded"
+        [style]="{ 'max-width': imagePreviewW + 'px', 'max-height': imagePreviewH + 'px' }"
+      ></p-progressSpinner>
       <canvas
-        [hidden]="!image || !imagesLoaded"
+        [hidden]="image.size === 0 || !imagesLoaded"
         [id]="'NewCharacterConfirmation_ImagePreviewKai_' + i"
         [style]="{ 'max-width': imagePreviewW + 'px', 'max-height': imagePreviewH + 'px' }"
       ></canvas
     ></span>
   </div>
+  -->
 </div>
 
 <!----------------------------------------------------------------------------->
