@@ -58,6 +58,7 @@ export class CloudStorageService {
     // Return data.
     const index = this.dataPool.findIndex((item) => item.path === path);
     if (index < 0) {
+      this.logger.error(location, 'Data is not found.', { path: path });
       const error = new Error(`${location} Data is not found. { path: ${path} }`);
       error.name = ErrorCode.Unexpected;
       throw error;

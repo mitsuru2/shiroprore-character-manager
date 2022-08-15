@@ -56,6 +56,9 @@ export enum TableCellType {
 export class CharacterComponent implements OnInit, AfterViewInit {
   readonly className = 'CharacterComponent';
 
+  /** Dialog initialization status. */
+  isInit = false;
+
   /** Warning message. */
   readonly changeOwnershipWarning = 'キャラクター所持状況の管理にはログインが必要です。';
 
@@ -121,6 +124,7 @@ export class CharacterComponent implements OnInit, AfterViewInit {
     if (tmpId) {
       this.id = tmpId;
     } else {
+      this.logger.error(location, 'No character ID.');
       const error = new Error(`${location} No character ID.`);
       error.name = ErrorCode.Unexpected;
       this.errorHandler.notifyError(error);
@@ -177,6 +181,9 @@ export class CharacterComponent implements OnInit, AfterViewInit {
 
       // Load thumbnail image.
       this.thumbnail = await this.storage.get(this.storage.makeCharacterThumbnailPath(this.character.index));
+
+      // Set initialized flag.
+      this.isInit = true;
     } catch (error) {
       this.logger.error(location, error);
     }

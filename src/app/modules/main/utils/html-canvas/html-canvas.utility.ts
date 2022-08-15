@@ -19,7 +19,7 @@ export class HtmlCanvas {
     // Get canvas.
     const canvas = document.getElementById(elemId) as HTMLCanvasElement;
     if (!canvas) {
-      console.log('elemId: ' + elemId);
+      console.error(`${location} Canvas is not available. { elemId: ${elemId} }`);
       const error = new Error(`${location} Canvas element is not available.`);
       error.name = ErrorCode.Unexpected;
       throw error;
@@ -28,6 +28,7 @@ export class HtmlCanvas {
     // Get context.
     const context = canvas.getContext('2d') as CanvasRenderingContext2D;
     if (!context) {
+      console.error(`${location} Canvas context is not available. { elemId: ${elemId} }`);
       const error = new Error(`${location} Canvas context is not available.`);
       error.name = ErrorCode.Unexpected;
       throw error;

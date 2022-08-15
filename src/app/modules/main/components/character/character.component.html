@@ -38,8 +38,8 @@
 <!-- Edit button. -->
 <!---->
 <div class="footer-container">
-  <p-button label="データ編集" (onClick)="onDataEditButtonClick()"></p-button>
-  <p-button label="画像編集" (onClick)="onImageEditButtonClick()" [style]="{ 'margin-left': '1rem' }"></p-button>
+  <p-button label="データ編集" (onClick)="onDataEditButtonClick()" [disabled]="!isInit"></p-button>
+  <p-button label="画像編集" (onClick)="onImageEditButtonClick()" [disabled]="!isInit" [style]="{ 'margin-left': '1rem' }"></p-button>
 </div>
 
 <!----------------------------------------------------------------------------->
@@ -63,7 +63,7 @@
 <!---->
 <!-- Character image edit dialog. -->
 <!---->
-<p-dialog header="キャラクターデータ編集" [(visible)]="imageEditFormShown" [modal]="true" [draggable]="false" [resizable]="false" [closable]="false">
+<p-dialog header="キャラクター画像編集" [(visible)]="imageEditFormShown" [modal]="true" [draggable]="false" [resizable]="false" [closable]="false">
   <app-new-character-form
     *ngIf="imageEditFormShown"
     styleClass="dialog"

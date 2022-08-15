@@ -836,6 +836,7 @@ export class NewCharacterFormComponent implements OnInit, AfterViewInit {
 
     const result = this.abilityTypes.find((item) => item.id === src.type);
     if (!result) {
+      this.logger.error(location, 'Unknown ability type.', { type: src.type });
       const error = new Error(`${location} Unknown ability type. ${src.type}`);
       error.name = ErrorCode.Unexpected;
       throw error;
@@ -887,6 +888,7 @@ export class NewCharacterFormComponent implements OnInit, AfterViewInit {
     // Get index.
     const index = this.inputMotifWeapons.findIndex((item) => item === value);
     if (index < 0) {
+      this.logger.error(location, 'Input text is not binded.', { value: value });
       const error = new Error(`${location} Input text is not binded. It seems a program error.`);
       error.name = ErrorCode.Unexpected;
       throw error;
@@ -914,6 +916,7 @@ export class NewCharacterFormComponent implements OnInit, AfterViewInit {
     // Get index.
     const index = this.inputMotifFacilities.findIndex((item) => item === value);
     if (index < 0) {
+      this.logger.error(location, 'Input text is not binded.');
       const error = new Error(`${location} Input text is not binded. It seems a program error.`);
       error.name = ErrorCode.Unexpected;
       throw error;
@@ -941,6 +944,7 @@ export class NewCharacterFormComponent implements OnInit, AfterViewInit {
     // Get index.
     const index = this.inputCharacterTags.findIndex((item) => item === value);
     if (index < 0) {
+      this.logger.error(location, 'Input text is not binded.');
       const error = new Error(`${location} Input text is not binded. It seems a program error.`);
       error.name = ErrorCode.Unexpected;
       throw error;
@@ -1496,6 +1500,7 @@ export class NewCharacterFormComponent implements OnInit, AfterViewInit {
 
   private async waitUntilCanvasReady() {
     const location = `${this.className}.waitUntilCanvasReady()`;
+    this.logger.trace(location);
 
     for (let i = 0; i < 10; ++i) {
       try {

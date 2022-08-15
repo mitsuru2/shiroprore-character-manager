@@ -369,12 +369,14 @@ export class MakeThumbnailFormComponent implements OnInit, AfterViewInit {
     // Make dummy canvas to crop image.
     const tmpCanvas = document.createElement('canvas');
     if (!tmpCanvas) {
+      this.logger.error(location, 'Temporary canvas creation failed.');
       const error = new Error(`${location} Temporary canvas creation failed.`);
       error.name = ErrorCode.Unexpected;
       throw error;
     }
     const context = tmpCanvas.getContext('2d');
     if (!context) {
+      this.logger.error(location, 'Temporary canvas context is not available.');
       const error = new Error(`${location} Temporary canvas context is not available.`);
       error.name = ErrorCode.Unexpected;
       throw error;
