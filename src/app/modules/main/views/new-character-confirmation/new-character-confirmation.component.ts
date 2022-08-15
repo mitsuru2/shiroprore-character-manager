@@ -87,19 +87,19 @@ export class NewCharacterConfirmationComponent implements AfterViewInit {
     const location = `${this.className}.loadAllImages()`;
 
     for (let i = 0; i < this.images.length; ++i) {
-      if (this.character.imageFiles[i] && this.character.imageFiles[i].size > 0) {
+      if (this.character.imageFiles[i].status !== 'empty') {
         this.logger.debug(location, `images[${i}]`);
-        this.images[i] = await loadImageFile(this.character.imageFiles[i]);
+        this.images[i] = await loadImageFile(this.character.imageFiles[i].data);
       }
     }
-    if (this.character.thumbnailImage && this.character.thumbnailImage.size > 0) {
+    if (this.character.thumbnailImage.status !== 'empty') {
       this.logger.debug(location, `thumbnail`);
-      this.thumbnailImage = await loadImageFile(this.character.thumbnailImage);
+      this.thumbnailImage = await loadImageFile(this.character.thumbnailImage.data);
     }
     for (let i = 0; i < this.imagesKai.length; ++i) {
-      if (this.character.imageFilesKai[i] && this.character.imageFilesKai[i].size > 0) {
+      if (this.character.imageFilesKai[i].status !== 'empty') {
         this.logger.debug(location, `imagesKai[${i}]`);
-        this.imagesKai[i] = await loadImageFile(this.character.imageFilesKai[i]);
+        this.imagesKai[i] = await loadImageFile(this.character.imageFilesKai[i].data);
       }
     }
   }
@@ -119,13 +119,11 @@ export class NewCharacterConfirmationComponent implements AfterViewInit {
         canvas.drawImage(this.images[i], offsetX, 0);
       }
     }
-    if (this.character.thumbnailImage) {
-      if (this.thumbnailImage) {
-        canvas = new HtmlCanvas(`NewCharacterConfirmation_ThumbnailPreview`);
-        canvas.width = this.thumbnailImage.width;
-        canvas.height = this.thumbnailImage.height;
-        canvas.drawImage(this.thumbnailImage, 0, 0);
-      }
+    if (this.thumbnailImage) {
+      canvas = new HtmlCanvas(`NewCharacterConfirmation_ThumbnailPreview`);
+      canvas.width = this.thumbnailImage.width;
+      canvas.height = this.thumbnailImage.height;
+      canvas.drawImage(this.thumbnailImage, 0, 0);
     }
     for (let i = 0; i < this.imagesKai.length; ++i) {
       if (this.imagesKai[i]) {

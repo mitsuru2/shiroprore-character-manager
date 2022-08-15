@@ -30,6 +30,7 @@ import { UserAuthService } from '../../services/user-auth/user-auth.service';
 import { sleep } from '../../utils/sleep/sleep.utility';
 import {
   FsAbilityForNewCharacterForm,
+  ImageDataWithProperty,
   NewCharacterFormData,
 } from '../../views/new-character-form/new-character-form.interface';
 
@@ -999,10 +1000,12 @@ export class CharacterComponent implements OnInit, AfterViewInit {
     let result = new NewCharacterFormData();
 
     for (let i = 0; i < this.images.length; ++i) {
-      result.imageFiles[i] = this.images[i].data;
+      if (this.images[i].valid) {
+        result.imageFiles[i] = new ImageDataWithProperty(this.images[i].data);
+      }
     }
 
-    result.thumbnailImage = this.thumbnail;
+    result.thumbnailImage = new ImageDataWithProperty(this.thumbnail);
 
     return result;
   }
@@ -1015,19 +1018,19 @@ export class CharacterComponent implements OnInit, AfterViewInit {
     // Character images.
     for (let i = 0; i < this.characterFormData.imageFiles.length; ++i) {
       const image = this.characterFormData.imageFiles[i];
-      if (image && image.size > 0) {
+      if (image.status === 'updated') {
         path = this.storage.makeCharacterImagePath(this.character.index, csCharacterImageTypes[i].type);
         this.logger.info(location, { path: path });
-        await this.storage.upload(path, image);
+        await this.storage.upload(path, image.data);
       }
     }
 
     // Thumbnail images.
     const thumb = this.characterFormData.thumbnailImage;
-    if (thumb && thumb.size > 0) {
+    if (thumb.status === 'updated') {
       path = this.storage.makeCharacterThumbnailPath(this.character.index);
       this.logger.info(location, { path: path });
-      await this.storage.upload(path, thumb);
+      await this.storage.upload(path, thumb.data);
     }
   }
 }

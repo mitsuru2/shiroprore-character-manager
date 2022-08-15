@@ -1,3 +1,4 @@
+import { csCharacterImageTypes } from 'src/app/services/cloud-storage/cloud-storage.interface';
 import {
   FsAbility,
   FsCharacterTag,
@@ -20,6 +21,24 @@ export class FsAbilityForNewCharacterForm extends FsAbility {
   tokenAvailable: boolean = false;
 
   isExisting: boolean = false;
+}
+
+export class ImageDataWithProperty {
+  data: Blob = new Blob();
+
+  status: 'empty' | 'ready' | 'updated' = 'empty';
+
+  constructor(imageData?: Blob) {
+    if (imageData) {
+      this.data = imageData;
+      this.status = 'ready';
+    }
+  }
+
+  setImageData(imageData: Blob) {
+    this.data = imageData;
+    this.status = 'updated';
+  }
 }
 
 export class NewCharacterFormData {
@@ -55,9 +74,16 @@ export class NewCharacterFormData {
 
   abilitiesKai: FsAbilityForNewCharacterForm[] = [];
 
-  imageFiles: Blob[] = [];
+  imageFiles: ImageDataWithProperty[] = [];
 
-  imageFilesKai: Blob[] = [];
+  imageFilesKai: ImageDataWithProperty[] = [];
 
-  thumbnailImage: Blob = new Blob();
+  thumbnailImage: ImageDataWithProperty = new ImageDataWithProperty();
+
+  constructor() {
+    for (let i = 0; i < csCharacterImageTypes.length; ++i) {
+      this.imageFiles.push(new ImageDataWithProperty());
+      this.imageFilesKai.push(new ImageDataWithProperty());
+    }
+  }
 }

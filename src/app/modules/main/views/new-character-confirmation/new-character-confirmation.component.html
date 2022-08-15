@@ -141,11 +141,11 @@
   <div class="col">
     <span *ngFor="let image of character.imageFiles; let i = index" style="margin-right: 0.5rem">
       <p-progressSpinner
-        *ngIf="image && image.size > 0 && !imagesLoaded"
+        *ngIf="image && image.status !== 'empty' && !imagesLoaded"
         [style]="{ 'max-width': imagePreviewW + 'px', 'max-height': imagePreviewH + 'px' }"
       ></p-progressSpinner>
       <canvas
-        [hidden]="!image || image.size === 0 || !imagesLoaded"
+        [hidden]="!image || image.status === 'empty' || !imagesLoaded"
         [id]="'NewCharacterConfirmation_ImagePreview_' + i"
         [style]="{ 'max-width': imagePreviewW + 'px', 'max-height': imagePreviewH + 'px' }"
       ></canvas>

@@ -31,6 +31,7 @@ import { NewFacilityFormData } from '../new-facility-form/new-facility-form.inte
 import { NewWeaponFormData } from '../new-weapon-form/new-weapon-form.interface';
 import {
   FsAbilityForNewCharacterForm,
+  ImageDataWithProperty,
   NewCharacterFormData,
   NewCharacterFormMode,
 } from './new-character-form.interface';
@@ -293,24 +294,24 @@ export class NewCharacterFormComponent implements OnInit, AfterViewInit {
   }
 
   async ngAfterViewInit(): Promise<void> {
-    await sleep(100);
+    await this.waitUntilCanvasReady();
 
     // Copy character images.
     try {
       // Character images.
       for (let i = 0; i < this.characterData.imageFiles.length; ++i) {
-        this.inputImageFiles[i] = this.characterData.imageFiles[i];
-        if (this.inputImageFiles[i].size > 0) {
+        if (this.characterData.imageFiles[i].status !== 'empty') {
+          this.inputImageFiles[i] = this.characterData.imageFiles[i].data;
           this.imageLoadStatus[i] = 'loading';
           await this.loadImageFileAndDrawImage(
-            this.inputImageFiles[i],
+            this.characterData.imageFiles[i].data,
             `NewCharacterForm_${this.imageTypesAndLabels[i].type}Preview`
           );
           this.imageLoadStatus[i] = 'loaded';
 
           // Set up thumb info.
           if (i === 0) {
-            this.thumbInfo.image = this.inputImageFiles[i];
+            this.thumbInfo.image = this.characterData.imageFiles[i].data;
             this.thumbInfo.offset = new XY(0, 0);
             this.thumbInfo.scale = this.defaultThumbScale;
           }
@@ -318,8 +319,8 @@ export class NewCharacterFormComponent implements OnInit, AfterViewInit {
       }
 
       // Thumbnail image.
-      this.thumbInfo.thumb = this.characterData.thumbnailImage;
-      if (this.thumbInfo.thumb.size > 0) {
+      if (this.characterData.thumbnailImage.status !== 'empty') {
+        this.thumbInfo.thumb = this.characterData.thumbnailImage.data;
         await this.loadImageFileAndDrawImage(this.thumbInfo.thumb, 'NewCharacterForm_ThumbnailPreview');
         this.thumbCanceled = false;
       }
@@ -649,8 +650,10 @@ export class NewCharacterFormComponent implements OnInit, AfterViewInit {
 
       if (!kaichiku) {
         this.imageLoadStatus[index] = 'loaded';
+        this.characterData.imageFiles[index].setImageData(input.files[0]);
       } else {
         this.imageLoadStatusKai[index] = 'loaded';
+        this.characterData.imageFilesKai[index].setImageData(input.files[0]);
       }
 
       if (index === 0 && !kaichiku) {
@@ -674,9 +677,11 @@ export class NewCharacterFormComponent implements OnInit, AfterViewInit {
     if (!kaichiku) {
       this.inputImageFiles[index] = new Blob();
       this.imageLoadStatus[index] = 'empty';
+      this.characterData.imageFiles[index].status = 'empty';
     } else {
       this.inputImageFilesKai[index] = new Blob();
       this.imageLoadStatusKai[index] = 'empty';
+      this.characterData.imageFilesKai[index].status = 'empty';
     }
   }
 
@@ -700,6 +705,7 @@ export class NewCharacterFormComponent implements OnInit, AfterViewInit {
     if (!canceled) {
       try {
         await this.loadImageFileAndDrawImage(this.thumbInfo.thumb, 'NewCharacterForm_ThumbnailPreview');
+        this.characterData.thumbnailImage.setImageData(this.thumbInfo.thumb);
       } catch (error) {
         this.errorHandler.notifyError(error);
       }
@@ -788,7 +794,7 @@ export class NewCharacterFormComponent implements OnInit, AfterViewInit {
       this.thumbCanceled = true;
       this.characterData.imageFiles = [];
       this.characterData.imageFilesKai = [];
-      this.characterData.thumbnailImage = new Blob();
+      this.characterData.thumbnailImage = new ImageDataWithProperty();
     }
   }
 
@@ -1107,27 +1113,9 @@ export class NewCharacterFormComponent implements OnInit, AfterViewInit {
       true
     );
 
-    // Image files (include thumbnail).
-    {
-      // Make image file array.
-      this.characterData.imageFiles = Array(this.imageTypeMax);
-      this.characterData.imageFilesKai = Array(this.imageTypeMax);
-
-      // Copy input image files.
-      for (let i = 0; i < this.imageTypeMax; ++i) {
-        if (this.inputImageFiles[i]) {
-          this.characterData.imageFiles[i] = this.inputImageFiles[i];
-        }
-        if (this.inputImageFilesKai[i]) {
-          this.characterData.imageFilesKai[i] = this.inputImageFilesKai[i];
-        }
-      }
-
-      // Thumbnail.
-      if (!this.thumbCanceled) {
-        this.characterData.thumbnailImage = this.thumbInfo.thumb;
-      }
-    }
+    // Image files.
+    // Image files are already stored.
+    // Do nothing.
   }
 
   private calcCharacterCost(
@@ -1503,6 +1491,21 @@ export class NewCharacterFormComponent implements OnInit, AfterViewInit {
     this.logger.debug(location, { buttons: buttons.length });
     for (let i = 0; i < buttons.length; ++i) {
       buttons[i].setAttribute('tabindex', '-1');
+    }
+  }
+
+  private async waitUntilCanvasReady() {
+    const location = `${this.className}.waitUntilCanvasReady()`;
+
+    for (let i = 0; i < 10; ++i) {
+      try {
+        new HtmlCanvas('NewCharacterForm_ThumbnailPreview');
+        new HtmlCanvas(`NewCharacterForm_${this.imageTypesAndLabels[0].type}Preview`);
+        this.logger.info(location, `It takes ${i * 100} ms.`);
+        break;
+      } catch (error) {
+        await sleep(100);
+      }
     }
   }
 }

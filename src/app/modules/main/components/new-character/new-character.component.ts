@@ -307,21 +307,21 @@ export class NewCharacterComponent /*implements OnInit*/ {
 
     // Upload images before kaichiku.
     for (let i = 0; i < formContent.imageFiles.length; ++i) {
-      if (formContent.imageFiles[i]) {
+      if (formContent.imageFiles[i] && formContent.imageFiles[i].status !== 'empty') {
         const imagePath = this.storage.makeCharacterImagePath(index, csCharacterImageTypes[i].type, false);
-        await this.storage.upload(imagePath, formContent.imageFiles[i]);
+        await this.storage.upload(imagePath, formContent.imageFiles[i].data);
       }
     }
     // Upload thumbnail.
-    if (formContent.thumbnailImage) {
+    if (formContent.thumbnailImage && formContent.thumbnailImage.status !== 'empty') {
       const imagePath = this.storage.makeCharacterThumbnailPath(index);
-      await this.storage.upload(imagePath, formContent.thumbnailImage);
+      await this.storage.upload(imagePath, formContent.thumbnailImage.data);
     }
     // Upload images after kaichiku.
     for (let i = 0; i < formContent.imageFilesKai.length; ++i) {
-      if (formContent.imageFilesKai[i]) {
+      if (formContent.imageFilesKai[i] && formContent.imageFilesKai[i].status !== 'empty') {
         const imagePath = this.storage.makeCharacterImagePath(index, csCharacterImageTypes[i].type, true);
-        await this.storage.upload(imagePath, formContent.imageFilesKai[i]);
+        await this.storage.upload(imagePath, formContent.imageFilesKai[i].data);
       }
     }
   }
