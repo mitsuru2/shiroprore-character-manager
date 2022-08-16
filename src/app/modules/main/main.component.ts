@@ -121,7 +121,7 @@ export class MainComponent /*implements OnInit*/ {
     this.logger.trace(location);
 
     this.userAuth.signOut();
-    this.router.navigateByUrl('/main/login');
+    this.showLogoutConfirmation();
   }
 
   goToStartupScreen() {
@@ -168,5 +168,16 @@ export class MainComponent /*implements OnInit*/ {
         },
       });
     }
+  }
+
+  private showLogoutConfirmation() {
+    this.confirmationDialog.confirm({
+      message: 'ログアウトしました。',
+      acceptLabel: 'ＯＫ',
+      rejectVisible: false,
+      accept: () => {
+        this.router.navigateByUrl('/');
+      },
+    });
   }
 }

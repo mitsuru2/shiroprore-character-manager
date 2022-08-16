@@ -195,7 +195,7 @@ export class NewCharacterFormComponent implements OnInit, AfterViewInit {
   constructor(
     private logger: NGXLogger,
     private firestore: FirestoreDataService,
-    elemRef: ElementRef,
+    private elemRef: ElementRef,
     private errorHandler: ErrorHandlerService
   ) {
     this.logger.trace(`new ${this.className}()`);
