@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { AppInfo } from 'src/app/app-info.enum';
 
 @Component({
   selector: 'app-legal',
@@ -7,5 +6,5 @@ import { AppInfo } from 'src/app/app-info.enum';
   styleUrls: ['./legal.component.scss'],
 })
 export class LegalComponent /*implements OnInit*/ {
-  appInfo = AppInfo;
+  tabIndex = 0;
 }

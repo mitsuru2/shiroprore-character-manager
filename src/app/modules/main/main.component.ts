@@ -36,7 +36,7 @@ export class MainComponent /*implements OnInit*/ {
       },
     },
     {
-      label: 'コピーライト表記',
+      label: '利用規約等',
       command: () => {
         this.router.navigateByUrl('/main/legal');
       },
@@ -61,7 +61,7 @@ export class MainComponent /*implements OnInit*/ {
           },
         },
         {
-          label: 'コピーライト表記',
+          label: '利用規約等',
           command: () => {
             this.router.navigateByUrl('/main/legal');
           },

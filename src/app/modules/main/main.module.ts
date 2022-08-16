@@ -21,6 +21,7 @@ import { PanelModule } from 'primeng/panel';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { InputSwitchModule } from 'primeng/inputswitch';
+import { TabViewModule } from 'primeng/tabview';
 
 /** Application components. */
 import { MainRoutingModule } from './main-routing.module';
@@ -49,6 +50,9 @@ import { CharacterComponent } from './components/character/character.component';
 import { CharacterFilterSettingsFormComponent } from './views/character-filter-settings-form/character-filter-settings-form.component';
 import { SpinnerService } from './services/spinner/spinner.service';
 import { CharacterSortSettingsFormComponent } from './views/character-sort-settings-form/character-sort-settings-form.component';
+import { CopyrightNoticeComponent } from './views/copyright-notice/copyright-notice.component';
+import { PrivacyPolicyComponent } from './views/privacy-policy/privacy-policy.component';
+import { TermsOfServiceComponent } from './views/terms-of-service/terms-of-service.component';
 
 const firebaseUiAuthConfig: firebaseui.auth.Config = {
   autoUpgradeAnonymousUsers: false, // Disable annymouse users.
@@ -83,6 +87,9 @@ const firebaseUiAuthConfig: firebaseui.auth.Config = {
     CharacterComponent,
     CharacterFilterSettingsFormComponent,
     CharacterSortSettingsFormComponent,
+    CopyrightNoticeComponent,
+    PrivacyPolicyComponent,
+    TermsOfServiceComponent,
   ],
   imports: [
     CommonModule,
@@ -109,6 +116,7 @@ const firebaseUiAuthConfig: firebaseui.auth.Config = {
     PanelModule,
     ProgressSpinnerModule,
     RadioButtonModule,
+    TabViewModule,
   ],
   bootstrap: [MainComponent],
   providers: [NavigatorService, UserAuthService, ConfirmationService, SpinnerService],
