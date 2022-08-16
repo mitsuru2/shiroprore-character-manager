@@ -18,6 +18,7 @@ const routes: Routes = [
       { path: 'list-character', component: ListCharacterComponent },
       { path: 'character/:id', component: CharacterComponent },
       { path: 'legal', component: LegalComponent },
+      { path: 'legal/:page', component: LegalComponent },
       { path: 'login', component: LoginComponent },
     ],
     canActivateChild: [NavigatorService],
