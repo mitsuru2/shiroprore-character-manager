@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { NGXLogger } from 'ngx-logger';
 import { ErrorCode } from 'src/app/services/error-handler/error-code.enum';
 import { ErrorHandlerService } from 'src/app/services/error-handler/error-handler.service';
@@ -68,7 +68,7 @@ export class MakeThumbnailFormComponent implements OnInit, AfterViewInit {
    * Constructor. Nothing to do.
    * @param logger NGX logger instance injection.
    */
-  constructor(private logger: NGXLogger, private errorHandler: ErrorHandlerService) {
+  constructor(private logger: NGXLogger, private errorHandler: ErrorHandlerService, private elemRef: ElementRef) {
     this.logger.trace(`new ${this.className}()`);
   }
 
@@ -94,6 +94,9 @@ export class MakeThumbnailFormComponent implements OnInit, AfterViewInit {
   async ngAfterViewInit(): Promise<void> {
     const location = `${this.className}.ngAfterViewInit()`;
     this.logger.trace(location);
+
+    // Disable input number control.
+    this.disableScaleInputControl();
 
     // Get canvas element.
     try {
@@ -403,5 +406,19 @@ export class MakeThumbnailFormComponent implements OnInit, AfterViewInit {
     }
 
     return new Blob([binaryData], { type: 'image/jpeg' });
+  }
+
+  //----------------------------------------------------------------------------
+  // Other utilities.
+  //
+  private disableScaleInputControl() {
+    const location = `${this.className}.disableScaleInputControl()`;
+
+    const inputElements = this.elemRef.nativeElement.querySelectorAll('.p-inputnumber-input');
+    this.logger.debug(location, `Find native HTML elements of .p-inputnumber-input: ${inputElements.length}`);
+
+    for (let i = 0; i < inputElements.length; ++i) {
+      inputElements[i].setAttribute('disabled', true);
+    }
   }
 }
