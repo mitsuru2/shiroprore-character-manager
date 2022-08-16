@@ -63,8 +63,8 @@ const firebaseUiAuthConfig: firebaseui.auth.Config = {
       //requireDisplayName: false,
     },
   ],
-  privacyPolicyUrl: 'https://shiroprore-character.web.app/main/legal/1',
-  tosUrl: 'https://shiroprore-character.web.app/main/legal/0',
+  privacyPolicyUrl: 'https://shiroprore-character.web.app/main/legal/privacy',
+  tosUrl: 'https://shiroprore-character.web.app/main/legal/tos',
   credentialHelper: firebaseui.auth.CredentialHelper.GOOGLE_YOLO,
   siteName: 'my-app',
 };

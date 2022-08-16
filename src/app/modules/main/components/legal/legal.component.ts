@@ -17,9 +17,13 @@ export class LegalComponent /*implements OnInit*/ {
     this.logger.trace(location);
 
     // Get page index from URL.
-    const tmp = Number(this.route.snapshot.paramMap.get('page'));
-    if (tmp && tmp >= 0 && tmp <= 3) {
-      this.tabIndex = tmp;
+    const tmp = this.route.snapshot.paramMap.get('page');
+    if (tmp === 'tos') {
+      this.tabIndex = 0;
+    } else if (tmp === 'privacy') {
+      this.tabIndex = 1;
+    } else if (tmp === 'copyright') {
+      this.tabIndex = 2;
     }
   }
 }
