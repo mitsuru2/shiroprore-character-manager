@@ -794,6 +794,10 @@ export class NewCharacterFormComponent implements OnInit, AfterViewInit {
       this.thumbCanceled = true;
       this.characterData.imageFiles = [];
       this.characterData.imageFilesKai = [];
+      for (let i = 0; i < csCharacterImageTypes.length; ++i) {
+        this.characterData.imageFiles.push(new ImageDataWithProperty());
+        this.characterData.imageFilesKai.push(new ImageDataWithProperty());
+      }
       this.characterData.thumbnailImage = new ImageDataWithProperty();
     }
   }
