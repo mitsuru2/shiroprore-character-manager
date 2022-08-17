@@ -53,6 +53,7 @@ import { CharacterSortSettingsFormComponent } from './views/character-sort-setti
 import { CopyrightNoticeComponent } from './views/copyright-notice/copyright-notice.component';
 import { PrivacyPolicyComponent } from './views/privacy-policy/privacy-policy.component';
 import { TermsOfServiceComponent } from './views/terms-of-service/terms-of-service.component';
+import { RemoveUserDataComponent } from './views/remove-user-data/remove-user-data.component';
 
 const firebaseUiAuthConfig: firebaseui.auth.Config = {
   autoUpgradeAnonymousUsers: false, // Disable annymouse users.
@@ -90,6 +91,7 @@ const firebaseUiAuthConfig: firebaseui.auth.Config = {
     CopyrightNoticeComponent,
     PrivacyPolicyComponent,
     TermsOfServiceComponent,
+    RemoveUserDataComponent,
   ],
   imports: [
     CommonModule,

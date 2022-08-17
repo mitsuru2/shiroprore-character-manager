@@ -154,4 +154,6 @@ export class FirestoreCollectionDummy<T extends FsDocumentBase> {
   async incrementCounter(docId: string): Promise<number> { // eslint-disable-line
     return 0;
   }
+
+  async delete(docId: string): Promise<void> {}
 }

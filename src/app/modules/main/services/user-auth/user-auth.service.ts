@@ -72,6 +72,24 @@ export class UserAuthService {
     }
   }
 
+  async removeCurrentUser() {
+    const location = `${this.className}.removeCurrentUser()`;
+    this.logger.trace(location, { userId: this._userId });
+
+    if (this.signedIn) {
+      (await this.afAuth.currentUser)?.delete();
+      this._signedIn = false;
+      this._userId = '';
+      this._userData = new FsUser();
+
+      for (let i = 0; i < this._eventListeners.length; ++i) {
+        if (this._eventListeners[i].event === 'signOut') {
+          this._eventListeners[i].cbFn();
+        }
+      }
+    }
+  }
+
   addEventListener(event: 'signIn' | 'signOut', cbFn: () => void) {
     const location = `${this.className}.addEventListener()`;
     this.logger.trace(location, { event: event, cbFn: cbFn });

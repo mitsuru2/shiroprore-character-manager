@@ -3,6 +3,7 @@ import {
   addDoc,
   collection,
   CollectionReference,
+  deleteDoc,
   doc,
   Firestore,
   getDocs,
@@ -199,6 +200,20 @@ export class FirestoreCollectionWrapper<T extends FsDocumentBase> {
     });
 
     return count;
+  }
+
+  async delete(docId: string): Promise<void> {
+    const location = `${this.className}.delete()`;
+
+    try {
+      const docRef = doc(this.fs, `${this.name}/${docId}`);
+      await deleteDoc(docRef);
+    } catch (e) {
+      console.error(e);
+      const error = new Error(`${location} Data delete failed. { collection: ${this.name}, docId: ${docId} }`);
+      error.name = ErrorCode.InternalServerError;
+      throw error;
+    }
   }
 
   //============================================================================

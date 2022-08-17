@@ -204,6 +204,12 @@ export class FirestoreDataService {
     return count;
   }
 
+  async removeData(name: FsCollectionName, docId: string): Promise<void> {
+    const location = `${this.className}.removeData()`;
+    this.logger.trace(location, { name: name, docId: docId });
+    await this.collections[name].delete(docId);
+  }
+
   sortByOrder(items: FsDocumentBaseWithOrder[], isDesc: boolean = false) {
     const location = `${this.className}.sortByOrder()`;
     this.logger.trace(location);
