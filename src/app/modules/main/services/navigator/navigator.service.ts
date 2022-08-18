@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivateChild, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
 import { NGXLogger } from 'ngx-logger';
 import { FirestoreDataService } from 'src/app/services/firestore-data/firestore-data.service';
+import { sleep } from '../../utils/sleep/sleep.utility';
 import { UserAuthService } from '../user-auth/user-auth.service';
 
 @Injectable()
@@ -37,19 +38,30 @@ export class NavigatorService implements CanActivateChild {
         return false;
       }
       if (!this.firestore.loaded) {
-        await this.firestore.loadAll();
+        await this.waitUntilLoaded(10); // 10s.
         return true;
       }
     }
 
     if (path === 'list-character') {
       if (!this.firestore.loaded) {
-        await this.firestore.loadAll();
+        await this.waitUntilLoaded(10); // 10s.
         return true;
       }
     }
 
     // Default true;
     return true;
+  }
+
+  private async waitUntilLoaded(timeout: number): Promise<void> {
+    const maxCount = timeout * 10;
+
+    for (let i = 0; i < maxCount; ++i) {
+      await sleep(100);
+      if (this.firestore.loaded) {
+        break;
+      }
+    }
   }
 }
