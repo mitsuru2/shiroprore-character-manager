@@ -160,12 +160,6 @@ export class MainComponent /*implements OnInit*/ {
         message: 'キャラクターデータの作成にはログインが必要です。',
         acceptLabel: 'ＯＫ',
         rejectVisible: false,
-        accept: () => {
-          this.router.navigateByUrl('/main/login');
-        },
-        reject: () => {
-          this.router.navigateByUrl('/main/login');
-        },
       });
     }
   }
