@@ -42,6 +42,8 @@ export class FsDocumentBaseWithCode extends FsDocumentBase {
 /**
  * Practical data types.
  */
+export type MapCellType = '赤' | '青' | '赤青' | '舟' | 'なし';
+
 export class FsAbility extends FsDocumentBase {
   type: string = '';
 
@@ -51,7 +53,7 @@ export class FsAbility extends FsDocumentBase {
 
   cost: number = 0;
 
-  tokenLayouts: string[] = [];
+  tokenLayouts: MapCellType[] = [];
 }
 
 export class FsAbilityType extends FsDocumentBaseWithOrder {

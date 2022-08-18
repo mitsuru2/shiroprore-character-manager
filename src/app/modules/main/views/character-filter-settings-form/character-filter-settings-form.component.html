@@ -80,6 +80,22 @@
       </div>
     </div>
   </div>
+  <div class="formgrid grid">
+    <div class="field col">
+      <label>伏兵タイプ</label>
+      <div class="formgroup-inline">
+        <div *ngFor="let item of tokenTypeItems" class="field-checkbox">
+          <p-checkbox
+            [inputId]="'CharacterFilterSettingsForm_TokenTypeInput_' + item"
+            name="CharacterFilterSettingsForm_TokenTypeInput"
+            [value]="item"
+            [(ngModel)]="filterSettings.tokenTypes"
+          ></p-checkbox>
+          <label [for]="'CharacterFilterSettingsForm_TokenTypeInput_' + item">{{ item }}</label>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!--------------------------------------------------------------------------->
   <!-- Footer ----------------------------------------------------------------->

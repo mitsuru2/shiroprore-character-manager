@@ -829,7 +829,7 @@ export class NewCharacterFormComponent implements OnInit, AfterViewInit {
     }
     result.tokenLayouts = [];
     for (let j = 0; j < src.tokenLayouts.length; ++j) {
-      result.tokenLayouts.push(src.tokenLayouts[j].slice());
+      result.tokenLayouts.push(src.tokenLayouts[j]);
     }
 
     return result;
@@ -1002,7 +1002,7 @@ export class NewCharacterFormComponent implements OnInit, AfterViewInit {
       result.cost = base.cost;
       result.tokenLayouts = [];
       for (let i = 0; i < base.tokenLayouts.length; ++i) {
-        result.tokenLayouts.push(base.tokenLayouts[i].slice());
+        result.tokenLayouts.push(base.tokenLayouts[i]);
       }
 
       // Extended info.
@@ -1454,19 +1454,7 @@ export class NewCharacterFormComponent implements OnInit, AfterViewInit {
       if (abilityType.isKeiryaku && ability.tokenAvailable) {
         if (!ability.tokenLayouts || ability.tokenLayouts.length === 0) {
           this.logger.warn(location, 'No token layout option is selected.', { index: i, kaichiku: false });
-          this.errorMessage = 'トークン計略の場合はトークンの配置マスタイプを選択してください。';
-          return false;
-        }
-        let isBlank = true;
-        for (let j = 0; j < ability.tokenLayouts.length; ++j) {
-          if (ability.tokenLayouts[j] !== '') {
-            isBlank = false;
-            break;
-          }
-        }
-        if (isBlank) {
-          this.logger.warn(location, 'No token layout option is selected.', { index: i, kaichiku: false });
-          this.errorMessage = 'トークン計略の場合はトークンの配置マスタイプを選択してください。';
+          this.errorMessage = '伏兵計略の場合は伏兵の配置マスタイプを選択してください。';
           return false;
         }
       }

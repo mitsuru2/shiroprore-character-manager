@@ -19,6 +19,7 @@ import {
   FsVoiceActor,
   FsWeapon,
   FsWeaponType,
+  MapCellType,
 } from 'src/app/services/firestore-data/firestore-document.interface';
 import { NavigatorService } from '../../services/navigator/navigator.service';
 import { SpinnerService } from '../../services/spinner/spinner.service';
@@ -726,6 +727,7 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
             descText += `\n(CT:${ability.interval}秒/消費気:${ability.cost})`;
           } else {
             let tokenLayoutText = '';
+            this.firestore.sortMapCellTypes(ability.tokenLayouts);
             for (let j = 0; j < ability.tokenLayouts.length; ++j) {
               tokenLayoutText += ability.tokenLayouts[j];
             }
@@ -919,6 +921,7 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
   // Filter and sorting.
   //
   private filterCharacterList(filter: CharacterFilterSettings) {
+    const location = `${this.className}.filterCharacterList()`;
     this.filteredIndexes = [];
 
     for (let i = 0; i < this.characters.length; ++i) {
@@ -967,7 +970,7 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
         for (let j = 0; j < character.geographTypes.length; ++j) {
           if (filter.geographTypes.includes(character.geographTypes[j])) {
             found = true;
-            continue;
+            break;
           }
         }
         if (!found) {
@@ -984,9 +987,54 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
         }
       }
 
+      // Token type.
+      if (filter.tokenTypes.length === 0) {
+        // Do nothing. Go to next filter.
+      } else {
+        // Get token layout list.
+        const tokenTypes = this.extractTokenTypesFromCharacter(character);
+        this.logger.debug(location, { tokenTypes: tokenTypes });
+
+        // Check token type.
+        let found = false;
+        for (let j = 0; j < tokenTypes.length; ++j) {
+          if (filter.tokenTypes.includes(tokenTypes[j])) {
+            found = true;
+            break;
+          }
+        }
+        if (!found) {
+          continue;
+        }
+      }
+
       // Add character to the filtered index.
       this.filteredIndexes.push(i);
     }
+  }
+
+  private extractTokenTypesFromCharacter(character: FsCharacter): MapCellType[] {
+    let tmpList: MapCellType[] = [];
+
+    // Make token layout list.
+    for (let i = 0; i < character.abilities.length; ++i) {
+      const ability = this.firestore.getDataById(FsCollectionName.Abilities, character.abilities[i]) as FsAbility;
+      tmpList = tmpList.concat(ability.tokenLayouts);
+    }
+    for (let i = 0; i < character.abilitiesKai.length; ++i) {
+      const ability = this.firestore.getDataById(FsCollectionName.Abilities, character.abilitiesKai[i]) as FsAbility;
+      tmpList = tmpList.concat(ability.tokenLayouts);
+    }
+
+    // Remove duplicated items.
+    let result: MapCellType[] = [];
+    if (tmpList.length === 0) {
+      result.push('なし');
+    } else {
+      result = Array.from(new Set(tmpList));
+    }
+
+    return result;
   }
 
   private filterCharacterListBySearchText(queryText: string) {

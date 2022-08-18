@@ -24,6 +24,7 @@ import {
   FsWeaponType,
   FsDocumentBase,
   FsUser,
+  MapCellType,
 } from './firestore-document.interface';
 import { FirestoreCollectionWrapper } from './firestore-collection-wrapper.class';
 import { FirestoreCollectionDummy } from './firestore-collection-dummy.class';
@@ -240,5 +241,36 @@ export class FirestoreDataService {
         return b.code < a.code ? -1 : 1;
       });
     }
+  }
+
+  sortMapCellTypes(items: MapCellType[], isDesc: boolean = false) {
+    const location = `${this.className}.sortMapCellTypes()`;
+    this.logger.trace(location);
+
+    // Make temporary list with order.
+    const tmpList: { type: MapCellType; order: number }[] = [];
+    for (let i = 0; i < items.length; ++i) {
+      if (items[i] === '赤') {
+        tmpList.push({ type: items[i], order: 0 });
+      } else if (items[i] === '青') {
+        tmpList.push({ type: items[i], order: 1 });
+      } else if (items[i] === '赤青') {
+        tmpList.push({ type: items[i], order: 2 });
+      } else if (items[i] === '舟') {
+        tmpList.push({ type: items[i], order: 3 });
+      } /*if (items[i] === 'なし')*/ else {
+        tmpList.push({ type: items[i], order: 4 });
+      }
+    }
+
+    // Sort temp list.
+    if (!isDesc) {
+      tmpList.sort((a, b) => a.order - b.order);
+    } else {
+      tmpList.sort((a, b) => b.order - a.order);
+    }
+
+    // Update input list.
+    items = tmpList.map((item) => item.type);
   }
 }

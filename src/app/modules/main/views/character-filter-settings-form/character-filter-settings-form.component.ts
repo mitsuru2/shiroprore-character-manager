@@ -8,6 +8,7 @@ import {
   FsGeographType,
   FsRegion,
   FsWeaponType,
+  MapCellType,
 } from 'src/app/services/firestore-data/firestore-document.interface';
 import { UserAuthService } from '../../services/user-auth/user-auth.service';
 import {
@@ -46,6 +47,9 @@ export class CharacterFilterSettingsFormComponent {
 
   /** Regions. */
   regionItems: FsRegion[] = this.firestore.getData(FsCollectionName.Regions) as FsRegion[];
+
+  /** Token type. */
+  tokenTypeItems: MapCellType[] = ['なし', '赤', '青'];
 
   /** Button event. */
   @Output() canceled = new EventEmitter<boolean>();

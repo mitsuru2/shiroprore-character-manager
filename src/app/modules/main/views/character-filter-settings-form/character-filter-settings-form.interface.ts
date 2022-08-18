@@ -1,3 +1,5 @@
+import { MapCellType } from 'src/app/services/firestore-data/firestore-document.interface';
+
 export enum CharacterOwnershipStatusType {
   All = 'all',
   HasOnly = 'hasOnly',
@@ -20,4 +22,6 @@ export class CharacterFilterSettings {
   geographTypes: string[] = [];
 
   regions: string[] = [];
+
+  tokenTypes: MapCellType[] = [];
 }
