@@ -3,7 +3,7 @@
     <div class="tool-bar">
       <app-top-menu
         [signedIn]="userAuth.signedIn"
-        (requestSignInEvent)="signIn()"
+        (requestSignInEvent)="goToLoginPage()"
         (requestSignOutEvent)="signOut()"
         (requestGoHomeEvent)="goToStartupScreen()"
       ></app-top-menu>

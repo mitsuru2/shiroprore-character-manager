@@ -73,7 +73,7 @@ export class MainComponent /*implements OnInit*/ {
           label: 'ログイン',
           visible: !this.userAuth.signedIn,
           command: () => {
-            this.signIn();
+            this.goToLoginPage();
           },
         },
         {
@@ -112,15 +112,15 @@ export class MainComponent /*implements OnInit*/ {
     });
   }
 
-  signIn() {
+  goToLoginPage() {
     this.router.navigateByUrl('/main/login');
   }
 
-  signOut() {
+  async signOut() {
     const location = `${this.className}.signOut()`;
     this.logger.trace(location);
 
-    this.userAuth.signOut();
+    await this.userAuth.signOut();
     this.showLogoutConfirmation();
   }
 
