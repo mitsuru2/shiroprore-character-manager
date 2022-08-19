@@ -15,11 +15,4 @@ export class LoginComponent /*implements OnInit*/ {
   }
 
   // ngOnInit(): void {}
-
-  onAuthSuccess(event: any) {
-    const location = `${this.className}.onAuthSuccess()`;
-    this.logger.trace(location, { event: event });
-
-    this.userAuth.signIn();
-  }
 }

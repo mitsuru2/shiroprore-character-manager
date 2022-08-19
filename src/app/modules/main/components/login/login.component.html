@@ -1,5 +1,5 @@
 <div class="login-form">
-  <firebase-ui (signInSuccessWithAuthResult)="onAuthSuccess($event)"></firebase-ui>
+  <firebase-ui></firebase-ui>
   <div *ngIf="userAuth.signedIn">
     <p>ようこそ {{ userAuth.userId }} さん</p>
   </div>
