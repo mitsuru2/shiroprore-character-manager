@@ -24,7 +24,7 @@
 
     .grid-layout {
       display: grid;
-      grid-template-columns: repeat(auto-fill, 160px);  // 160px: Thumbnail image size.
+      grid-template-columns: repeat(auto-fill, 105px);  // 160px: Thumbnail image size.
       gap: 12px;
       justify-content: space-between;
     }
@@ -44,6 +44,8 @@
     }
 
     img {
+      width: 105px;
+      height: 105px;
       border-radius: 1rem;
     }
 

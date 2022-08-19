@@ -873,7 +873,7 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     this.logger.debug(location, { dw: dw, dh: dh });
 
     // Calc image size and gaps.
-    let iw = mobileMode ? 80 : 160;
+    let iw = mobileMode ? 80 : 105;
     let ih = mobileMode ? iw + 3 : iw + 4;
     let gw = mobileMode ? 4 : 12;
     let gh = gw;
