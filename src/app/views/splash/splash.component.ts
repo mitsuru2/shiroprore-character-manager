@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { NGXLogger } from 'ngx-logger';
+import { AppInfo } from 'src/app/app-info.enum';
 
 @Component({
   selector: 'app-splash',
@@ -7,9 +8,7 @@ import { NGXLogger } from 'ngx-logger';
   styleUrls: ['./splash.component.scss'],
 })
 export class SplashComponent {
-  @Input() title: string = '';
-
-  @Input() subTitle?: string;
+  appInfo = AppInfo;
 
   @Input() ready: boolean = false;
 

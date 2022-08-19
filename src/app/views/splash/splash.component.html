@@ -1,11 +1,18 @@
-<div class="splash-panel">
+<div class="panel-container">
   <div>
-    <span class="h1">{{ title }}</span
-    ><br />
-    <span class="h2">{{ subTitle }}</span>
-  </div>
-  <p-progressSpinner [hidden]="ready"></p-progressSpinner>
-  <div>
-    <button class="enter-button" pButton type="button" label="ENTER" [disabled]="!ready" (click)="enter()"></button>
+    <div class="splash-panel">
+      <div>
+        <span class="h1">{{ appInfo.title }}</span>
+        <br />
+        <span class="h2">{{ appInfo.subTitle }}</span>
+      </div>
+      <p-progressSpinner [hidden]="ready"></p-progressSpinner>
+      <div>
+        <button class="enter-button" pButton type="button" label="ENTER" [disabled]="!ready" (click)="enter()"></button>
+      </div>
+    </div>
+    <div class="version-text-container">
+      <span class="version-text">v{{ appInfo.version }}</span>
+    </div>
   </div>
 </div>

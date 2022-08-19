@@ -1,9 +1,14 @@
+@import "src/styles.scss";
+
+.panel-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100vw;
+  height: 100vh;
+}
+
 .splash-panel {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -19,13 +24,24 @@
   background-color: var(--primary-color);
   background-image: linear-gradient(rgb(255 255 255 / 25%), rgb(255 255 255 / 75%)), url("../../../assets/bgimage_splash.png");
   background-repeat: no-repeat;
-  background-position: 0 0, -5rem 1rem;
+  background-position: 0 0, -5rem 1rem; // '0 0' for color panel. '-5rem 1rem' for background image.
   border-radius: 1rem;
 }
 
 .enter-button {
   width: 50%;
   min-width: 5rem;
+}
+
+.version-text-container {
+  display: flex;
+  flex-direction: row-reverse;
+}
+
+.version-text {
+  @extend .small-text;
+
+  color: var(--primary-color);
 }
 
 @media screen and (max-width: 959px) {
@@ -45,5 +61,10 @@
     width: 50vw;
     min-width: 8rem;
     font-size: x-large;
+  }
+
+  .version-text-container {
+    display: none;
+    flex-direction: row-reverse;
   }
 }
