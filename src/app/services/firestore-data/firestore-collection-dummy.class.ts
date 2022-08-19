@@ -155,5 +155,5 @@ export class FirestoreCollectionDummy<T extends FsDocumentBase> {
     return 0;
   }
 
-  async delete(docId: string): Promise<void> {}
+  async delete(docId: string): Promise<void> {} // eslint-disable-line
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit, Output } from '@angular/core';
+import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { NGXLogger } from 'ngx-logger';
 import { ConfirmationService } from 'primeng/api';
@@ -14,7 +14,7 @@ import { sleep } from '../../utils/sleep/sleep.utility';
   templateUrl: './remove-user-data.component.html',
   styleUrls: ['./remove-user-data.component.scss'],
 })
-export class RemoveUserDataComponent implements OnInit {
+export class RemoveUserDataComponent /*implements OnInit*/ {
   private readonly className = 'RemoveUserDataComponent';
 
   private isConfirmed: boolean = false;
@@ -35,8 +35,6 @@ export class RemoveUserDataComponent implements OnInit {
   ) {
     this.logger.trace(`new ${this.className}()`);
   }
-
-  ngOnInit(): void {}
 
   async onRemoveUserDataButtonClick() {
     const location = `${this.className}.onRemoveUserDataButtonClick()`;
@@ -115,9 +113,4 @@ export class RemoveUserDataComponent implements OnInit {
       },
     });
   }
-
-  //----------------------------------------------------------------------------
-  // Remove user data.
-  //
-  private async removeUserData() {}
 }
