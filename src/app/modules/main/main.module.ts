@@ -54,6 +54,7 @@ import { CopyrightNoticeComponent } from './views/copyright-notice/copyright-not
 import { PrivacyPolicyComponent } from './views/privacy-policy/privacy-policy.component';
 import { TermsOfServiceComponent } from './views/terms-of-service/terms-of-service.component';
 import { RemoveUserDataComponent } from './views/remove-user-data/remove-user-data.component';
+import { ListCharacterOwnershipComponent } from './components/list-character-ownership/list-character-ownership.component';
 
 const firebaseUiAuthConfig: firebaseui.auth.Config = {
   autoUpgradeAnonymousUsers: false, // Disable annymouse users.
@@ -92,6 +93,7 @@ const firebaseUiAuthConfig: firebaseui.auth.Config = {
     PrivacyPolicyComponent,
     TermsOfServiceComponent,
     RemoveUserDataComponent,
+    ListCharacterOwnershipComponent,
   ],
   imports: [
     CommonModule,

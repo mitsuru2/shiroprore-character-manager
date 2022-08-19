@@ -24,15 +24,21 @@ export class MainComponent /*implements OnInit*/ {
 
   sideMenuItems = [
     {
-      label: '新規キャラクター登録',
-      command: () => {
-        this.onNewCharacterMenuClick();
-      },
-    },
-    {
       label: 'キャラクター一覧',
       command: () => {
         this.router.navigateByUrl('/main/list-character');
+      },
+    },
+    {
+      label: 'キャラクター所持状況',
+      command: () => {
+        this.onCharacterOwnershipStatusMenuClick();
+      },
+    },
+    {
+      label: '新規キャラクター登録',
+      command: () => {
+        this.onNewCharacterMenuClick();
       },
     },
     {
@@ -49,15 +55,21 @@ export class MainComponent /*implements OnInit*/ {
       escape: false,
       items: [
         {
-          label: '新規キャラクター登録',
-          command: () => {
-            this.onNewCharacterMenuClick();
-          },
-        },
-        {
           label: 'キャラクター一覧',
           command: () => {
             this.router.navigateByUrl('/main/list-character');
+          },
+        },
+        {
+          label: 'キャラクター所持状況',
+          command: () => {
+            this.onCharacterOwnershipStatusMenuClick();
+          },
+        },
+        {
+          label: '新規キャラクター登録',
+          command: () => {
+            this.onNewCharacterMenuClick();
           },
         },
         {
@@ -158,6 +170,18 @@ export class MainComponent /*implements OnInit*/ {
       // Show warning message.
       this.confirmationDialog.confirm({
         message: 'キャラクターデータの作成にはログインが必要です。',
+        acceptLabel: 'ＯＫ',
+        rejectVisible: false,
+      });
+    }
+  }
+
+  private onCharacterOwnershipStatusMenuClick() {
+    if (this.userAuth.signedIn) {
+      this.router.navigateByUrl('/main/list-character-ownership');
+    } else {
+      this.confirmationDialog.confirm({
+        message: 'キャラクター所持状況の管理にはログインが必要です。',
         acceptLabel: 'ＯＫ',
         rejectVisible: false,
       });

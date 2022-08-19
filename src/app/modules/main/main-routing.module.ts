@@ -7,6 +7,7 @@ import { LegalComponent } from './components/legal/legal.component';
 import { LoginComponent } from './components/login/login.component';
 import { NavigatorService } from './services/navigator/navigator.service';
 import { CharacterComponent } from './components/character/character.component';
+import { ListCharacterOwnershipComponent } from './components/list-character-ownership/list-character-ownership.component';
 
 const routes: Routes = [
   {
@@ -17,6 +18,7 @@ const routes: Routes = [
       { path: 'new-character', component: NewCharacterComponent },
       { path: 'list-character', component: ListCharacterComponent },
       { path: 'character/:id', component: CharacterComponent },
+      { path: 'list-character-ownership', component: ListCharacterOwnershipComponent },
       { path: 'legal', component: LegalComponent },
       { path: 'legal/:page', component: LegalComponent },
       { path: 'login', component: LoginComponent },
