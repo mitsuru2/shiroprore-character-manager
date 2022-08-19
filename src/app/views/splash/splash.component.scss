@@ -1,5 +1,3 @@
-@import "src/styles.scss";
-
 .panel-container {
   display: flex;
   align-items: center;
@@ -39,8 +37,6 @@
 }
 
 .version-text {
-  @extend .small-text;
-
   color: var(--primary-color);
 }
 
