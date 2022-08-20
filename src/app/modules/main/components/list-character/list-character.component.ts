@@ -99,6 +99,8 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
 
   readonly dummyThumbUrl = './assets/no_image.png';
 
+  ownershipStatues: boolean[] = [];
+
   /** Data view: footer. */
   paginator = new PaginatorControl();
 
@@ -172,12 +174,15 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
       await sleep(10);
       this.paginator.rowNum = this.calcGridRowNum();
     }
+    this.ownershipStatues = Array(this.paginator.rowNum);
+    this.ownershipStatues.fill(true);
     await sleep(10);
 
     // Update thumbnail images.
     await this.loadThumbImages();
     this.updateThumbImages();
     this.makeCharacterInfoTables();
+    this.updateOwnershipStatuses();
   }
 
   //----------------------------------------------------------------------------
@@ -196,6 +201,8 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
       await this.loadThumbImages();
       this.updateThumbImages();
       this.makeCharacterInfoTables();
+
+      this.updateOwnershipStatuses();
 
       // Scroll.
       this.scrollToTop();
@@ -255,6 +262,7 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     await this.loadThumbImages();
     this.updateThumbImages();
     this.makeCharacterInfoTables();
+    this.updateOwnershipStatuses();
 
     // Hide spinner.
     this.spinner.hide();
@@ -303,6 +311,7 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     await this.loadThumbImages();
     this.updateThumbImages();
     this.makeCharacterInfoTables();
+    this.updateOwnershipStatuses();
 
     // Hide spinner.
     this.spinner.hide();
@@ -370,6 +379,7 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     for (let i = 0; i < this.paginator.rowNum; ++i) {
       // Get image element.
       const img = document.getElementById(`ListCharacter_Thumb_${i}`) as HTMLImageElement;
+      const div = document.getElementById(`ListCharacter_ThumbBox_${i}`) as HTMLDivElement;
       if (!img) {
         throw Error(`${location} Image element is not available.`);
       }
@@ -380,8 +390,10 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
         const iCharacter = this.filteredIndexes[i + this.paginator.firstItemIndex];
         img.src = this.thumbImages[iCharacter].url;
         img.hidden = false;
+        div.hidden = false;
       } else {
         img.hidden = true;
+        div.hidden = true;
       }
     }
   }
@@ -833,8 +845,8 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
 
     // Calc image size and gaps.
     let iw = mobileMode ? 80 : 105;
-    let ih = mobileMode ? iw + 3 : iw + 4;
-    let gw = mobileMode ? 4 : 12;
+    let ih = iw;
+    let gw = mobileMode ? 6 : 12;
     let gh = gw;
 
     // Calc number of images.
@@ -867,6 +879,29 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     }
 
     return height;
+  }
+
+  //----------------------------------------------------------------------------
+  // Uset data.
+  //
+  private updateOwnershipStatuses() {
+    this.ownershipStatues = Array(this.paginator.rowNum);
+    this.ownershipStatues.fill(true);
+
+    if (!this.userAuth.signedIn) {
+      return;
+    }
+
+    const userData = this.userAuth.userData.characters;
+
+    for (let i = 0; i < this.paginator.rowNum; ++i) {
+      if (i + this.paginator.firstItemIndex >= this.filteredIndexes.length) {
+        break;
+      }
+
+      const characterId = this.characters[this.filteredIndexes[i + this.paginator.firstItemIndex]].id;
+      this.ownershipStatues[i] = userData.includes(characterId);
+    }
   }
 
   //----------------------------------------------------------------------------

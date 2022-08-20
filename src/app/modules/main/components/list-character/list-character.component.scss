@@ -40,7 +40,24 @@
 
     .list-item {
       display: flex;
+    }
+
+    .list-margin-bottom {
       margin-bottom: 1rem;
+    }
+
+    .image-box {
+      width: 105px;
+      height: 105px;
+    }
+
+    .image-shade {
+      background-color: black;
+      border-radius: 1rem;
+
+      img {
+        opacity: 0.7;
+      }
     }
 
     img {
@@ -117,8 +134,18 @@ table {
 
       .grid-layout {
         grid-template-columns: repeat(auto-fill, 80px);  // 60px: Thumbnail image size.
-        gap: 4px;
+        gap: 6px;
         justify-content: space-around;
+      }
+
+      .list-margin-bottom {
+        margin-bottom: 0.5rem;
+      }
+
+
+      .image-box {
+        width: 80px;
+        height: 80px;
       }
 
       img {

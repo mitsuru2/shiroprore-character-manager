@@ -30,9 +30,14 @@
   <!---->
   <div class="content" id="ListCharacter_Content">
     <div [class.grid-layout]="!isListLayout" [class.list-layout]="isListLayout">
-      <div *ngFor="let i of paginator.rowIndexes" class="item" [class.list-item]="isListLayout">
-        <div>
-          <img [id]="'ListCharacter_Thumb_' + i" [class.list-image]="isListLayout" (click)="onThumbnailClick(i)" />
+      <div
+        *ngFor="let i of paginator.rowIndexes"
+        class="item"
+        [class.list-item]="isListLayout"
+        [class.list-margin-bottom]="i + paginator.firstItemIndex < filteredIndexes.length && isListLayout"
+      >
+        <div [id]="'ListCharacter_ThumbBox_' + i" class="image-box" [class.image-shade]="!ownershipStatues[i]" [class.list-image]="isListLayout">
+          <img [id]="'ListCharacter_Thumb_' + i" (click)="onThumbnailClick(i)" />
         </div>
         <div>
           <table [id]="'ListCharacter_Table_' + i" [hidden]="!isListLayout">
