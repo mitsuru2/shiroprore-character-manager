@@ -192,6 +192,9 @@ export class ListCharacterOwnershipComponent implements OnInit {
       this.userAuth.userData.characters
     );
 
+    // Clear changed flag.
+    this.changed = false;
+
     this.spinner.hide();
   }
 
