@@ -4,10 +4,10 @@
   <!---->
   <div class="header">
     <!-- Filter button -->
-    <button pButton type="button" icon="pi pi-filter" (click)="onFilterButtonClick()" style="flex: none"></button>
+    <button pButton type="button" icon="pi pi-filter" (click)="onFilterButtonClick()" style="flex: none" title="フィルター設定"></button>
 
     <!-- Sort button -->
-    <button pButton type="button" icon="pi pi-sort" (click)="onSortButtonClick()" style="flex: none"></button>
+    <button pButton type="button" icon="pi pi-sort" (click)="onSortButtonClick()" style="flex: none" title="ソート設定"></button>
 
     <!-- Text search input. -->
     <div style="flex: auto">
@@ -15,7 +15,7 @@
         <i class="pi" [class.pi-times]="inputSearchText !== ''" (click)="onSearchTextClearButtonClick()"></i>
         <input type="text" pInputText [(ngModel)]="inputSearchText" placeholder="Search" style="width: 100%" (keydown.enter)="onTextSearchButtonClick()" />
       </span>
-      <button pButton type="button" icon="pi pi-search" [disabled]="inputSearchText === ''" (click)="onTextSearchButtonClick()"></button>
+      <button pButton type="button" icon="pi pi-search" [disabled]="inputSearchText === ''" (click)="onTextSearchButtonClick()" title="テキスト検索"></button>
     </div>
 
     <!-- Submit button. -->
@@ -25,10 +25,11 @@
         pButton
         type="button"
         icon="pi pi-check"
-        label="OK"
+        label="SAVE"
         (click)="onApplyButtonClick()"
         [disabled]="!changed"
         style="flex: none"
+        title="保存"
       ></button>
     </span>
   </div>
