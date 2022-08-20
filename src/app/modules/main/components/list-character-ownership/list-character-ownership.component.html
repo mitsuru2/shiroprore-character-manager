@@ -51,8 +51,8 @@
   </div>
   <div class="content" id="ListCharacterOwnership_Content">
     <div *ngFor="let i of paginator.rowIndexes">
-      <div class="grid grid-nogutter" *ngIf="i + paginator.firstItemIndex < filteredIndexes.length">
-        <div class="col-fixed" style="width: 38px">
+      <div class="formgrid grid grid-nogutter" *ngIf="i + paginator.firstItemIndex < filteredIndexes.length">
+        <div class="field col-fixed" style="width: 38px">
           <p-checkbox
             [inputId]="'ListCharacterOwnership_Checkbox_' + i"
             name="ListCharacterOwnership_Checkbox"
@@ -61,7 +61,7 @@
             (onChange)="onIndivisualCheckboxClick(i, $event)"
           ></p-checkbox>
         </div>
-        <div class="col">{{ characterLabels[i] }}</div>
+        <div class="field col">{{ characterLabels[i] }}</div>
       </div>
     </div>
   </div>
