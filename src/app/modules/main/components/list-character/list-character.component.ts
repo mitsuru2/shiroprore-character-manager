@@ -24,6 +24,7 @@ import {
 import { NavigatorService } from '../../services/navigator/navigator.service';
 import { SpinnerService } from '../../services/spinner/spinner.service';
 import { UserAuthService } from '../../services/user-auth/user-auth.service';
+import { PaginatorControl } from '../../utils/paginator-control/paginator-control.class';
 import { sleep } from '../../utils/sleep/sleep.utility';
 import { TextSearch, TextSearchResult } from '../../utils/text-search/text-search.class';
 import { isMobileMode } from '../../utils/window-size/window-size.util';
@@ -40,30 +41,6 @@ export class ThumbImageWrapper {
 }
 
 export const defaultGidRowNum = 10;
-
-export class Paginator {
-  first: number = 0;
-
-  rowNum: number = defaultGidRowNum;
-
-  rowIndexes: number[] = [];
-
-  pageIndex: number = 0;
-
-  pageLinkSize: number = 5; // Default value.
-
-  constructor() {
-    this.setRowNum(defaultGidRowNum);
-  }
-
-  setRowNum(num: number) {
-    this.rowNum = num;
-    this.rowIndexes = [];
-    for (let i = 0; i < this.rowNum; ++i) {
-      this.rowIndexes.push(i);
-    }
-  }
-}
 
 export enum TableCellType {
   h1,
@@ -132,7 +109,7 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
   readonly dummyThumbUrl = './assets/no_image.png';
 
   /** Data view: footer. */
-  paginator = new Paginator();
+  paginator = new PaginatorControl();
 
   /** Filter dialog */
   showFilterDialog: boolean = false;
@@ -186,8 +163,6 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     this.characters.sort((a, b) => {
       return a.index < b.index ? -1 : 1;
     });
-
-    this.paginator.pageLinkSize = this.calcPageLinkNum();
   }
 
   async ngAfterViewInit(): Promise<void> {
@@ -208,7 +183,7 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     // Else, calculate num of thumbnails per page.
     else {
       await sleep(10);
-      this.paginator.setRowNum(this.calcGridRowNum());
+      this.paginator.rowNum = this.calcGridRowNum();
     }
     await sleep(10);
 
@@ -227,7 +202,7 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
 
     if (this.paginator.pageIndex !== event.page) {
       // Update paginate info.
-      this.paginator.first = event.first;
+      this.paginator.firstItemIndex = event.first;
       this.paginator.pageIndex = event.page;
 
       // Update thumbnail images.
@@ -251,7 +226,7 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     this.storePageParameter();
 
     // Go to character page.
-    const iFilter = this.paginator.first + i;
+    const iFilter = this.paginator.firstItemIndex + i;
     const id = this.characters[this.filteredIndexes[iFilter]].id;
     this.router.navigateByUrl(`main/character/${id}`);
   }
@@ -288,8 +263,7 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     this.filterCharacterListBySearchText(this.inputSearchText);
 
     // Update paginate info.
-    this.paginator.first = 0;
-    this.paginator.pageIndex = 0;
+    this.paginator.goToFirstPage();
 
     // Update thumbnail images.
     await this.loadThumbImages();
@@ -337,8 +311,7 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     this.sortCharacterListAndFilteredIndexList(this.sortSettings);
 
     // Update paginate info.
-    this.paginator.first = 0;
-    this.paginator.pageIndex = 0;
+    this.paginator.goToFirstPage();
 
     // Update thumbnail images.
     await this.loadThumbImages();
@@ -363,12 +336,12 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
 
     for (let i = 0; i < this.paginator.rowNum; ++i) {
       // Exit loop if out of filtered index list.
-      if (i + this.paginator.first >= this.filteredIndexes.length) {
+      if (i + this.paginator.firstItemIndex >= this.filteredIndexes.length) {
         break;
       }
 
       // Call image load function and store the returned promise.
-      const index = this.characters[this.filteredIndexes[i + this.paginator.first]].index;
+      const index = this.characters[this.filteredIndexes[i + this.paginator.firstItemIndex]].index;
       const path = this.storage.makeCharacterThumbnailPath(index);
       promises.push(this.storage.get(path));
       thumbCount++;
@@ -379,7 +352,7 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
 
     // Store thumnail images.
     for (let i = 0; i < thumbCount; ++i) {
-      const index = this.filteredIndexes[i + this.paginator.first];
+      const index = this.filteredIndexes[i + this.paginator.firstItemIndex];
       if (blobs[i]) {
         this.thumbImages[index].data = blobs[i] as Blob;
         this.thumbImages[index].url = window.URL.createObjectURL(blobs[i] as Blob);
@@ -417,8 +390,8 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
 
       // Set image URL to the image element.
       // Hide image element if the index is out of range.
-      if (i + this.paginator.first < this.filteredIndexes.length) {
-        const iCharacter = this.filteredIndexes[i + this.paginator.first];
+      if (i + this.paginator.firstItemIndex < this.filteredIndexes.length) {
+        const iCharacter = this.filteredIndexes[i + this.paginator.firstItemIndex];
         img.src = this.thumbImages[iCharacter].url;
         img.hidden = false;
       } else {
@@ -441,9 +414,9 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     // Make table for each characters.
     for (let i = 0; i < this.paginator.rowNum; ++i) {
       const tableId = `ListCharacter_Table_${i}`;
-      if (i + this.paginator.first < this.filteredIndexes.length) {
+      if (i + this.paginator.firstItemIndex < this.filteredIndexes.length) {
         // Make character table for 'a' character.
-        const iCharacter = this.filteredIndexes[i + this.paginator.first];
+        const iCharacter = this.filteredIndexes[i + this.paginator.firstItemIndex];
         this.makeCharacterInfoTable(tableId, iCharacter);
       } else {
         // Clear table.
@@ -908,13 +881,6 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     }
 
     return height;
-  }
-
-  //----------------------------------------------------------------------------
-  // Paginator.
-  //
-  private calcPageLinkNum() {
-    return isMobileMode() ? 3 : 5;
   }
 
   //----------------------------------------------------------------------------

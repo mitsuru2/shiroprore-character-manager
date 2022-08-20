@@ -1,1 +1,44 @@
-<p>list-character-ownership works!</p>
+<div class="character-ownership-list-view">
+  <!---->
+  <!-- Header Area -->
+  <!---->
+  <div class="header">
+    <!-- Filter button -->
+    <button pButton type="button" icon="pi pi-filter" (click)="onFilterButtonClick()" style="flex: none"></button>
+
+    <!-- Sort button -->
+    <button pButton type="button" icon="pi pi-sort" (click)="onSortButtonClick()" style="flex: none"></button>
+
+    <!-- Text search input. -->
+    <div style="flex: auto">
+      <span class="p-input-icon-right search-text-input">
+        <i class="pi" [class.pi-times]="inputSearchText !== ''" (click)="onSearchTextClearButtonClick()"></i>
+        <input type="text" pInputText [(ngModel)]="inputSearchText" placeholder="Search" style="width: 100%" (keydown.enter)="onTextSearchButtonClick()" />
+      </span>
+      <button pButton type="button" icon="pi pi-search" [disabled]="inputSearchText === ''" (click)="onTextSearchButtonClick()"></button>
+    </div>
+  </div>
+
+  <!---->
+  <!-- Contents Area -->
+  <!---->
+  <div class="content" id="ListCharacter_Content">
+    <div *ngFor="let i of paginator.rowIndexes" class="item">
+      <span>{{ i }}</span>
+    </div>
+  </div>
+
+  <!---->
+  <!-- Footer Area -->
+  <!---->
+  <div class="footer">
+    <p-paginator
+      [rows]="paginator.rowNum"
+      [first]="paginator.firstItemIndex"
+      [totalRecords]="filteredIndexes.length"
+      [pageLinkSize]="paginator.pageLinkNum"
+      styleClass="paginator"
+      (onPageChange)="onPageChange($event)"
+    ></p-paginator>
+  </div>
+</div>

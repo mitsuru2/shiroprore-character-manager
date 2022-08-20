@@ -31,7 +31,7 @@ export class NavigatorService implements CanActivateChild {
 
     this.logger.trace(location, { path: path });
 
-    if (path === 'new-character') {
+    if (['new-character', 'list-character-ownership'].includes(path)) {
       if (!this.userAuth.signedIn) {
         this.logger.error(location, 'Anonymous user is not allowed.', { path: path });
         this.router.navigateByUrl('main/login');
