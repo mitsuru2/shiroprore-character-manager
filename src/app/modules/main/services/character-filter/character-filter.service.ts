@@ -62,6 +62,7 @@ export class CharacterFilterService {
   //
   private filterByFilterSettings(characters: FsCharacter[], filter: CharacterFilterSettings) {
     this.filteredIndexes = [];
+    this.filteredIds = [];
 
     for (let i = 0; i < characters.length; ++i) {
       const character = characters[i];
