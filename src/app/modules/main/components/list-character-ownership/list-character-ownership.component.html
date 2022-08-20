@@ -31,7 +31,8 @@
         [inputId]="'ListCharacterOwnership_Checkbox_All'"
         name="ListCharacterOwnership_Checkbox_All"
         [value]="true"
-        [(ngModel)]="checkboxAll"
+        [(ngModel)]="inputAllCheckboxSwitch"
+        (onChange)="onAllCheckboxSwitchClick()"
       ></p-checkbox>
     </div>
     <div class="col">一括チェック</div>
@@ -44,12 +45,11 @@
             [inputId]="'ListCharacterOwnership_Checkbox_' + i"
             name="ListCharacterOwnership_Checkbox"
             [value]="i"
-            [(ngModel)]="checkboxInputs"
+            [(ngModel)]="inputCharacterOwnershipStatuses"
+            (onChange)="onIndivisualCheckboxClick(i, $event)"
           ></p-checkbox>
         </div>
-        <div class="col">
-          {{ characters[filteredIndexes[i + paginator.firstItemIndex]].name }} (★{{ characters[filteredIndexes[i + paginator.firstItemIndex]].rarerity }})
-        </div>
+        <div class="col">{{ characterLabels[i] }}</div>
       </div>
     </div>
   </div>

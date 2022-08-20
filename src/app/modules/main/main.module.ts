@@ -55,6 +55,7 @@ import { PrivacyPolicyComponent } from './views/privacy-policy/privacy-policy.co
 import { TermsOfServiceComponent } from './views/terms-of-service/terms-of-service.component';
 import { RemoveUserDataComponent } from './views/remove-user-data/remove-user-data.component';
 import { ListCharacterOwnershipComponent } from './components/list-character-ownership/list-character-ownership.component';
+import { CharacterFilterService } from './services/character-filter/character-filter.service';
 
 const firebaseUiAuthConfig: firebaseui.auth.Config = {
   autoUpgradeAnonymousUsers: false, // Disable annymouse users.
@@ -123,6 +124,6 @@ const firebaseUiAuthConfig: firebaseui.auth.Config = {
     TabViewModule,
   ],
   bootstrap: [MainComponent],
-  providers: [NavigatorService, UserAuthService, ConfirmationService, SpinnerService],
+  providers: [CharacterFilterService, NavigatorService, SpinnerService, UserAuthService, ConfirmationService],
 })
 export class MainModule {}

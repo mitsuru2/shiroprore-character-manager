@@ -293,14 +293,18 @@ export class CharacterFilterService {
         }
       });
     } /* if (settings.indexType === 'weaponType') */ else {
+      const weaponTypes = this.firestore.getData(FsCollectionName.WeaponTypes) as FsWeaponType[];
+      this.firestore.sortByCode(weaponTypes);
+      const weaponTypeIds = weaponTypes.map((item) => item.id);
+
       characters.sort((a, b) => {
-        const codeA = (this.firestore.getDataById(FsCollectionName.WeaponTypes, a.weaponType) as FsWeaponType).code;
-        const codeB = (this.firestore.getDataById(FsCollectionName.WeaponTypes, b.weaponType) as FsWeaponType).code;
+        const indexA = weaponTypeIds.indexOf(a.weaponType);
+        const indexB = weaponTypeIds.indexOf(b.weaponType);
 
         if (settings.direction === 'asc') {
-          return codeA < codeB ? -1 : 1;
+          return indexA < indexB ? -1 : 1;
         } else {
-          return codeB < codeA ? -1 : 1;
+          return indexB < indexA ? -1 : 1;
         }
       });
     }

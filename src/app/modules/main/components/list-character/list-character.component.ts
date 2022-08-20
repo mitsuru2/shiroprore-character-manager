@@ -134,10 +134,8 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
   ) {
     this.logger.trace(`new ${this.className}()`);
 
-    // Filter index array.
-    for (let i = 0; i < this.characters.length; ++i) {
-      this.filteredIndexes.push(i);
-    }
+    // Initialize filter service.
+    this.filteredIndexes = this.characterFilter.filter(this.characters, this.filterSettings, '');
 
     // Thumbnail image info.
     for (let i = 0; i < this.characters.length; ++i) {
