@@ -17,14 +17,40 @@
       </span>
       <button pButton type="button" icon="pi pi-search" [disabled]="inputSearchText === ''" (click)="onTextSearchButtonClick()"></button>
     </div>
+
+    <!-- Submit button. -->
+    <button pButton type="button" label="適用" (click)="onApplyButtonClick()" [disabled]="!changed" style="flex: none"></button>
   </div>
 
   <!---->
   <!-- Contents Area -->
   <!---->
-  <div class="content" id="ListCharacter_Content">
-    <div *ngFor="let i of paginator.rowIndexes" class="item">
-      <span>{{ i }}</span>
+  <div class="grid grid-nogutter">
+    <div class="col-fixed" style="width: 38px">
+      <p-checkbox
+        [inputId]="'ListCharacterOwnership_Checkbox_All'"
+        name="ListCharacterOwnership_Checkbox_All"
+        [value]="true"
+        [(ngModel)]="checkboxAll"
+      ></p-checkbox>
+    </div>
+    <div class="col">一括チェック</div>
+  </div>
+  <div class="content" id="ListCharacterOwnership_Content">
+    <div *ngFor="let i of paginator.rowIndexes">
+      <div class="grid grid-nogutter" *ngIf="i + paginator.firstItemIndex < filteredIndexes.length">
+        <div class="col-fixed" style="width: 38px">
+          <p-checkbox
+            [inputId]="'ListCharacterOwnership_Checkbox_' + i"
+            name="ListCharacterOwnership_Checkbox"
+            [value]="i"
+            [(ngModel)]="checkboxInputs"
+          ></p-checkbox>
+        </div>
+        <div class="col">
+          {{ characters[filteredIndexes[i + paginator.firstItemIndex]].name }} (★{{ characters[filteredIndexes[i + paginator.firstItemIndex]].rarerity }})
+        </div>
+      </div>
     </div>
   </div>
 
@@ -42,3 +68,25 @@
     ></p-paginator>
   </div>
 </div>
+
+<!----------------------------------------------------------------------------->
+<!-- Filter setting dialog ---------------------------------------------------->
+<!----------------------------------------------------------------------------->
+<p-dialog header="フィルタ設定" [(visible)]="filterDialogShown" [modal]="true" [closable]="false" [draggable]="false" [resizable]="false" styleClass="dialog">
+  <app-character-filter-settings-form
+    [(filterSettings)]="filterSettings"
+    buttonStyleClass="p-button-text"
+    (canceled)="onFilterSettingsDialogResult($event)"
+  ></app-character-filter-settings-form>
+</p-dialog>
+
+<!----------------------------------------------------------------------------->
+<!-- Sort setting dialog ---------------------------------------------------->
+<!----------------------------------------------------------------------------->
+<p-dialog header="ソート設定" [(visible)]="sortDialogShown" [modal]="true" [closable]="false" [draggable]="false" [resizable]="false" styleClass="dialog">
+  <app-character-sort-settings-form
+    [(sortSettings)]="sortSettings"
+    buttonStyleClass="p-button-text"
+    (canceled)="onSortSettingsDialogResult($event)"
+  ></app-character-sort-settings-form>
+</p-dialog>

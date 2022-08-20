@@ -13,8 +13,8 @@ import {
 import { UserAuthService } from '../../services/user-auth/user-auth.service';
 import {
   CharacterFilterSettings,
-  CharacterOwnershipStatusType,
-  CharacterOwnershipStatusTypes,
+  CharacterOwnershipFilterType,
+  CharacterOwnershipFilterTypeLabels,
 } from './character-filter-settings-form.interface';
 
 @Component({
@@ -34,7 +34,7 @@ export class CharacterFilterSettingsFormComponent {
   @Output() filterSettingsChange = new EventEmitter<CharacterFilterSettings>();
 
   /** User character ownership status type. */
-  readonly ownershipStatusTypeItems = CharacterOwnershipStatusTypes;
+  readonly ownershipStatusTypeItems = CharacterOwnershipFilterTypeLabels;
 
   /** Rarerity */
   rarerityItems: number[];
@@ -80,7 +80,7 @@ export class CharacterFilterSettingsFormComponent {
     this.logger.trace(location);
 
     // Show warning message if user does not signed in.
-    if (value !== CharacterOwnershipStatusType.All) {
+    if ((value as CharacterOwnershipFilterType) !== 'all') {
       if (!this.userAuth.signedIn) {
         this.showWarningDialogForAnnonymousUser();
       }
@@ -112,10 +112,10 @@ export class CharacterFilterSettingsFormComponent {
       acceptLabel: 'ＯＫ',
       rejectVisible: false,
       accept: () => {
-        this.filterSettings.ownershipStatusType = CharacterOwnershipStatusType.All;
+        this.filterSettings.ownershipFilterType = 'all';
       },
       reject: () => {
-        this.filterSettings.ownershipStatusType = CharacterOwnershipStatusType.All;
+        this.filterSettings.ownershipFilterType = 'all';
       },
     });
   }

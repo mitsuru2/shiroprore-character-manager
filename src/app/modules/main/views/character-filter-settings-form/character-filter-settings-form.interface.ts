@@ -1,19 +1,15 @@
 import { MapCellType } from 'src/app/services/firestore-data/firestore-document.interface';
 
-export enum CharacterOwnershipStatusType {
-  All = 'all',
-  HasOnly = 'hasOnly',
-  NotHasOnly = 'notHasOnly',
-}
+export type CharacterOwnershipFilterType = 'all' | 'hasOnly' | 'notHasOnly';
 
-export const CharacterOwnershipStatusTypes: { label: string; value: CharacterOwnershipStatusType }[] = [
-  { label: 'すべて', value: CharacterOwnershipStatusType.All },
-  { label: '所持', value: CharacterOwnershipStatusType.HasOnly },
-  { label: '未所持', value: CharacterOwnershipStatusType.NotHasOnly },
+export const CharacterOwnershipFilterTypeLabels: { label: string; value: CharacterOwnershipFilterType }[] = [
+  { label: 'すべて', value: 'all' },
+  { label: '所持', value: 'hasOnly' },
+  { label: '未所持', value: 'notHasOnly' },
 ];
 
 export class CharacterFilterSettings {
-  ownershipStatusType: CharacterOwnershipStatusType = CharacterOwnershipStatusType.All;
+  ownershipFilterType: CharacterOwnershipFilterType = 'all';
 
   rarerities: number[] = [];
 

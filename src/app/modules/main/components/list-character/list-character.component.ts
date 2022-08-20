@@ -19,19 +19,15 @@ import {
   FsVoiceActor,
   FsWeapon,
   FsWeaponType,
-  MapCellType,
 } from 'src/app/services/firestore-data/firestore-document.interface';
+import { CharacterFilterService } from '../../services/character-filter/character-filter.service';
 import { NavigatorService } from '../../services/navigator/navigator.service';
 import { SpinnerService } from '../../services/spinner/spinner.service';
 import { UserAuthService } from '../../services/user-auth/user-auth.service';
 import { PaginatorControl } from '../../utils/paginator-control/paginator-control.class';
 import { sleep } from '../../utils/sleep/sleep.utility';
-import { TextSearch, TextSearchResult } from '../../utils/text-search/text-search.class';
 import { isMobileMode } from '../../utils/window-size/window-size.util';
-import {
-  CharacterFilterSettings,
-  CharacterOwnershipStatusType,
-} from '../../views/character-filter-settings-form/character-filter-settings-form.interface';
+import { CharacterFilterSettings } from '../../views/character-filter-settings-form/character-filter-settings-form.interface';
 import { CharacterSortSettings } from '../../views/character-sort-settings-form/character-sort-settings-form.interface';
 
 export class ThumbImageWrapper {
@@ -47,11 +43,6 @@ export enum TableCellType {
   h2,
   h3,
   data,
-}
-
-interface TextPropertyMap {
-  cate: 'name' | 'voice' | 'illust' | 'tag' | 'ability' | 'abilityKai';
-  index?: number;
 }
 
 @Component({
@@ -125,9 +116,6 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
 
   sortSettingsCopy = new CharacterSortSettings();
 
-  /** Text search engine. */
-  textSearchResult: TextSearchResult[] = [];
-
   //============================================================================
   // Class methods.
   //
@@ -141,7 +129,8 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     private router: Router,
     private navigator: NavigatorService,
     private userAuth: UserAuthService,
-    private spinner: SpinnerService
+    private spinner: SpinnerService,
+    private characterFilter: CharacterFilterService
   ) {
     this.logger.trace(`new ${this.className}()`);
 
@@ -259,8 +248,7 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     this.spinner.show();
 
     // Filter characters.
-    this.filterCharacterList(this.filterSettings);
-    this.filterCharacterListBySearchText(this.inputSearchText);
+    this.filteredIndexes = this.characterFilter.filter(this.characters, this.filterSettings, this.inputSearchText);
 
     // Update paginate info.
     this.paginator.goToFirstPage();
@@ -308,7 +296,7 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     this.spinner.show();
 
     // Sort characters and filtered index list.
-    this.sortCharacterListAndFilteredIndexList(this.sortSettings);
+    this.filteredIndexes = this.characterFilter.sort(this.characters, this.sortSettings);
 
     // Update paginate info.
     this.paginator.goToFirstPage();
@@ -884,251 +872,6 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
   }
 
   //----------------------------------------------------------------------------
-  // Filter and sorting.
-  //
-  private filterCharacterList(filter: CharacterFilterSettings) {
-    const location = `${this.className}.filterCharacterList()`;
-    this.filteredIndexes = [];
-
-    for (let i = 0; i < this.characters.length; ++i) {
-      let character = this.characters[i];
-
-      // Ownership status.
-      if (filter.ownershipStatusType === CharacterOwnershipStatusType.All) {
-        // Do nothing. Go to next filter.
-      } else if (filter.ownershipStatusType === CharacterOwnershipStatusType.HasOnly) {
-        if (this.userAuth.signedIn) {
-          if (!this.userAuth.userData.characters.includes(character.id)) {
-            continue;
-          }
-        }
-      } else {
-        if (this.userAuth.signedIn) {
-          if (this.userAuth.userData.characters.includes(character.id)) {
-            continue;
-          }
-        }
-      }
-
-      // Rarerity.
-      if (filter.rarerities.length === 0) {
-        // Do nothing. Go to next filter.
-      } else {
-        if (!filter.rarerities.includes(character.rarerity)) {
-          continue;
-        }
-      }
-
-      // Weapon type.
-      if (filter.weaponTypes.length === 0) {
-        // Do nothing. Go to next filter.
-      } else {
-        if (!filter.weaponTypes.includes(character.weaponType)) {
-          continue;
-        }
-      }
-
-      // Geograph type.
-      if (filter.geographTypes.length === 0) {
-        // Do nothing. Go to next filter.
-      } else {
-        let found = false;
-        for (let j = 0; j < character.geographTypes.length; ++j) {
-          if (filter.geographTypes.includes(character.geographTypes[j])) {
-            found = true;
-            break;
-          }
-        }
-        if (!found) {
-          continue;
-        }
-      }
-
-      // Region.
-      if (filter.regions.length === 0) {
-        // Do nothing. Go to next filter.
-      } else {
-        if (!filter.regions.includes(character.region)) {
-          continue;
-        }
-      }
-
-      // Token type.
-      if (filter.tokenTypes.length === 0) {
-        // Do nothing. Go to next filter.
-      } else {
-        // Get token layout list.
-        const tokenTypes = this.extractTokenTypesFromCharacter(character);
-        this.logger.debug(location, { tokenTypes: tokenTypes });
-
-        // Check token type.
-        let found = false;
-        for (let j = 0; j < tokenTypes.length; ++j) {
-          if (filter.tokenTypes.includes(tokenTypes[j])) {
-            found = true;
-            break;
-          }
-        }
-        if (!found) {
-          continue;
-        }
-      }
-
-      // Add character to the filtered index.
-      this.filteredIndexes.push(i);
-    }
-  }
-
-  private extractTokenTypesFromCharacter(character: FsCharacter): MapCellType[] {
-    let tmpList: MapCellType[] = [];
-
-    // Make token layout list.
-    for (let i = 0; i < character.abilities.length; ++i) {
-      const ability = this.firestore.getDataById(FsCollectionName.Abilities, character.abilities[i]) as FsAbility;
-      tmpList = tmpList.concat(ability.tokenLayouts);
-    }
-    for (let i = 0; i < character.abilitiesKai.length; ++i) {
-      const ability = this.firestore.getDataById(FsCollectionName.Abilities, character.abilitiesKai[i]) as FsAbility;
-      tmpList = tmpList.concat(ability.tokenLayouts);
-    }
-
-    // Remove duplicated items.
-    let result: MapCellType[] = [];
-    if (tmpList.length === 0) {
-      result.push('なし');
-    } else {
-      result = Array.from(new Set(tmpList));
-    }
-
-    return result;
-  }
-
-  private filterCharacterListBySearchText(queryText: string) {
-    // Do nothing if query text is blank.
-    if (queryText === '') {
-      return;
-    }
-
-    // Check each characters.
-    // It skips characters which is already filtered.
-    for (let i = this.filteredIndexes.length - 1; i >= 0; --i) {
-      // Get target character.
-      const character = this.characters[this.filteredIndexes[i]];
-
-      // Make text search object and register text properties of the character.
-      const textSearch = this.makeTextSearch(character);
-
-      // Run quick search.
-      const searchResult = textSearch.quickSearch(queryText);
-
-      // Remove index if the query text is not found.
-      if (!searchResult.allTokensFound) {
-        this.filteredIndexes.splice(i, 1);
-      }
-    }
-  }
-
-  private makeTextSearch(character: FsCharacter): TextSearch {
-    const ts = new TextSearch();
-    let text = '';
-
-    // Character name.
-    ts.add(character.name, { cate: 'name' } as TextPropertyMap);
-
-    // CV and illustrator.
-    for (let i = 0; i < character.voiceActors.length; ++i) {
-      text = this.firestore.getDataById(FsCollectionName.VoiceActors, character.voiceActors[i]).name;
-      if (text !== '') {
-        ts.add(text, { cate: 'voice' } as TextPropertyMap);
-      }
-    }
-    for (let i = 0; i < character.illustrators.length; ++i) {
-      text = this.firestore.getDataById(FsCollectionName.Illustrators, character.illustrators[i]).name;
-      if (text !== '') {
-        ts.add(text, { cate: 'illust' } as TextPropertyMap);
-      }
-    }
-
-    // Tag.
-    for (let i = 0; i < character.tags.length; ++i) {
-      text = this.firestore.getDataById(FsCollectionName.CharacterTags, character.tags[i]).name;
-      if (text !== '') {
-        ts.add(text, { cate: 'tag', index: i } as TextPropertyMap);
-      }
-    }
-
-    // Abilities.
-    for (let i = 0; i < character.abilities.length; ++i) {
-      const ability = this.firestore.getDataById(FsCollectionName.Abilities, character.abilities[i]) as FsAbility;
-      if (ability.descriptions.length > 0) {
-        ts.add(ability.descriptions, { cate: 'ability', index: i } as TextPropertyMap);
-      }
-    }
-
-    // Abilities (Kaichiku).
-    for (let i = 0; i < character.abilitiesKai.length; ++i) {
-      const ability = this.firestore.getDataById(FsCollectionName.Abilities, character.abilitiesKai[i]) as FsAbility;
-      if (ability.descriptions.length > 0) {
-        ts.add(ability.descriptions, { cate: 'abilityKai', index: i } as TextPropertyMap);
-      }
-    }
-
-    return ts;
-  }
-
-  private sortCharacterListAndFilteredIndexList(sortSettings: CharacterSortSettings) {
-    // Make filtered character id list.
-    const filteredIds = [];
-    for (let i = 0; i < this.filteredIndexes.length; ++i) {
-      filteredIds.push(this.characters[this.filteredIndexes[i]].id);
-    }
-
-    // Sort character list.
-    this.sortCharacterList({ indexType: 'identifier', direction: 'asc' });
-    this.sortCharacterList(sortSettings);
-
-    // Make filtered index list.
-    this.filteredIndexes = [];
-    for (let i = 0; i < this.characters.length; ++i) {
-      if (filteredIds.includes(this.characters[i].id)) {
-        this.filteredIndexes.push(i);
-      }
-    }
-  }
-
-  private sortCharacterList(settings: CharacterSortSettings) {
-    if (settings.indexType === 'identifier') {
-      this.characters.sort((a, b) => {
-        if (settings.direction === 'asc') {
-          return a.index < b.index ? -1 : 1;
-        } else {
-          return b.index < a.index ? -1 : 1;
-        }
-      });
-    } else if (settings.indexType === 'rarerity') {
-      this.characters.sort((a, b) => {
-        if (settings.direction === 'asc') {
-          return a.rarerity < b.rarerity ? -1 : 1;
-        } else {
-          return b.rarerity < a.rarerity ? -1 : 1;
-        }
-      });
-    } /* if (settings.indexType === 'weaponType') */ else {
-      const weaponTypes = this.firestore.getData(FsCollectionName.WeaponTypes) as FsWeaponType[];
-      this.firestore.sortByCode(weaponTypes);
-      this.characters.sort((a, b) => {
-        const iA = weaponTypes.findIndex((item) => item.id === a.weaponType);
-        const iB = weaponTypes.findIndex((item) => item.id === b.weaponType);
-        if (settings.direction === 'asc') {
-          return iA < iB ? -1 : 1;
-        } else {
-          return iB < iA ? -1 : 1;
-        }
-      });
-    }
-  }
-
-  //----------------------------------------------------------------------------
   // Other utilities.
   //
   private scrollToTop() {
@@ -1148,6 +891,6 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     this.paginator = this.navigator.paramStorage['list-character'].paginator;
     this.isListLayout = this.navigator.paramStorage['list-character'].isListLayout;
     this.filterSettings = this.navigator.paramStorage['list-character'].filterSettings;
-    this.filterCharacterList(this.filterSettings);
+    this.filteredIndexes = this.characterFilter.filter(this.characters, this.filterSettings, '');
   }
 }
