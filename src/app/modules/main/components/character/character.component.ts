@@ -660,7 +660,7 @@ export class CharacterComponent implements OnInit, AfterViewInit {
   private showConfirmationDialog(message: string) {
     this.confirmationDialog.confirm({
       message: message,
-      acceptLabel: 'ＯＫ',
+      acceptLabel: 'OK',
       rejectVisible: false,
       accept: () => {
         this.hasThisCharacter = false;

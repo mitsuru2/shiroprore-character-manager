@@ -19,7 +19,18 @@
     </div>
 
     <!-- Submit button. -->
-    <button pButton type="button" label="適用" (click)="onApplyButtonClick()" [disabled]="!changed" style="flex: none"></button>
+    <span>
+      <button
+        id="ListCharacterOwnership_ApplyButton"
+        pButton
+        type="button"
+        icon="pi pi-check"
+        label="OK"
+        (click)="onApplyButtonClick()"
+        [disabled]="!changed"
+        style="flex: none"
+      ></button>
+    </span>
   </div>
 
   <!---->

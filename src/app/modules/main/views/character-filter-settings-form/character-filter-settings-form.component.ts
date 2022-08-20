@@ -109,7 +109,7 @@ export class CharacterFilterSettingsFormComponent {
   private showWarningDialogForAnnonymousUser() {
     this.confirmationDialog.confirm({
       message: 'キャラクター所持状況を管理するためにはログインが必要です。',
-      acceptLabel: 'ＯＫ',
+      acceptLabel: 'OK',
       rejectVisible: false,
       accept: () => {
         this.filterSettings.ownershipFilterType = 'all';

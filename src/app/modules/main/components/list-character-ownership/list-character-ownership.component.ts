@@ -241,7 +241,7 @@ export class ListCharacterOwnershipComponent implements OnInit {
 
       // Clear checkbox.
       this.inputAllCheckboxSwitch = [];
-      this.onAllCheckboxSwitchClick();
+      this.updateOwnershipStatuses();
 
       // Clear changed flag.
       this.changed = false;

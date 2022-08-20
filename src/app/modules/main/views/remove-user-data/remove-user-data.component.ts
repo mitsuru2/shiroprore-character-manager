@@ -82,7 +82,7 @@ export class RemoveUserDataComponent /*implements OnInit*/ {
   // Confirmation dialog.
   //
   private notifyUserNotSignedIn() {
-    this.confirmationDialog.confirm({ message: 'ログインしていません。', acceptLabel: 'ＯＫ', rejectVisible: false });
+    this.confirmationDialog.confirm({ message: 'ログインしていません。', acceptLabel: 'OK', rejectVisible: false });
   }
 
   private confirmRemoveUserData() {
@@ -90,8 +90,8 @@ export class RemoveUserDataComponent /*implements OnInit*/ {
 
     this.confirmationDialog.confirm({
       message: 'ユーザーデータを削除します。よろしいですか？',
-      acceptLabel: 'ＯＫ',
-      rejectLabel: 'キャンセル',
+      acceptLabel: 'OK',
+      rejectLabel: 'CANCEL',
       accept: () => {
         this.isConfirmed = true;
         this.isRemoveAllowed = true;
@@ -106,7 +106,7 @@ export class RemoveUserDataComponent /*implements OnInit*/ {
   private notifyUserDataRemoved() {
     this.confirmationDialog.confirm({
       message: 'ユーザーデータを削除しました。ホーム画面に戻ります。',
-      acceptLabel: 'ＯＫ',
+      acceptLabel: 'OK',
       rejectVisible: false,
       accept: () => {
         this.router.navigateByUrl('/');

@@ -3,8 +3,8 @@
 <!----------------------------------------------------------------------------->
 <app-new-character-form
   [mode]="'normal'"
-  [okLabel]="'入力内容確認'"
-  [cancelLabel]="'キャンセル'"
+  [okLabel]="'CONFIRM'"
+  [cancelLabel]="'CANCEL'"
   [(characterData)]="characterData"
   (canceled)="onNewCharacterFormResult($event)"
 ></app-new-character-form>
@@ -16,8 +16,8 @@
   <app-new-character-confirmation
     *ngIf="showConfirmationDialog"
     styleClass="dialog"
-    okLabel="ＯＫ"
-    cancelLabel="キャンセル"
+    okLabel="OK"
+    cancelLabel="CANCEL"
     buttonStyleClass="p-button-text"
     [character]="characterData"
     (canceled)="onNewCharacterConfirmResult($event)"

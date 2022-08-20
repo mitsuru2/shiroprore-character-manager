@@ -170,7 +170,7 @@ export class MainComponent /*implements OnInit*/ {
       // Show warning message.
       this.confirmationDialog.confirm({
         message: 'キャラクターデータの作成にはログインが必要です。',
-        acceptLabel: 'ＯＫ',
+        acceptLabel: 'OK',
         rejectVisible: false,
       });
     }
@@ -182,7 +182,7 @@ export class MainComponent /*implements OnInit*/ {
     } else {
       this.confirmationDialog.confirm({
         message: 'キャラクター所持状況の管理にはログインが必要です。',
-        acceptLabel: 'ＯＫ',
+        acceptLabel: 'OK',
         rejectVisible: false,
       });
     }
@@ -191,7 +191,7 @@ export class MainComponent /*implements OnInit*/ {
   private showLogoutConfirmation() {
     this.confirmationDialog.confirm({
       message: 'ログアウトしました。',
-      acceptLabel: 'ＯＫ',
+      acceptLabel: 'OK',
       rejectVisible: false,
       accept: () => {
         this.router.navigateByUrl('/');

@@ -20,7 +20,7 @@ export class MakeThumbnailFormComponent implements OnInit, AfterViewInit {
 
   @Input() okLabel = 'OK';
 
-  @Input() cancelLabel = 'Cancel';
+  @Input() cancelLabel = 'CANCEL';
 
   @Input() buttonStyleClass = '';
 

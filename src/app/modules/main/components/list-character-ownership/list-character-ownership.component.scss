@@ -52,6 +52,10 @@
 @media screen and (max-width: 959px) {
   .character-ownership-list-view {
     .header {
+      .header-left-div {
+        width: auto;
+      }
+
       .search-text-input {
         max-width: none;
       }

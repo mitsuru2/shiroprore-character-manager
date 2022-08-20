@@ -53,8 +53,8 @@
     *ngIf="dataEditFormShown"
     styleClass="dialog"
     [mode]="'dataEdit'"
-    [okLabel]="'ＯＫ'"
-    [cancelLabel]="'キャンセル'"
+    [okLabel]="'OK'"
+    [cancelLabel]="'CANCEL'"
     [(characterData)]="characterFormData"
     (canceled)="onDataEditFormResult($event)"
   ></app-new-character-form>
@@ -68,8 +68,8 @@
     *ngIf="imageEditFormShown"
     styleClass="dialog"
     [mode]="'imageEdit'"
-    [okLabel]="'ＯＫ'"
-    [cancelLabel]="'キャンセル'"
+    [okLabel]="'OK'"
+    [cancelLabel]="'CANCEL'"
     [(characterData)]="characterFormData"
     (canceled)="onImageEditFormResult($event)"
   ></app-new-character-form>
