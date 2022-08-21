@@ -42,6 +42,12 @@ export class MainComponent /*implements OnInit*/ {
       },
     },
     {
+      label: 'サポート',
+      command: () => {
+        this.router.navigateByUrl('/main/support');
+      },
+    },
+    {
       label: '利用規約等',
       command: () => {
         this.router.navigateByUrl('/main/legal');
@@ -70,6 +76,12 @@ export class MainComponent /*implements OnInit*/ {
           label: '新規キャラクター登録',
           command: () => {
             this.onNewCharacterMenuClick();
+          },
+        },
+        {
+          label: 'サポート',
+          command: () => {
+            this.router.navigateByUrl('/main/support');
           },
         },
         {

@@ -8,6 +8,7 @@ import { LoginComponent } from './components/login/login.component';
 import { NavigatorService } from './services/navigator/navigator.service';
 import { CharacterComponent } from './components/character/character.component';
 import { ListCharacterOwnershipComponent } from './components/list-character-ownership/list-character-ownership.component';
+import { SupportComponent } from './components/support/support.component';
 
 const routes: Routes = [
   {
@@ -22,6 +23,7 @@ const routes: Routes = [
       { path: 'legal', component: LegalComponent },
       { path: 'legal/:page', component: LegalComponent },
       { path: 'login', component: LoginComponent },
+      { path: 'support', component: SupportComponent },
     ],
     canActivateChild: [NavigatorService],
   },

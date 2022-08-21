@@ -22,6 +22,7 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { InputSwitchModule } from 'primeng/inputswitch';
 import { TabViewModule } from 'primeng/tabview';
+import { InputTextareaModule } from 'primeng/inputtextarea';
 
 /** Application components. */
 import { MainRoutingModule } from './main-routing.module';
@@ -56,6 +57,8 @@ import { TermsOfServiceComponent } from './views/terms-of-service/terms-of-servi
 import { RemoveUserDataComponent } from './views/remove-user-data/remove-user-data.component';
 import { ListCharacterOwnershipComponent } from './components/list-character-ownership/list-character-ownership.component';
 import { CharacterFilterService } from './services/character-filter/character-filter.service';
+import { SupportComponent } from './components/support/support.component';
+import { InquiryFormComponent } from './views/inquiry-form/inquiry-form.component';
 
 const firebaseUiAuthConfig: firebaseui.auth.Config = {
   autoUpgradeAnonymousUsers: false, // Disable annymouse users.
@@ -95,6 +98,8 @@ const firebaseUiAuthConfig: firebaseui.auth.Config = {
     TermsOfServiceComponent,
     RemoveUserDataComponent,
     ListCharacterOwnershipComponent,
+    SupportComponent,
+    InquiryFormComponent,
   ],
   imports: [
     CommonModule,
@@ -116,6 +121,7 @@ const firebaseUiAuthConfig: firebaseui.auth.Config = {
     InputNumberModule,
     InputSwitchModule,
     InputTextModule,
+    InputTextareaModule,
     MenuModule,
     PaginatorModule,
     PanelModule,

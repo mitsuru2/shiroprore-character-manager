@@ -1,0 +1,41 @@
+<form [style]="{ 'margin-bottom': '1rem' }">
+  <div class="formgrid grid">
+    <div class="field col">
+      <label for="InquiryForm_TitleInput">件名*</label>
+      <span class="p-input-icon-right" [style]="{ width: '100%' }">
+        <i *ngIf="inquiryData.title !== ''" class="pi pi-times" (click)="inquiryData.title = ''"></i>
+        <input
+          pInputText
+          type="text"
+          id="InquiryForm_TitleInput"
+          name="InquiryForm_TitleInput"
+          [(ngModel)]="inquiryData.title"
+          [maxlength]="80"
+          [style]="{ width: '100%' }"
+        />
+      </span>
+    </div>
+  </div>
+
+  <div class="formgrid grid">
+    <div class="field col">
+      <label for="InquiryForm_BodyInput">本文*</label>
+      <textarea
+        pInputTextarea
+        id="InquiryForm_BodyInput"
+        name="InquiryForm_BodyInput"
+        [(ngModel)]="inquiryData.body"
+        [rows]="10"
+        [maxlength]="800"
+        [style]="{ width: '100%', resize: 'none' }"
+      ></textarea>
+    </div>
+  </div>
+
+  <!---->
+  <!-- Footer -->
+  <!---->
+  <div style="margin-top: 1rem">
+    <p-button label="OK" icon="pi pi-check" (onClick)="onOkClick()" [disabled]="inquiryData.title === '' || inquiryData.body === ''"></p-button>
+  </div>
+</form>
