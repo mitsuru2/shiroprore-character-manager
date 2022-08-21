@@ -917,6 +917,8 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
       paginator: this.paginator,
       isListLayout: this.isListLayout,
       filterSettings: this.filterSettings,
+      inputSearchText: this.inputSearchText,
+      sortSettings: this.sortSettings,
     };
   }
 
@@ -924,6 +926,9 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     this.paginator = this.navigator.paramStorage['list-character'].paginator;
     this.isListLayout = this.navigator.paramStorage['list-character'].isListLayout;
     this.filterSettings = this.navigator.paramStorage['list-character'].filterSettings;
-    this.filteredIndexes = this.characterFilter.filter(this.characters, this.filterSettings, '');
+    this.inputSearchText = this.navigator.paramStorage['list-character'].inputSearchText;
+    this.sortSettings = this.navigator.paramStorage['list-character'].sortSettings;
+    this.filteredIndexes = this.characterFilter.filter(this.characters, this.filterSettings, this.inputSearchText);
+    this.filteredIndexes = this.characterFilter.sort(this.characters, this.sortSettings);
   }
 }
