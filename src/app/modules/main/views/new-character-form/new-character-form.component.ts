@@ -245,12 +245,12 @@ export class NewCharacterFormComponent implements OnInit, AfterViewInit {
     // Copy motif weapon.
     try {
       for (let i = 0; i < this.characterData.motifWeapons.length; ++i) {
-        const textChip = this.makeTextChipForMotifWeapon(this.characterData.motifWeapons[i]);
-        this.inputMotifWeapons.push(textChip);
+        // const textChip = this.makeTextChipForMotifWeapon(this.characterData.motifWeapons[i]);
+        this.inputMotifWeapons.push(this.characterData.motifWeapons[i].name);
       }
       for (let i = 0; i < this.characterData.motifFacilities.length; ++i) {
-        const textChip = this.makeTextChipForMotifFacility(this.characterData.motifFacilities[i]);
-        this.inputMotifFacilities.push(textChip);
+        // const textChip = this.makeTextChipForMotifFacility(this.characterData.motifFacilities[i]);
+        this.inputMotifFacilities.push(this.characterData.motifFacilities[i].name);
       }
     } catch (err) {
       this.errorHandler.notifyError(err);

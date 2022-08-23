@@ -832,6 +832,7 @@ export class CharacterComponent implements OnInit, AfterViewInit {
   }
 
   private async updateCharacterData(): Promise<void> {
+    const location = `${this.className}.updateCharacterData()`;
     const original = this.character;
     const modified = this.characterFormData;
     let changed = false;
@@ -890,11 +891,86 @@ export class CharacterComponent implements OnInit, AfterViewInit {
       await this.firestore.updateField(FsCollectionName.Characters, original.id, 'costKai', modified.costKai);
     }
 
+    // Motif weapons.
+    changed = this.isListFieldChanged(original.motifWeapons, modified.motifWeapons);
+    if (changed) {
+      for (let i = 0; i < modified.motifWeapons.length; ++i) {
+        if (modified.motifWeapons[i].id === '') {
+          this.logger.info(location, 'New weapon data added.', { weapon: modified.motifWeapons[i] });
+          const docId = await this.firestore.addData(FsCollectionName.Weapons, modified.motifWeapons[i]);
+          modified.motifWeapons[i].id = docId;
+        }
+      }
+
+      await this.firestore.updateField(
+        FsCollectionName.Characters,
+        original.id,
+        'motifWeapons',
+        modified.motifWeapons.map((item) => item.id)
+      );
+    }
+
+    // Motif facilities.
+    changed = this.isListFieldChanged(original.motifFacilities, modified.motifFacilities);
+    if (changed) {
+      for (let i = 0; i < modified.motifFacilities.length; ++i) {
+        if (modified.motifFacilities[i].id === '') {
+          this.logger.info(location, 'New facility data added.', { facility: modified.motifFacilities[i] });
+          const docId = await this.firestore.addData(FsCollectionName.Facilities, modified.motifFacilities[i]);
+          modified.motifFacilities[i].id = docId;
+        }
+      }
+
+      await this.firestore.updateField(
+        FsCollectionName.Characters,
+        original.id,
+        'motifFacilities',
+        modified.motifFacilities.map((item) => item.id)
+      );
+    }
+
+    // Character tags.
+    changed = this.isListFieldChanged(original.tags, modified.characterTags);
+    if (changed) {
+      // If new character tag is added, add tag data at first.
+      for (let i = 0; i < modified.characterTags.length; ++i) {
+        if (modified.characterTags[i].id === '') {
+          this.logger.info(location, 'New character tag added.', { tag: modified.characterTags[i] });
+          const docId = await this.firestore.addData(FsCollectionName.CharacterTags, modified.characterTags[i]);
+          modified.characterTags[i].id = docId;
+        }
+      }
+
+      // Add character ID into tag data.
+      for (let i = 0; i < modified.characterTags.length; ++i) {
+        const tag = (await this.firestore.getDataById(
+          FsCollectionName.CharacterTags,
+          modified.characterTags[i].id
+        )) as FsCharacterTag;
+
+        if (!tag.characters.includes(original.id)) {
+          tag.characters.push(original.id);
+          await this.firestore.updateField(FsCollectionName.CharacterTags, tag.id, 'characters', tag.characters);
+        }
+      }
+
+      await this.firestore.updateField(
+        FsCollectionName.Characters,
+        original.id,
+        'tags',
+        modified.characterTags.map((item) => item.id)
+      );
+    }
+
     // Abilities.
     const abilities = await this.updateAbilities(original.abilities, modified.abilities);
-    await this.firestore.updateField(FsCollectionName.Characters, original.id, 'abilities', abilities);
+    if (this.isStringsChanged(abilities, original.abilities)) {
+      await this.firestore.updateField(FsCollectionName.Characters, original.id, 'abilities', abilities);
+    }
     const abilitiesKai = await this.updateAbilities(original.abilitiesKai, modified.abilitiesKai);
-    await this.firestore.updateField(FsCollectionName.Characters, original.id, 'abilitiesKai', abilitiesKai);
+    if (this.isStringsChanged(abilitiesKai, original.abilitiesKai)) {
+      await this.firestore.updateField(FsCollectionName.Characters, original.id, 'abilitiesKai', abilitiesKai);
+    }
   }
 
   private isListFieldChanged(a: string[], b: FsDocumentBase[]) {
