@@ -8,7 +8,7 @@ import {
   FsWeaponType,
   MapCellType,
 } from 'src/app/services/firestore-data/firestore-document.interface';
-import { TextSearch } from '../../utils/text-search/text-search.class';
+import { TextSearch, TextSearchResult } from '../../utils/text-search/text-search.class';
 import { CharacterFilterSettings } from '../../views/character-filter-settings-form/character-filter-settings-form.interface';
 import { CharacterSortSettings } from '../../views/character-sort-settings-form/character-sort-settings-form.interface';
 import { UserAuthService } from '../user-auth/user-auth.service';
@@ -186,9 +186,23 @@ export class CharacterFilterService {
   // Filter by query text.
   //
   private filterBySearchText(characters: FsCharacter[], queryText: string) {
+    // const location = `${this.className}.filterBySearchText()`;
+
     // Do nothing if query text is blank.
     if (queryText === '') {
       return;
+    }
+
+    // Parse query text and separate normal query and tag query.
+    const parsedTokens = TextSearch.parseInputText(queryText);
+    const queryTokens: string[] = [];
+    const tagTokens: string[] = [];
+    for (let i = 0; i < parsedTokens.length; ++i) {
+      if (parsedTokens[i].charAt(0) === '#') {
+        tagTokens.push(parsedTokens[i].slice(1));
+      } else {
+        queryTokens.push(parsedTokens[i]);
+      }
     }
 
     // Check each characters.
@@ -198,13 +212,26 @@ export class CharacterFilterService {
       const character = characters[this.filteredIndexes[i]];
 
       // Make text search object and register text properties of the character.
-      const textSearch = this.makeTextSearch(character);
-
       // Run quick search.
-      const searchResult = textSearch.quickSearch(queryText);
+      let searchResult = new TextSearchResult();
+      if (queryTokens.length > 0) {
+        const textSearch = this.makeTextSearch(character);
+        searchResult = textSearch.quickSearch(queryText);
+      }
+
+      // Make text search object and register text properties of the character.
+      // Run tag match search.
+      let matchResult = new TextSearchResult();
+      if (tagTokens.length > 0) {
+        const textSearch = this.makeTagTextSearch(character);
+        matchResult = textSearch.match(tagTokens);
+      }
 
       // Remove index if the query text is not found.
-      if (!searchResult.allTokensFound) {
+      if (
+        (queryTokens.length > 0 && !searchResult.allTokensFound) ||
+        (tagTokens.length > 0 && !matchResult.allTokensFound)
+      ) {
         this.filteredIndexes.splice(i, 1);
         this.filteredIds.splice(i, 1);
       }
@@ -233,12 +260,12 @@ export class CharacterFilterService {
     }
 
     // Tag.
-    for (let i = 0; i < character.tags.length; ++i) {
-      text = this.firestore.getDataById(FsCollectionName.CharacterTags, character.tags[i]).name;
-      if (text !== '') {
-        ts.add(text, { cate: 'tag', index: i } as TextPropertyMap);
-      }
-    }
+    // for (let i = 0; i < character.tags.length; ++i) {
+    //   text = this.firestore.getDataById(FsCollectionName.CharacterTags, character.tags[i]).name;
+    //   if (text !== '') {
+    //     ts.add(text, { cate: 'tag', index: i } as TextPropertyMap);
+    //   }
+    // }
 
     // Abilities.
     for (let i = 0; i < character.abilities.length; ++i) {
@@ -253,6 +280,21 @@ export class CharacterFilterService {
       const ability = this.firestore.getDataById(FsCollectionName.Abilities, character.abilitiesKai[i]) as FsAbility;
       if (ability.descriptions.length > 0) {
         ts.add(ability.descriptions, { cate: 'abilityKai', index: i } as TextPropertyMap);
+      }
+    }
+
+    return ts;
+  }
+
+  private makeTagTextSearch(character: FsCharacter): TextSearch {
+    const ts = new TextSearch();
+    let text = '';
+
+    // Tag.
+    for (let i = 0; i < character.tags.length; ++i) {
+      text = this.firestore.getDataById(FsCollectionName.CharacterTags, character.tags[i]).name;
+      if (text !== '') {
+        ts.add(text, { cate: 'tag', index: i } as TextPropertyMap);
       }
     }
 

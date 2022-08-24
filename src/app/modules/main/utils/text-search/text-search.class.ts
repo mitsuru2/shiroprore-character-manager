@@ -57,7 +57,7 @@ export class TextSearch {
 
     let tokens: string[];
     if (typeof token === 'string') {
-      tokens = this.parseInputText(token);
+      tokens = TextSearch.parseInputText(token);
     } else {
       tokens = token;
     }
@@ -83,7 +83,7 @@ export class TextSearch {
 
     let tokens: string[];
     if (typeof token === 'string') {
-      tokens = this.parseInputText(token);
+      tokens = TextSearch.parseInputText(token);
     } else {
       tokens = token;
     }
@@ -101,6 +101,32 @@ export class TextSearch {
     return result;
   }
 
+  match(token: string): TextSearchResult;
+  match(token: string[]): TextSearchResult;
+  match(token: string | string[]): TextSearchResult {
+    const result: TextSearchResult = new TextSearchResult();
+
+    let tokens: string[];
+    if (typeof token === 'string') {
+      tokens = TextSearch.parseInputText(token);
+    } else {
+      tokens = token;
+    }
+
+    // Run search process for each text token.
+    result.allTokensFound = true;
+    for (let i = 0; i < tokens.length; ++i) {
+      const tmpResult = this.matchTextToken(tokens[i]);
+      result.details.push(tmpResult);
+      if (!tmpResult.found) {
+        result.allTokensFound = false;
+        break;
+      }
+    }
+
+    return result;
+  }
+
   //============================================================================
   // Private methods.
   //
@@ -111,13 +137,13 @@ export class TextSearch {
     // Search token from registered text line.
     for (let i = 0; i < this.textLines.length; ++i) {
       // Make long single line text from text lines.
-      const margedText: string = this.textLines[i].texts.join('');
+      const mergedText: string = this.textLines[i].texts.join('');
 
       // Search token.
       let iStart = 0;
       let iEnd = 0;
       while (true) {
-        iStart = margedText.indexOf(token, iStart); // Return '-1' if not found.
+        iStart = mergedText.indexOf(token, iStart); // Return '-1' if not found.
         if (iStart < 0) {
           break; // Exit while loop if not found.
         }
@@ -141,6 +167,25 @@ export class TextSearch {
 
       // Exit loop if the token is found and it runs in quick mode.
       if (result.found && mode === 'quick') {
+        break;
+      }
+    }
+
+    return result;
+  }
+
+  private matchTextToken(token: string): TextParseInfoWithToken {
+    let result: TextParseInfoWithToken = new TextParseInfoWithToken();
+    result.token = token;
+
+    // Search token from registered text line.
+    for (let i = 0; i < this.textLines.length; ++i) {
+      // Make long single line text from text lines.
+      const mergedText: string = this.textLines[i].texts.join('');
+
+      // Match token.
+      if (mergedText === token) {
+        result.found = true;
         break;
       }
     }
@@ -201,7 +246,7 @@ export class TextSearch {
     return result;
   }
 
-  private parseInputText(text: string): string[] {
+  static parseInputText(text: string): string[] {
     let result: string[] = [];
     let start = 0;
     let end = 0;
@@ -209,15 +254,6 @@ export class TextSearch {
 
     for (let i = 0; i < text.length; ++i) {
       const char = text.charAt(i);
-
-      // CASE: Last character.
-      if (i + 1 >= text.length) {
-        if (status === 'normalText') {
-          end = i + 1;
-          result.push(text.slice(start, end));
-          break;
-        }
-      }
 
       // CASE: White space.
       if (char === ' ' || char === '　') {
@@ -277,6 +313,15 @@ export class TextSearch {
         if (status === 'none') {
           start = i;
           status = 'normalText';
+        }
+      }
+
+      // CASE: Last character.
+      if (i + 1 >= text.length) {
+        if (status === 'normalText') {
+          end = i + 1;
+          result.push(text.slice(start, end));
+          break;
         }
       }
     }

@@ -295,51 +295,64 @@ describe('TextSearch.quichSearch()', () => {
   });
 });
 
-// describe('TextSearch (private)', () => {
-//   const textSearch = new TextSearch();
+describe('TextSearch (private)', () => {
+  const textSearch = new TextSearch();
 
-//   //============================================================================
-//   // Test of private functions.
-//   //
-//   // From here, you must export private functions to test them.
-//   // Please comment out the 'private' key word of the target functions.
-//   //
-//   //----------------------------------------------------------------------------
-//   // private parseInputText(text: string): string[]
-//   //
-//   it('Normal texts separated by white spaces.', () => {
-//     console.log('Normal texts separated by white spaces.');
-//     const result = textSearch.parseInputText("aaa bbb　ccc");
-//     expect(result.length).toEqual(3);
-//     expect(result[0]).toEqual("aaa");
-//     expect(result[1]).toEqual("bbb");
-//     expect(result[2]).toEqual("ccc");
-//   });
+  //============================================================================
+  // Test of private functions.
+  //
+  // From here, you must export private functions to test them.
+  // Please comment out the 'private' key word of the target functions.
+  //
+  //----------------------------------------------------------------------------
+  // private parseInputText(text: string): string[]
+  //
+  it('Normal texts separated by white spaces.', () => {
+    console.log('Normal texts separated by white spaces.');
+    const result = TextSearch.parseInputText("aaa bbb　ccc");
+    expect(result.length).toEqual(3);
+    expect(result[0]).toEqual("aaa");
+    expect(result[1]).toEqual("bbb");
+    expect(result[2]).toEqual("ccc");
+  });
 
-//   it('Single quote texts', () => {
-//     console.log('Single quote texts.');
-//     const result = textSearch.parseInputText("'aaa' 'bbb ccc'");
-//     expect(result.length).toEqual(2);
-//     expect(result[0]).toEqual("aaa");
-//     expect(result[1]).toEqual("bbb ccc");
-//   });
+  it('Single quote texts', () => {
+    console.log('Single quote texts.');
+    const result = TextSearch.parseInputText("'aaa' 'bbb ccc'");
+    expect(result.length).toEqual(2);
+    expect(result[0]).toEqual("aaa");
+    expect(result[1]).toEqual("bbb ccc");
+  });
 
-//   it('Double quote texts', () => {
-//     console.log('Double quote texts.');
-//     const result = textSearch.parseInputText('"aaa" "bbb ccc"');
-//     expect(result.length).toEqual(2);
-//     expect(result[0]).toEqual("aaa");
-//     expect(result[1]).toEqual("bbb ccc");
-//   });
+  it('Double quote texts', () => {
+    console.log('Double quote texts.');
+    const result = TextSearch.parseInputText('"aaa" "bbb ccc"');
+    expect(result.length).toEqual(2);
+    expect(result[0]).toEqual("aaa");
+    expect(result[1]).toEqual("bbb ccc");
+  });
 
-//   it('Mix of single and double quotes.', () => {
-//     console.log('Mix of single and double quotes.');
-//     const result = textSearch.parseInputText("  aaa 'bbb \" ccc' \"ddd ' eee\"  ");
-//     expect(result.length).toEqual(3);
-//     expect(result[0]).toEqual("aaa");
-//     expect(result[1]).toEqual('bbb " ccc');
-//     expect(result[2]).toEqual("ddd ' eee");
-//   });
+  it('Mix of single and double quotes.', () => {
+    console.log('Mix of single and double quotes.');
+    const result = TextSearch.parseInputText("  aaa 'bbb \" ccc' \"ddd ' eee\"  ");
+    expect(result.length).toEqual(3);
+    expect(result[0]).toEqual("aaa");
+    expect(result[1]).toEqual('bbb " ccc');
+    expect(result[2]).toEqual("ddd ' eee");
+  });
 
+  it('Single char.', () => {
+    console.log('Single char.');
+    const result = TextSearch.parseInputText("a");
+    expect(result.length).toEqual(1);
+    expect(result[0]).toEqual("a");
+  });
 
-// });
+  it('Unclosed quotation.', () => {
+    console.log('Unclosed quotation.');
+    const result = TextSearch.parseInputText("'abc");
+    expect(result.length).toEqual(1);
+    expect(result[0]).toEqual("'abc");
+  });
+
+});
