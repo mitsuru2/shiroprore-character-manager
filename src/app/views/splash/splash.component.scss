@@ -60,7 +60,13 @@
   }
 
   .version-text-container {
-    display: none;
-    flex-direction: row-reverse;
+    position: absolute;
+    top: 0;
+    right: 4px;
+    display: block;
+  }
+
+  .version-text {
+    color: var(--primary-color-text);
   }
 }
