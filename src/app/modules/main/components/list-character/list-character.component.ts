@@ -743,6 +743,7 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
             descText += `\n(CT:${ability.interval}秒/消費気:${ability.cost})`;
           } else {
             let tokenLayoutText = '';
+            this.firestore.sortMapCellTypes(ability.tokenLayouts);
             for (let j = 0; j < ability.tokenLayouts.length; ++j) {
               tokenLayoutText += ability.tokenLayouts[j];
             }

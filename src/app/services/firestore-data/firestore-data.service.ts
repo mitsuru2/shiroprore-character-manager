@@ -245,32 +245,31 @@ export class FirestoreDataService {
 
   sortMapCellTypes(items: MapCellType[], isDesc: boolean = false) {
     const location = `${this.className}.sortMapCellTypes()`;
-    this.logger.trace(location);
+    this.logger.trace(location, { items: items });
 
-    // Make temporary list with order.
-    const tmpList: { type: MapCellType; order: number }[] = [];
-    for (let i = 0; i < items.length; ++i) {
-      if (items[i] === '赤') {
-        tmpList.push({ type: items[i], order: 0 });
-      } else if (items[i] === '青') {
-        tmpList.push({ type: items[i], order: 1 });
-      } else if (items[i] === '赤青') {
-        tmpList.push({ type: items[i], order: 2 });
-      } else if (items[i] === '舟') {
-        tmpList.push({ type: items[i], order: 3 });
-      } /*if (items[i] === 'なし')*/ else {
-        tmpList.push({ type: items[i], order: 4 });
+    items.sort((a, b) => {
+      const va = this.calcMapCellTypeOrder(a);
+      const vb = this.calcMapCellTypeOrder(b);
+
+      if (!isDesc) {
+        return va - vb;
+      } else {
+        return vb - va;
       }
-    }
+    });
+  }
 
-    // Sort temp list.
-    if (!isDesc) {
-      tmpList.sort((a, b) => a.order - b.order);
+  private calcMapCellTypeOrder(cType: MapCellType): number {
+    if (cType === '赤') {
+      return 0;
+    } else if (cType === '青') {
+      return 1;
+    } else if (cType === '赤青') {
+      return 2;
+    } else if (cType === '舟') {
+      return 3;
     } else {
-      tmpList.sort((a, b) => b.order - a.order);
+      return 4;
     }
-
-    // Update input list.
-    items = tmpList.map((item) => item.type);
   }
 }
