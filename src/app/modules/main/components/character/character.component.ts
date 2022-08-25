@@ -941,6 +941,24 @@ export class CharacterComponent implements OnInit, AfterViewInit {
         }
       }
 
+      // If character tag is removed, update tag data.
+      for (let i = 0; i < original.tags.length; ++i) {
+        if (modified.characterTags.map((item) => item.id).includes(original.tags[i]) === false) {
+          this.logger.info(location, 'Character tag has been removed.', { tag: original.tags[i] });
+          const removedTag = this.firestore.getDataById(
+            FsCollectionName.CharacterTags,
+            original.tags[i]
+          ) as FsCharacterTag;
+          removedTag.characters.splice(removedTag.characters.indexOf(original.id), 1);
+          await this.firestore.updateField(
+            FsCollectionName.CharacterTags,
+            removedTag.id,
+            'characters',
+            removedTag.characters
+          );
+        }
+      }
+
       // Add character ID into tag data.
       for (let i = 0; i < modified.characterTags.length; ++i) {
         const tag = (await this.firestore.getDataById(
