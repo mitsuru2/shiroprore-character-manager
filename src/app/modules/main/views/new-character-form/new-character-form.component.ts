@@ -437,6 +437,7 @@ export class NewCharacterFormComponent implements OnInit, AfterViewInit {
 
       // Clear existing flag.
       this.inputAbilities[index].isExisting = false;
+      this.disableSpinButtonFocusByTabKey();
 
       // If the input value is the same as an existing name,
       // it will do the same as if an autofill candidate was selected.
@@ -461,6 +462,7 @@ export class NewCharacterFormComponent implements OnInit, AfterViewInit {
 
       // Clear existing flag.
       this.inputAbilitiesKai[index].isExisting = false;
+      this.disableSpinButtonFocusByTabKey();
 
       // If the input value is the same as an existing name,
       // it will do the same as if an autofill candidate was selected.
