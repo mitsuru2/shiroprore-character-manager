@@ -190,3 +190,7 @@ export class FsWeapon extends FsDocumentBase {
 
   effectsKai: string[] = [];
 }
+
+export class FsVersion extends FsDocumentBase {
+  descriptions: string[] = [];
+}

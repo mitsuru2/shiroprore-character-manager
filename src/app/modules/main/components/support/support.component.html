@@ -1,6 +1,8 @@
 <div>
   <p-tabView [(activeIndex)]="tabIndex">
-    <p-tabPanel header="アップデート"> </p-tabPanel>
+    <p-tabPanel header="アップデート">
+      <app-release-history></app-release-history>
+    </p-tabPanel>
     <!--<p-tabPanel header="FAQ"> </p-tabPanel>-->
     <p-tabPanel header="お問合せ">
       <app-inquiry-form></app-inquiry-form>

@@ -11,6 +11,7 @@ export enum FsCollectionName {
   Regions = 'Regions',
   SubCharacterTypes = 'SubCharacterTypes',
   Users = 'Users',
+  Versions = 'Versions',
   VoiceActors = 'VoiceActors',
   Weapons = 'Weapons',
   WeaponTypes = 'WeaponTypes',

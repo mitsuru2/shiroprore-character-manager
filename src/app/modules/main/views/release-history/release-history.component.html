@@ -1,0 +1,9 @@
+<div>
+  <div *ngFor="let version of filteredVersions; let i = index">
+    <p-panel header="v{{ version.name }} ({{ createdDates[i] }})" [style]="{ 'margin-bottom': '1rem' }">
+      <div *ngFor="let desc of version.descriptions">
+        <p>{{ desc }}</p>
+      </div>
+    </p-panel>
+  </div>
+</div>

@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 // eslint-disable-next-line import/no-named-as-default
+import { includes } from 'cypress/types/lodash';
 import { Dexie, Table } from 'dexie';
 import { ErrorCode } from '../error-handler/error-code.enum';
 import { FsCollectionName } from './firestore-collection-name.enum';
@@ -13,6 +14,7 @@ import {
   FsIllustrator,
   FsSubCharacterType,
   FsUser,
+  FsVersion,
   FsVoiceActor,
   FsWeapon,
 } from './firestore-document.interface';
@@ -58,6 +60,8 @@ export class IndexedDbWrapper extends Dexie {
 
   users!: Table<FsUser, string>;
 
+  versions!: Table<FsVersion, string>;
+
   voiceActors!: Table<FsVoiceActor, string>;
 
   weapons!: Table<FsWeapon, string>;
@@ -69,7 +73,7 @@ export class IndexedDbWrapper extends Dexie {
   //
   constructor() {
     super(IndexedDbWrapper.dbName);
-    this.version(2).stores({
+    this.version(3).stores({
       abilities: 'id',
       characterTags: 'id',
       characterTypes: 'id',
@@ -78,6 +82,7 @@ export class IndexedDbWrapper extends Dexie {
       illustrators: 'id',
       subCharacterTypes: 'id',
       users: 'id',
+      versions: 'id',
       voiceActors: 'id',
       weapons: 'id',
       timeStamps: 'name',
@@ -113,6 +118,9 @@ export class IndexedDbWrapper extends Dexie {
       // Do nothing.
       // await indexedDbWrapper.users.bulkPut(data as FsUser[]);
       // await indexedDbWrapper.timeStamps.put({ name: name, timestamp: timestamp });
+    } else if (name === FsCollectionName.Versions) {
+      await indexedDbWrapper.versions.bulkPut(data as FsVersion[]);
+      await indexedDbWrapper.timeStamps.put({ name: name, timestamp: timestamp });
     } else if (name === FsCollectionName.VoiceActors) {
       await indexedDbWrapper.voiceActors.bulkPut(data as FsVoiceActor[]);
       await indexedDbWrapper.timeStamps.put({ name: name, timestamp: timestamp });
@@ -147,6 +155,8 @@ export class IndexedDbWrapper extends Dexie {
     } else if (name === FsCollectionName.Users) {
       // Do nothing.
       //   result = await indexedDbWrapper.users.toArray();
+    } else if (name === FsCollectionName.Versions) {
+      result = await indexedDbWrapper.versions.toArray();
     } else if (name === FsCollectionName.VoiceActors) {
       result = await indexedDbWrapper.voiceActors.toArray();
     } else if (name === FsCollectionName.Weapons) {

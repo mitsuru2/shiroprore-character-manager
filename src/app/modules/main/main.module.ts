@@ -59,6 +59,7 @@ import { ListCharacterOwnershipComponent } from './components/list-character-own
 import { CharacterFilterService } from './services/character-filter/character-filter.service';
 import { SupportComponent } from './components/support/support.component';
 import { InquiryFormComponent } from './views/inquiry-form/inquiry-form.component';
+import { ReleaseHistoryComponent } from './views/release-history/release-history.component';
 
 const firebaseUiAuthConfig: firebaseui.auth.Config = {
   autoUpgradeAnonymousUsers: false, // Disable annymouse users.
@@ -100,6 +101,7 @@ const firebaseUiAuthConfig: firebaseui.auth.Config = {
     ListCharacterOwnershipComponent,
     SupportComponent,
     InquiryFormComponent,
+    ReleaseHistoryComponent,
   ],
   imports: [
     CommonModule,

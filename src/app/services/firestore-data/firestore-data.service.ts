@@ -25,11 +25,13 @@ import {
   FsDocumentBase,
   FsUser,
   MapCellType,
+  FsVersion,
 } from './firestore-document.interface';
 import { FirestoreCollectionWrapper } from './firestore-collection-wrapper.class';
 import { FirestoreCollectionDummy } from './firestore-collection-dummy.class';
 import { ErrorHandlerService } from '../error-handler/error-handler.service';
 import { ErrorCode } from '../error-handler/error-code.enum';
+import { sleep } from 'src/app/modules/main/utils/sleep/sleep.utility';
 
 //==============================================================================
 // Service class implementation.
@@ -65,6 +67,7 @@ export class FirestoreDataService {
     [FsCollectionName.Regions]:           new FirestoreCollectionDummy<FsRegion>             (         FsCollectionName.Regions), // eslint-disable-line
     [FsCollectionName.SubCharacterTypes]: new FirestoreCollectionWrapper<FsSubCharacterType> (this.fs, FsCollectionName.SubCharacterTypes), // eslint-disable-line
     [FsCollectionName.Users]:             new FirestoreCollectionWrapper<FsUser>             (this.fs, FsCollectionName.Users), // eslint-disable-line
+    [FsCollectionName.Versions]:          new FirestoreCollectionWrapper<FsVersion>          (this.fs, FsCollectionName.Versions), // eslint-disable-line
     [FsCollectionName.VoiceActors]:       new FirestoreCollectionWrapper<FsVoiceActor>       (this.fs, FsCollectionName.VoiceActors), // eslint-disable-line
     [FsCollectionName.WeaponTypes]:       new FirestoreCollectionDummy<FsWeaponType>         (         FsCollectionName.WeaponTypes), // eslint-disable-line
     [FsCollectionName.Weapons]:           new FirestoreCollectionWrapper<FsWeapon>           (this.fs, FsCollectionName.Weapons), // eslint-disable-line
@@ -105,6 +108,7 @@ export class FirestoreDataService {
       this.load(FsCollectionName.Illustrators),
       this.load(FsCollectionName.Regions),
       this.load(FsCollectionName.SubCharacterTypes),
+      this.load(FsCollectionName.Versions),
       this.load(FsCollectionName.VoiceActors),
       this.load(FsCollectionName.Weapons),
       this.load(FsCollectionName.WeaponTypes),
@@ -257,6 +261,12 @@ export class FirestoreDataService {
         return vb - va;
       }
     });
+  }
+
+  async waitInit() {
+    while (!this.loaded) {
+      await sleep(100);
+    }
   }
 
   private calcMapCellTypeOrder(cType: MapCellType): number {
