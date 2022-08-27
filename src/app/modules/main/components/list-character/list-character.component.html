@@ -13,9 +13,24 @@
     <div style="flex: auto">
       <span class="p-input-icon-right search-text-input">
         <i class="pi" [class.pi-times]="inputSearchText !== ''" (click)="onSearchTextClearButtonClick()"></i>
-        <input type="text" pInputText [(ngModel)]="inputSearchText" placeholder="Search" style="width: 100%" (keydown.enter)="onTextSearchButtonClick()" />
+        <input
+          type="text"
+          pInputText
+          [(ngModel)]="inputSearchText"
+          placeholder="Search"
+          style="width: 100%"
+          (keydown.enter)="onTextSearchButtonClick()"
+          title="テキスト検索。タグ検索の場合は#を付けてください。"
+        />
       </span>
-      <button pButton type="button" icon="pi pi-search" [disabled]="inputSearchText === ''" (click)="onTextSearchButtonClick()" title="テキスト検索"></button>
+      <button
+        pButton
+        type="button"
+        icon="pi pi-search"
+        [disabled]="inputSearchText === ''"
+        (click)="onTextSearchButtonClick()"
+        title="テキスト検索。タグ検索の場合は#を付けてください。"
+      ></button>
     </div>
 
     <!-- Layout mode switch. -->
