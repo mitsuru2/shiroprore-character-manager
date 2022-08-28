@@ -294,9 +294,11 @@ export class CharacterComponent implements OnInit, AfterViewInit {
 
     const iType = csCharacterImageTypes.findIndex((item) => item.type === this.selectedImageType.type);
     const imageElement = document.getElementById('Character_ImagePreview') as HTMLImageElement;
+    const anchorElement = document.getElementById('Character_ImageAnchor') as HTMLAnchorElement;
 
     this.logger.debug(location, this.images[iType]);
     imageElement.src = this.images[iType].url;
+    anchorElement.href = this.images[iType].url;
   }
 
   //----------------------------------------------------------------------------
