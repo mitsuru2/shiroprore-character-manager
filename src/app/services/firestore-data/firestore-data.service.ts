@@ -3,7 +3,7 @@
 //
 import { Injectable } from '@angular/core';
 import { NGXLogger } from 'ngx-logger';
-import { Firestore } from '@angular/fire/firestore';
+import { Firestore, Timestamp } from '@angular/fire/firestore';
 import { FsCollectionName } from './firestore-collection-name.enum';
 import {
   FsAbility,
@@ -259,6 +259,30 @@ export class FirestoreDataService {
         return va - vb;
       } else {
         return vb - va;
+      }
+    });
+  }
+
+  sortByTimestamp(items: FsDocumentBase[], key: 'updatedAt' | 'createdAt', isDesc: boolean = false) {
+    const location = `${this.className}.sortByTimestamp()`;
+    this.logger.trace(location, { items: items });
+
+    items.sort((a, b) => {
+      const ta = (key === 'createdAt' ? a.createdAt : a.updatedAt) as Timestamp;
+      const tb = (key === 'createdAt' ? b.createdAt : b.updatedAt) as Timestamp;
+
+      if (ta.seconds !== tb.seconds) {
+        if (!isDesc) {
+          return ta.seconds - tb.seconds;
+        } else {
+          return tb.seconds - ta.seconds;
+        }
+      } else {
+        if (!isDesc) {
+          return ta.nanoseconds - tb.nanoseconds;
+        } else {
+          return tb.nanoseconds - tb.nanoseconds;
+        }
       }
     });
   }

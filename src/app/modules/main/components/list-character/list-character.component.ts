@@ -656,6 +656,10 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
       .filter((item) => character.abilitiesKai.includes(item.id))
       .filter((item) => item.type === type.id);
 
+    // Sort ability list by updated date.
+    this.firestore.sortByTimestamp(abilities, 'updatedAt');
+    this.firestore.sortByTimestamp(abilitiesKai, 'updatedAt');
+
     // CASE: No abilities. --> Do nothing.
     if (abilities.length === 0 && abilitiesKai.length === 0) {
       return;
