@@ -95,6 +95,7 @@ export class FirestoreDataService {
    */
   async loadAll(): Promise<void> {
     const location = `${this.className}.loadAll()`;
+    this.loaded = false;
 
     await Promise.all([
       this.load(FsCollectionName.Abilities),

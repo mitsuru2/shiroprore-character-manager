@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { NGXLogger } from 'ngx-logger';
 import { ConfirmationService } from 'primeng/api';
 import { AppInfo } from 'src/app/app-info.enum';
+import { FirestoreDataService } from 'src/app/services/firestore-data/firestore-data.service';
 import { NewCharacterComponent } from './components/new-character/new-character.component';
 import { SpinnerService } from './services/spinner/spinner.service';
 import { UserAuthService } from './services/user-auth/user-auth.service';
@@ -116,6 +117,7 @@ export class MainComponent /*implements OnInit*/ {
   //
   constructor(
     private logger: NGXLogger,
+    private firestore: FirestoreDataService,
     private router: Router,
     public userAuth: UserAuthService,
     private confirmationDialog: ConfirmationService,
@@ -149,6 +151,7 @@ export class MainComponent /*implements OnInit*/ {
   }
 
   goToStartupScreen() {
+    this.firestore.loadAll();
     this.router.navigateByUrl('');
   }
 
