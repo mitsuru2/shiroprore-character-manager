@@ -543,7 +543,7 @@ export class NewCharacterFormComponent implements OnInit, AfterViewInit {
     }
   }
 
-  onAddAbilityButtonClick(kai: boolean) {
+  async onAddAbilityButtonClick(kai: boolean) {
     const location = `${this.className}.onAddAbilityButtonClick()`;
     this.logger.trace(location, { kai: kai });
 
@@ -552,6 +552,8 @@ export class NewCharacterFormComponent implements OnInit, AfterViewInit {
       this.selectedAbilityTypes.push(this.abilityTypes[0]);
       this.suggestAbilityNames.push([]);
       this.inputAbilities.push(this.makeFsAbilityForNewCharacterForm());
+      await sleep(100);
+      document.getElementById(`NewCharacterForm_AbilityNameInput_${this.inputAbilities.length - 1}`)?.focus();
     }
 
     // CASE: After kaichiku.
@@ -559,6 +561,8 @@ export class NewCharacterFormComponent implements OnInit, AfterViewInit {
       this.selectedAbilityTypesKai.push(this.abilityTypes[0]);
       this.suggestAbilityNamesKai.push([]);
       this.inputAbilitiesKai.push(this.makeFsAbilityForNewCharacterForm());
+      await sleep(100);
+      document.getElementById(`NewCharacterForm_AbilityNameKaiInput_${this.inputAbilitiesKai.length - 1}`)?.focus();
     }
   }
 
