@@ -23,6 +23,7 @@ import { RadioButtonModule } from 'primeng/radiobutton';
 import { InputSwitchModule } from 'primeng/inputswitch';
 import { TabViewModule } from 'primeng/tabview';
 import { InputTextareaModule } from 'primeng/inputtextarea';
+import { CalendarModule } from 'primeng/calendar';
 
 /** Application components. */
 import { MainRoutingModule } from './main-routing.module';
@@ -113,6 +114,7 @@ const firebaseUiAuthConfig: firebaseui.auth.Config = {
     FirebaseUIModule.forRoot(firebaseUiAuthConfig),
     AutoCompleteModule,
     ButtonModule,
+    CalendarModule,
     CardModule,
     CheckboxModule,
     ChipsModule,

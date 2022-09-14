@@ -123,6 +123,8 @@ export class FsCharacter extends FsDocumentBase {
   motifFacilities: string[] = [];
 
   tags: string[] = [];
+
+  implementedDate?: Date;
 }
 
 export class FsFacilityType extends FsDocumentBaseWithCode {}

@@ -248,6 +248,21 @@
         ></p-chips>
       </div>
     </div>
+
+    <!---->
+    <!-- Implemented date -->
+    <!---->
+    <div class="formgrid grid">
+      <div class="field col p-fluid">
+        <label for="NewCharacterForm_ImplementedDateInput">実装日</label>
+        <p-calendar
+          inputId="NewCharacterForm_ImplementedDateInput"
+          name="NewCharacterForm_ImplementedDateInput"
+          [(ngModel)]="characterData.implementedDate"
+          dateFormat="yy/m/d"
+        ></p-calendar>
+      </div>
+    </div>
   </div>
 
   <!------------------------------------------------------------------------->
