@@ -754,7 +754,7 @@ export class NewCharacterFormComponent implements OnInit, AfterViewInit {
       this.characterData.rarerity = 0;
     }
     if (exceptItems.includes('weaponType') === false) {
-      this.characterData.weaponType = this.weaponTypes[0];
+      this.characterData.weaponType = new FsWeaponType();
     }
     if (exceptItems.includes('geographType') === false) {
       this.characterData.geographTypes = [];
