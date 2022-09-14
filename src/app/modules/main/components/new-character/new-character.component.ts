@@ -237,6 +237,7 @@ export class NewCharacterComponent /*implements OnInit*/ {
       character.region = formContent.region.id;
       character.cost = formContent.cost;
       character.costKai = formContent.costKai;
+      character.implementedDate = formContent.implementedDate;
     }
 
     return character;

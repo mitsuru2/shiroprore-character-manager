@@ -66,6 +66,11 @@
       >
       <span *ngIf="character.characterTags.length === 0">{{ textNotAvailable }}</span>
     </div>
+    <div class="col-6 lg:col-3">実装日</div>
+    <div class="col-6 lg:col-9">
+      <span *ngIf="character.implementedDate">{{ character.implementedDate.toLocaleDateString() }}</span>
+      <span *ngIf="!character.implementedDate">{{ textNotAvailable }}</span>
+    </div>
   </div>
 
   <!--------------------------------------------------------------------------->
