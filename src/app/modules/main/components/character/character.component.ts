@@ -797,6 +797,7 @@ export class CharacterComponent implements OnInit, AfterViewInit {
     }
     result.cost = src.cost;
     result.costKai = src.costKai;
+    result.implementedDate = src.implementedDate ? this.firestore.convTimestampToDate(src.implementedDate) : undefined;
 
     // Voice and illustration.
     if (src.voiceActors.length > 0) {
@@ -1004,6 +1005,16 @@ export class CharacterComponent implements OnInit, AfterViewInit {
         original.id,
         'tags',
         modified.characterTags.map((item) => item.id)
+      );
+    }
+
+    // Implemented date.
+    if (original.implementedDate !== modified.implementedDate) {
+      await this.firestore.updateField(
+        FsCollectionName.Characters,
+        original.id,
+        'implementedDate',
+        modified.implementedDate // 'Date' data will be converted to 'Timestamp' data automatically.
       );
     }
 
