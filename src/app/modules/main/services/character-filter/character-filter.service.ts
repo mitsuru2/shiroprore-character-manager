@@ -147,6 +147,30 @@ export class CharacterFilterService {
         }
       }
 
+      // Implemented date.
+      if (filter.startDate) {
+        // Case: Start date is specified.
+        //       Do 'continue' if the implemented date is before start date or is not defined.
+        if (!character.implementedDate) {
+          continue;
+        }
+        const implementedDate = this.firestore.convTimestampToDate(character.implementedDate);
+        if (implementedDate < filter.startDate) {
+          continue;
+        }
+      }
+      if (filter.endDate) {
+        // Case: End date is specified.
+        //       Do 'continue' if the implemented date is after end date or is not defined.
+        if (!character.implementedDate) {
+          continue;
+        }
+        const implementedDate = this.firestore.convTimestampToDate(character.implementedDate);
+        if (implementedDate > filter.endDate) {
+          continue;
+        }
+      }
+
       // Add character to the filtered index.
       this.filteredIndexes.push(i);
       this.filteredIds.push(character.id);
