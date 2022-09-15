@@ -19,6 +19,7 @@ import { CloudStorageService } from 'src/app/services/cloud-storage/cloud-storag
 import { ErrorHandlerService } from 'src/app/services/error-handler/error-handler.service';
 import { SpinnerService } from '../../services/spinner/spinner.service';
 import { NewCharacterFormComponent } from '../../views/new-character-form/new-character-form.component';
+import { Timestamp } from 'firebase/firestore';
 
 @Component({
   selector: 'app-new-character',
@@ -237,7 +238,9 @@ export class NewCharacterComponent /*implements OnInit*/ {
       character.region = formContent.region.id;
       character.cost = formContent.cost;
       character.costKai = formContent.costKai;
-      character.implementedDate = formContent.implementedDate;
+      character.implementedDate = formContent.implementedDate
+        ? Timestamp.fromDate(formContent.implementedDate)
+        : undefined;
     }
 
     return character;

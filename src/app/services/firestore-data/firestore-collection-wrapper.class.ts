@@ -110,7 +110,7 @@ export class FirestoreCollectionWrapper<T extends FsDocumentBase> {
         }
 
         // Set 'createdAt' timestamp.
-        data.createdAt = serverTimestamp();
+        data.createdAt = serverTimestamp() as Timestamp;
         data.updatedAt = data.createdAt;
 
         // Remove 'id' field from the target data.

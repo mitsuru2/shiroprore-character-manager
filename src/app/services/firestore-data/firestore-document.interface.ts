@@ -1,4 +1,4 @@
-import { FieldValue, Timestamp } from '@angular/fire/firestore';
+import { Timestamp } from '@angular/fire/firestore';
 
 /**
  * Base data types.
@@ -8,9 +8,9 @@ export class FsDocumentBase {
 
   name: string = '';
 
-  createdAt: FieldValue = Timestamp.fromDate(new Date('2022-07-13T00:00:00+0900'));
+  createdAt: Timestamp = Timestamp.fromDate(new Date('2022-07-13T00:00:00+0900'));
 
-  updatedAt: FieldValue = Timestamp.fromDate(new Date('2022-07-13T00:00:00+0900'));
+  updatedAt: Timestamp = Timestamp.fromDate(new Date('2022-07-13T00:00:00+0900'));
 
   constructor(id = '', name = '') {
     this.id = id;
@@ -124,7 +124,7 @@ export class FsCharacter extends FsDocumentBase {
 
   tags: string[] = [];
 
-  implementedDate?: Date;
+  implementedDate?: Timestamp;
 }
 
 export class FsFacilityType extends FsDocumentBaseWithCode {}
