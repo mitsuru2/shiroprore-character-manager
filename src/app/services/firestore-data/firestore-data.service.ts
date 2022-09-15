@@ -294,6 +294,10 @@ export class FirestoreDataService {
     }
   }
 
+  convTimestampToDate(value: any): Date {
+    return new Date((value as Timestamp).seconds * 1000);
+  }
+
   private calcMapCellTypeOrder(cType: MapCellType): number {
     if (cType === '赤') {
       return 0;

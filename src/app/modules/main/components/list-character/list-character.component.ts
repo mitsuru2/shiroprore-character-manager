@@ -576,6 +576,11 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
       result += tmp;
     }
 
+    if (character.implementedDate) {
+      let tmp = `, 実装日: ${this.firestore.convTimestampToDate(character.implementedDate).toLocaleDateString()}`;
+      result += tmp;
+    }
+
     return result;
   }
 
