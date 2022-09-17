@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { NGXLogger } from 'ngx-logger';
+import { ErrorCode } from 'src/app/services/error-handler/error-code.enum';
+import { ErrorHandlerService } from 'src/app/services/error-handler/error-handler.service';
 import { FsCollectionName } from 'src/app/services/firestore-data/firestore-collection-name.enum';
 import { FirestoreDataService } from 'src/app/services/firestore-data/firestore-data.service';
 import {
@@ -31,7 +33,12 @@ export class CharacterFilterService {
   //============================================================================
   // Class methods.
   //
-  constructor(private logger: NGXLogger, private firestore: FirestoreDataService, private userAuth: UserAuthService) {
+  constructor(
+    private logger: NGXLogger,
+    private firestore: FirestoreDataService,
+    private userAuth: UserAuthService,
+    private errorHandler: ErrorHandlerService
+  ) {
     this.logger.trace(`new ${this.className}()`);
   }
 
@@ -49,7 +56,11 @@ export class CharacterFilterService {
     const location = `${this.className}.sort()`;
     this.logger.trace(location, { settings: settings });
 
-    this.sortCharacterListAndFilteredIndexList(characters, settings);
+    try {
+      this.sortCharacterListAndFilteredIndexList(characters, settings);
+    } catch (e) {
+      this.errorHandler.notifyError(e);
+    }
 
     return this.filteredIndexes;
   }
@@ -359,7 +370,7 @@ export class CharacterFilterService {
           return b.rarerity < a.rarerity ? -1 : 1;
         }
       });
-    } /* if (settings.indexType === 'weaponType') */ else {
+    } else if (settings.indexType === 'weaponType') {
       const weaponTypes = this.firestore.getData(FsCollectionName.WeaponTypes) as FsWeaponType[];
       this.firestore.sortByCode(weaponTypes);
       const weaponTypeIds = weaponTypes.map((item) => item.id);
@@ -374,6 +385,32 @@ export class CharacterFilterService {
           return indexB < indexA ? -1 : 1;
         }
       });
+    } else if (settings.indexType === 'implementedDate') {
+      characters.sort((a, b) => {
+        if (!a.implementedDate) {
+          if (!b.implementedDate) {
+            return 1; // b --> a
+          } else {
+            return 1; // b --> a
+          }
+        } else {
+          if (!b.implementedDate) {
+            return -1; // a --> b
+          } else {
+            // CASE: Both 'a' and 'b' have valid date data.
+            //       It sorts by date data.
+            if (settings.direction === 'asc') {
+              return a.implementedDate.seconds < b.implementedDate.seconds ? -1 : 1;
+            } else {
+              return b.implementedDate.seconds < a.implementedDate.seconds ? -1 : 1;
+            }
+          }
+        }
+      });
+    } else {
+      const error = new Error(ErrorCode.Unexpected);
+      error.message = 'Implementation error. Please check character sort settings.';
+      throw error;
     }
   }
 }
