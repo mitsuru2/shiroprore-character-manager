@@ -70,6 +70,8 @@ export class NewCharacterFormData {
 
   characterTags: FsCharacterTag[] = [];
 
+  implementedDate?: Date;
+
   abilities: FsAbilityForNewCharacterForm[] = [];
 
   abilitiesKai: FsAbilityForNewCharacterForm[] = [];

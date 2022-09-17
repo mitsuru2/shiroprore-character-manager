@@ -11,6 +11,7 @@ import {
   MapCellType,
 } from 'src/app/services/firestore-data/firestore-document.interface';
 import { UserAuthService } from '../../services/user-auth/user-auth.service';
+import { isMobileMode } from '../../utils/window-size/window-size.util';
 import {
   CharacterFilterSettings,
   CharacterOwnershipFilterType,
@@ -50,6 +51,9 @@ export class CharacterFilterSettingsFormComponent {
 
   /** Token type. */
   tokenTypeItems: MapCellType[] = ['なし', '赤', '青'];
+
+  /** Implemented date. */
+  isMobile = isMobileMode();
 
   /** Button event. */
   @Output() canceled = new EventEmitter<boolean>();

@@ -96,6 +96,28 @@
       </div>
     </div>
   </div>
+  <div class="formgrid grid">
+    <div class="field col">
+      <label>実装日</label>
+      <div class="calendar-container">
+        <p-calendar
+          inputId="CharacterFilterSettingsForm_StartDateInput"
+          name="CharacterFilterSettingsForm_StartDateInput"
+          [(ngModel)]="filterSettings.startDate"
+          dateFormat="yy/m/d"
+          [showClear]="true"
+        ></p-calendar>
+        &nbsp;～&nbsp;
+        <p-calendar
+          inputId="CharacterFilterSettingsForm_EndDateInput"
+          name="CharacterFilterSettingsForm_EndDateInput"
+          [(ngModel)]="filterSettings.endDate"
+          dateFormat="yy/m/d"
+          [showClear]="true"
+        ></p-calendar>
+      </div>
+    </div>
+  </div>
 
   <!--------------------------------------------------------------------------->
   <!-- Footer ----------------------------------------------------------------->

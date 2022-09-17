@@ -738,7 +738,7 @@ export class NewCharacterFormComponent implements OnInit, AfterViewInit {
   }
 
   clearForm(exceptItems: string[] = []) {
-    const location = `${this.className}.clearAll()`;
+    const location = `${this.className}.clearForm()`;
     this.logger.trace(location);
 
     if (exceptItems.includes('characterType') === false) {
@@ -779,6 +779,9 @@ export class NewCharacterFormComponent implements OnInit, AfterViewInit {
     if (exceptItems.includes('characterTag') === false) {
       this.inputCharacterTags = [];
       this.characterData.characterTags = [];
+    }
+    if (exceptItems.includes('implementedDate') === false) {
+      this.characterData.implementedDate = undefined;
     }
     if (exceptItems.includes('ability') === false) {
       this.selectedAbilityTypes = [];
@@ -1058,7 +1061,7 @@ export class NewCharacterFormComponent implements OnInit, AfterViewInit {
   // Make result character info.
   //
   private makeCharacterInfo() {
-    // Type, name, rarerity, weapon type, geograph type, and region.
+    // Type, name, rarerity, weapon type, geograph type, region, and implemented date.
 
     // Voice actor.
     for (let i = 0; i < this.voiceActors.length; ++i) {

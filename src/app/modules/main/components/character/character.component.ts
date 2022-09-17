@@ -420,7 +420,16 @@ export class CharacterComponent implements OnInit, AfterViewInit {
     td.textContent = this.makeCharacterTagText(this.character.tags);
     this.setTdStyle(td);
 
-    // 12th row: Ability caption.
+    // 12th row: Implemented date.
+    tr = t.insertRow();
+    td = tr.insertCell();
+    td.textContent = '実装日';
+    this.setTdStyle(td);
+    td = tr.insertCell();
+    td.textContent = this.makeImplementedDateText(this.character.implementedDate);
+    this.setTdStyle(td);
+
+    // 13th row: Ability caption.
     for (let i = 0; i < this.abilityTypes.length; ++i) {
       this.makeAbilityInfoRows(t, this.character, this.abilityTypes[i]);
     }
@@ -527,6 +536,18 @@ export class CharacterComponent implements OnInit, AfterViewInit {
           result += item;
         }
       }
+    }
+
+    return result;
+  }
+
+  private makeImplementedDateText(timestamp: any): string {
+    let result = '';
+
+    if (!timestamp) {
+      result = 'n.a.';
+    } else {
+      result = this.firestore.convTimestampToDate(timestamp).toLocaleDateString();
     }
 
     return result;
@@ -776,6 +797,7 @@ export class CharacterComponent implements OnInit, AfterViewInit {
     }
     result.cost = src.cost;
     result.costKai = src.costKai;
+    result.implementedDate = src.implementedDate ? this.firestore.convTimestampToDate(src.implementedDate) : undefined;
 
     // Voice and illustration.
     if (src.voiceActors.length > 0) {
@@ -983,6 +1005,16 @@ export class CharacterComponent implements OnInit, AfterViewInit {
         original.id,
         'tags',
         modified.characterTags.map((item) => item.id)
+      );
+    }
+
+    // Implemented date.
+    if (original.implementedDate !== modified.implementedDate) {
+      await this.firestore.updateField(
+        FsCollectionName.Characters,
+        original.id,
+        'implementedDate',
+        modified.implementedDate // 'Date' data will be converted to 'Timestamp' data automatically.
       );
     }
 

@@ -20,4 +20,8 @@ export class CharacterFilterSettings {
   regions: string[] = [];
 
   tokenTypes: MapCellType[] = [];
+
+  startDate?: Date;
+
+  endDate?: Date;
 }
