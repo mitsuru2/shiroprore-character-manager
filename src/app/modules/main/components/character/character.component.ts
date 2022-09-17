@@ -2,7 +2,11 @@ import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NGXLogger } from 'ngx-logger';
 import { ConfirmationService } from 'primeng/api';
-import { CsCharacterImageTypeMax, csCharacterImageTypes } from 'src/app/services/cloud-storage/cloud-storage.interface';
+import {
+  CsCharacterImageType,
+  CsCharacterImageTypeMax,
+  csCharacterImageTypes,
+} from 'src/app/services/cloud-storage/cloud-storage.interface';
 import { CloudStorageService } from 'src/app/services/cloud-storage/cloud-storage.service';
 import { ErrorCode } from 'src/app/services/error-handler/error-code.enum';
 import { ErrorHandlerService } from 'src/app/services/error-handler/error-handler.service';
@@ -40,6 +44,12 @@ class CharacterImage {
   data: Blob = new Blob();
 
   valid = false;
+
+  setImageData(data: Blob) {
+    this.data = data;
+    this.url = window.URL.createObjectURL(data);
+    this.valid = true;
+  }
 }
 
 export enum TableCellType {
@@ -166,9 +176,7 @@ export class CharacterComponent implements OnInit, AfterViewInit {
         const path = this.storage.makeCharacterImagePath(this.character.index, csCharacterImageTypes[i].type);
         try {
           const data = await this.storage.get(path);
-          this.images[i].data = data;
-          this.images[i].url = window.URL.createObjectURL(this.images[i].data);
-          this.images[i].valid = true;
+          this.images[i].setImageData(data);
 
           // Draw 1st image.
           if (i === 0) {
@@ -1162,6 +1170,7 @@ export class CharacterComponent implements OnInit, AfterViewInit {
         path = this.storage.makeCharacterImagePath(this.character.index, csCharacterImageTypes[i].type);
         this.logger.info(location, { path: path });
         await this.storage.upload(path, image.data);
+        this.images[i].setImageData(image.data);
       }
     }
 
@@ -1171,6 +1180,7 @@ export class CharacterComponent implements OnInit, AfterViewInit {
       path = this.storage.makeCharacterThumbnailPath(this.character.index);
       this.logger.info(location, { path: path });
       await this.storage.upload(path, thumb.data);
+      this.thumbnail = thumb.data;
     }
   }
 }
