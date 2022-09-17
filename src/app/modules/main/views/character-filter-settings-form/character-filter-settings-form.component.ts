@@ -13,6 +13,8 @@ import {
 import { UserAuthService } from '../../services/user-auth/user-auth.service';
 import { isMobileMode } from '../../utils/window-size/window-size.util';
 import {
+  CharacterFilterOptionOthersLabels,
+  CharacterFilterOptionOthersType,
   CharacterFilterSettings,
   CharacterOwnershipFilterType,
   CharacterOwnershipFilterTypeLabels,
@@ -50,7 +52,9 @@ export class CharacterFilterSettingsFormComponent {
   regionItems: FsRegion[] = this.firestore.getData(FsCollectionName.Regions) as FsRegion[];
 
   /** Token type. */
-  tokenTypeItems: MapCellType[] = ['なし', '赤', '青'];
+  othersItems = CharacterFilterOptionOthersLabels;
+
+  selectedOtherOptions: CharacterFilterOptionOthersType[] = [];
 
   /** Implemented date. */
   isMobile = isMobileMode();
@@ -94,6 +98,7 @@ export class CharacterFilterSettingsFormComponent {
   onOkClick() {
     const location = `${this.className}.onOkClick()`;
     this.logger.trace(location);
+    this.applySelectedOtherOptions(this.filterSettings);
     this.filterSettingsChange.emit(this.filterSettings);
     this.canceled.emit(false);
   }
@@ -107,6 +112,36 @@ export class CharacterFilterSettingsFormComponent {
   //============================================================================
   // Private methods.
   //
+  //----------------------------------------------------------------------------
+  // Split other options selection.
+  //
+  private applySelectedOtherOptions(filter: CharacterFilterSettings) {
+    // Clear option flags.
+    filter.ownershipAbility = false;
+    filter.teamAbility = false;
+    filter.defeatedTimeAbility = false;
+    filter.tokenTypes = [];
+
+    for (let i = 0; i < this.selectedOtherOptions.length; ++i) {
+      const item = this.selectedOtherOptions[i];
+
+      // Set option flags.
+      if (item === 'ownershipAbility') {
+        filter.ownershipAbility = true;
+      } else if (item === 'teamAbility') {
+        filter.teamAbility = true;
+      } else if (item === 'defeatedTimeAbility') {
+        filter.defeatedTimeAbility = true;
+      } else if (item === 'tokenRed') {
+        filter.tokenTypes.push('赤');
+      } else if (item === 'tokenBlue') {
+        filter.tokenTypes.push('青');
+      } else if (item === 'tokenRedAndBlue') {
+        filter.tokenTypes.push('赤青');
+      }
+    }
+  }
+
   //----------------------------------------------------------------------------
   // Confirmation dialog.
   //

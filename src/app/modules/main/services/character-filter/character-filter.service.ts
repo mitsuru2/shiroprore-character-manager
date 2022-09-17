@@ -6,6 +6,7 @@ import { FsCollectionName } from 'src/app/services/firestore-data/firestore-coll
 import { FirestoreDataService } from 'src/app/services/firestore-data/firestore-data.service';
 import {
   FsAbility,
+  FsAbilityType,
   FsCharacter,
   FsWeaponType,
   MapCellType,
@@ -138,6 +139,62 @@ export class CharacterFilterService {
         }
       }
 
+      // Ownership ability, team ability, or defeated time ability supported.
+      if (!filter.ownershipAbility && !filter.teamAbility && !filter.defeatedTimeAbility) {
+        // Do nothing. Go to next filter.
+      } else {
+        // Scan all abilities of the character.
+        let ownershipAbilityFound = false;
+        let teamAbilityFound = false;
+        let defeatedTimeAbilityFound = false;
+        for (let j = 0; j < character.abilities.length; ++j) {
+          const ability = this.firestore.getDataById(FsCollectionName.Abilities, character.abilities[j]) as FsAbility;
+          const abilityType = this.firestore.getDataById(FsCollectionName.AbilityTypes, ability.type) as FsAbilityType;
+          if (abilityType.name === '所持特技') {
+            ownershipAbilityFound = true;
+          } else if (abilityType.name === '編成特技') {
+            teamAbilityFound = true;
+          } else if (abilityType.name === '大破特技') {
+            defeatedTimeAbilityFound = true;
+          }
+        }
+        for (let j = 0; j < character.abilitiesKai.length; ++j) {
+          const ability = this.firestore.getDataById(
+            FsCollectionName.Abilities,
+            character.abilitiesKai[j]
+          ) as FsAbility;
+          const abilityType = this.firestore.getDataById(FsCollectionName.AbilityTypes, ability.type) as FsAbilityType;
+          if (abilityType.name === '所持特技') {
+            ownershipAbilityFound = true;
+          } else if (abilityType.name === '編成特技') {
+            teamAbilityFound = true;
+          } else if (abilityType.name === '大破特技') {
+            defeatedTimeAbilityFound = true;
+          }
+        }
+
+        // Filter by ownership ability.
+        if (filter.ownershipAbility) {
+          if (!ownershipAbilityFound) {
+            continue;
+          }
+        }
+
+        // Filter by team ability.
+        if (filter.teamAbility) {
+          if (!teamAbilityFound) {
+            continue;
+          }
+        }
+
+        // Filter by defeated time ability.
+        if (filter.defeatedTimeAbility) {
+          if (!defeatedTimeAbilityFound) {
+            continue;
+          }
+        }
+      }
+
       // Token type.
       if (filter.tokenTypes.length === 0) {
         // Do nothing. Go to next filter.
@@ -206,13 +263,14 @@ export class CharacterFilterService {
       }
     }
 
+    // Add "赤青".
+    if (tmpList.includes('赤') && tmpList.includes('青')) {
+      tmpList.push('赤青');
+    }
+
     // Remove duplicated items.
     let result: MapCellType[] = [];
-    if (tmpList.length === 0) {
-      result.push('なし');
-    } else {
-      result = Array.from(new Set(tmpList));
-    }
+    result = Array.from(new Set(tmpList));
 
     return result;
   }

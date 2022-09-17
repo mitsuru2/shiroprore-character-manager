@@ -82,16 +82,16 @@
   </div>
   <div class="formgrid grid">
     <div class="field col">
-      <label>伏兵タイプ</label>
+      <label>その他</label>
       <div class="formgroup-inline">
-        <div *ngFor="let item of tokenTypeItems" class="field-checkbox">
+        <div *ngFor="let item of othersItems" class="field-checkbox">
           <p-checkbox
-            [inputId]="'CharacterFilterSettingsForm_TokenTypeInput_' + item"
-            name="CharacterFilterSettingsForm_TokenTypeInput"
-            [value]="item"
-            [(ngModel)]="filterSettings.tokenTypes"
+            [inputId]="'CharacterFilterSettingsForm_OtherOptionInput_' + item.value"
+            name="CharacterFilterSettingsForm_OtherOptionInput"
+            [value]="item.value"
+            [(ngModel)]="selectedOtherOptions"
           ></p-checkbox>
-          <label [for]="'CharacterFilterSettingsForm_TokenTypeInput_' + item">{{ item }}</label>
+          <label [for]="'CharacterFilterSettingsForm_OtherOptionInput_' + item.value">{{ item.label }}</label>
         </div>
       </div>
     </div>
