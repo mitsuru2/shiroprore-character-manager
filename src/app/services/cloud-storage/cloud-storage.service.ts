@@ -48,10 +48,10 @@ export class CloudStorageService {
 
   async get(path: string): Promise<Blob> {
     const location = `${this.className}.get()`;
-    this.logger.trace(location, { path: path });
 
     // Download data if it's not downloaded.
     if (this.dataPool.findIndex((item) => item.path === path) < 0) {
+      this.logger.trace(location, { path: path });
       await this.download(path);
     }
 

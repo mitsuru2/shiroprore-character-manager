@@ -160,7 +160,7 @@ export class FirestoreDataService {
    */
   getDataById(name: FsCollectionName, id: string): FsDocumentBase {
     const location = `${this.className}.getDataById()`;
-    this.logger.trace(location, { name: name, id: id });
+    // this.logger.trace(location, { name: name, id: id });
 
     let tmp = this.collections[name].data.find((item) => item.id === id);
     if (!tmp) {
@@ -217,8 +217,8 @@ export class FirestoreDataService {
   }
 
   sortByOrder(items: FsDocumentBaseWithOrder[], isDesc: boolean = false) {
-    const location = `${this.className}.sortByOrder()`;
-    this.logger.trace(location);
+    // const location = `${this.className}.sortByOrder()`;
+    // this.logger.trace(location);
 
     // Ascending order.
     if (isDesc === false) {
@@ -231,8 +231,8 @@ export class FirestoreDataService {
   }
 
   sortByCode(items: FsDocumentBaseWithCode[], isDesc: boolean = false) {
-    const location = `${this.className}.sortByCode()`;
-    this.logger.trace(location);
+    // const location = `${this.className}.sortByCode()`;
+    // this.logger.trace(location);
 
     // Ascending order.
     if (isDesc === false) {
@@ -249,8 +249,8 @@ export class FirestoreDataService {
   }
 
   sortMapCellTypes(items: MapCellType[], isDesc: boolean = false) {
-    const location = `${this.className}.sortMapCellTypes()`;
-    this.logger.trace(location, { items: items });
+    // const location = `${this.className}.sortMapCellTypes()`;
+    // this.logger.trace(location, { items: items });
 
     items.sort((a, b) => {
       const va = this.calcMapCellTypeOrder(a);
@@ -265,8 +265,8 @@ export class FirestoreDataService {
   }
 
   sortByTimestamp(items: FsDocumentBase[], key: 'updatedAt' | 'createdAt', isDesc: boolean = false) {
-    const location = `${this.className}.sortByTimestamp()`;
-    this.logger.trace(location, { items: items });
+    // const location = `${this.className}.sortByTimestamp()`;
+    // this.logger.trace(location, { items: items });
 
     items.sort((a, b) => {
       const ta = (key === 'createdAt' ? a.createdAt : a.updatedAt) as Timestamp;
