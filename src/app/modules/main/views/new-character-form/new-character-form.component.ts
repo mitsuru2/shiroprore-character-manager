@@ -295,7 +295,7 @@ export class NewCharacterFormComponent implements OnInit, AfterViewInit {
 
   async ngAfterViewInit(): Promise<void> {
     // Set input focus to the character name input.
-    document.getElementById('NewCharacterForm_CharacterNameInput')?.focus();
+    this.focusCharacterNameInput();
 
     // Wait canvas elements become available.
     await this.waitUntilCanvasReady();
@@ -331,6 +331,10 @@ export class NewCharacterFormComponent implements OnInit, AfterViewInit {
     } catch (error) {
       this.errorHandler.notifyError(error);
     }
+  }
+
+  focusCharacterNameInput() {
+    document.getElementById('NewCharacterForm_CharacterNameInput')?.focus();
   }
 
   onCharacterTypeChanged() {

@@ -99,6 +99,7 @@ export class NewCharacterComponent /*implements OnInit*/ {
 
     // Clear character form.
     this.newCharacterForm.clearForm();
+    this.newCharacterForm.focusCharacterNameInput();
     this.scrollToTop();
 
     // Hide progress spinner.
