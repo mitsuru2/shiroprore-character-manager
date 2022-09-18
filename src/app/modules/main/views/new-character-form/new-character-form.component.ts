@@ -294,6 +294,10 @@ export class NewCharacterFormComponent implements OnInit, AfterViewInit {
   }
 
   async ngAfterViewInit(): Promise<void> {
+    // Set input focus to the character name input.
+    document.getElementById('NewCharacterForm_CharacterNameInput')?.focus();
+
+    // Wait canvas elements become available.
     await this.waitUntilCanvasReady();
 
     // Copy character images.
