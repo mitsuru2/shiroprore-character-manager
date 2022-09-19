@@ -770,6 +770,12 @@ export class NewCharacterFormComponent implements OnInit, AfterViewInit {
     if (exceptItems.includes('region') === false) {
       this.characterData.region = new FsRegion();
     }
+    if (exceptItems.includes('cost') === false) {
+      this.characterData.cost = 0;
+      this.characterData.costKai = 0;
+      this.inputCharacterCost = 0;
+      this.inputCharacterCostKai = 0;
+    }
     if (exceptItems.includes('voiceActor') === false) {
       this.characterData.voiceActor.name = '';
     }
