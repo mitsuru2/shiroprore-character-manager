@@ -197,29 +197,7 @@ export class NewCharacterComponent /*implements OnInit*/ {
     this.logger.info(location, { character: character });
 
     // Upload character info.
-    const characterId = await this.firestore.addData(FsCollectionName.Characters, character);
-
-    // Update character tag info.
-    if (character.tags) {
-      // Reload tag info.
-      await this.firestore.load(FsCollectionName.CharacterTags);
-
-      // Add character ID to tag.
-      for (let i = 0; i < this.characterTags.length; ++i) {
-        for (let j = 0; j < character.tags.length; ++j) {
-          if (this.characterTags[i].id === character.tags[j]) {
-            // Add character ID to the tag info.
-            this.characterTags[i].characters.push(characterId);
-            await this.firestore.updateField(
-              FsCollectionName.CharacterTags,
-              this.characterTags[i].id,
-              'characters',
-              this.characterTags[i].characters
-            );
-          }
-        }
-      }
-    }
+    await this.firestore.addData(FsCollectionName.Characters, character);
 
     return character.index;
   }

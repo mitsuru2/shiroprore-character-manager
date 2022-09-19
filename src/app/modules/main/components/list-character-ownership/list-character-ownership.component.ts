@@ -173,6 +173,7 @@ export class ListCharacterOwnershipComponent implements OnInit {
 
   onTextSearchButtonClick() {
     this.onFilterSettingsDialogResult(false);
+    document.getElementById('ListCharacterOwnership_SearchTextInput')?.focus();
   }
 
   async onApplyButtonClick() {

@@ -65,27 +65,7 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
 
   abilityTypes = this.firestore.getData(FsCollectionName.AbilityTypes) as FsAbilityType[];
 
-  characterTags = this.firestore.getData(FsCollectionName.CharacterTags) as FsCharacterTag[];
-
-  characterTypes = this.firestore.getData(FsCollectionName.CharacterTypes) as FsCharacterType[];
-
   characters = this.firestore.getData(FsCollectionName.Characters) as FsCharacter[];
-
-  facilities = this.firestore.getData(FsCollectionName.Facilities) as FsFacility[];
-
-  facilityTypes = this.firestore.getData(FsCollectionName.FacilityTypes) as FsFacilityType[];
-
-  geographTypes = this.firestore.getData(FsCollectionName.GeographTypes) as FsGeographType[];
-
-  illustrators = this.firestore.getData(FsCollectionName.Illustrators) as FsIllustrator[];
-
-  regions = this.firestore.getData(FsCollectionName.Regions) as FsRegion[];
-
-  voiceActors = this.firestore.getData(FsCollectionName.VoiceActors) as FsVoiceActor[];
-
-  weaponTypes = this.firestore.getData(FsCollectionName.WeaponTypes) as FsWeaponType[];
-
-  weapons = this.firestore.getData(FsCollectionName.Weapons) as FsWeapon[];
 
   /** Data view: header. */
   isListLayout = false;
@@ -270,6 +250,7 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
 
   onTextSearchButtonClick() {
     this.onFilterSettingsDialogResult(false);
+    document.getElementById('ListCharacter_SearchTextInput')?.focus();
   }
 
   onSearchTextClearButtonClick() {
@@ -425,7 +406,7 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
 
   private makeCharacterInfoTable(tableId: string, iCharacter: number) {
     const character = this.characters[iCharacter];
-    const cType = this.characterTypes.find((item) => item.id === character.type);
+    const cType = this.firestore.getDataById(FsCollectionName.CharacterTypes, character.type) as FsCharacterType;
 
     // Clear table.
     this.clearTable(tableId);
@@ -498,12 +479,15 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     let result = '';
 
     // Get character type.
-    const characterType = this.characterTypes.find((item) => item.id === character.type);
+    const characterType = this.firestore.getDataById(
+      FsCollectionName.CharacterTypes,
+      character.type
+    ) as FsCharacterType;
 
     // Weapon type.
     if (character.weaponType !== '') {
       let tmp = '武器タイプ: ';
-      let wt = this.weaponTypes.find((item) => item.id === character.weaponType);
+      let wt = this.firestore.getDataById(FsCollectionName.WeaponTypes, character.weaponType) as FsWeaponType;
       tmp += wt ? wt.name : 'n.a.';
       result += tmp;
     }
@@ -512,7 +496,10 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     if (character.geographTypes.length > 0) {
       let tmp = ', 地形タイプ: ';
       for (let i = 0; i < character.geographTypes.length; ++i) {
-        let gt = this.geographTypes.find((item) => item.id === character.geographTypes[i]);
+        let gt = this.firestore.getDataById(
+          FsCollectionName.GeographTypes,
+          character.geographTypes[i]
+        ) as FsGeographType;
         if (i > 0) {
           tmp += '/';
         }
@@ -524,7 +511,7 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     // Region
     if (character.region !== '') {
       let tmp = ', 地域: ';
-      let rg = this.regions.find((item) => item.id === character.region);
+      let rg = this.firestore.getDataById(FsCollectionName.Regions, character.region) as FsRegion;
       tmp += rg ? rg.name : 'n.a.';
       result += tmp;
     }
@@ -548,7 +535,7 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
         if (i > 0) {
           tmp += ', ';
         }
-        const cv = this.voiceActors.find((item) => item.id === character.voiceActors[i]);
+        const cv = this.firestore.getDataById(FsCollectionName.VoiceActors, character.voiceActors[i]) as FsVoiceActor;
         tmp += cv ? cv.name : 'n.a.';
       }
       if (character.voiceActors.length >= 2) {
@@ -567,7 +554,10 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
         if (i > 0) {
           tmp += ', ';
         }
-        const illustrator = this.illustrators.find((item) => item.id === character.illustrators[i]);
+        const illustrator = this.firestore.getDataById(
+          FsCollectionName.Illustrators,
+          character.illustrators[i]
+        ) as FsIllustrator;
         tmp += illustrator ? illustrator.name : 'n.a.';
       }
       if (character.illustrators.length >= 2) {
@@ -596,7 +586,7 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     if (character.motifWeapons.length > 0) {
       let tmp = '';
       for (let i = 0; i < character.motifWeapons.length; ++i) {
-        const wp = this.weapons.find((item) => item.id === character.motifWeapons[i]);
+        const wp = this.firestore.getDataById(FsCollectionName.Weapons, character.motifWeapons[i]) as FsWeapon;
         if (wp) {
           if (i > 0 || result.length > 0) {
             tmp += ', ';
@@ -609,18 +599,32 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
 
     // Motif facilities.
     if (character.motifFacilities.length > 0) {
-      let tmp = '';
+      // Collect facility information.
+      let motifFacilities: { facility: FsFacility; type: FsFacilityType }[] = [];
       for (let i = 0; i < character.motifFacilities.length; ++i) {
-        const fc = this.facilities.find((item) => item.id === character.motifFacilities[i]);
-        if (fc) {
-          const fcType = this.facilityTypes.find((item) => item.id === fc.type);
-          if (fcType) {
-            if (i > 0 || result.length > 0) {
-              tmp += ', ';
-            }
-            tmp += `${fc.name}(${fcType.name})`;
-          }
+        const facility = this.firestore.getDataById(
+          FsCollectionName.Facilities,
+          character.motifFacilities[i]
+        ) as FsFacility;
+        const facilityType = this.firestore.getDataById(
+          FsCollectionName.FacilityTypes,
+          facility.type
+        ) as FsFacilityType;
+        motifFacilities.push({ facility: facility, type: facilityType });
+      }
+
+      // Sort motif facilities by facility type.
+      motifFacilities.sort((a, b) => {
+        return a.type.code < b.type.code ? -1 : 1;
+      });
+
+      // Make facility info text.
+      let tmp = '';
+      for (let i = 0; i < motifFacilities.length; ++i) {
+        if (i > 0 || result.length > 0) {
+          tmp += ', ';
         }
+        tmp += `${motifFacilities[i].facility.name}(${motifFacilities[i].type.name})`;
       }
       result += tmp;
     }
@@ -639,7 +643,7 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     // CASE: Make character tag text.
     else {
       for (let i = 0; i < character.tags.length; ++i) {
-        const tag = this.characterTags.find((item) => item.id === character.tags[i]);
+        const tag = this.firestore.getDataById(FsCollectionName.CharacterTags, character.tags[i]) as FsCharacterTag;
         if (tag) {
           if (i > 0) {
             result += ', ';

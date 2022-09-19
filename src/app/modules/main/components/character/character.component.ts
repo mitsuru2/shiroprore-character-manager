@@ -512,13 +512,25 @@ export class CharacterComponent implements OnInit, AfterViewInit {
     if (ids.length === 0) {
       result = 'n.a.';
     } else {
+      // Collect facility information.
+      let motifFacilities: { facility: FsFacility; type: FsFacilityType }[] = [];
       for (let i = 0; i < ids.length; ++i) {
-        const item = this.firestore.getDataById(FsCollectionName.Facilities, ids[i]) as FsFacility;
-        const itemType = this.firestore.getDataById(FsCollectionName.FacilityTypes, item.type) as FsFacilityType;
+        const fc = this.firestore.getDataById(FsCollectionName.Facilities, ids[i]) as FsFacility;
+        const fcType = this.firestore.getDataById(FsCollectionName.FacilityTypes, fc.type) as FsFacilityType;
+        motifFacilities.push({ facility: fc, type: fcType });
+      }
+
+      // Sort motif facilities by facility type.
+      motifFacilities.sort((a, b) => {
+        return a.type.code < b.type.code ? -1 : 1;
+      });
+
+      for (let i = 0; i < motifFacilities.length; ++i) {
         if (i > 0) {
           result += ', ';
         }
-        result += `${item.name} (★${item.rarerity}|${itemType.name})`;
+        const item = motifFacilities[i];
+        result += `${item.facility.name} (★${item.facility.rarerity}|${item.type.name})`;
       }
     }
 
@@ -977,37 +989,7 @@ export class CharacterComponent implements OnInit, AfterViewInit {
         }
       }
 
-      // If character tag is removed, update tag data.
-      for (let i = 0; i < original.tags.length; ++i) {
-        if (modified.characterTags.map((item) => item.id).includes(original.tags[i]) === false) {
-          this.logger.info(location, 'Character tag has been removed.', { tag: original.tags[i] });
-          const removedTag = this.firestore.getDataById(
-            FsCollectionName.CharacterTags,
-            original.tags[i]
-          ) as FsCharacterTag;
-          removedTag.characters.splice(removedTag.characters.indexOf(original.id), 1);
-          await this.firestore.updateField(
-            FsCollectionName.CharacterTags,
-            removedTag.id,
-            'characters',
-            removedTag.characters
-          );
-        }
-      }
-
-      // Add character ID into tag data.
-      for (let i = 0; i < modified.characterTags.length; ++i) {
-        const tag = (await this.firestore.getDataById(
-          FsCollectionName.CharacterTags,
-          modified.characterTags[i].id
-        )) as FsCharacterTag;
-
-        if (!tag.characters.includes(original.id)) {
-          tag.characters.push(original.id);
-          await this.firestore.updateField(FsCollectionName.CharacterTags, tag.id, 'characters', tag.characters);
-        }
-      }
-
+      // Update character data.
       await this.firestore.updateField(
         FsCollectionName.Characters,
         original.id,

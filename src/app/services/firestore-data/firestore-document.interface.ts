@@ -65,9 +65,7 @@ export class FsAbilityType extends FsDocumentBaseWithOrder {
   }
 }
 
-export class FsCharacterTag extends FsDocumentBase {
-  characters: string[] = [];
-}
+export class FsCharacterTag extends FsDocumentBase {}
 
 export class FsCharacterType extends FsDocumentBaseWithCode {
   weaponTypes: string[] = [];
