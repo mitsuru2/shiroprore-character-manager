@@ -855,7 +855,6 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     // Get div size.
     const dw = this.getHtmlElementWidth('ListCharacter_Content') - 1;
     const dh = this.getHtmlElementHeight('ListCharacter_Content') - 1;
-    this.logger.debug(location, { dw: dw, dh: dh });
 
     // Calc image size and gaps.
     let iw = mobileMode ? 80 : 105;
@@ -864,11 +863,26 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     let gh = gw;
 
     // Calc number of images.
-    let columnNum = 1 + Math.floor((dw - iw) / (iw + gw));
-    let rowNum = 1 + Math.floor((dh - ih) / (ih + gh));
+    let columnNum = 0;
+    let rowNum = 0;
+    if (mobileMode) {
+      columnNum = Math.floor(dw / (iw + gw));
+      rowNum = Math.floor(dh / (ih + gh));
+    } else {
+      columnNum = Math.floor((dw - iw) / (iw + gw)) + 1;
+      rowNum = Math.floor((dh - ih) / (ih + gh)) + 1;
+    }
 
     // columns x rows = total image count.
     result = columnNum * rowNum;
+    this.logger.debug(location, {
+      dw: dw,
+      dh: dh,
+      mobileMode: mobileMode,
+      columnNum: columnNum,
+      rowNum: rowNum,
+      result: result,
+    });
 
     return result;
   }
