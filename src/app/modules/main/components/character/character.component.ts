@@ -2,11 +2,7 @@ import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NGXLogger } from 'ngx-logger';
 import { ConfirmationService } from 'primeng/api';
-import {
-  CsCharacterImageType,
-  CsCharacterImageTypeMax,
-  csCharacterImageTypes,
-} from 'src/app/services/cloud-storage/cloud-storage.interface';
+import { CsCharacterImageTypeMax, csCharacterImageTypes } from 'src/app/services/cloud-storage/cloud-storage.interface';
 import { CloudStorageService } from 'src/app/services/cloud-storage/cloud-storage.service';
 import { ErrorCode } from 'src/app/services/error-handler/error-code.enum';
 import { ErrorHandlerService } from 'src/app/services/error-handler/error-handler.service';
@@ -959,6 +955,42 @@ export class CharacterComponent implements OnInit, AfterViewInit {
       await this.firestore.updateField(FsCollectionName.Characters, original.id, 'costKai', modified.costKai);
     }
 
+    // Voice actor.
+    changed = this.isVoiceActorFieldChanged(original.voiceActors, modified.voiceActor);
+    if (changed) {
+      // Make target data.
+      let data: string[] = [];
+      if (modified.voiceActor.name !== '') {
+        let tmpId = modified.voiceActor.id;
+        if (tmpId === '') {
+          tmpId = await this.firestore.addData(FsCollectionName.VoiceActors, modified.voiceActor);
+        }
+        data = [tmpId];
+      }
+
+      // Update.
+      await this.firestore.updateField(FsCollectionName.Characters, original.id, 'voiceActors', data);
+    }
+
+    // Illustrator.
+    changed = this.isIllustratorFieldChanged(original.illustrators, modified.illustrator);
+    if (changed) {
+      if (changed) {
+        // Make target data.
+        let data: string[] = [];
+        if (modified.illustrator.name !== '') {
+          let tmpId = modified.illustrator.id;
+          if (tmpId === '') {
+            tmpId = await this.firestore.addData(FsCollectionName.Illustrators, modified.illustrator);
+          }
+          data = [tmpId];
+        }
+
+        // Update.
+        await this.firestore.updateField(FsCollectionName.Characters, original.id, 'illustrators', data);
+      }
+    }
+
     // Motif weapons.
     changed = this.isListFieldChanged(original.motifWeapons, modified.motifWeapons);
     if (changed) {
@@ -1055,6 +1087,50 @@ export class CharacterComponent implements OnInit, AfterViewInit {
     }
 
     return result;
+  }
+
+  private isVoiceActorFieldChanged(originalIds: string[], modifiedData: FsVoiceActor): boolean {
+    // CASE: Original voice acter IDs is empty.
+    if (originalIds.length === 0) {
+      if (modifiedData.name !== '') {
+        return true;
+      } else {
+        return false;
+      }
+    }
+
+    // CASE: Original voice acter IDs is not empty.
+    else {
+      if (modifiedData.name === '') {
+        return true;
+      } else if (originalIds[0] !== modifiedData.id) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+  }
+
+  private isIllustratorFieldChanged(originalIds: string[], modifiedData: FsIllustrator): boolean {
+    // CASE: Original illustrator IDs is empty.
+    if (originalIds.length === 0) {
+      if (modifiedData.name !== '') {
+        return true;
+      } else {
+        return false;
+      }
+    }
+
+    // CASE: Original illustrator IDs is not empty.
+    else {
+      if (modifiedData.name === '') {
+        return true;
+      } else if (originalIds[0] !== modifiedData.id) {
+        return true;
+      } else {
+        return false;
+      }
+    }
   }
 
   private async updateAbilities(original: string[], modified: FsAbility[]): Promise<string[]> {
