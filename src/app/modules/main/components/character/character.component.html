@@ -55,9 +55,22 @@
     [mode]="'dataEdit'"
     [okLabel]="'OK'"
     [cancelLabel]="'CANCEL'"
+    [hideButton]="true"
     [(characterData)]="characterFormData"
     (canceled)="onDataEditFormResult($event)"
   ></app-new-character-form>
+  <ng-template pTemplate="footer">
+    <div style="margin-top: 1rem">
+      <p-button label="OK" icon="pi pi-check" (onClick)="onDataEditOkButtonClick()"></p-button>
+      <p-button
+        label="CANCEL"
+        icon="pi pi-times"
+        [style]="{ 'margin-left': '.5rem' }"
+        [styleClass]="'p-button-secondary '"
+        (onClick)="onDataEditCancelButtonClick()"
+      ></p-button>
+    </div>
+  </ng-template>
 </p-dialog>
 
 <!---->
@@ -70,7 +83,20 @@
     [mode]="'imageEdit'"
     [okLabel]="'OK'"
     [cancelLabel]="'CANCEL'"
+    [hideButton]="true"
     [(characterData)]="characterFormData"
     (canceled)="onImageEditFormResult($event)"
   ></app-new-character-form>
+  <ng-template pTemplate="footer" style="margin-top: 1rem">
+    <div style="margin-top: 1rem">
+      <p-button label="OK" icon="pi pi-check" (onClick)="onImageEditOkButtonClick()"></p-button>
+      <p-button
+        label="CANCEL"
+        icon="pi pi-times"
+        [style]="{ 'margin-left': '.5rem' }"
+        [styleClass]="'p-button-secondary '"
+        (onClick)="onImageEditCancelButtonClick()"
+      ></p-button>
+    </div>
+  </ng-template>
 </p-dialog>
