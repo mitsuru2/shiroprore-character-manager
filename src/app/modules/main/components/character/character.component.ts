@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NGXLogger } from 'ngx-logger';
 import { ConfirmationService } from 'primeng/api';
@@ -32,6 +32,7 @@ import {
 import { SpinnerService } from '../../services/spinner/spinner.service';
 import { UserAuthService } from '../../services/user-auth/user-auth.service';
 import { sleep } from '../../utils/sleep/sleep.utility';
+import { NewCharacterFormComponent } from '../../views/new-character-form/new-character-form.component';
 import {
   FsAbilityForNewCharacterForm,
   ImageDataWithProperty,
@@ -65,6 +66,9 @@ export enum TableCellType {
 })
 export class CharacterComponent implements OnInit, AfterViewInit {
   readonly className = 'CharacterComponent';
+
+  /** New character form. */
+  @ViewChild(NewCharacterFormComponent) private newCharacterForm!: NewCharacterFormComponent;
 
   /** Dialog initialization status. */
   isInit = false;
@@ -263,6 +267,14 @@ export class CharacterComponent implements OnInit, AfterViewInit {
     this.dataEditFormShown = false;
   }
 
+  onDataEditOkButtonClick() {
+    this.newCharacterForm.onOkClick();
+  }
+
+  onDataEditCancelButtonClick() {
+    this.newCharacterForm.onCancelClick();
+  }
+
   onImageEditButtonClick() {
     const location = `${this.className}.onImageEditButtonClick()`;
     this.logger.trace(location);
@@ -289,6 +301,14 @@ export class CharacterComponent implements OnInit, AfterViewInit {
     }
 
     this.imageEditFormShown = false;
+  }
+
+  onImageEditOkButtonClick() {
+    this.newCharacterForm.onOkClick();
+  }
+
+  onImageEditCancelButtonClick() {
+    this.newCharacterForm.onCancelClick();
   }
 
   //============================================================================

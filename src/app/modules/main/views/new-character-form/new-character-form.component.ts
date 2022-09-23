@@ -49,6 +49,8 @@ export class NewCharacterFormComponent implements OnInit, AfterViewInit {
 
   @Input() styleClass = '';
 
+  @Input() hideButton = false;
+
   iconButtonWidth = 50; // px
 
   previewCanvasWidth = 300; // px
