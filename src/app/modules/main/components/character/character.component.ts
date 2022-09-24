@@ -1195,10 +1195,18 @@ export class CharacterComponent implements OnInit, AfterViewInit {
 
     // Scan modified ability info.
     for (let i = 0; i < modified.length; ++i) {
+      // CASE: New ability is added.
       if (modified[i].id === '') {
         const docId = await this.firestore.addData(FsCollectionName.Abilities, modified[i]);
         abilityIdList.push(docId);
         modified[i].id = docId;
+      }
+
+      // CASE: Existing ability is added.
+      else {
+        if (!original.includes(modified[i].id)) {
+          abilityIdList.push(modified[i].id);
+        }
       }
     }
 
