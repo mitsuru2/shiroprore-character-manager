@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { NGXLogger } from 'ngx-logger';
 import { AppInfo } from 'src/app/app-info.enum';
 import { CloudStorageService } from 'src/app/services/cloud-storage/cloud-storage.service';
@@ -117,6 +117,7 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     private firestore: FirestoreDataService,
     private storage: CloudStorageService,
     private router: Router,
+    private route: ActivatedRoute,
     private navigator: NavigatorService,
     private userAuth: UserAuthService,
     private spinner: SpinnerService,
@@ -135,8 +136,21 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
 
   async ngOnInit(): Promise<void> {
     const location = `${this.className}.ngOnInit()`;
-    this.logger.trace(location);
 
+    // Get character tag info from URL parameter.
+    const tagName = this.route.snapshot.paramMap.get('tag');
+    if (!tagName) {
+      this.logger.trace(location);
+    } else {
+      this.logger.trace(location, { tagName: tagName });
+      // If tag parameter is input,
+      // (1) Set tag name to the text input field.
+      // (2) Overwrite stored page parameter. It will be readout at ngAfterViewInit().
+      this.inputSearchText = `#${tagName}`;
+      this.storePageParameter();
+    }
+
+    // Sort characters by index as a default behavior.
     this.characters.sort((a, b) => {
       return a.index < b.index ? -1 : 1;
     });
@@ -158,10 +172,10 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     }
 
     // Else, calculate num of thumbnails per page.
-    else {
-      await sleep(10);
-      this.paginator.rowNum = this.calcGridRowNum();
-    }
+    // else {
+    await sleep(10);
+    this.paginator.rowNum = this.calcGridRowNum();
+    // }
     this.ownershipStatues = Array(this.paginator.rowNum);
     this.ownershipStatues.fill(true);
     await sleep(10);
@@ -471,7 +485,7 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     td.textContent = 'タグ';
     this.setTdStyle(td);
     td = tr.insertCell();
-    td.textContent = this.makeCharacterTagText(character);
+    this.makeCharacterTagLinks(td, character.tags);
     this.setTdStyle(td);
 
     // Make ability info rows.
@@ -603,7 +617,7 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
 
     // No motif weapons and facilities.
     if (character.motifWeapons.length === 0 && character.motifFacilities.length === 0) {
-      return 'なし';
+      return 'n.a.';
     }
 
     // Motif weapons.
@@ -661,7 +675,7 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
 
     // CASE: No character tags.
     if (character.tags.length === 0) {
-      return 'なし';
+      return 'n.a.';
     }
 
     // CASE: Make character tag text.
@@ -678,6 +692,25 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     }
 
     return result;
+  }
+
+  private makeCharacterTagLinks(td: HTMLTableCellElement, ids: string[]) {
+    if (ids.length === 0) {
+      td.textContent = 'n.a.';
+      return;
+    }
+
+    for (let i = 0; i < ids.length; ++i) {
+      if (i > 0) {
+        td.appendChild(document.createTextNode(', '));
+      }
+
+      const tagName = this.firestore.getDataById(FsCollectionName.CharacterTags, ids[i]).name;
+      const anchor = document.createElement('a');
+      anchor.appendChild(document.createTextNode(tagName));
+      anchor.href = `${AppInfo.baseUrlProd}/main/list-character/${tagName}`;
+      td.appendChild(anchor);
+    }
   }
 
   private makeAbilityInfoRows(t: HTMLTableElement, character: FsCharacter, type: FsAbilityType) {
@@ -982,5 +1015,12 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     this.sortSettings = this.navigator.paramStorage['list-character'].sortSettings;
     this.filteredIndexes = this.characterFilter.filter(this.characters, this.filterSettings, this.inputSearchText);
     this.filteredIndexes = this.characterFilter.sort(this.characters, this.sortSettings);
+
+    // Clear parameter storage after restore them once.
+    this.clearPageParameter();
+  }
+
+  private clearPageParameter() {
+    this.navigator.paramStorage['list-character'] = undefined;
   }
 }

@@ -18,6 +18,7 @@ const routes: Routes = [
       { path: '', redirectTo: 'list-character', pathMatch: 'full' },
       { path: 'new-character', component: NewCharacterComponent },
       { path: 'list-character', component: ListCharacterComponent },
+      { path: 'list-character/:tag', component: ListCharacterComponent },
       { path: 'character/:id', component: CharacterComponent },
       { path: 'list-character-ownership', component: ListCharacterOwnershipComponent },
       { path: 'legal', component: LegalComponent },
