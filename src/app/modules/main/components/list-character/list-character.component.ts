@@ -485,7 +485,7 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     td.textContent = 'タグ';
     this.setTdStyle(td);
     td = tr.insertCell();
-    td.textContent = this.makeCharacterTagText(character);
+    this.makeCharacterTagLinks(td, character.tags);
     this.setTdStyle(td);
 
     // Make ability info rows.
@@ -617,7 +617,7 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
 
     // No motif weapons and facilities.
     if (character.motifWeapons.length === 0 && character.motifFacilities.length === 0) {
-      return 'なし';
+      return 'n.a.';
     }
 
     // Motif weapons.
@@ -675,7 +675,7 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
 
     // CASE: No character tags.
     if (character.tags.length === 0) {
-      return 'なし';
+      return 'n.a.';
     }
 
     // CASE: Make character tag text.
@@ -692,6 +692,25 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     }
 
     return result;
+  }
+
+  private makeCharacterTagLinks(td: HTMLTableCellElement, ids: string[]) {
+    if (ids.length === 0) {
+      td.textContent = 'n.a.';
+      return;
+    }
+
+    for (let i = 0; i < ids.length; ++i) {
+      if (i > 0) {
+        td.appendChild(document.createTextNode(', '));
+      }
+
+      const tagName = this.firestore.getDataById(FsCollectionName.CharacterTags, ids[i]).name;
+      const anchor = document.createElement('a');
+      anchor.appendChild(document.createTextNode(tagName));
+      anchor.href = `${AppInfo.baseUrlProd}/main/list-character/${tagName}`;
+      td.appendChild(anchor);
+    }
   }
 
   private makeAbilityInfoRows(t: HTMLTableElement, character: FsCharacter, type: FsAbilityType) {

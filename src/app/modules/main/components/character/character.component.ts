@@ -2,6 +2,7 @@ import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NGXLogger } from 'ngx-logger';
 import { ConfirmationService } from 'primeng/api';
+import { AppInfo } from 'src/app/app-info.enum';
 import { CsCharacterImageTypeMax, csCharacterImageTypes } from 'src/app/services/cloud-storage/cloud-storage.interface';
 import { CloudStorageService } from 'src/app/services/cloud-storage/cloud-storage.service';
 import { ErrorCode } from 'src/app/services/error-handler/error-code.enum';
@@ -61,11 +62,7 @@ export enum TableCellType {
   styleUrls: ['./character.component.scss'],
 })
 export class CharacterComponent implements OnInit, AfterViewInit {
-  readonly className = 'CharacterComponent';
-
-  readonly baseUrlProd = 'https://shiroprore-character.web.app';
-
-  readonly baseUrlDebug = 'http://localhost:4200';
+  private readonly className = 'CharacterComponent';
 
   /** New character form. */
   @ViewChild(NewCharacterFormComponent) private newCharacterForm!: NewCharacterFormComponent;
@@ -74,9 +71,9 @@ export class CharacterComponent implements OnInit, AfterViewInit {
   isInit = false;
 
   /** Warning message. */
-  readonly changeOwnershipWarning = 'キャラクター所持状況の管理にはログインが必要です。';
+  private readonly changeOwnershipWarning = 'キャラクター所持状況の管理にはログインが必要です。';
 
-  readonly editCharacterInfoWarning = 'キャラクター情報の編集にはログインが必要です。';
+  private readonly editCharacterInfoWarning = 'キャラクター情報の編集にはログインが必要です。';
 
   /** Firestore data. */
   private abilities = this.firestore.getData(FsCollectionName.Abilities) as FsAbility[];
@@ -562,6 +559,11 @@ export class CharacterComponent implements OnInit, AfterViewInit {
   }
 
   private makeCharacterTagLinks(td: HTMLTableCellElement, ids: string[]) {
+    if (ids.length === 0) {
+      td.textContent = 'n.a.';
+      return;
+    }
+
     for (let i = 0; i < ids.length; ++i) {
       if (i > 0) {
         td.appendChild(document.createTextNode(', '));
@@ -570,7 +572,7 @@ export class CharacterComponent implements OnInit, AfterViewInit {
       const tagName = this.firestore.getDataById(FsCollectionName.CharacterTags, ids[i]).name;
       const anchor = document.createElement('a');
       anchor.appendChild(document.createTextNode(tagName));
-      anchor.href = `${this.baseUrlDebug}/main/list-character/${tagName}`;
+      anchor.href = `${AppInfo.baseUrlProd}/main/list-character/${tagName}`;
       td.appendChild(anchor);
     }
   }
