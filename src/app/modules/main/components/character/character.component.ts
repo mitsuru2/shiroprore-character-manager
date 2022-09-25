@@ -63,6 +63,10 @@ export enum TableCellType {
 export class CharacterComponent implements OnInit, AfterViewInit {
   readonly className = 'CharacterComponent';
 
+  readonly baseUrlProd = 'https://shiroprore-character.web.app';
+
+  readonly baseUrlDebug = 'http://localhost:4200';
+
   /** New character form. */
   @ViewChild(NewCharacterFormComponent) private newCharacterForm!: NewCharacterFormComponent;
 
@@ -441,7 +445,7 @@ export class CharacterComponent implements OnInit, AfterViewInit {
     td.textContent = 'タグ';
     this.setTdStyle(td);
     td = tr.insertCell();
-    td.textContent = this.makeCharacterTagText(this.character.tags);
+    this.makeCharacterTagLinks(td, this.character.tags);
     this.setTdStyle(td);
 
     // 12th row: Implemented date.
@@ -555,6 +559,20 @@ export class CharacterComponent implements OnInit, AfterViewInit {
 
   private makeCharacterTagText(ids: string[]): string {
     return this.makeTextFromIds(ids, FsCollectionName.CharacterTags);
+  }
+
+  private makeCharacterTagLinks(td: HTMLTableCellElement, ids: string[]) {
+    for (let i = 0; i < ids.length; ++i) {
+      if (i > 0) {
+        td.appendChild(document.createTextNode(', '));
+      }
+
+      const tagName = this.firestore.getDataById(FsCollectionName.CharacterTags, ids[i]).name;
+      const anchor = document.createElement('a');
+      anchor.appendChild(document.createTextNode(tagName));
+      anchor.href = `${this.baseUrlDebug}/main/list-character/${tagName}`;
+      td.appendChild(anchor);
+    }
   }
 
   private makeTextFromIds(ids: string[], collectionName: FsCollectionName, separator: string = ', '): string {
