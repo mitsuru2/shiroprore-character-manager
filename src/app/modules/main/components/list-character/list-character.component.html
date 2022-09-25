@@ -88,7 +88,6 @@
 <p-dialog header="フィルタ設定" [(visible)]="showFilterDialog" [modal]="true" [closable]="false" [draggable]="false" [resizable]="false" styleClass="dialog">
   <app-character-filter-settings-form
     [(filterSettings)]="filterSettings"
-    buttonStyleClass="p-button-text"
     [hideButton]="true"
     (canceled)="onFilterSettingsDialogResult($event)"
   ></app-character-filter-settings-form>
@@ -112,7 +111,6 @@
 <p-dialog header="ソート設定" [(visible)]="showSortDialog" [modal]="true" [closable]="false" [draggable]="false" [resizable]="false" styleClass="dialog">
   <app-character-sort-settings-form
     [(sortSettings)]="sortSettings"
-    buttonStyleClass="p-button-text"
     [hideButton]="true"
     (canceled)="onSortSettingsDialogResult($event)"
   ></app-character-sort-settings-form>

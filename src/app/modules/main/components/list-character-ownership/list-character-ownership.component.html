@@ -95,10 +95,21 @@
 <p-dialog header="フィルタ設定" [(visible)]="filterDialogShown" [modal]="true" [closable]="false" [draggable]="false" [resizable]="false" styleClass="dialog">
   <app-character-filter-settings-form
     [(filterSettings)]="filterSettings"
-    buttonStyleClass="p-button-text"
+    [hideButton]="true"
     (canceled)="onFilterSettingsDialogResult($event)"
   ></app-character-filter-settings-form>
-</p-dialog>
+  <ng-template pTemplate="footer">
+    <div style="margin-top: 1rem">
+      <p-button label="OK" icon="pi pi-check" [styleClass]="'p-button-text'" (onClick)="onFilterSettingsOkButtonClick()"></p-button>
+      <p-button
+        label="CANCEL"
+        icon="pi pi-times"
+        [style]="{ 'margin-left': '.5rem' }"
+        [styleClass]="'p-button-secondary p-button-text'"
+        (onClick)="onFilterSettingsCancelButtonClick()"
+      ></p-button>
+    </div> </ng-template
+></p-dialog>
 
 <!----------------------------------------------------------------------------->
 <!-- Sort setting dialog ---------------------------------------------------->
@@ -106,7 +117,18 @@
 <p-dialog header="ソート設定" [(visible)]="sortDialogShown" [modal]="true" [closable]="false" [draggable]="false" [resizable]="false" styleClass="dialog">
   <app-character-sort-settings-form
     [(sortSettings)]="sortSettings"
-    buttonStyleClass="p-button-text"
+    [hideButton]="true"
     (canceled)="onSortSettingsDialogResult($event)"
   ></app-character-sort-settings-form>
-</p-dialog>
+  <ng-template pTemplate="footer">
+    <div style="margin-top: 1rem">
+      <p-button label="OK" icon="pi pi-check" [styleClass]="'p-button-text'" (onClick)="onSortSettingsOkButtonClick()"></p-button>
+      <p-button
+        label="CANCEL"
+        icon="pi pi-times"
+        [style]="{ 'margin-left': '.5rem' }"
+        [styleClass]="'p-button-secondary p-button-text'"
+        (onClick)="onSortSettingsCancelButtonClick()"
+      ></p-button>
+    </div> </ng-template
+></p-dialog>
