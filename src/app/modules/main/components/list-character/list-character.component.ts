@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { NGXLogger } from 'ngx-logger';
 import { AppInfo } from 'src/app/app-info.enum';
@@ -27,7 +27,9 @@ import { UserAuthService } from '../../services/user-auth/user-auth.service';
 import { PaginatorControl } from '../../utils/paginator-control/paginator-control.class';
 import { sleep } from '../../utils/sleep/sleep.utility';
 import { isMobileMode } from '../../utils/window-size/window-size.util';
+import { CharacterFilterSettingsFormComponent } from '../../views/character-filter-settings-form/character-filter-settings-form.component';
 import { CharacterFilterSettings } from '../../views/character-filter-settings-form/character-filter-settings-form.interface';
+import { CharacterSortSettingsFormComponent } from '../../views/character-sort-settings-form/character-sort-settings-form.component';
 import { CharacterSortSettings } from '../../views/character-sort-settings-form/character-sort-settings-form.interface';
 
 export class ThumbImageWrapper {
@@ -54,6 +56,12 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
   readonly className = 'ListCharacterComponent';
 
   appInfo = AppInfo;
+
+  /** Filter settings form. */
+  @ViewChild(CharacterFilterSettingsFormComponent) private filterSettingsForm!: CharacterFilterSettingsFormComponent;
+
+  /** Sort settings form. */
+  @ViewChild(CharacterSortSettingsFormComponent) private sortSettingsForm!: CharacterSortSettingsFormComponent;
 
   /** View status. */
   viewInited = false;
@@ -248,6 +256,14 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     this.spinner.hide();
   }
 
+  onFilterSettingsOkButtonClick() {
+    this.filterSettingsForm.onOkClick();
+  }
+
+  onFilterSettingsCancelButtonClick() {
+    this.filterSettingsForm.onCancelClick();
+  }
+
   onTextSearchButtonClick() {
     this.onFilterSettingsDialogResult(false);
     document.getElementById('ListCharacter_SearchTextInput')?.focus();
@@ -296,6 +312,14 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
 
     // Hide spinner.
     this.spinner.hide();
+  }
+
+  onSortSettingsOkButtonClick() {
+    this.sortSettingsForm.onOkClick();
+  }
+
+  onSortSettingsCancelButtonClick() {
+    this.sortSettingsForm.onCancelClick();
   }
 
   //============================================================================

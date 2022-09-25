@@ -8,7 +8,6 @@ import {
   FsGeographType,
   FsRegion,
   FsWeaponType,
-  MapCellType,
 } from 'src/app/services/firestore-data/firestore-document.interface';
 import { UserAuthService } from '../../services/user-auth/user-auth.service';
 import { isMobileMode } from '../../utils/window-size/window-size.util';
@@ -30,6 +29,8 @@ export class CharacterFilterSettingsFormComponent {
 
   /** Appearance. */
   @Input() buttonStyleClass = '';
+
+  @Input() hideButton = false;
 
   /** Form result. */
   @Input() filterSettings!: CharacterFilterSettings;

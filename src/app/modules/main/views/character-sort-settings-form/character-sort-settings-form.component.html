@@ -35,7 +35,7 @@
   <!--------------------------------------------------------------------------->
   <!-- Footer ----------------------------------------------------------------->
   <!--------------------------------------------------------------------------->
-  <div style="margin-top: 1rem">
+  <div *ngIf="!hideButton" style="margin-top: 1rem">
     <p-button label="OK" icon="pi pi-check" (onClick)="onOkClick()" [styleClass]="buttonStyleClass"></p-button>
     <p-button
       label="CANCEL"

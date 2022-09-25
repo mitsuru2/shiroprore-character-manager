@@ -17,6 +17,8 @@ export class CharacterSortSettingsFormComponent {
   /** Appearance. */
   @Input() buttonStyleClass = '';
 
+  @Input() hideButton = false;
+
   /** Form result. */
   @Input() sortSettings!: CharacterSortSettings;
 
