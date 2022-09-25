@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { NGXLogger } from 'ngx-logger';
 import { AppInfo } from 'src/app/app-info.enum';
 import { CloudStorageService } from 'src/app/services/cloud-storage/cloud-storage.service';
@@ -117,6 +117,7 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     private firestore: FirestoreDataService,
     private storage: CloudStorageService,
     private router: Router,
+    private route: ActivatedRoute,
     private navigator: NavigatorService,
     private userAuth: UserAuthService,
     private spinner: SpinnerService,
@@ -135,8 +136,21 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
 
   async ngOnInit(): Promise<void> {
     const location = `${this.className}.ngOnInit()`;
-    this.logger.trace(location);
 
+    // Get character tag info from URL parameter.
+    const tagName = this.route.snapshot.paramMap.get('tag');
+    if (!tagName) {
+      this.logger.trace(location);
+    } else {
+      this.logger.trace(location, { tagName: tagName });
+      // If tag parameter is input,
+      // (1) Set tag name to the text input field.
+      // (2) Overwrite stored page parameter. It will be readout at ngAfterViewInit().
+      this.inputSearchText = `#${tagName}`;
+      this.storePageParameter();
+    }
+
+    // Sort characters by index as a default behavior.
     this.characters.sort((a, b) => {
       return a.index < b.index ? -1 : 1;
     });
@@ -158,10 +172,10 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     }
 
     // Else, calculate num of thumbnails per page.
-    else {
-      await sleep(10);
-      this.paginator.rowNum = this.calcGridRowNum();
-    }
+    // else {
+    await sleep(10);
+    this.paginator.rowNum = this.calcGridRowNum();
+    // }
     this.ownershipStatues = Array(this.paginator.rowNum);
     this.ownershipStatues.fill(true);
     await sleep(10);
@@ -982,5 +996,12 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     this.sortSettings = this.navigator.paramStorage['list-character'].sortSettings;
     this.filteredIndexes = this.characterFilter.filter(this.characters, this.filterSettings, this.inputSearchText);
     this.filteredIndexes = this.characterFilter.sort(this.characters, this.sortSettings);
+
+    // Clear parameter storage after restore them once.
+    this.clearPageParameter();
+  }
+
+  private clearPageParameter() {
+    this.navigator.paramStorage['list-character'] = undefined;
   }
 }
