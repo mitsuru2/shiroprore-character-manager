@@ -1,19 +1,19 @@
-import { Component, OnInit } from '@angular/core';
-import { arrayRemove } from 'firebase/firestore';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { NGXLogger } from 'ngx-logger';
 import { FsCollectionName } from 'src/app/services/firestore-data/firestore-collection-name.enum';
 import { FirestoreDataService } from 'src/app/services/firestore-data/firestore-data.service';
 import {
   FsCharacter,
   FsGeographType,
-  FsWeapon,
   FsWeaponType,
 } from 'src/app/services/firestore-data/firestore-document.interface';
 import { CharacterFilterService } from '../../services/character-filter/character-filter.service';
 import { SpinnerService } from '../../services/spinner/spinner.service';
 import { UserAuthService } from '../../services/user-auth/user-auth.service';
 import { PaginatorControl } from '../../utils/paginator-control/paginator-control.class';
+import { CharacterFilterSettingsFormComponent } from '../../views/character-filter-settings-form/character-filter-settings-form.component';
 import { CharacterFilterSettings } from '../../views/character-filter-settings-form/character-filter-settings-form.interface';
+import { CharacterSortSettingsFormComponent } from '../../views/character-sort-settings-form/character-sort-settings-form.component';
 import { CharacterSortSettings } from '../../views/character-sort-settings-form/character-sort-settings-form.interface';
 
 @Component({
@@ -23,6 +23,12 @@ import { CharacterSortSettings } from '../../views/character-sort-settings-form/
 })
 export class ListCharacterOwnershipComponent implements OnInit {
   private readonly className = 'ListCharacterOwnershipComponent';
+
+  /** Filter settings form. */
+  @ViewChild(CharacterFilterSettingsFormComponent) private filterSettingsForm!: CharacterFilterSettingsFormComponent;
+
+  /** Sort settings form. */
+  @ViewChild(CharacterSortSettingsFormComponent) private sortSettingsForm!: CharacterSortSettingsFormComponent;
 
   /** Firestore data. */
   characters = this.firestore.getData(FsCollectionName.Characters) as FsCharacter[];
@@ -166,6 +172,14 @@ export class ListCharacterOwnershipComponent implements OnInit {
     this.spinner.hide();
   }
 
+  onFilterSettingsOkButtonClick() {
+    this.filterSettingsForm.onOkClick();
+  }
+
+  onFilterSettingsCancelButtonClick() {
+    this.filterSettingsForm.onCancelClick();
+  }
+
   onSearchTextClearButtonClick() {
     this.inputSearchText = '';
     this.onTextSearchButtonClick();
@@ -253,6 +267,14 @@ export class ListCharacterOwnershipComponent implements OnInit {
       // Scroll.
       this.scrollToTop();
     }
+  }
+
+  onSortSettingsOkButtonClick() {
+    this.sortSettingsForm.onOkClick();
+  }
+
+  onSortSettingsCancelButtonClick() {
+    this.sortSettingsForm.onCancelClick();
   }
 
   //============================================================================
