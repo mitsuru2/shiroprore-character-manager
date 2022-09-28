@@ -61,6 +61,7 @@ import { CharacterFilterService } from './services/character-filter/character-fi
 import { SupportComponent } from './components/support/support.component';
 import { InquiryFormComponent } from './views/inquiry-form/inquiry-form.component';
 import { ReleaseHistoryComponent } from './views/release-history/release-history.component';
+import { ReadMeComponent } from './views/read-me/read-me.component';
 
 const firebaseUiAuthConfig: firebaseui.auth.Config = {
   autoUpgradeAnonymousUsers: false, // Disable annymouse users.
@@ -103,6 +104,7 @@ const firebaseUiAuthConfig: firebaseui.auth.Config = {
     SupportComponent,
     InquiryFormComponent,
     ReleaseHistoryComponent,
+    ReadMeComponent,
   ],
   imports: [
     CommonModule,

@@ -49,7 +49,7 @@ export class MainComponent /*implements OnInit*/ {
       },
     },
     {
-      label: '利用規約等',
+      label: 'ツール説明',
       command: () => {
         this.router.navigateByUrl('/main/legal');
       },
@@ -86,7 +86,7 @@ export class MainComponent /*implements OnInit*/ {
           },
         },
         {
-          label: '利用規約等',
+          label: 'ツール説明',
           command: () => {
             this.router.navigateByUrl('/main/legal');
           },
