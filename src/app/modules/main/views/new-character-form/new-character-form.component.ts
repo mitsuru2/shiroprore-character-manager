@@ -22,6 +22,7 @@ import {
   FsCharacterTag,
   FsSubCharacterType,
   FsCharacter,
+  MapCellType,
 } from 'src/app/services/firestore-data/firestore-document.interface';
 import { HtmlCanvas } from '../../utils/html-canvas/html-canvas.utility';
 import { loadImageFile } from '../../utils/image-file/image-file.utility';
@@ -160,6 +161,8 @@ export class NewCharacterFormComponent implements OnInit, AfterViewInit {
   inputAbilitiesKai: FsAbilityForNewCharacterForm[] = [];
 
   abilityFormMax = 8;
+
+  readonly tokenCellTypes: MapCellType[] = ['赤', '青', '水上'];
 
   /** Validation */
   isFormValid = true;

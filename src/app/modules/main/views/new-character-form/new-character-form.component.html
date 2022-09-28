@@ -362,25 +362,17 @@
                     ></p-radioButton>
                     <label [for]="'NewCharacterForm_HasTokenInput_' + i + '_true'">あり</label>
                   </div>
-                  <div class="field-checkbox">
-                    <p-checkbox
-                      [inputId]="'NewCharacterForm_TokenLayoutInput_' + i + '_0'"
-                      [name]="'NewCharacterForm_TokenLayoutInput_' + i"
-                      value="赤"
-                      [(ngModel)]="inputAbilities[i].tokenLayouts"
-                      [disabled]="inputAbilities[i].isExisting || !inputAbilities[i].tokenAvailable"
-                    ></p-checkbox>
-                    <label [for]="'NewCharacterForm_TokenLayoutInput_' + i + '_0'">赤配置</label>
-                  </div>
-                  <div class="field-checkbox">
-                    <p-checkbox
-                      [inputId]="'NewCharacterForm_TokenLayoutInput_' + i + '_1'"
-                      [name]="'NewCharacterForm_TokenLayoutInput_' + i"
-                      value="青"
-                      [(ngModel)]="inputAbilities[i].tokenLayouts"
-                      [disabled]="inputAbilities[i].isExisting || !inputAbilities[i].tokenAvailable"
-                    ></p-checkbox>
-                    <label [for]="'NewCharacterForm_TokenLayoutInput_' + i + '_1'">青配置</label>
+                  <div *ngFor="let cellType of tokenCellTypes; let j = index">
+                    <div class="field-checkbox">
+                      <p-checkbox
+                        [inputId]="'NewCharacterForm_TokenLayoutInput_' + i + '_' + j"
+                        [name]="'NewCharacterForm_TokenLayoutInput_' + i"
+                        [value]="cellType"
+                        [(ngModel)]="inputAbilities[i].tokenLayouts"
+                        [disabled]="inputAbilities[i].isExisting || !inputAbilities[i].tokenAvailable"
+                      ></p-checkbox>
+                      <label [for]="'NewCharacterForm_TokenLayoutInput_' + i + '_' + j">{{ cellType }}配置</label>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -526,25 +518,17 @@
                     ></p-radioButton>
                     <label [for]="'NewCharacterForm_HasTokenKaiInput_' + i + '_true'">あり</label>
                   </div>
-                  <div class="field-checkbox">
-                    <p-checkbox
-                      [inputId]="'NewCharacterForm_TokenLayoutKaiInput_' + i + '_0'"
-                      [name]="'NewCharacterForm_TokenLayoutKaiInput_' + i"
-                      value="赤"
-                      [(ngModel)]="inputAbilitiesKai[i].tokenLayouts"
-                      [disabled]="inputAbilitiesKai[i].isExisting || !inputAbilitiesKai[i].tokenAvailable"
-                    ></p-checkbox>
-                    <label [for]="'NewCharacterForm_TokenLayoutKaiInput_' + i + '_0'">赤配置</label>
-                  </div>
-                  <div class="field-checkbox">
-                    <p-checkbox
-                      [inputId]="'NewCharacterForm_TokenLayoutKaiInput_' + i + '_1'"
-                      [name]="'NewCharacterForm_TokenLayoutKaiInput_' + i"
-                      value="青"
-                      [(ngModel)]="inputAbilitiesKai[i].tokenLayouts"
-                      [disabled]="inputAbilitiesKai[i].isExisting || !inputAbilitiesKai[i].tokenAvailable"
-                    ></p-checkbox>
-                    <label [for]="'NewCharacterForm_TokenLayoutKaiInput_' + i + '_1'">青配置</label>
+                  <div *ngFor="let cellType of tokenCellTypes; let j = index">
+                    <div class="field-checkbox">
+                      <p-checkbox
+                        [inputId]="'NewCharacterForm_TokenLayoutKaiInput_' + i + '_' + j"
+                        [name]="'NewCharacterForm_TokenLayoutKaiInput_' + i"
+                        [value]="cellType"
+                        [(ngModel)]="inputAbilitiesKai[i].tokenLayouts"
+                        [disabled]="inputAbilitiesKai[i].isExisting || !inputAbilitiesKai[i].tokenAvailable"
+                      ></p-checkbox>
+                      <label [for]="'NewCharacterForm_TokenLayoutKaiInput_' + i + '_' + j">{{ cellType }}配置</label>
+                    </div>
                   </div>
                 </div>
               </div>

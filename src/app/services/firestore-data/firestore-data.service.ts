@@ -305,7 +305,7 @@ export class FirestoreDataService {
       return 1;
     } else if (cType === '赤青') {
       return 2;
-    } else if (cType === '舟') {
+    } else if (cType === '水上') {
       return 3;
     } else {
       return 4;
