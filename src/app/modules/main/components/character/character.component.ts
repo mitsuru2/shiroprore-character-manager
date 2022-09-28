@@ -660,16 +660,7 @@ export class CharacterComponent implements OnInit, AfterViewInit {
 
         // If the ability type is Keiryaku, add interval, cost, and token info.
         if (type.isKeiryaku) {
-          if (ability.tokenLayouts.length === 0) {
-            descText += `\n(CT:${ability.interval}秒/消費気:${ability.cost})`;
-          } else {
-            let tokenLayoutText = '';
-            this.firestore.sortMapCellTypes(ability.tokenLayouts);
-            for (let j = 0; j < ability.tokenLayouts.length; ++j) {
-              tokenLayoutText += ability.tokenLayouts[j];
-            }
-            descText += `\n(CT:${ability.interval}秒/消費気:${ability.cost}/配置:${tokenLayoutText})`;
-          }
+          descText += '\n' + this.makeKeiryakuPropertiesText(ability);
         }
 
         td.innerText = descText; // User 'innerText' property to activate line feed.
@@ -705,15 +696,7 @@ export class CharacterComponent implements OnInit, AfterViewInit {
 
         // If the ability type is Keiryaku, add interval, cost, and token info.
         if (type.isKeiryaku) {
-          if (ability.tokenLayouts.length === 0) {
-            descText += `\n(CT:${ability.interval}秒/消費気:${ability.cost})`;
-          } else {
-            let tokenLayoutText = '';
-            for (let j = 0; j < ability.tokenLayouts.length; ++j) {
-              tokenLayoutText += ability.tokenLayouts[j];
-            }
-            descText += `\n(CT:${ability.interval}秒/消費気:${ability.cost}/配置:${tokenLayoutText})`;
-          }
+          descText += '\n' + this.makeKeiryakuPropertiesText(ability);
         }
 
         td.innerText = descText; // User 'innerText' property to activate line feed.
@@ -732,6 +715,26 @@ export class CharacterComponent implements OnInit, AfterViewInit {
     result = descriptions[0];
     for (let i = 1; i < descriptions.length; ++i) {
       result += '\n' + descriptions[i];
+    }
+
+    return result;
+  }
+
+  private makeKeiryakuPropertiesText(ability: FsAbility): string {
+    let result = '';
+
+    if (ability.tokenLayouts.length === 0) {
+      result += `(CT:${ability.interval}秒 / 消費気:${ability.cost})`;
+    } else {
+      let tokenLayoutText = '';
+      this.firestore.sortMapCellTypes(ability.tokenLayouts);
+      for (let j = 0; j < ability.tokenLayouts.length; ++j) {
+        if (j > 0) {
+          tokenLayoutText += ',';
+        }
+        tokenLayoutText += ability.tokenLayouts[j];
+      }
+      result += `(CT:${ability.interval}秒 / 消費気:${ability.cost} / 配置:${tokenLayoutText})`;
     }
 
     return result;
