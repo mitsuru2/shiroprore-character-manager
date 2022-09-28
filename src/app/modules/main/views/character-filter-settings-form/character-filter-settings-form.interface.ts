@@ -13,7 +13,8 @@ export type CharacterFilterOptionOthersType =
   | 'defeatedTimeAbility'
   | 'tokenRed'
   | 'tokenBlue'
-  | 'tokenRedAndBlue';
+  | 'tokenRedAndBlue'
+  | 'tokenWater';
 export const CharacterFilterOptionOthersLabels: { label: string; value: CharacterFilterOptionOthersType }[] = [
   { label: '所持特技', value: 'ownershipAbility' },
   { label: '編成特技', value: 'teamAbility' },
@@ -21,6 +22,7 @@ export const CharacterFilterOptionOthersLabels: { label: string; value: Characte
   { label: '伏兵(赤)', value: 'tokenRed' },
   { label: '伏兵(青)', value: 'tokenBlue' },
   { label: '伏兵(赤青)', value: 'tokenRedAndBlue' },
+  { label: '伏兵(水上)', value: 'tokenWater' },
 ];
 
 export class CharacterFilterSettings {

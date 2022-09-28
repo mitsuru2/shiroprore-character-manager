@@ -139,6 +139,8 @@ export class CharacterFilterSettingsFormComponent {
         filter.tokenTypes.push('青');
       } else if (item === 'tokenRedAndBlue') {
         filter.tokenTypes.push('赤青');
+      } else if (item === 'tokenWater') {
+        filter.tokenTypes.push('水上');
       }
     }
   }
