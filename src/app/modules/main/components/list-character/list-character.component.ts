@@ -31,6 +31,7 @@ import { CharacterFilterSettingsFormComponent } from '../../views/character-filt
 import { CharacterFilterSettings } from '../../views/character-filter-settings-form/character-filter-settings-form.interface';
 import { CharacterSortSettingsFormComponent } from '../../views/character-sort-settings-form/character-sort-settings-form.component';
 import { CharacterSortSettings } from '../../views/character-sort-settings-form/character-sort-settings-form.interface';
+import { HtmlElementUtil } from '../../utils/html-element-util/html-element-util.class';
 
 export class ThumbImageWrapper {
   url: string = '';
@@ -138,16 +139,23 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     const location = `${this.className}.ngOnInit()`;
 
     // Get character tag info from URL parameter.
-    const tagName = this.route.snapshot.paramMap.get('tag');
-    if (!tagName) {
-      this.logger.trace(location);
-    } else {
-      this.logger.trace(location, { tagName: tagName });
+    const query = this.route.snapshot.paramMap.get('query');
+    if (query && (query.match(/&/g) || []).length === 1) {
+      const queryParams = query.split('&');
+
+      this.logger.trace(location, { type: queryParams[0], value: queryParams[1] });
+
       // If tag parameter is input,
       // (1) Set tag name to the text input field.
       // (2) Overwrite stored page parameter. It will be readout at ngAfterViewInit().
-      this.inputSearchText = `#${tagName}`;
+      if (queryParams[0] === 'tag') {
+        this.inputSearchText = `#${queryParams[1]}`;
+      } else if (queryParams[0] === 'text') {
+        this.inputSearchText = `${queryParams[1]}`;
+      }
       this.storePageParameter();
+    } else {
+      this.logger.trace(location);
     }
 
     // Sort characters by index as a default behavior.
@@ -465,7 +473,7 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     td.textContent = '基本情報';
     this.setTdStyle(td);
     td = tr.insertCell();
-    td.textContent = this.makeBasicInfoText(character);
+    this.makeBasicInfoCellValue(td, character);
     this.setTdStyle(td);
 
     // 3rd row: Motif weapons and facilities.
@@ -513,7 +521,7 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     }
   }
 
-  private makeBasicInfoText(character: FsCharacter): string {
+  private makeBasicInfoCellValue(td: HTMLTableCellElement, character: FsCharacter) {
     let result = '';
 
     // Get character type.
@@ -563,23 +571,28 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
       result += tmp;
     }
 
+    // Make normal text node.
+    HtmlElementUtil.appendTextNode(td, result);
+
     // CV.
     if (character.voiceActors.length > 0) {
       let tmp = `, CV: `;
       if (character.voiceActors.length >= 2) {
         tmp += '[';
       }
+      HtmlElementUtil.appendTextNode(td, tmp);
       for (let i = 0; i < character.voiceActors.length; ++i) {
         if (i > 0) {
-          tmp += ', ';
+          HtmlElementUtil.appendTextNode(td, ',');
         }
-        const cv = this.firestore.getDataById(FsCollectionName.VoiceActors, character.voiceActors[i]) as FsVoiceActor;
-        tmp += cv ? cv.name : 'n.a.';
+        const cv = this.firestore.getDataById(FsCollectionName.VoiceActors, character.voiceActors[i]);
+        if (cv) {
+          HtmlElementUtil.appendTextAnchor(td, cv.name, `main/list-character/text&${cv.name}`);
+        }
       }
       if (character.voiceActors.length >= 2) {
-        tmp += ']';
+        HtmlElementUtil.appendTextNode(td, ']');
       }
-      result += tmp;
     }
 
     // Illustrator.
@@ -588,28 +601,25 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
       if (character.illustrators.length >= 2) {
         tmp += '[';
       }
+      HtmlElementUtil.appendTextNode(td, tmp);
       for (let i = 0; i < character.illustrators.length; ++i) {
         if (i > 0) {
-          tmp += ', ';
+          HtmlElementUtil.appendTextNode(td, ',');
         }
-        const illustrator = this.firestore.getDataById(
-          FsCollectionName.Illustrators,
-          character.illustrators[i]
-        ) as FsIllustrator;
-        tmp += illustrator ? illustrator.name : 'n.a.';
+        const illustrator = this.firestore.getDataById(FsCollectionName.Illustrators, character.illustrators[i]);
+        if (illustrator) {
+          HtmlElementUtil.appendTextAnchor(td, illustrator.name, `main/list-character/text&${illustrator.name}`);
+        }
       }
       if (character.illustrators.length >= 2) {
-        tmp += ']';
+        HtmlElementUtil.appendTextNode(td, ']');
       }
-      result += tmp;
     }
 
     if (character.implementedDate) {
       let tmp = `, 実装日: ${this.firestore.convTimestampToDate(character.implementedDate).toLocaleDateString()}`;
-      result += tmp;
+      HtmlElementUtil.appendTextNode(td, tmp);
     }
-
-    return result;
   }
 
   private makeMotifWeaponAndFacilityText(character: FsCharacter): string {
@@ -706,10 +716,7 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
       }
 
       const tagName = this.firestore.getDataById(FsCollectionName.CharacterTags, ids[i]).name;
-      const anchor = document.createElement('a');
-      anchor.appendChild(document.createTextNode(tagName));
-      anchor.href = `${AppInfo.baseUrlProd}/main/list-character/${tagName}`;
-      td.appendChild(anchor);
+      HtmlElementUtil.appendTextAnchor(td, tagName, `main/list-character/tag&${tagName}`);
     }
   }
 

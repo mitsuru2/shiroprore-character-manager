@@ -28,6 +28,7 @@ import {
 } from 'src/app/services/firestore-data/firestore-document.interface';
 import { SpinnerService } from '../../services/spinner/spinner.service';
 import { UserAuthService } from '../../services/user-auth/user-auth.service';
+import { HtmlElementUtil } from '../../utils/html-element-util/html-element-util.class';
 import { sleep } from '../../utils/sleep/sleep.utility';
 import { NewCharacterFormComponent } from '../../views/new-character-form/new-character-form.component';
 import {
@@ -402,7 +403,7 @@ export class CharacterComponent implements OnInit, AfterViewInit {
     td.textContent = 'ＣＶ';
     this.setTdStyle(td);
     td = tr.insertCell();
-    td.textContent = this.makeVoicActorText(this.character.voiceActors);
+    this.makeTextLinkFromIds(td, this.character.voiceActors, FsCollectionName.VoiceActors);
     this.setTdStyle(td);
 
     // 8th row: Illustrator.
@@ -411,7 +412,7 @@ export class CharacterComponent implements OnInit, AfterViewInit {
     td.textContent = 'イラスト';
     this.setTdStyle(td);
     td = tr.insertCell();
-    td.textContent = this.makeIllustratorText(this.character.illustrators);
+    this.makeTextLinkFromIds(td, this.character.illustrators, FsCollectionName.Illustrators);
     this.setTdStyle(td);
 
     // 9th row: Motif weapon.
@@ -566,14 +567,11 @@ export class CharacterComponent implements OnInit, AfterViewInit {
 
     for (let i = 0; i < ids.length; ++i) {
       if (i > 0) {
-        td.appendChild(document.createTextNode(', '));
+        HtmlElementUtil.appendTextNode(td, ', ');
       }
 
       const tagName = this.firestore.getDataById(FsCollectionName.CharacterTags, ids[i]).name;
-      const anchor = document.createElement('a');
-      anchor.appendChild(document.createTextNode(tagName));
-      anchor.href = `${AppInfo.baseUrlProd}/main/list-character/${tagName}`;
-      td.appendChild(anchor);
+      HtmlElementUtil.appendTextAnchor(td, tagName, `main/list-character/tag&${tagName}`);
     }
   }
 
@@ -595,6 +593,27 @@ export class CharacterComponent implements OnInit, AfterViewInit {
     }
 
     return result;
+  }
+
+  private makeTextLinkFromIds(
+    td: HTMLTableCellElement,
+    ids: string[],
+    collectionName: FsCollectionName,
+    separator: string = ', '
+  ) {
+    if (ids.length === 0) {
+      HtmlElementUtil.appendTextNode(td, 'n.a.');
+    } else {
+      for (let i = 0; i < ids.length; ++i) {
+        const item = this.firestore.getDataById(collectionName, ids[i]).name;
+        if (item !== '') {
+          if (i > 0) {
+            HtmlElementUtil.appendTextNode(td, separator);
+          }
+          HtmlElementUtil.appendTextAnchor(td, item, `main/list-character/text&${item}`);
+        }
+      }
+    }
   }
 
   private makeImplementedDateText(timestamp: any): string {
