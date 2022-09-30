@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 // eslint-disable-next-line import/no-named-as-default
-import { includes } from 'cypress/types/lodash';
 import { Dexie, Table } from 'dexie';
 import { ErrorCode } from '../error-handler/error-code.enum';
 import { FsCollectionName } from './firestore-collection-name.enum';

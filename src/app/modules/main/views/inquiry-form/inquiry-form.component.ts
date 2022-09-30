@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { NGXLogger } from 'ngx-logger';
 import { ConfirmationService } from 'primeng/api';
 import { CloudStorageService } from 'src/app/services/cloud-storage/cloud-storage.service';
@@ -12,7 +12,7 @@ import { InquiryFormData } from './inquiry-form.interface';
   templateUrl: './inquiry-form.component.html',
   styleUrls: ['./inquiry-form.component.scss'],
 })
-export class InquiryFormComponent implements OnInit {
+export class InquiryFormComponent /*implements OnInit*/ {
   private readonly className = 'InquiryFormComponent';
 
   inquiryData = new InquiryFormData();
@@ -29,7 +29,7 @@ export class InquiryFormComponent implements OnInit {
     private errorHandler: ErrorHandlerService
   ) {}
 
-  ngOnInit(): void {}
+  // ngOnInit(): void {}
 
   async onOkClick() {
     // Check user login.

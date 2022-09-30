@@ -14,9 +14,7 @@ import {
   FsFacility,
   FsFacilityType,
   FsGeographType,
-  FsIllustrator,
   FsRegion,
-  FsVoiceActor,
   FsWeapon,
   FsWeaponType,
 } from 'src/app/services/firestore-data/firestore-document.interface';

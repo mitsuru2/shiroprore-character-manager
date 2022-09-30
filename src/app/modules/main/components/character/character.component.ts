@@ -2,7 +2,6 @@ import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NGXLogger } from 'ngx-logger';
 import { ConfirmationService } from 'primeng/api';
-import { AppInfo } from 'src/app/app-info.enum';
 import { CsCharacterImageTypeMax, csCharacterImageTypes } from 'src/app/services/cloud-storage/cloud-storage.interface';
 import { CloudStorageService } from 'src/app/services/cloud-storage/cloud-storage.service';
 import { ErrorCode } from 'src/app/services/error-handler/error-code.enum';

@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { NGXLogger } from 'ngx-logger';
 import { FsCollectionName } from 'src/app/services/firestore-data/firestore-collection-name.enum';
 import { FirestoreDataService } from 'src/app/services/firestore-data/firestore-data.service';
@@ -21,7 +21,7 @@ import { CharacterSortSettings } from '../../views/character-sort-settings-form/
   templateUrl: './list-character-ownership.component.html',
   styleUrls: ['./list-character-ownership.component.scss'],
 })
-export class ListCharacterOwnershipComponent implements OnInit {
+export class ListCharacterOwnershipComponent /*implements OnInit*/ {
   private readonly className = 'ListCharacterOwnershipComponent';
 
   /** Filter settings form. */
@@ -98,7 +98,7 @@ export class ListCharacterOwnershipComponent implements OnInit {
     this.updateOwnershipStatuses();
   }
 
-  ngOnInit(): void {}
+  // ngOnInit(): void {}
 
   onFilterButtonClick() {
     this.filterSettingsCopy = { ...this.filterSettings };
