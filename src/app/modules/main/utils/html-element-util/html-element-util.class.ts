@@ -5,7 +5,7 @@ export class HtmlElementUtil {
     const isFullUrl = url.includes('://');
 
     if (!isFullUrl) {
-      url = `${AppInfo.baseUrlDev}/${url}`;
+      url = `${AppInfo.baseUrlProd}/${url}`;
     }
 
     const anchor = document.createElement('a');
