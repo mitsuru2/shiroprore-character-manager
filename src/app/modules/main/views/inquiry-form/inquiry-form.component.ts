@@ -32,11 +32,12 @@ export class InquiryFormComponent /*implements OnInit*/ {
   // ngOnInit(): void {}
 
   async onOkClick() {
-    // Check user login.
-    if (!this.userAuth.signedIn) {
-      this.notifyUserNotSignedIn();
-      return;
-    }
+    // Anyone can post the inquiry.
+    // // Check user login.
+    // if (!this.userAuth.signedIn) {
+    //   this.notifyUserNotSignedIn();
+    //   return;
+    // }
 
     this.spinner.show();
 
