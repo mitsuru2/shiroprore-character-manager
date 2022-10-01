@@ -1,6 +1,7 @@
 export enum FsCollectionName {
   Abilities = 'Abilities',
   AbilityTypes = 'AbilityTypes',
+  Announces = 'Announces',
   CharacterTags = 'CharacterTags',
   CharacterTypes = 'CharacterTypes',
   Characters = 'Characters',

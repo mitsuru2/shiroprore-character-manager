@@ -1,0 +1,14 @@
+.announce {
+  padding-left: 1rem;
+  margin: 0;
+  font-size: small;
+  color: var(--primary-color);
+  background-color: lightyellow;
+}
+
+@media screen and (max-width: 959px) {
+  .announce {
+    padding-left: 0.2rem;
+    font-size: xx-small;
+  }
+}
