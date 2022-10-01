@@ -13,3 +13,9 @@ td {
 .short-col {
   width: 200px;
 }
+
+@media screen and (max-width: 959px) {
+  .short-col {
+    width: 30%;
+  }
+}
