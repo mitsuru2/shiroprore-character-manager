@@ -1,0 +1,15 @@
+table {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+}
+
+td {
+  border: solid;
+  border-color: var(--primary-color);
+  border-width: thin;
+}
+
+.short-col {
+  width: 200px;
+}
