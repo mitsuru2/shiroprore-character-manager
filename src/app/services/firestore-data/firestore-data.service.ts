@@ -176,6 +176,20 @@ export class FirestoreDataService {
     return tmp;
   }
 
+  getDataByIds(name: FsCollectionName, ids: string[]): FsDocumentBase[] {
+    // const location = `${this.className}.getDataById()`;
+    // this.logger.trace(location, { name: name, id: id });
+
+    let result: FsDocumentBase[] = [];
+
+    for (let i = 0; i < ids.length; ++i) {
+      let tmp = this.getDataById(name, ids[i]);
+      result.push(tmp);
+    }
+
+    return result;
+  }
+
   /**
    * It adds new data to the specified data collection.
    * And it returns document ID.

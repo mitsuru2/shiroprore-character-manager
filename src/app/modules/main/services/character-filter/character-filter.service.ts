@@ -12,7 +12,10 @@ import {
   MapCellType,
 } from 'src/app/services/firestore-data/firestore-document.interface';
 import { TextSearch, TextSearchResult } from '../../utils/text-search/text-search.class';
-import { CharacterFilterSettings } from '../../views/character-filter-settings-form/character-filter-settings-form.interface';
+import {
+  CharacterFilterSettings,
+  CharacterTypeFilterType,
+} from '../../views/character-filter-settings-form/character-filter-settings-form.interface';
 import { CharacterSortSettings } from '../../views/character-sort-settings-form/character-sort-settings-form.interface';
 import { UserAuthService } from '../user-auth/user-auth.service';
 
@@ -93,6 +96,17 @@ export class CharacterFilterService {
           if (this.userAuth.userData.characters.includes(character.id)) {
             continue;
           }
+        }
+      }
+
+      // Character GACHA type.
+      if (filter.characterTypes.length === 0) {
+        // Do nothing. Go to next filter.
+      } else {
+        // Calc character GACHA type.
+        const type = this.calcCharacterGachaType(character);
+        if (!filter.characterTypes.includes(type)) {
+          continue;
         }
       }
 
@@ -243,6 +257,48 @@ export class CharacterFilterService {
       this.filteredIndexes.push(i);
       this.filteredIds.push(character.id);
     }
+  }
+
+  private calcCharacterGachaType(character: FsCharacter): CharacterTypeFilterType {
+    // Season limited characters.
+    if (
+      character.name.includes('[正月]') ||
+      character.name.includes('[バレンタイン]') ||
+      character.name.includes('[学園]') ||
+      character.name.includes('[端午]') ||
+      character.name.includes('[花嫁衣装]') ||
+      character.name.includes('[夏]') ||
+      character.name.includes('[肝試し]') ||
+      character.name.includes('[お月見]') ||
+      character.name.includes('[ハロウィン]') ||
+      character.name.includes('[聖夜]')
+    ) {
+      return 'season';
+    }
+
+    // Kenran characters.
+    if (character.name.includes('[絢爛]')) {
+      return 'kenran';
+    }
+
+    // Ura characters.
+    if (character.name.includes('[裏]')) {
+      return 'ura';
+    }
+
+    // Others.
+    // --> Hell, Collaboration, DMM, Kabuto-musume.
+    const characterType = this.firestore.getDataById(FsCollectionName.CharacterTypes, character.type);
+    if (characterType.name !== '城娘') {
+      return 'others';
+    }
+    const geographTypes = this.firestore.getDataByIds(FsCollectionName.GeographTypes, character.geographTypes);
+    if (geographTypes.find((item) => item.name === '地獄')) {
+      return 'others';
+    }
+
+    // Normal characters.
+    return 'normal';
   }
 
   private extractTokenTypesFromCharacter(character: FsCharacter): MapCellType[] {

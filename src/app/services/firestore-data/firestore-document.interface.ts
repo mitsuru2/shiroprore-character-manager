@@ -126,6 +126,8 @@ export class FsCharacter extends FsDocumentBase {
 
   tags: string[] = [];
 
+  internalTags: string[] = []; // Tags which is not shown on the display. It is used for filtering.
+
   implementedDate?: Timestamp;
 }
 
