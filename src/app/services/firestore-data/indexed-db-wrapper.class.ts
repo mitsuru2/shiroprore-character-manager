@@ -5,6 +5,7 @@ import { ErrorCode } from '../error-handler/error-code.enum';
 import { FsCollectionName } from './firestore-collection-name.enum';
 import {
   FsAbility,
+  FsAnnounce,
   FsCharacter,
   FsCharacterTag,
   FsCharacterType,
@@ -45,6 +46,8 @@ export class IndexedDbWrapper extends Dexie {
 
   abilities!: Table<FsAbility, string>;
 
+  announces!: Table<FsAnnounce, string>;
+
   characterTags!: Table<FsCharacterTag, string>;
 
   characterTypes!: Table<FsCharacterType, string>;
@@ -72,8 +75,9 @@ export class IndexedDbWrapper extends Dexie {
   //
   constructor() {
     super(IndexedDbWrapper.dbName);
-    this.version(3).stores({
+    this.version(4).stores({
       abilities: 'id',
+      announces: 'id',
       characterTags: 'id',
       characterTypes: 'id',
       characters: 'id',
@@ -94,6 +98,9 @@ export class IndexedDbWrapper extends Dexie {
 
     if (name === FsCollectionName.Abilities) {
       await indexedDbWrapper.abilities.bulkPut(data as FsAbility[]);
+      await indexedDbWrapper.timeStamps.put({ name: name, timestamp: timestamp });
+    } else if (name === FsCollectionName.Announces) {
+      await indexedDbWrapper.announces.bulkPut(data as FsAnnounce[]);
       await indexedDbWrapper.timeStamps.put({ name: name, timestamp: timestamp });
     } else if (name === FsCollectionName.CharacterTags) {
       await indexedDbWrapper.characterTags.bulkPut(data as FsCharacterTag[]);
@@ -139,6 +146,8 @@ export class IndexedDbWrapper extends Dexie {
 
     if (name === FsCollectionName.Abilities) {
       result = await indexedDbWrapper.abilities.toArray();
+    } else if (name === FsCollectionName.Announces) {
+      result = await indexedDbWrapper.announces.toArray();
     } else if (name === FsCollectionName.CharacterTags) {
       result = await indexedDbWrapper.characterTags.toArray();
     } else if (name === FsCollectionName.CharacterTypes) {

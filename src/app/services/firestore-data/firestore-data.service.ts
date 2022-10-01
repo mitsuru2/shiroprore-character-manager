@@ -26,6 +26,7 @@ import {
   FsUser,
   MapCellType,
   FsVersion,
+  FsAnnounce,
 } from './firestore-document.interface';
 import { FirestoreCollectionWrapper } from './firestore-collection-wrapper.class';
 import { FirestoreCollectionDummy } from './firestore-collection-dummy.class';
@@ -57,6 +58,7 @@ export class FirestoreDataService {
   collections: { [key in FsCollectionName]: FirestoreCollectionWrapper<any> | FirestoreCollectionDummy<any> } = {
     [FsCollectionName.Abilities]:         new FirestoreCollectionWrapper<FsAbility>          (this.fs, FsCollectionName.Abilities), // eslint-disable-line
     [FsCollectionName.AbilityTypes]:      new FirestoreCollectionDummy<FsAbilityType>        (         FsCollectionName.AbilityTypes), // eslint-disable-line
+    [FsCollectionName.Announces]:         new FirestoreCollectionWrapper<FsAnnounce>         (this.fs, FsCollectionName.Announces), // eslint-disable-line
     [FsCollectionName.CharacterTags]:     new FirestoreCollectionWrapper<FsCharacterTag>     (this.fs, FsCollectionName.CharacterTags), // eslint-disable-line
     [FsCollectionName.CharacterTypes]:    new FirestoreCollectionWrapper<FsCharacterType>    (this.fs, FsCollectionName.CharacterTypes), // eslint-disable-line
     [FsCollectionName.Characters]:        new FirestoreCollectionWrapper<FsCharacter>        (this.fs, FsCollectionName.Characters), // eslint-disable-line
@@ -100,6 +102,7 @@ export class FirestoreDataService {
     await Promise.all([
       this.load(FsCollectionName.Abilities),
       this.load(FsCollectionName.AbilityTypes),
+      this.load(FsCollectionName.Announces),
       this.load(FsCollectionName.CharacterTags),
       this.load(FsCollectionName.CharacterTypes),
       this.load(FsCollectionName.Characters),

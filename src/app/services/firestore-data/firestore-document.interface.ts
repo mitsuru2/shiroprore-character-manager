@@ -1,4 +1,5 @@
 import { Timestamp } from '@angular/fire/firestore';
+import { fsAbilityTypesData } from './firestore-collection-dummy.class';
 
 /**
  * Base data types.
@@ -63,6 +64,10 @@ export class FsAbilityType extends FsDocumentBaseWithOrder {
     super(id, name, order);
     this.isKeiryaku = isKeiryaku;
   }
+}
+
+export class FsAnnounce extends FsDocumentBase {
+  isActive: boolean = false;
 }
 
 export class FsCharacterTag extends FsDocumentBase {}
