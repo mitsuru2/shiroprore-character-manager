@@ -75,7 +75,7 @@ export class IndexedDbWrapper extends Dexie {
   //
   constructor() {
     super(IndexedDbWrapper.dbName);
-    this.version(4).stores({
+    this.version(5).stores({
       abilities: 'id',
       announces: 'id',
       characterTags: 'id',

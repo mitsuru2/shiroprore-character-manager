@@ -260,6 +260,9 @@ export class CharacterFilterService {
   }
 
   private calcCharacterGachaType(character: FsCharacter): CharacterTypeFilterType {
+    const present = 'wOLpjxD8RGtcIfFN2Ss8';
+    const specialPaidPack = 'uZsmpYs392nTCcwvM6fk';
+
     // Season limited characters.
     if (
       character.name.includes('[正月]') ||
@@ -287,7 +290,7 @@ export class CharacterFilterService {
     }
 
     // Others.
-    // --> Hell, Collaboration, DMM, Kabuto-musume.
+    // --> Hell, Collaboration, DMM, Kabuto-musume, present or special paid pack.
     const characterType = this.firestore.getDataById(FsCollectionName.CharacterTypes, character.type);
     if (characterType.name !== '城娘') {
       return 'others';
@@ -295,6 +298,11 @@ export class CharacterFilterService {
     const geographTypes = this.firestore.getDataByIds(FsCollectionName.GeographTypes, character.geographTypes);
     if (geographTypes.find((item) => item.name === '地獄')) {
       return 'others';
+    }
+    if (character.internalTags.length > 0) {
+      if (character.internalTags.includes(present) || character.internalTags.includes(specialPaidPack)) {
+        return 'others';
+      }
     }
 
     // Normal characters.
