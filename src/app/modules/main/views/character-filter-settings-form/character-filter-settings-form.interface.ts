@@ -7,6 +7,15 @@ export const CharacterOwnershipFilterTypeLabels: { label: string; value: Charact
   { label: '未所持', value: 'notHasOnly' },
 ];
 
+export type CharacterTypeFilterType = 'normal' | 'season' | 'kenran' | 'ura' | 'others';
+export const CharacterTypeFilterTypeLabels: { label: string; value: CharacterTypeFilterType }[] = [
+  { label: '通常', value: 'normal' },
+  { label: '季節限定', value: 'season' },
+  { label: '絢爛', value: 'kenran' },
+  { label: '裏', value: 'ura' },
+  { label: 'その他限定', value: 'others' },
+];
+
 export type CharacterFilterOptionOthersType =
   | 'ownershipAbility'
   | 'teamAbility'
@@ -27,6 +36,8 @@ export const CharacterFilterOptionOthersLabels: { label: string; value: Characte
 
 export class CharacterFilterSettings {
   ownershipFilterType: CharacterOwnershipFilterType = 'all';
+
+  characterTypes: CharacterTypeFilterType[] = [];
 
   rarerities: number[] = [];
 
