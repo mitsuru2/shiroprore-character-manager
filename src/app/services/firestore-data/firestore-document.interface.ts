@@ -1,5 +1,4 @@
 import { Timestamp } from '@angular/fire/firestore';
-import { fsAbilityTypesData } from './firestore-collection-dummy.class';
 
 /**
  * Base data types.
