@@ -305,10 +305,15 @@ export class FirestoreDataService {
     });
   }
 
-  async waitInit() {
+  async waitInit(): Promise<void> {
+    const location = `${this.className}.waitInit()`;
+
     while (!this.loaded) {
-      await sleep(100);
+      await sleep(200);
     }
+    this.logger.info(location, 'Complete.');
+
+    return;
   }
 
   convTimestampToDate(value: any): Date {

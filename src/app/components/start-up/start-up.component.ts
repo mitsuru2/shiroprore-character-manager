@@ -41,7 +41,8 @@ export class StartUpComponent implements OnInit {
     this.logger.info(location, 'Thumbnail images are loaded.');
 
     // Wait until that the firestore data loading will be finished.
-    this.waitFirestoreDataLoading();
+    await this.firestore.waitInit();
+    this.loaded = true;
   }
 
   goToMain() {

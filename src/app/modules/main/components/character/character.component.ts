@@ -162,7 +162,7 @@ export class CharacterComponent implements OnInit, AfterViewInit {
       // Load data if data loading is not finished.
       // Basically, this process is not needed. It's needed when user type URL directly.
       if (!this.firestore.loaded) {
-        await this.firestore.loadAll();
+        await this.firestore.waitInit();
       }
 
       // Get character information by character ID.

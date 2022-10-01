@@ -24,7 +24,7 @@ export class AnnounceComponent implements OnInit {
     const location = `${this.className}.ngOnInit()`;
     this.logger.trace(location);
 
-    await this.waitFirestoreDataLoading();
+    await this.firestore.waitInit();
 
     this.announce = this.firestore.getData(FsCollectionName.Announces)[0] as FsAnnounce;
   }
