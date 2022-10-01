@@ -17,6 +17,7 @@ import {
   CharacterFilterSettings,
   CharacterOwnershipFilterType,
   CharacterOwnershipFilterTypeLabels,
+  CharacterTypeFilterTypeLabels,
 } from './character-filter-settings-form.interface';
 
 @Component({
@@ -39,6 +40,9 @@ export class CharacterFilterSettingsFormComponent {
 
   /** User character ownership status type. */
   readonly ownershipStatusTypeItems = CharacterOwnershipFilterTypeLabels;
+
+  /** Character type. */
+  readonly characterTypeItems = CharacterTypeFilterTypeLabels;
 
   /** Rarerity */
   rarerityItems: number[];

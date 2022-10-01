@@ -18,6 +18,22 @@
   </div>
   <div class="formgrid grid">
     <div class="field col">
+      <label>キャラクタータイプ</label>
+      <div class="formgroup-inline">
+        <div *ngFor="let item of characterTypeItems" class="field-checkbox">
+          <p-checkbox
+            [inputId]="'CharacterFilterSettingsForm_CharacterTypeInput_' + item.value"
+            name="CharacterFilterSettingsForm_CharacterTypeInput"
+            [value]="item.value"
+            [(ngModel)]="filterSettings.characterTypes"
+          ></p-checkbox>
+          <label [for]="'CharacterFilterSettingsForm_RarerityInput_' + item.value">{{ item.label }}</label>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="formgrid grid">
+    <div class="field col">
       <label>レアリティ</label>
       <div class="formgroup-inline">
         <div *ngFor="let item of rarerityItems" class="field-checkbox">
