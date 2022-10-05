@@ -24,6 +24,7 @@ import { InputSwitchModule } from 'primeng/inputswitch';
 import { TabViewModule } from 'primeng/tabview';
 import { InputTextareaModule } from 'primeng/inputtextarea';
 import { CalendarModule } from 'primeng/calendar';
+import { FieldsetModule } from 'primeng/fieldset';
 
 /** Application components. */
 import { MainRoutingModule } from './main-routing.module';
@@ -126,6 +127,7 @@ const firebaseUiAuthConfig: firebaseui.auth.Config = {
     DialogModule,
     DividerModule,
     DropdownModule,
+    FieldsetModule,
     InputNumberModule,
     InputSwitchModule,
     InputTextModule,

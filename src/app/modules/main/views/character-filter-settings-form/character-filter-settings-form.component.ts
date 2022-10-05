@@ -10,10 +10,13 @@ import {
   FsWeaponType,
 } from 'src/app/services/firestore-data/firestore-document.interface';
 import { UserAuthService } from '../../services/user-auth/user-auth.service';
+import { AbilityAttr } from '../../utils/analyze-ability/ability-analyzer.class';
 import { isMobileMode } from '../../utils/window-size/window-size.util';
 import {
-  CharacterFilterOptionOthersLabels,
+  CharacterFilterOptionAbilityAttrLabels,
+  CharacterFilterOptionAbilityTypeLabels,
   CharacterFilterOptionOthersType,
+  CharacterFilterOptionTokenTypeLabels,
   CharacterFilterSettings,
   CharacterOwnershipFilterType,
   CharacterOwnershipFilterTypeLabels,
@@ -57,9 +60,17 @@ export class CharacterFilterSettingsFormComponent {
   regionItems: FsRegion[] = this.firestore.getData(FsCollectionName.Regions) as FsRegion[];
 
   /** Token type. */
-  othersItems = CharacterFilterOptionOthersLabels;
+  abilityTypeItems = CharacterFilterOptionAbilityTypeLabels;
 
-  selectedOtherOptions: CharacterFilterOptionOthersType[] = [];
+  abilityAttrItems = CharacterFilterOptionAbilityAttrLabels;
+
+  tokenTypeItems = CharacterFilterOptionTokenTypeLabels;
+
+  selectedAbilityTypeOptions: CharacterFilterOptionOthersType[] = [];
+
+  selectedAbilityAttrOptions: AbilityAttr[] = [];
+
+  selectedTokenTypeOptions: CharacterFilterOptionOthersType[] = [];
 
   /** Implemented date. */
   isMobile = isMobileMode();
@@ -127,26 +138,26 @@ export class CharacterFilterSettingsFormComponent {
     filter.defeatedTimeAbility = false;
     filter.tokenTypes = [];
 
-    for (let i = 0; i < this.selectedOtherOptions.length; ++i) {
-      const item = this.selectedOtherOptions[i];
+    // for (let i = 0; i < this.selectedOtherOptions.length; ++i) {
+    //   const item = this.selectedOtherOptions[i];
 
-      // Set option flags.
-      if (item === 'ownershipAbility') {
-        filter.ownershipAbility = true;
-      } else if (item === 'teamAbility') {
-        filter.teamAbility = true;
-      } else if (item === 'defeatedTimeAbility') {
-        filter.defeatedTimeAbility = true;
-      } else if (item === 'tokenRed') {
-        filter.tokenTypes.push('赤');
-      } else if (item === 'tokenBlue') {
-        filter.tokenTypes.push('青');
-      } else if (item === 'tokenRedAndBlue') {
-        filter.tokenTypes.push('赤青');
-      } else if (item === 'tokenWater') {
-        filter.tokenTypes.push('水上');
-      }
-    }
+    //   // Set option flags.
+    //   if (item === 'ownershipAbility') {
+    //     filter.ownershipAbility = true;
+    //   } else if (item === 'teamAbility') {
+    //     filter.teamAbility = true;
+    //   } else if (item === 'defeatedTimeAbility') {
+    //     filter.defeatedTimeAbility = true;
+    //   } else if (item === 'tokenRed') {
+    //     filter.tokenTypes.push('赤');
+    //   } else if (item === 'tokenBlue') {
+    //     filter.tokenTypes.push('青');
+    //   } else if (item === 'tokenRedAndBlue') {
+    //     filter.tokenTypes.push('赤青');
+    //   } else if (item === 'tokenWater') {
+    //     filter.tokenTypes.push('水上');
+    //   }
+    // }
   }
 
   //----------------------------------------------------------------------------
