@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { NGXLogger } from 'ngx-logger';
 import {
+  CharacterSortAbilityAttrTypes,
   CharacterSortDirectionTypes,
   CharacterSortIndexTypes,
   CharacterSortSettings,
@@ -26,6 +27,8 @@ export class CharacterSortSettingsFormComponent {
 
   /** Index type. */
   sortIndexTypes = CharacterSortIndexTypes;
+
+  sortIndexTypesDetail = CharacterSortAbilityAttrTypes;
 
   /** Sort directions. */
   sortDirectionTypes = CharacterSortDirectionTypes;

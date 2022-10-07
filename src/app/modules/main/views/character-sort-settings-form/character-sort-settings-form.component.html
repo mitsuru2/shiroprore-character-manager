@@ -15,6 +15,23 @@
       </div>
     </div>
   </div>
+  <div style="margin-bottom: 1rem">
+    <p-fieldset legend="特技/計略特性" [toggleable]="true" [collapsed]="true">
+      <div class="field col">
+        <div class="formgroup-inline">
+          <div *ngFor="let item of sortIndexTypesDetail" class="field-checkbox">
+            <p-radioButton
+              [inputId]="'CharacterSortSettingsForm_IndexTypeInput2_' + item.value"
+              name="CharacterSortSettingsForm_IndexTypeInput"
+              [value]="item.value"
+              [(ngModel)]="sortSettings.indexType"
+            ></p-radioButton>
+            <label [for]="'CharacterSortSettingsForm_IndexTypeInput2_' + item.value">{{ item.label }}</label>
+          </div>
+        </div>
+      </div>
+    </p-fieldset>
+  </div>
   <div class="formgrid grid">
     <div class="field col">
       <label>昇順/降順</label>

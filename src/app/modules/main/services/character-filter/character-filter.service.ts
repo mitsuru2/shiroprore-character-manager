@@ -559,10 +559,44 @@ export class CharacterFilterService {
           }
         }
       });
+    } else if (settings.indexType === 'AttackUpRate') {
+      characters.sort((a, b) => {
+        // Get ability attribute values.
+        const valueA = this.getMaxAbilityAttrValue(a, 'AttackUpRate');
+        const valueB = this.getMaxAbilityAttrValue(b, 'AttackUpRate');
+        // Sort.
+        if (settings.direction === 'asc') {
+          return valueA < valueB ? -1 : 1;
+        } else {
+          return valueB < valueA ? -1 : 1;
+        }
+      });
     } else {
       const error = new Error(ErrorCode.Unexpected);
       error.message = 'Implementation error. Please check character sort settings.';
       throw error;
     }
+  }
+
+  private getMaxAbilityAttrValue(character: FsCharacter, attrType: AbilityAttrType): number {
+    // Get all ability data of the character.
+    const abilityIds = Array.from(new Set(character.abilities.concat(character.abilitiesKai)));
+    const abilities = this.firestore.getDataByIds(FsCollectionName.Abilities, abilityIds) as FsAbility[];
+
+    // Scan abilities and find max attribute value.
+    let result = 0;
+    for (let i = 0; i < abilities.length; ++i) {
+      if (abilities[i].attributes.findIndex((item) => item.type === attrType) < 0) {
+        continue;
+      }
+      for (let j = 0; j < abilities[i].attributes.length; ++j) {
+        const attr = abilities[i].attributes[j];
+        if (attr.type === attrType && attr.value > result) {
+          result = attr.value;
+        }
+      }
+    }
+
+    return result;
   }
 }
