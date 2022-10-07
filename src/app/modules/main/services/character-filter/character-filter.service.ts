@@ -5,6 +5,7 @@ import { ErrorHandlerService } from 'src/app/services/error-handler/error-handle
 import { FsCollectionName } from 'src/app/services/firestore-data/firestore-collection-name.enum';
 import { FirestoreDataService } from 'src/app/services/firestore-data/firestore-data.service';
 import {
+  AbilityAttrType,
   FsAbility,
   FsAbilityType,
   FsCharacter,
@@ -76,6 +77,8 @@ export class CharacterFilterService {
   // Filter by filter settings.
   //
   private filterByFilterSettings(characters: FsCharacter[], filter: CharacterFilterSettings) {
+    const location = `${this.className}.filterByFilterSettings()`;
+
     this.filteredIndexes = [];
     this.filteredIds = [];
 
@@ -253,10 +256,37 @@ export class CharacterFilterService {
         }
       }
 
+      // Ability attribute types.
+      if (filter.abilityAttributes.length === 0) {
+        // Do nothing. Go to next filter.
+      } else {
+        if (!this.checkAbilityAttributes(character, filter.abilityAttributes)) {
+          continue;
+        }
+      }
+
       // Add character to the filtered index.
       this.filteredIndexes.push(i);
       this.filteredIds.push(character.id);
     }
+  }
+
+  private checkAbilityAttributes(character: FsCharacter, attributes: AbilityAttrType[]): boolean {
+    // Get abilities.
+    const tmp = character.abilities.concat(character.abilitiesKai);
+    const abilityIds = Array.from(new Set(tmp));
+    const abilities = this.firestore.getDataByIds(FsCollectionName.Abilities, abilityIds) as FsAbility[];
+
+    // Scan abilities.
+    for (let i = 0; i < abilities.length; ++i) {
+      for (let j = 0; j < attributes.length; ++j) {
+        if (abilities[i].attributes.findIndex((item) => item.type === attributes[j]) >= 0) {
+          return true;
+        }
+      }
+    }
+
+    return false;
   }
 
   private calcCharacterGachaType(character: FsCharacter): CharacterTypeFilterType {

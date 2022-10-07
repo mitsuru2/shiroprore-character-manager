@@ -60,6 +60,8 @@ export class CharacterFilterSettings {
 
   defeatedTimeAbility: boolean = false;
 
+  abilityAttributes: AbilityAttrType[] = [];
+
   startDate?: Date;
 
   endDate?: Date;
