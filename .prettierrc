@@ -1,6 +1,6 @@
 {
   "overrides": [
-    {"files": "*.ts", "options":{"printWidth":120}}
+    {"files": "*.ts", "options":{"printWidth":160}}
   ],
   "printWidth": 160,
   "singleQuote": true,

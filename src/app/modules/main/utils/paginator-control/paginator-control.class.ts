@@ -43,7 +43,7 @@ export class PaginatorControl {
   //
   constructor() {
     // Set page link num.
-    this._pageLinkNum = isMobileMode() ? 3 : 5;
+    this._pageLinkNum = isMobileMode() ? 3 : 9;
   }
 
   goToFirstPage() {

@@ -3,8 +3,13 @@ import { NGXLogger } from 'ngx-logger';
 import { ConfirmationService } from 'primeng/api';
 import { CloudStorageService } from 'src/app/services/cloud-storage/cloud-storage.service';
 import { ErrorHandlerService } from 'src/app/services/error-handler/error-handler.service';
+import { FsCollectionName } from 'src/app/services/firestore-data/firestore-collection-name.enum';
+import { FirestoreDataService } from 'src/app/services/firestore-data/firestore-data.service';
+import { AbilityAttrType, FsAbility } from 'src/app/services/firestore-data/firestore-document.interface';
 import { SpinnerService } from '../../services/spinner/spinner.service';
 import { UserAuthService } from '../../services/user-auth/user-auth.service';
+import { AbilityAnalyzer } from '../../utils/analyze-ability/ability-analyzer.class';
+import { sleep } from '../../utils/sleep/sleep.utility';
 import { InquiryFormData } from './inquiry-form.interface';
 
 @Component({
@@ -26,7 +31,8 @@ export class InquiryFormComponent /*implements OnInit*/ {
     private userAuth: UserAuthService,
     private spinner: SpinnerService,
     private confirmationDialog: ConfirmationService,
-    private errorHandler: ErrorHandlerService
+    private errorHandler: ErrorHandlerService,
+    private firestore: FirestoreDataService
   ) {}
 
   // ngOnInit(): void {}
@@ -62,6 +68,60 @@ export class InquiryFormComponent /*implements OnInit*/ {
     // Show message dialog.
     this.notifyInquirySubmitted();
   }
+
+  /**
+   * ONLY FOR DEVELOPMENT. DON'T DEPLOY!!!
+   * Scan all ability data and update ability attribute information.
+   */
+  // async updateAbilityAttributesAll(): Promise<void> {
+  //   const abilities = this.firestore.getData(FsCollectionName.Abilities) as FsAbility[];
+  //   const analyzer = new AbilityAnalyzer();
+
+  //   this.spinner.show();
+
+  //   for (let i = 0; i < abilities.length; ++i) {
+  //     const a = abilities[i];
+
+  //     // Analyze ability description text.
+  //     const attributes = analyzer.analyze(a.descriptions);
+
+  //     if (attributes.length > 0) {
+  //       this.inquiryData.body += `${i},${a.id},${a.name}\n`;
+
+  //       // Copy attribute information into the FsAbility data type.
+  //       for (let j = 0; j < attributes.length; ++j) {
+  //         const attr = attributes[j];
+  //         a.attributes.push({ type: attr.type, value: attr.value, isStepEffect: attr.isStepEffect });
+  //       }
+
+  //       // Update attribute field.
+  //       await this.firestore.updateField(FsCollectionName.Abilities, a.id, 'attributes', a.attributes);
+  //       await sleep(100);
+  //     }
+  //   }
+
+  //   this.spinner.hide();
+  // }
+
+  // printAbilityData() {
+  //   const abilities = this.firestore.getData(FsCollectionName.Abilities) as FsAbility[];
+
+  //   this.spinner.show();
+
+  //   this.inquiryData.body += '[\n';
+  //   for (let i = 0; i < abilities.length; ++i) {
+  //     let text = `'${abilities[i].name}',\n`;
+  //     this.inquiryData.body += text;
+  //   }
+  //   this.inquiryData.body += '];\n[\n';
+  //   for (let i = 0; i < abilities.length; ++i) {
+  //     let text = `'${abilities[i].descriptions.join('')}',\n`;
+  //     this.inquiryData.body += text;
+  //   }
+  //   this.inquiryData.body += '];\n';
+
+  //   this.spinner.hide();
+  // }
 
   //============================================================================
   // Private methods.

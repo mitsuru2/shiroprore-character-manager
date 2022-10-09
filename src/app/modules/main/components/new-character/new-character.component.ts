@@ -10,16 +10,14 @@ import {
 } from 'src/app/services/firestore-data/firestore-document.interface';
 import { FirestoreDataService } from 'src/app/services/firestore-data/firestore-data.service';
 import { FsCollectionName } from 'src/app/services/firestore-data/firestore-collection-name.enum';
-import {
-  FsAbilityForNewCharacterForm,
-  NewCharacterFormData,
-} from '../../views/new-character-form/new-character-form.interface';
+import { FsAbilityForNewCharacterForm, NewCharacterFormData } from '../../views/new-character-form/new-character-form.interface';
 import { csCharacterImageTypes } from 'src/app/services/cloud-storage/cloud-storage.interface';
 import { CloudStorageService } from 'src/app/services/cloud-storage/cloud-storage.service';
 import { ErrorHandlerService } from 'src/app/services/error-handler/error-handler.service';
 import { SpinnerService } from '../../services/spinner/spinner.service';
 import { NewCharacterFormComponent } from '../../views/new-character-form/new-character-form.component';
 import { Timestamp } from 'firebase/firestore';
+import { AbilityAnalyzer } from '../../utils/analyze-ability/ability-analyzer.class';
 
 @Component({
   selector: 'app-new-character',
@@ -217,9 +215,7 @@ export class NewCharacterComponent /*implements OnInit*/ {
       character.region = formContent.region.id;
       character.cost = formContent.cost;
       character.costKai = formContent.costKai;
-      character.implementedDate = formContent.implementedDate
-        ? Timestamp.fromDate(formContent.implementedDate)
-        : undefined;
+      character.implementedDate = formContent.implementedDate ? Timestamp.fromDate(formContent.implementedDate) : undefined;
     }
 
     return character;
@@ -258,6 +254,16 @@ export class NewCharacterComponent /*implements OnInit*/ {
       }
     }
     if (!isFound) {
+      // In case of new ability data, it analyzes ability attributes before uploading.
+      if (name === FsCollectionName.Abilities) {
+        const analyzer = new AbilityAnalyzer();
+        const attributes = analyzer.analyze((data as FsAbility).descriptions);
+        for (let i = 0; i < attributes.length; ++i) {
+          const attr = attributes[i];
+          (data as FsAbility).attributes.push({ type: attr.type, value: attr.value, isStepEffect: attr.isStepEffect });
+        }
+      }
+
       // Upload voice actor info.
       docId = await this.firestore.addData(name, data);
       this.logger.debug(location, 'new data', { docId: docId });

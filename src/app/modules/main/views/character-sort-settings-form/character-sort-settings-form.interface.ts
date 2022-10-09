@@ -1,4 +1,6 @@
-export type CharacterSortIndexType = 'identifier' | 'rarerity' | 'weaponType' | 'implementedDate';
+import { AbilityAttrType } from 'src/app/services/firestore-data/firestore-document.interface';
+
+export type CharacterSortIndexType = 'identifier' | 'rarerity' | 'weaponType' | 'implementedDate' | AbilityAttrType;
 export type CharacterSortDirectionType = 'asc' | 'desc'; // asc: 昇順, desc: 降順
 
 export const CharacterSortIndexTypes: { value: CharacterSortIndexType; label: string }[] = [
@@ -6,6 +8,11 @@ export const CharacterSortIndexTypes: { value: CharacterSortIndexType; label: st
   { value: 'rarerity', label: 'レアリティ' },
   { value: 'weaponType', label: '武器タイプ' },
   { value: 'implementedDate', label: '実装日' },
+];
+
+export const CharacterSortAbilityAttrTypes: { value: AbilityAttrType; label: string }[] = [
+  { value: 'AttackUpRate', label: '割合攻撃バフ' },
+  { value: 'AttackDownRate', label: '割合攻撃デバフ' },
 ];
 
 export const CharacterSortDirectionTypes: { value: CharacterSortDirectionType; label: string }[] = [

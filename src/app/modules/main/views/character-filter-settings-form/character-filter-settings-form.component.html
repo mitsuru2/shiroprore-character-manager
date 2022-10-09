@@ -98,22 +98,6 @@
   </div>
   <div class="formgrid grid">
     <div class="field col">
-      <label>その他</label>
-      <div class="formgroup-inline">
-        <div *ngFor="let item of othersItems" class="field-checkbox">
-          <p-checkbox
-            [inputId]="'CharacterFilterSettingsForm_OtherOptionInput_' + item.value"
-            name="CharacterFilterSettingsForm_OtherOptionInput"
-            [value]="item.value"
-            [(ngModel)]="selectedOtherOptions"
-          ></p-checkbox>
-          <label [for]="'CharacterFilterSettingsForm_OtherOptionInput_' + item.value">{{ item.label }}</label>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="formgrid grid">
-    <div class="field col">
       <label>実装日</label>
       <div class="calendar-container">
         <p-calendar
@@ -133,6 +117,52 @@
         ></p-calendar>
       </div>
     </div>
+  </div>
+  <div>
+    <p-fieldset legend="詳細設定" [toggleable]="true" [collapsed]="true">
+      <div class="field col">
+        <label>特技タイプ</label>
+        <div class="formgroup-inline">
+          <div *ngFor="let item of abilityTypeItems" class="field-checkbox">
+            <p-checkbox
+              [inputId]="'CharacterFilterSettingsForm_AbilityTypeInput_' + item.value"
+              name="CharacterFilterSettingsForm_AbilityTypeInput"
+              [value]="item.value"
+              [(ngModel)]="selectedAbilityTypeOptions"
+            ></p-checkbox>
+            <label [for]="'CharacterFilterSettingsForm_AbilityTypeInput_' + item.value">{{ item.label }}</label>
+          </div>
+        </div>
+      </div>
+      <div class="field col">
+        <label>特技/計略特性</label>
+        <div class="formgroup-inline">
+          <div *ngFor="let item of abilityAttrItems" class="field-checkbox">
+            <p-checkbox
+              [inputId]="'CharacterFilterSettingsForm_AbilityAttrInput_' + item.value"
+              name="CharacterFilterSettingsForm_AbilityAttrInput"
+              [value]="item.value"
+              [(ngModel)]="selectedAbilityAttrOptions"
+            ></p-checkbox>
+            <label [for]="'CharacterFilterSettingsForm_AbilityAttrInput_' + item.value">{{ item.label }}</label>
+          </div>
+        </div>
+      </div>
+      <div class="field col">
+        <label>伏兵配置マス</label>
+        <div class="formgroup-inline">
+          <div *ngFor="let item of tokenTypeItems" class="field-checkbox">
+            <p-checkbox
+              [inputId]="'CharacterFilterSettingsForm_TokenTypeInput_' + item.value"
+              name="CharacterFilterSettingsForm_TokenTypeInput"
+              [value]="item.value"
+              [(ngModel)]="selectedTokenTypeOptions"
+            ></p-checkbox>
+            <label [for]="'CharacterFilterSettingsForm_TokenTypeInput_' + item.value">{{ item.label }}</label>
+          </div>
+        </div>
+      </div>
+    </p-fieldset>
   </div>
 
   <!--------------------------------------------------------------------------->
