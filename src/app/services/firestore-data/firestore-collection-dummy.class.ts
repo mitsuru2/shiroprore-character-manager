@@ -1,12 +1,5 @@
 import { FsCollectionName } from './firestore-collection-name.enum';
-import {
-  FsAbilityType,
-  FsDocumentBase,
-  FsFacilityType,
-  FsGeographType,
-  FsRegion,
-  FsWeaponType,
-} from './firestore-document.interface';
+import { FsAbilityType, FsDocumentBase, FsFacilityType, FsGeographType, FsRegion, FsWeaponType } from './firestore-document.interface';
 
 export const fsAbilityTypesData: FsAbilityType[] = [
   new FsAbilityType('aaDP1APcLDh2z7ud3NTk', '特技', 0, false),
@@ -128,9 +121,10 @@ export class FirestoreCollectionDummy<T extends FsDocumentBase> {
    * Add new document to the collection.
    * ID will be assigned automatically.
    * @param data Target data.
+   * @param uid User ID. It's original user ID stored in Users collection as 'name' field.
    * @returns Promise<string>. New document ID.
    */
-  async add(data: T): Promise<string> {  // eslint-disable-line
+  async add(data: T, uid: string): Promise<string> {  // eslint-disable-line
     return '';
   }
 
@@ -140,18 +134,20 @@ export class FirestoreCollectionDummy<T extends FsDocumentBase> {
    * @param docId Document ID.
    * @param fieldName Target field name.
    * @param value Data to be pushed to the target list field.
+   * @param uid User ID. It's original user ID stored in Users collection as 'name' field.
    * @returns Document ID.
    */
-  async updateField(docId: string, fieldName: string, value: any): Promise<string> { // eslint-disable-line
+  async updateField(docId: string, fieldName: string, value: any, uid: string): Promise<string> { // eslint-disable-line
     return docId;
   }
 
   /**
    * Increment the 'count' field value.
    * @param docId Document ID.
+   * @param uid User ID. It's original user ID stored in Users collection as 'name' field.
    * @returns Counter value after increment.
    */
-  async incrementCounter(docId: string): Promise<number> { // eslint-disable-line
+  async incrementCounter(docId: string, uid: string): Promise<number> { // eslint-disable-line
     return 0;
   }
 

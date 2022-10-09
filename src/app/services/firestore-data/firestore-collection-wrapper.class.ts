@@ -89,9 +89,10 @@ export class FirestoreCollectionWrapper<T extends FsDocumentBase> {
    * Add new document to the collection.
    * ID will be assigned automatically.
    * @param data Target data.
+   * @param uid User ID. It's original user ID stored in Users collection as 'name' field.
    * @returns Promise<string>. New document ID.
    */
-  async add(data: T): Promise<string> {
+  async add(data: T, uid: string): Promise<string> {
     let docId = '';
 
     try {
@@ -112,6 +113,7 @@ export class FirestoreCollectionWrapper<T extends FsDocumentBase> {
         // Set 'createdAt' timestamp.
         data.createdAt = serverTimestamp() as Timestamp;
         data.updatedAt = data.createdAt;
+        data.updatedBy = uid;
 
         // Remove 'id' field from the target data.
         const tmp = { ...data } as any;
@@ -136,9 +138,10 @@ export class FirestoreCollectionWrapper<T extends FsDocumentBase> {
    * @param docId Document ID.
    * @param fieldName Field name of target document.
    * @param value Field value.
+   * @param uid User ID. It's original user ID stored in Users collection as 'name' field.
    * @returns Document ID.
    */
-  async updateField(docId: string, fieldName: string, value: any): Promise<string> {
+  async updateField(docId: string, fieldName: string, value: any, uid: string): Promise<string> {
     const location = `${this.className}.updateField()`;
 
     // Get document reference.
@@ -159,6 +162,7 @@ export class FirestoreCollectionWrapper<T extends FsDocumentBase> {
       // Update specified field.
       transaction.update(docRef, { [fieldName]: value });
       transaction.update(docRef, { updatedAt: serverTimestamp() });
+      transaction.update(docRef, { updatedBy: uid });
     });
 
     return docId;
@@ -167,9 +171,10 @@ export class FirestoreCollectionWrapper<T extends FsDocumentBase> {
   /**
    * Increment the 'count' field value.
    * @param docId Document ID.
+   * @param uid User ID. It's original user ID stored in Users collection as 'name' field.
    * @returns Counter value after increment.
    */
-  async incrementCounter(docId: string): Promise<number> {
+  async incrementCounter(docId: string, uid: string): Promise<number> {
     // Get document reference.
     const docRef = doc(this.fs, `${this.name}/${docId}`);
     let count = 0;
@@ -180,9 +185,7 @@ export class FirestoreCollectionWrapper<T extends FsDocumentBase> {
       // Throw error if the target document is not existing.
       const docBody = await transaction.get(docRef);
       if (!docBody.exists()) {
-        throw Error(
-          `FirestoreDataService.incrementCounter() | Document was not found. { path: ${this.name}/${docId} }`
-        );
+        throw Error(`FirestoreDataService.incrementCounter() | Document was not found. { path: ${this.name}/${docId} }`);
       }
 
       // Get counter value.
@@ -197,6 +200,7 @@ export class FirestoreCollectionWrapper<T extends FsDocumentBase> {
       // Update database.
       transaction.update(docRef, { count: count });
       transaction.update(docRef, { updatedAt: serverTimestamp() });
+      transaction.update(docRef, { updatedBy: uid });
     });
 
     return count;

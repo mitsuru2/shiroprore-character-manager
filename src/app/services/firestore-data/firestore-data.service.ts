@@ -33,6 +33,7 @@ import { FirestoreCollectionDummy } from './firestore-collection-dummy.class';
 import { ErrorHandlerService } from '../error-handler/error-handler.service';
 import { ErrorCode } from '../error-handler/error-code.enum';
 import { sleep } from 'src/app/modules/main/utils/sleep/sleep.utility';
+import { UserAuthService } from 'src/app/modules/main/services/user-auth/user-auth.service';
 
 //==============================================================================
 // Service class implementation.
@@ -52,6 +53,8 @@ import { sleep } from 'src/app/modules/main/utils/sleep/sleep.utility';
 })
 export class FirestoreDataService {
   private className = 'FirestoreDataService';
+
+  private userId = '';
 
   loaded = false;
 
@@ -201,15 +204,23 @@ export class FirestoreDataService {
     const location = `${this.className}.addData()`;
     this.logger.trace(location, { name: name, data: data });
 
-    const docId = await this.collections[name].add(data);
+    const docId = await this.collections[name].add(data, this.userId);
     return docId;
   }
 
+  /**
+   * It updates data field value of the existing data document.
+   * @param name Data collection name.
+   * @param docId Target data document ID.
+   * @param fieldName Target data field name.
+   * @param value Updating data.
+   * @returns The document ID.
+   */
   async updateField(name: FsCollectionName, docId: string, fieldName: string, value: any): Promise<string> {
     const location = `${this.className}.updateField()`;
     this.logger.trace(location, { name: name, docId: docId, field: fieldName, value: value });
 
-    const docIdResult = await this.collections[name].updateField(docId, fieldName, value);
+    const docIdResult = await this.collections[name].updateField(docId, fieldName, value, this.userId);
     return docIdResult;
   }
 
@@ -223,7 +234,7 @@ export class FirestoreDataService {
     const location = `${this.className}.incrementCounter()`;
     this.logger.trace(location, { name: name, docId: docId });
 
-    const count = await this.collections[name].incrementCounter(docId);
+    const count = await this.collections[name].incrementCounter(docId, this.userId);
     return count;
   }
 
@@ -231,6 +242,10 @@ export class FirestoreDataService {
     const location = `${this.className}.removeData()`;
     this.logger.trace(location, { name: name, docId: docId });
     await this.collections[name].delete(docId);
+  }
+
+  setUserId(userId: string) {
+    this.userId = userId;
   }
 
   sortByOrder(items: FsDocumentBaseWithOrder[], isDesc: boolean = false) {

@@ -54,12 +54,7 @@ export class UserAuthService {
    * @param firestore Firestore data service.
    * @param errorHandler Error handling service.
    */
-  constructor(
-    private logger: NGXLogger,
-    private afAuth: AngularFireAuth,
-    private firestore: FirestoreDataService,
-    private errorHandler: ErrorHandlerService
-  ) {
+  constructor(private logger: NGXLogger, private afAuth: AngularFireAuth, private firestore: FirestoreDataService, private errorHandler: ErrorHandlerService) {
     this.logger.trace(`new ${this.className}()`);
 
     this.startMonitoringAuthState();
@@ -173,6 +168,9 @@ export class UserAuthService {
         this._initialized = true;
         this._userId = user.uid;
         this._signedIn = true;
+
+        // Set user ID to the firestore data service.
+        this.firestore.setUserId(user.uid);
 
         // Load user data from Firestore.
         await this.loadUserData(user.uid);

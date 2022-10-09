@@ -12,6 +12,8 @@ export class FsDocumentBase {
 
   updatedAt: Timestamp = Timestamp.fromDate(new Date('2022-07-13T00:00:00+0900'));
 
+  updatedBy: string = '';
+
   constructor(id = '', name = '') {
     this.id = id;
     this.name = name;
