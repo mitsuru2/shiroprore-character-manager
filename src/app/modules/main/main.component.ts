@@ -43,13 +43,13 @@ export class MainComponent /*implements OnInit*/ {
       },
     },
     {
-      label: 'サポート',
+      label: 'サポート(new)',
       command: () => {
         this.router.navigateByUrl('/main/support');
       },
     },
     {
-      label: 'ツール説明(new)',
+      label: 'ツール説明',
       command: () => {
         this.router.navigateByUrl('/main/legal');
       },
@@ -80,13 +80,13 @@ export class MainComponent /*implements OnInit*/ {
           },
         },
         {
-          label: 'サポート',
+          label: 'サポート(new)',
           command: () => {
             this.router.navigateByUrl('/main/support');
           },
         },
         {
-          label: 'ツール説明(new)',
+          label: 'ツール説明',
           command: () => {
             this.router.navigateByUrl('/main/legal');
           },
