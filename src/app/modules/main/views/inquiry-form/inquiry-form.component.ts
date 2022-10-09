@@ -5,7 +5,7 @@ import { CloudStorageService } from 'src/app/services/cloud-storage/cloud-storag
 import { ErrorHandlerService } from 'src/app/services/error-handler/error-handler.service';
 import { FsCollectionName } from 'src/app/services/firestore-data/firestore-collection-name.enum';
 import { FirestoreDataService } from 'src/app/services/firestore-data/firestore-data.service';
-import { FsAbility } from 'src/app/services/firestore-data/firestore-document.interface';
+import { AbilityAttrType, FsAbility } from 'src/app/services/firestore-data/firestore-document.interface';
 import { SpinnerService } from '../../services/spinner/spinner.service';
 import { UserAuthService } from '../../services/user-auth/user-auth.service';
 import { AbilityAnalyzer } from '../../utils/analyze-ability/ability-analyzer.class';
@@ -91,7 +91,7 @@ export class InquiryFormComponent /*implements OnInit*/ {
   //       // Copy attribute information into the FsAbility data type.
   //       for (let j = 0; j < attributes.length; ++j) {
   //         const attr = attributes[j];
-  //         a.attributes.push({ type: attr.type, value: attr.value });
+  //         a.attributes.push({ type: attr.type, value: attr.value, isStepEffect: attr.isStepEffect });
   //       }
 
   //       // Update attribute field.
@@ -99,6 +99,26 @@ export class InquiryFormComponent /*implements OnInit*/ {
   //       await sleep(100);
   //     }
   //   }
+
+  //   this.spinner.hide();
+  // }
+
+  // printAbilityData() {
+  //   const abilities = this.firestore.getData(FsCollectionName.Abilities) as FsAbility[];
+
+  //   this.spinner.show();
+
+  //   this.inquiryData.body += '[\n';
+  //   for (let i = 0; i < abilities.length; ++i) {
+  //     let text = `'${abilities[i].name}',\n`;
+  //     this.inquiryData.body += text;
+  //   }
+  //   this.inquiryData.body += '];\n[\n';
+  //   for (let i = 0; i < abilities.length; ++i) {
+  //     let text = `'${abilities[i].descriptions.join('')}',\n`;
+  //     this.inquiryData.body += text;
+  //   }
+  //   this.inquiryData.body += '];\n';
 
   //   this.spinner.hide();
   // }

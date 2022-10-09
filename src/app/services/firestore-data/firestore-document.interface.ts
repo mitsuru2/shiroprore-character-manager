@@ -56,7 +56,7 @@ export class FsAbility extends FsDocumentBase {
 
   tokenLayouts: MapCellType[] = [];
 
-  attributes: { type: AbilityAttrType; value: number }[] = [];
+  attributes: { type: AbilityAttrType; value: number; isStepEffect: boolean }[] = [];
 }
 
 export class FsAbilityType extends FsDocumentBaseWithOrder {
