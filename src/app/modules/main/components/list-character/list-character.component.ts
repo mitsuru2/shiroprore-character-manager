@@ -523,10 +523,7 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     let result = '';
 
     // Get character type.
-    const characterType = this.firestore.getDataById(
-      FsCollectionName.CharacterTypes,
-      character.type
-    ) as FsCharacterType;
+    const characterType = this.firestore.getDataById(FsCollectionName.CharacterTypes, character.type) as FsCharacterType;
 
     // Weapon type.
     if (character.weaponType !== '') {
@@ -540,10 +537,7 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     if (character.geographTypes.length > 0) {
       let tmp = ', 地形タイプ: ';
       for (let i = 0; i < character.geographTypes.length; ++i) {
-        let gt = this.firestore.getDataById(
-          FsCollectionName.GeographTypes,
-          character.geographTypes[i]
-        ) as FsGeographType;
+        let gt = this.firestore.getDataById(FsCollectionName.GeographTypes, character.geographTypes[i]) as FsGeographType;
         if (i > 0) {
           tmp += '/';
         }
@@ -648,14 +642,8 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
       // Collect facility information.
       let motifFacilities: { facility: FsFacility; type: FsFacilityType }[] = [];
       for (let i = 0; i < character.motifFacilities.length; ++i) {
-        const facility = this.firestore.getDataById(
-          FsCollectionName.Facilities,
-          character.motifFacilities[i]
-        ) as FsFacility;
-        const facilityType = this.firestore.getDataById(
-          FsCollectionName.FacilityTypes,
-          facility.type
-        ) as FsFacilityType;
+        const facility = this.firestore.getDataById(FsCollectionName.Facilities, character.motifFacilities[i]) as FsFacility;
+        const facilityType = this.firestore.getDataById(FsCollectionName.FacilityTypes, facility.type) as FsFacilityType;
         motifFacilities.push({ facility: facility, type: facilityType });
       }
 
@@ -720,16 +708,17 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
 
   private makeAbilityInfoRows(t: HTMLTableElement, character: FsCharacter, type: FsAbilityType) {
     // Filter abilities and abilities(kai).
-    const abilities = this.abilities
-      .filter((item) => character.abilities.includes(item.id))
-      .filter((item) => item.type === type.id);
-    const abilitiesKai = this.abilities
-      .filter((item) => character.abilitiesKai.includes(item.id))
-      .filter((item) => item.type === type.id);
+    // const abilities = this.abilities.filter((item) => character.abilities.includes(item.id)).filter((item) => item.type === type.id);
+    // const abilitiesKai = this.abilities.filter((item) => character.abilitiesKai.includes(item.id)).filter((item) => item.type === type.id);
+    const abilities = (this.firestore.getDataByIds(FsCollectionName.Abilities, character.abilities) as FsAbility[]).filter((item) => item.type === type.id);
+    const abilitiesKai = (this.firestore.getDataByIds(FsCollectionName.Abilities, character.abilitiesKai) as FsAbility[]).filter(
+      (item) => item.type === type.id
+    );
 
-    // Sort ability list by updated date.
-    this.firestore.sortByTimestamp(abilities, 'updatedAt');
-    this.firestore.sortByTimestamp(abilitiesKai, 'updatedAt');
+    // 2022-10-09: Show abilities by order in character ability list.
+    // // Sort ability list by updated date.
+    // this.firestore.sortByTimestamp(abilities, 'updatedAt');
+    // this.firestore.sortByTimestamp(abilitiesKai, 'updatedAt');
 
     // CASE: No abilities. --> Do nothing.
     if (abilities.length === 0 && abilitiesKai.length === 0) {

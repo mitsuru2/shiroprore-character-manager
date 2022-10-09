@@ -12,6 +12,7 @@ export const CharacterSortIndexTypes: { value: CharacterSortIndexType; label: st
 
 export const CharacterSortAbilityAttrTypes: { value: AbilityAttrType; label: string }[] = [
   { value: 'AttackUpRate', label: '割合攻撃バフ' },
+  { value: 'AttackDownRate', label: '割合攻撃デバフ' },
 ];
 
 export const CharacterSortDirectionTypes: { value: CharacterSortDirectionType; label: string }[] = [

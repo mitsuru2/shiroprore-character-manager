@@ -13,11 +13,8 @@ import {
   MapCellType,
 } from 'src/app/services/firestore-data/firestore-document.interface';
 import { TextSearch, TextSearchResult } from '../../utils/text-search/text-search.class';
-import {
-  CharacterFilterSettings,
-  CharacterTypeFilterType,
-} from '../../views/character-filter-settings-form/character-filter-settings-form.interface';
-import { CharacterSortSettings } from '../../views/character-sort-settings-form/character-sort-settings-form.interface';
+import { CharacterFilterSettings, CharacterTypeFilterType } from '../../views/character-filter-settings-form/character-filter-settings-form.interface';
+import { CharacterSortDirectionType, CharacterSortSettings } from '../../views/character-sort-settings-form/character-sort-settings-form.interface';
 import { UserAuthService } from '../user-auth/user-auth.service';
 
 interface TextPropertyMap {
@@ -176,10 +173,7 @@ export class CharacterFilterService {
           }
         }
         for (let j = 0; j < character.abilitiesKai.length; ++j) {
-          const ability = this.firestore.getDataById(
-            FsCollectionName.Abilities,
-            character.abilitiesKai[j]
-          ) as FsAbility;
+          const ability = this.firestore.getDataById(FsCollectionName.Abilities, character.abilitiesKai[j]) as FsAbility;
           const abilityType = this.firestore.getDataById(FsCollectionName.AbilityTypes, ability.type) as FsAbilityType;
           if (abilityType.name === '所持特技') {
             ownershipAbilityFound = true;
@@ -415,10 +409,7 @@ export class CharacterFilterService {
       }
 
       // Remove index if the query text is not found.
-      if (
-        (queryTokens.length > 0 && !searchResult.allTokensFound) ||
-        (tagTokens.length > 0 && !matchResult.allTokensFound)
-      ) {
+      if ((queryTokens.length > 0 && !searchResult.allTokensFound) || (tagTokens.length > 0 && !matchResult.allTokensFound)) {
         this.filteredIndexes.splice(i, 1);
         this.filteredIds.splice(i, 1);
       }
@@ -560,22 +551,28 @@ export class CharacterFilterService {
         }
       });
     } else if (settings.indexType === 'AttackUpRate') {
-      characters.sort((a, b) => {
-        // Get ability attribute values.
-        const valueA = this.getMaxAbilityAttrValue(a, 'AttackUpRate');
-        const valueB = this.getMaxAbilityAttrValue(b, 'AttackUpRate');
-        // Sort.
-        if (settings.direction === 'asc') {
-          return valueA < valueB ? -1 : 1;
-        } else {
-          return valueB < valueA ? -1 : 1;
-        }
-      });
+      this.sortByAbilityAttrValue(characters, 'AttackUpRate', settings.direction);
+    } else if (settings.indexType === 'AttackDownRate') {
+      this.sortByAbilityAttrValue(characters, 'AttackDownRate', settings.direction);
     } else {
       const error = new Error(ErrorCode.Unexpected);
       error.message = 'Implementation error. Please check character sort settings.';
       throw error;
     }
+  }
+
+  private sortByAbilityAttrValue(characters: FsCharacter[], attrType: AbilityAttrType, direction: CharacterSortDirectionType) {
+    characters.sort((a, b) => {
+      // Get ability attribute values.
+      const valueA = this.getMaxAbilityAttrValue(a, attrType);
+      const valueB = this.getMaxAbilityAttrValue(b, attrType);
+      // Sort.
+      if (direction === 'asc') {
+        return valueA < valueB ? -1 : 1;
+      } else {
+        return valueB < valueA ? -1 : 1;
+      }
+    });
   }
 
   private getMaxAbilityAttrValue(character: FsCharacter, attrType: AbilityAttrType): number {
@@ -586,13 +583,41 @@ export class CharacterFilterService {
     // Scan abilities and find max attribute value.
     let result = 0;
     for (let i = 0; i < abilities.length; ++i) {
-      if (abilities[i].attributes.findIndex((item) => item.type === attrType) < 0) {
+      const ability = abilities[i];
+      if (ability.attributes.findIndex((item) => item.type === attrType) < 0) {
         continue;
       }
-      for (let j = 0; j < abilities[i].attributes.length; ++j) {
+      for (let j = 0; j < ability.attributes.length; ++j) {
         const attr = abilities[i].attributes[j];
-        if (attr.type === attrType && attr.value > result) {
-          result = attr.value;
+        if (attr.type === attrType) {
+          // Conpensate ability attribute value by characters rarerity.
+          let value = attr.value;
+          if (attr.isStepEffect) {
+            if (character.rarerity <= 1) {
+              value *= 3;
+            } else if (character.rarerity === 2) {
+              if (character.abilitiesKai.includes(ability.id)) {
+                value *= 4;
+              } else {
+                value *= 3;
+              }
+            } else if (character.rarerity === 3) {
+              value *= 4;
+            } else if (character.rarerity === 5) {
+              if (character.abilitiesKai.includes(ability.id)) {
+                value *= 5;
+              } else {
+                value *= 4;
+              }
+            } else {
+              value *= 5;
+            }
+          }
+
+          // Update max value if current attribute value is larger than previous max value.
+          if (value > result) {
+            result = value;
+          }
         }
       }
     }
