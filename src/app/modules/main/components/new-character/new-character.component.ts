@@ -17,7 +17,7 @@ import { ErrorHandlerService } from 'src/app/services/error-handler/error-handle
 import { SpinnerService } from '../../services/spinner/spinner.service';
 import { NewCharacterFormComponent } from '../../views/new-character-form/new-character-form.component';
 import { Timestamp } from 'firebase/firestore';
-import { AbilityAnalyzer } from '../../utils/analyze-ability/ability-analyzer.class';
+import { AbilityAnalyzer } from '../../utils/ability-analyzer/ability-analyzer.class';
 
 @Component({
   selector: 'app-new-character',

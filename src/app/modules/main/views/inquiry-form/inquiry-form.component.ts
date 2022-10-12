@@ -8,7 +8,7 @@ import { FirestoreDataService } from 'src/app/services/firestore-data/firestore-
 import { AbilityAttrType, FsAbility } from 'src/app/services/firestore-data/firestore-document.interface';
 import { SpinnerService } from '../../services/spinner/spinner.service';
 import { UserAuthService } from '../../services/user-auth/user-auth.service';
-import { AbilityAnalyzer } from '../../utils/analyze-ability/ability-analyzer.class';
+import { AbilityAnalyzer } from '../../utils/ability-analyzer/ability-analyzer.class';
 import { sleep } from '../../utils/sleep/sleep.utility';
 import { InquiryFormData } from './inquiry-form.interface';
 
