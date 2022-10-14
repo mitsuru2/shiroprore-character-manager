@@ -6,6 +6,7 @@ import { FsCollectionName } from 'src/app/services/firestore-data/firestore-coll
 import { FirestoreDataService } from 'src/app/services/firestore-data/firestore-data.service';
 import {
   AbilityAttrType,
+  AbilityAttrTypes,
   FsAbility,
   FsAbilityType,
   FsCharacter,
@@ -550,10 +551,8 @@ export class CharacterFilterService {
           }
         }
       });
-    } else if (settings.indexType === 'AttackUpRate') {
-      this.sortByAbilityAttrValue(characters, 'AttackUpRate', settings.direction);
-    } else if (settings.indexType === 'AttackDownRate') {
-      this.sortByAbilityAttrValue(characters, 'AttackDownRate', settings.direction);
+    } else if (AbilityAttrTypes.includes(settings.indexType)) {
+      this.sortByAbilityAttrValue(characters, settings.indexType, settings.direction);
     } else {
       const error = new Error(ErrorCode.Unexpected);
       error.message = 'Implementation error. Please check character sort settings.';

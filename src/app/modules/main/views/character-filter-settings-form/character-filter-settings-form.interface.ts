@@ -31,6 +31,7 @@ export const CharacterFilterOptionAbilityTypeLabels: { label: string; value: Cha
 ];
 export const CharacterFilterOptionAbilityAttrLabels: { label: string; value: AbilityAttrType }[] = [
   { label: '割合攻撃バフ', value: 'AttackUpRate' },
+  { label: '与ダメバフ', value: 'DamageUpRate' },
   { label: '割合攻撃デバフ', value: 'AttackDownRate' },
 ];
 export const CharacterFilterOptionTokenTypeLabels: { label: string; value: CharacterFilterOptionOthersType }[] = [

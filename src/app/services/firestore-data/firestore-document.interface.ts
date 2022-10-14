@@ -45,7 +45,8 @@ export class FsDocumentBaseWithCode extends FsDocumentBase {
  * Practical data types.
  */
 export type MapCellType = '赤' | '青' | '赤青' | '水上' | 'なし';
-export type AbilityAttrType = 'AttackUpRate' | 'AttackDownRate' | 'DamageUpRate' | 'TakenDamageDownRate';
+export const AbilityAttrTypes = ['AttackUpRate', 'AttackDownRate', 'DamageUpRate', 'TakenDamageDownRate'];
+export type AbilityAttrType = typeof AbilityAttrTypes[number]; // <-- Define union data type from string const array.
 
 export class FsAbility extends FsDocumentBase {
   type: string = '';
