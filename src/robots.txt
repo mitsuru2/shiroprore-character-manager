@@ -1,7 +1,4 @@
-User-agent: Googlebot
-Disallow: /nogooglebot/
-
 User-agent: *
-Allow: /
+Disallow: /main/
 
 Sitemap: https://shiroprore-character.web.app/sitemap.xml
