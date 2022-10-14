@@ -8,7 +8,7 @@ import { FirestoreDataService } from 'src/app/services/firestore-data/firestore-
 import { AbilityAttrType, FsAbility } from 'src/app/services/firestore-data/firestore-document.interface';
 import { SpinnerService } from '../../services/spinner/spinner.service';
 import { UserAuthService } from '../../services/user-auth/user-auth.service';
-import { AbilityAnalyzer } from '../../utils/ability-analyzer/ability-analyzer.class';
+import { AbilityAnalyzer, AbilityAttr } from '../../utils/ability-analyzer/ability-analyzer.class';
 import { sleep } from '../../utils/sleep/sleep.utility';
 import { InquiryFormData } from './inquiry-form.interface';
 
@@ -85,10 +85,12 @@ export class InquiryFormComponent /*implements OnInit*/ {
   //     // Analyze ability description text.
   //     const attributes = analyzer.analyze(a.descriptions);
 
-  //     if (attributes.length > 0) {
+  //     if (this.isAttrChanged(a.attributes, attributes)) {
+  //       // Debug print.
   //       this.inquiryData.body += `${i},${a.id},${a.name}\n`;
 
   //       // Copy attribute information into the FsAbility data type.
+  //       a.attributes = [];
   //       for (let j = 0; j < attributes.length; ++j) {
   //         const attr = attributes[j];
   //         a.attributes.push({ type: attr.type, value: attr.value, isStepEffect: attr.isStepEffect });
@@ -101,6 +103,26 @@ export class InquiryFormComponent /*implements OnInit*/ {
   //   }
 
   //   this.spinner.hide();
+  // }
+
+  // private isAttrChanged(org: { type: AbilityAttrType; value: number; isStepEffect: boolean }[], mod: AbilityAttr[]): boolean {
+  //   if (org.length !== mod.length) {
+  //     return true;
+  //   }
+
+  //   for (let i = 0; i < org.length; ++i) {
+  //     if (org[i].type !== mod[i].type) {
+  //       return true;
+  //     }
+  //     if (org[i].value !== mod[i].value) {
+  //       return true;
+  //     }
+  //     if (org[i].isStepEffect !== mod[i].isStepEffect) {
+  //       return true;
+  //     }
+  //   }
+
+  //   return false;
   // }
 
   // printAbilityData() {
@@ -119,6 +141,41 @@ export class InquiryFormComponent /*implements OnInit*/ {
   //     this.inquiryData.body += text;
   //   }
   //   this.inquiryData.body += '];\n';
+
+  //   this.spinner.hide();
+  // }
+
+  // printAbilityDataAsCsv() {
+  //   const abilities = this.firestore.getData(FsCollectionName.Abilities) as FsAbility[];
+  //   const analyzer = new AbilityAnalyzer();
+
+  //   this.spinner.show();
+
+  //   this.inquiryData.body = 'Name,Description,AttackUp,AttackDown,DamageUp\n';
+
+  //   for (let i = 0; i < abilities.length; ++i) {
+  //     const ability = abilities[i];
+  //     const desc = ability.descriptions.join('');
+  //     const attributes = analyzer.analyze(ability.descriptions);
+  //     let index = 0;
+
+  //     this.inquiryData.body += `${ability.name},${desc},`;
+  //     index = attributes.findIndex((item) => item.type === 'AttackUpRate');
+  //     if (index >= 0) {
+  //       this.inquiryData.body += `${attributes[index].value}(${attributes[index].isStepEffect})`;
+  //     }
+  //     this.inquiryData.body += ',';
+  //     index = attributes.findIndex((item) => item.type === 'AttackDownRate');
+  //     if (index >= 0) {
+  //       this.inquiryData.body += `${attributes[index].value}(${attributes[index].isStepEffect})`;
+  //     }
+  //     this.inquiryData.body += ',';
+  //     index = attributes.findIndex((item) => item.type === 'DamageUpRate');
+  //     if (index >= 0) {
+  //       this.inquiryData.body += `${attributes[index].value}(${attributes[index].isStepEffect})`;
+  //     }
+  //     this.inquiryData.body += '\n';
+  //   }
 
   //   this.spinner.hide();
   // }

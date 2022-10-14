@@ -2254,14 +2254,15 @@ describe('AnalyzeAbility', () => {
         console.log(`${abilityDescriptions[i]},${result[0].debug},${result[0].value},${result[0].isStepEffect}`)
       } else {
         let text = abilityDescriptions[i];
-        let index = text.indexOf("攻撃");
+        let index = text.indexOf("与ダメ");
         if (index >= 0) {
           text = text.slice(index);
           index = text.indexOf("%");
           if (index >= 0) {
             text = text.slice(index);
-            index = text.indexOf("低下");
-            if (index>= 0) {
+            index = text.indexOf("上昇");
+            const index2 = text.indexOf("倍");
+            if (index >= 0 || index2 >= 0) {
               console.log(abilityDescriptions[i]);
               cnt++;
             }

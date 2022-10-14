@@ -45,7 +45,7 @@ export class FsDocumentBaseWithCode extends FsDocumentBase {
  * Practical data types.
  */
 export type MapCellType = '赤' | '青' | '赤青' | '水上' | 'なし';
-export type AbilityAttrType = 'AttackUpFixed' | 'AttackUpRate' | 'AttackDownFixed' | 'AttackDownRate';
+export type AbilityAttrType = 'AttackUpRate' | 'AttackDownRate' | 'DamageUpRate' | 'TakenDamageDownRate';
 
 export class FsAbility extends FsDocumentBase {
   type: string = '';

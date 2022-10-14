@@ -61,7 +61,7 @@ export class AbilityAnalyzer {
     new AbilityAttrMatchPattern([/\d+秒間/g, /(敵|兜)の攻撃(が|を)(\d+)%と\d+低下/g], 'AttackDownRate', 3), /* 敵の攻撃が20%と20低下 *//* eslint-disable-line */
     new AbilityAttrMatchPattern([/\d+秒間/g, /(敵|兜)の攻撃(が|を)(\d+)%[^\d]+は\d+%低下/g], 'AttackDownRate', 3), /* 敵の攻撃が20%、妖怪は30%低下 *//* eslint-disable-line */
     new AbilityAttrMatchPattern([/\d+秒間/g, /(敵|兜)の攻撃(が|を)\d+%[^\d]+は(\d+)%低下/g], 'AttackDownRate', 3), /* eslint-disable-line */
-    new AbilityAttrMatchPattern([/\d+秒間/g, /ずつ/g, /(敵|兜)の攻撃と[^\d]+(が|を)(\d+)%低下/g], 'AttackDownRate', 3), /* 敵の攻撃と移動速度が20%低下 *//* eslint-disable-line */ 
+    new AbilityAttrMatchPattern([/\d+秒間/g, /ずつ/g, /(敵|兜)の攻撃と[^\d]+(が|を)(\d+)%低下/g], 'AttackDownRate', 3), /* 敵の攻撃と移動速度が20%低下 *//* eslint-disable-line */
     new AbilityAttrMatchPattern([/\d+秒間/g, /ずつ/g, /(敵|兜)の攻撃と[^\d]+(が|を)\d+%低下\((上限|最大)(\d+)%\)/g], 'AttackDownRate', 4), // eslint-disable-line
     new AbilityAttrMatchPattern([/\d+秒間/g, /(敵|兜)の攻撃と[^\d]+(が|を)(\d+)%と\d+低下/g], 'AttackDownRate', 3), /* 敵の攻撃と移動速度が20%と100低下 *//* eslint-disable-line */
     new AbilityAttrMatchPattern([/\d+秒間/g, /(敵|兜)の攻撃が(\d+)%[^\d]+が\d+%低下/g], 'AttackDownRate', 2), /* 敵の攻撃が20%、攻撃速度が10%低下 *//* eslint-disable-line */
@@ -76,6 +76,14 @@ export class AbilityAnalyzer {
     new AbilityAttrMatchPattern([/\d+秒間/g, /(敵|兜)の[^\d]+が\d+%?低下、?攻撃(が|を)(\d+)%低下/g], 'AttackDownRate', 3), /* 敵の移動速度が60%低下攻撃が20%低下 *//* eslint-disable-line */
     new AbilityAttrMatchPattern([/\d+秒間/g, /(敵|兜)の[^\d]+が\d+%?、?攻撃と[^\d]+(が|を)(\d+)%低下/g], 'AttackDownRate', 3), /* 敵の与ダメージが30%、攻撃と防御が20%低下 *//* eslint-disable-line */
     new AbilityAttrMatchPattern([/\d+秒間/g, /(敵|兜)の攻撃と[^\d]+(が|を)(\d+)%[^\d]+(が|を)\d+%?低下/g], 'AttackDownRate', 3), /* 敵の攻撃と防御が25%移動速度が25%低下 *//* eslint-disable-line */
+    //
+    // Damage up (percent)
+    //
+    new AbilityAttrMatchPattern([/\d+秒間/g, /ずつ/g, /(与ダメージ|与ダメ)が(\d+)%上昇/g], 'DamageUpRate', 2), /* 与ダメージが20%上昇 *//* eslint-disable-line */
+    new AbilityAttrMatchPattern([/\d+秒間/g, /ずつ/g, /(与ダメージ|与ダメ)が(\d+)倍/g], 'DamageUpRate', 2, 100, -100), /* 与ダメージが1.2倍 *//* eslint-disable-line */
+    new AbilityAttrMatchPattern([/\d+秒間/g, /ずつ/g, /(与ダメージ|与ダメ)が(\d+)%[^\d上昇低下]+が\d+%?上昇/g], 'DamageUpRate', 2), /* 与ダメージが20%防御が20上昇 *//* eslint-disable-line */
+    new AbilityAttrMatchPattern([/\d+秒間/g, /ずつ/g, /(与ダメージ|与ダメ)と[^\d上昇低下]+が(\d+)%上昇/g], 'DamageUpRate', 2), /* 与ダメージと防御が20%上昇 *//* eslint-disable-line */
+    new AbilityAttrMatchPattern([/\d+秒間/g, /ずつ/g, /(与ダメージ|与ダメ)が(\d+)%[^\d上昇低下]+が\d+%?[^\d上昇低下]+が\d+%?上昇/g], 'DamageUpRate', 2), /* 与ダメージが7%近接城娘の射程が10、遠隔城娘の攻撃が50上昇 *//* eslint-disable-line */
   ];
 
   analyze(descriptions: string[]): AbilityAttr[] {
