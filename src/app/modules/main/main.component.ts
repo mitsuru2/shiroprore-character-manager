@@ -43,7 +43,7 @@ export class MainComponent /*implements OnInit*/ {
       },
     },
     {
-      label: 'サポート(new)',
+      label: 'サポート',
       command: () => {
         this.router.navigateByUrl('/main/support');
       },
@@ -80,7 +80,7 @@ export class MainComponent /*implements OnInit*/ {
           },
         },
         {
-          label: 'サポート(new)',
+          label: 'サポート',
           command: () => {
             this.router.navigateByUrl('/main/support');
           },
