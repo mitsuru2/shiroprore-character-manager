@@ -280,6 +280,10 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     this.filterSettingsForm.onOkClick();
   }
 
+  onFilterSettingsClearButtonClick() {
+    this.filterSettingsForm.onClearClick();
+  }
+
   onFilterSettingsCancelButtonClick() {
     this.filterSettingsForm.onCancelClick();
   }

@@ -2,11 +2,7 @@ import { Component, ViewChild } from '@angular/core';
 import { NGXLogger } from 'ngx-logger';
 import { FsCollectionName } from 'src/app/services/firestore-data/firestore-collection-name.enum';
 import { FirestoreDataService } from 'src/app/services/firestore-data/firestore-data.service';
-import {
-  FsCharacter,
-  FsGeographType,
-  FsWeaponType,
-} from 'src/app/services/firestore-data/firestore-document.interface';
+import { FsCharacter, FsGeographType, FsWeaponType } from 'src/app/services/firestore-data/firestore-document.interface';
 import { CharacterFilterService } from '../../services/character-filter/character-filter.service';
 import { SpinnerService } from '../../services/spinner/spinner.service';
 import { UserAuthService } from '../../services/user-auth/user-auth.service';
@@ -176,6 +172,10 @@ export class ListCharacterOwnershipComponent /*implements OnInit*/ {
     this.filterSettingsForm.onOkClick();
   }
 
+  onFilterSettingsClearButtonClick() {
+    this.filterSettingsForm.onClearClick();
+  }
+
   onFilterSettingsCancelButtonClick() {
     this.filterSettingsForm.onCancelClick();
   }
@@ -200,12 +200,7 @@ export class ListCharacterOwnershipComponent /*implements OnInit*/ {
     this.updateUserData();
 
     // Upload updated user data.
-    await this.firestore.updateField(
-      FsCollectionName.Users,
-      this.userAuth.userData.id,
-      'characters',
-      this.userAuth.userData.characters
-    );
+    await this.firestore.updateField(FsCollectionName.Users, this.userAuth.userData.id, 'characters', this.userAuth.userData.characters);
 
     // Clear changed flag.
     this.changed = false;

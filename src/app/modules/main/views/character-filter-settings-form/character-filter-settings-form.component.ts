@@ -3,13 +3,7 @@ import { NGXLogger } from 'ngx-logger';
 import { ConfirmationService } from 'primeng/api';
 import { FsCollectionName } from 'src/app/services/firestore-data/firestore-collection-name.enum';
 import { FirestoreDataService } from 'src/app/services/firestore-data/firestore-data.service';
-import {
-  AbilityAttrType,
-  FsCharacterRarerityMax,
-  FsGeographType,
-  FsRegion,
-  FsWeaponType,
-} from 'src/app/services/firestore-data/firestore-document.interface';
+import { AbilityAttrType, FsCharacterRarerityMax, FsGeographType, FsRegion, FsWeaponType } from 'src/app/services/firestore-data/firestore-document.interface';
 import { UserAuthService } from '../../services/user-auth/user-auth.service';
 import { isMobileMode } from '../../utils/window-size/window-size.util';
 import {
@@ -119,6 +113,12 @@ export class CharacterFilterSettingsFormComponent {
     this.canceled.emit(false);
   }
 
+  onClearClick() {
+    const location = `${this.className}.onClearClick()`;
+    this.logger.trace(location);
+    this.clearSettings();
+  }
+
   onCancelClick() {
     const location = `${this.className}.onCancelClick()`;
     this.logger.trace(location);
@@ -185,5 +185,15 @@ export class CharacterFilterSettingsFormComponent {
         this.filterSettings.ownershipFilterType = 'all';
       },
     });
+  }
+
+  //----------------------------------------------------------------------------
+  // Others.
+  //
+  private clearSettings() {
+    this.filterSettings = new CharacterFilterSettings();
+    this.selectedAbilityTypeOptions = [];
+    this.selectedAbilityAttrOptions = [];
+    this.selectedTokenTypeOptions = [];
   }
 }
