@@ -2254,15 +2254,15 @@ describe('AnalyzeAbility', () => {
         console.log(`${abilityDescriptions[i]},${result[0].debug},${result[0].value},${result[0].isStepEffect}`)
       } else {
         let text = abilityDescriptions[i];
-        let index = text.indexOf("被ダメ");
+        let index = text.indexOf("再配置");
         if (index >= 0) {
           text = text.slice(index);
-          index = text.indexOf("%");
+          index = text.indexOf("時間");
           if (index >= 0) {
             text = text.slice(index);
-            index = text.indexOf("上昇");
-            const index2 = text.indexOf("倍");
-            if (index >= 0 || index2 >= 0) {
+            index = text.indexOf("%");
+            // const index2 = text.indexOf("倍");
+            if (index >= 0 /*|| index2 >= 0*/) {
               console.log(abilityDescriptions[i]);
               cnt++;
             }
@@ -2285,18 +2285,18 @@ describe('AnalyzeAbility', () => {
 
   //   let data: AbilityAttr[] = [
   //     new AbilityAttr('AttackUpFixed', 90),
-  //     new AbilityAttr('AttackUpRate', 100),
+  //     new AbilityAttr('AttackUpPercent', 100),
   //     new AbilityAttr('AttackDownFixed', 10),
-  //     new AbilityAttr('AttackDownRate', 50),
-  //     new AbilityAttr('AttackUpRate', 25),
+  //     new AbilityAttr('AttackDownPercent', 50),
+  //     new AbilityAttr('AttackUpPercent', 25),
   //     new AbilityAttr('AttackDownFixed', 100),
-  //     new AbilityAttr('AttackDownRate', 25),
-  //     new AbilityAttr('AttackDownRate', 100),
+  //     new AbilityAttr('AttackDownPercent', 25),
+  //     new AbilityAttr('AttackDownPercent', 100),
   //     new AbilityAttr('AttackUpFixed', 25),
-  //     new AbilityAttr('AttackUpRate', 30),
-  //     new AbilityAttr('AttackUpRate', 70),
+  //     new AbilityAttr('AttackUpPercent', 30),
+  //     new AbilityAttr('AttackUpPercent', 70),
   //     new AbilityAttr('AttackDownFixed', 30),
-  //     new AbilityAttr('AttackUpRate', 50),
+  //     new AbilityAttr('AttackUpPercent', 50),
   //     new AbilityAttr('AttackUpFixed', 100),
   //   ];
 

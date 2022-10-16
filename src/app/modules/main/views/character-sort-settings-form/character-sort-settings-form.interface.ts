@@ -11,10 +11,10 @@ export const CharacterSortIndexTypes: { label: string; value: CharacterSortIndex
 ];
 
 export const CharacterSortAbilityAttrTypes: { label: string; value: AbilityAttrType }[] = [
-  { label: '攻撃バフ(%)', value: 'AttackUpRate' },
-  { label: '与ダメバフ', value: 'DamageUpRate' },
-  { label: '攻撃デバフ(%)', value: 'AttackDownRate' },
-  { label: '被ダメデバフ', value: 'TakenDamageUpRate' },
+  { label: '攻撃バフ(%)', value: 'AttackUpPercent' },
+  { label: '与ダメバフ', value: 'DamageUpPercent' },
+  { label: '攻撃デバフ(%)', value: 'AttackDownPercent' },
+  { label: '被ダメデバフ', value: 'TakenDamageUpPercent' },
 ];
 
 export const CharacterSortDirectionTypes: { label: string; value: CharacterSortDirectionType }[] = [

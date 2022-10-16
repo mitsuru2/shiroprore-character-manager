@@ -160,17 +160,17 @@ export class InquiryFormComponent /*implements OnInit*/ {
   //     let index = 0;
 
   //     this.inquiryData.body += `${ability.name},${desc},`;
-  //     index = attributes.findIndex((item) => item.type === 'AttackUpRate');
+  //     index = attributes.findIndex((item) => item.type === 'AttackUpPercent');
   //     if (index >= 0) {
   //       this.inquiryData.body += `${attributes[index].value}(${attributes[index].isStepEffect})`;
   //     }
   //     this.inquiryData.body += ',';
-  //     index = attributes.findIndex((item) => item.type === 'AttackDownRate');
+  //     index = attributes.findIndex((item) => item.type === 'AttackDownPercent');
   //     if (index >= 0) {
   //       this.inquiryData.body += `${attributes[index].value}(${attributes[index].isStepEffect})`;
   //     }
   //     this.inquiryData.body += ',';
-  //     index = attributes.findIndex((item) => item.type === 'DamageUpRate');
+  //     index = attributes.findIndex((item) => item.type === 'DamageUpPercent');
   //     if (index >= 0) {
   //       this.inquiryData.body += `${attributes[index].value}(${attributes[index].isStepEffect})`;
   //     }
