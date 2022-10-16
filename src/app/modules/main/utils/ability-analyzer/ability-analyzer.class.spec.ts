@@ -2254,7 +2254,7 @@ describe('AnalyzeAbility', () => {
         console.log(`${abilityDescriptions[i]},${result[0].debug},${result[0].value},${result[0].isStepEffect}`)
       } else {
         let text = abilityDescriptions[i];
-        let index = text.indexOf("与ダメ");
+        let index = text.indexOf("被ダメ");
         if (index >= 0) {
           text = text.slice(index);
           index = text.indexOf("%");

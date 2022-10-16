@@ -30,9 +30,10 @@ export const CharacterFilterOptionAbilityTypeLabels: { label: string; value: Cha
   { label: '大破特技', value: 'defeatedTimeAbility' },
 ];
 export const CharacterFilterOptionAbilityAttrLabels: { label: string; value: AbilityAttrType }[] = [
-  { label: '割合攻撃バフ', value: 'AttackUpRate' },
+  { label: '攻撃バフ(%)', value: 'AttackUpRate' },
   { label: '与ダメバフ', value: 'DamageUpRate' },
-  { label: '割合攻撃デバフ', value: 'AttackDownRate' },
+  { label: '攻撃デバフ(%)', value: 'AttackDownRate' },
+  { label: '被ダメデバフ', value: 'TakenDamageUpRate' },
 ];
 export const CharacterFilterOptionTokenTypeLabels: { label: string; value: CharacterFilterOptionOthersType }[] = [
   { label: '伏兵(赤)', value: 'tokenRed' },
