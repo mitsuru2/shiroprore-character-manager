@@ -95,6 +95,10 @@ export class AbilityAnalyzer {
     // Sortie interval shorten (percent)
     //
     new AbilityAttrMatchPattern([/再配置[^\d]{0,5}時間が?(\d+)%短縮/g], 'ShortSortieIntervalPercent', 1),
+    //
+    // Keiryaku interval shorten (percent)
+    //
+    new AbilityAttrMatchPattern([/計略再?使用(までの)?時間(が|を)?(\d+)%短縮/g], 'ShortKeiryakuIntervalPercent', 3),
   ];
 
   analyze(descriptions: string[]): AbilityAttr[] {

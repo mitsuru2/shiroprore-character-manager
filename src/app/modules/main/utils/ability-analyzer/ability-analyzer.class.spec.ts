@@ -2254,13 +2254,13 @@ describe('AnalyzeAbility', () => {
         console.log(`${abilityDescriptions[i]},${result[0].debug},${result[0].value},${result[0].isStepEffect}`)
       } else {
         let text = abilityDescriptions[i];
-        let index = text.indexOf("再配置");
+        let index = text.indexOf("計略");
         if (index >= 0) {
           text = text.slice(index);
           index = text.indexOf("時間");
           if (index >= 0) {
             text = text.slice(index);
-            index = text.indexOf("%");
+            index = text.indexOf("秒");
             // const index2 = text.indexOf("倍");
             if (index >= 0 /*|| index2 >= 0*/) {
               console.log(abilityDescriptions[i]);
