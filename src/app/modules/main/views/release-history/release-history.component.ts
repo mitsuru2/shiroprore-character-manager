@@ -43,7 +43,7 @@ export class ReleaseHistoryComponent implements OnInit {
 
     // Make date text.
     for (let i = 0; i < this.filteredVersions.length; ++i) {
-      this.logger.debug(location, { seconds: (this.filteredVersions[i].createdAt as Timestamp).seconds });
+      // this.logger.debug(location, { seconds: (this.filteredVersions[i].createdAt as Timestamp).seconds });
       const date = this.firestore.convTimestampToDate(this.filteredVersions[i].createdAt);
       this.createdDates.push(date.toLocaleDateString());
     }

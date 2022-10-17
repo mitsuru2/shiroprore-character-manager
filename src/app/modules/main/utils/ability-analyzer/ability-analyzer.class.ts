@@ -39,58 +39,58 @@ export class AbilityAttr {
 
 export class AbilityAnalyzer {
   private matchPatterns: AbilityAttrMatchPattern[] = [
-    // //
-    // // Attack up (percent)
-    // //
-    // new AbilityAttrMatchPattern([/ずつ/g, /攻撃が(\d+)%上昇/g], 'AttackUpPercent', 1), /* 攻撃が20%上昇 *//* eslint-disable-line */
-    // new AbilityAttrMatchPattern([/ずつ/g, /攻撃が\d+%上昇\((上限|最大)(\d+)%\)/g], 'AttackUpPercent', 2), /* 攻撃が4%ずつ上昇(最大40%) *//* eslint-disable-line */
-    // new AbilityAttrMatchPattern([/特殊攻撃が/g, /攻撃が(\d+.?\d?)倍/g], 'AttackUpPercent', 1, 100, -100), /* 攻撃が1.2倍 *//* eslint-disable-line */
-    // new AbilityAttrMatchPattern([/特殊攻撃が/g, /攻撃が[^\d]{1,6}に対して(\d+.?\d?)倍/g], 'AttackUpPercent', 1, 100, -100), /* 攻撃が飛行敵に対して1.2倍 *//* eslint-disable-line */
-    // new AbilityAttrMatchPattern([/攻撃が(\d+)%と\d+上昇/g], 'AttackUpPercent', 1), /* 攻撃が20%と10上昇 *//* eslint-disable-line */
-    // new AbilityAttrMatchPattern([/ずつ/g, /攻撃と[^上昇\d]+が(\d+)%上昇/g], 'AttackUpPercent', 1), /* 攻撃と耐久が20%上昇 *//* eslint-disable-line */
-    // new AbilityAttrMatchPattern([/ずつ/g, /攻撃と[^上昇\d]+が\d+%上昇\((上限|最大)(\d+)%\)/g], 'AttackUpPercent', 2), /* 攻撃と耐久が4%ずつ上昇(最大40%) *//* eslint-disable-line */
-    // new AbilityAttrMatchPattern([/ずつ/g, /攻撃と[^上昇\d]+が(\d+.?\d?)倍/g], 'AttackUpPercent', 1, 100, -100), /* 攻撃と耐久が1.2倍 *//* eslint-disable-line */
-    // new AbilityAttrMatchPattern([/攻撃と[^上昇\d]+が(\d+)%と\d+上昇/g], 'AttackUpPercent', 1), /* 攻撃と耐久が20%と50上昇 *//* eslint-disable-line */
-    // new AbilityAttrMatchPattern([/低下効果/g, /大きく/g, /攻撃が(\d+)%[^上昇低下]*が\d*%?に?上昇/g], 'AttackUpPercent', 1), /* 攻撃が20%、砲弾直撃ボーナスが60%に上昇 *//* eslint-disable-line */
-    // new AbilityAttrMatchPattern([/低下効果/g, /大きく/g, /攻撃と[^上昇\d]+が(\d+)%[^上昇低下]+が\d*%?に?上昇/g], 'AttackUpPercent', 1), /* 攻撃と耐久が20%、防御が10%上昇 *//* eslint-disable-line */
-    // //
-    // // Attack down (percent)
-    // //
-    // new AbilityAttrMatchPattern([/\d+秒間/g, /ずつ/g, /(敵|兜)の攻撃(が|を)(\d+)%低下/g], 'AttackDownPercent', 3), /* 敵の攻撃が20%低下 *//* eslint-disable-line */
-    // new AbilityAttrMatchPattern([/\d+秒間/g, /ずつ/g, /(敵|兜)の攻撃(が|を)\d+%低下\((上限|最大)(\d+)%\)/g], 'AttackDownPercent', 4), /* 敵の攻撃が2%ずつ低下(上限10%) *//* eslint-disable-line */
-    // new AbilityAttrMatchPattern([/\d+秒間/g, /(敵|兜)の攻撃(が|を)(\d+)%と\d+低下/g], 'AttackDownPercent', 3), /* 敵の攻撃が20%と20低下 *//* eslint-disable-line */
-    // new AbilityAttrMatchPattern([/\d+秒間/g, /(敵|兜)の攻撃(が|を)(\d+)%[^\d]+は\d+%低下/g], 'AttackDownPercent', 3), /* 敵の攻撃が20%、妖怪は30%低下 *//* eslint-disable-line */
-    // new AbilityAttrMatchPattern([/\d+秒間/g, /(敵|兜)の攻撃(が|を)\d+%[^\d]+は(\d+)%低下/g], 'AttackDownPercent', 3), /* eslint-disable-line */
-    // new AbilityAttrMatchPattern([/\d+秒間/g, /ずつ/g, /(敵|兜)の攻撃と[^\d]+(が|を)(\d+)%低下/g], 'AttackDownPercent', 3), /* 敵の攻撃と移動速度が20%低下 *//* eslint-disable-line */
-    // new AbilityAttrMatchPattern([/\d+秒間/g, /ずつ/g, /(敵|兜)の攻撃と[^\d]+(が|を)\d+%低下\((上限|最大)(\d+)%\)/g], 'AttackDownPercent', 4), // eslint-disable-line
-    // new AbilityAttrMatchPattern([/\d+秒間/g, /(敵|兜)の攻撃と[^\d]+(が|を)(\d+)%と\d+低下/g], 'AttackDownPercent', 3), /* 敵の攻撃と移動速度が20%と100低下 *//* eslint-disable-line */
-    // new AbilityAttrMatchPattern([/\d+秒間/g, /(敵|兜)の攻撃が(\d+)%[^\d]+が\d+%低下/g], 'AttackDownPercent', 2), /* 敵の攻撃が20%、攻撃速度が10%低下 *//* eslint-disable-line */
-    // new AbilityAttrMatchPattern([/\d+秒間/g, /(敵|兜)の攻撃が(\d+)%と\d+[^\d]+が\d+%低下/g], 'AttackDownPercent', 2), /* 敵の攻撃が5%と20、攻撃速度が10%低下 *//* eslint-disable-line */
-    // new AbilityAttrMatchPattern([/(敵|兜)の攻撃と[^\d]+(が|を)(\d+)%[^\d]+は\d+%低下/g], 'AttackDownPercent', 3), /* 敵の攻撃と射程が25%、妖怪は35%低下 *//* eslint-disable-line */
-    // new AbilityAttrMatchPattern([/(敵|兜)の攻撃と[^\d]+(が|を)\d+%[^\d]+は(\d+)%低下/g], 'AttackDownPercent', 3), /* eslint-disable-line */
-    // new AbilityAttrMatchPattern([/\d+秒間/g, /ダメージを与え、?攻撃(が|を)(\d+)%低下/g], 'AttackDownPercent', 2), /* ダメージを与え攻撃が20%低下 *//* eslint-disable-line */
-    // new AbilityAttrMatchPattern([/\d+秒間/g, /ダメージを与え、?攻撃と[^\d]+(が|を)(\d+)%低下/g], 'AttackDownPercent', 2), /* ダメージを与え攻撃と移動速度が20%低下 *//* eslint-disable-line */
-    // new AbilityAttrMatchPattern([/\d+秒間/g, /攻撃し、?攻撃(が|を)(\d+)%低下させ/g], 'AttackDownPercent', 2), /* 攻撃し攻撃を20%低下させる *//* eslint-disable-line */
-    // new AbilityAttrMatchPattern([/\d+秒間/g, /攻撃し、?攻撃と[^\d]+(が|を)(\d+)%低下/g], 'AttackDownPercent', 2), /* 攻撃し攻撃と攻撃速度を20%低下させる *//* eslint-disable-line */
-    // new AbilityAttrMatchPattern([/\d+秒間/g, /(敵|兜)の[^\d]+が\d+%?、?攻撃(が|を)(\d+)%低下/g], 'AttackDownPercent', 3), /* 敵の与ダメージが30%、攻撃が20%低下 *//* eslint-disable-line */
-    // new AbilityAttrMatchPattern([/\d+秒間/g, /(敵|兜)の[^\d]+が\d+%?低下、?攻撃(が|を)(\d+)%低下/g], 'AttackDownPercent', 3), /* 敵の移動速度が60%低下攻撃が20%低下 *//* eslint-disable-line */
-    // new AbilityAttrMatchPattern([/\d+秒間/g, /(敵|兜)の[^\d]+が\d+%?、?攻撃と[^\d]+(が|を)(\d+)%低下/g], 'AttackDownPercent', 3), /* 敵の与ダメージが30%、攻撃と防御が20%低下 *//* eslint-disable-line */
-    // new AbilityAttrMatchPattern([/\d+秒間/g, /(敵|兜)の攻撃と[^\d]+(が|を)(\d+)%[^\d]+(が|を)\d+%?低下/g], 'AttackDownPercent', 3), /* 敵の攻撃と防御が25%移動速度が25%低下 *//* eslint-disable-line */
-    // //
-    // // Damage up (percent)
-    // //
-    // new AbilityAttrMatchPattern([/\d+秒間/g, /ずつ/g, /(与ダメージ|与ダメ)が(\d+)%上昇/g], 'DamageUpPercent', 2), /* 与ダメージが20%上昇 *//* eslint-disable-line */
-    // new AbilityAttrMatchPattern([/\d+秒間/g, /ずつ/g, /(与ダメージ|与ダメ)が(\d+)倍/g], 'DamageUpPercent', 2, 100, -100), /* 与ダメージが1.2倍 *//* eslint-disable-line */
-    // new AbilityAttrMatchPattern([/\d+秒間/g, /ずつ/g, /(与ダメージ|与ダメ)が(\d+)%[^\d上昇低下]+が\d+%?上昇/g], 'DamageUpPercent', 2), /* 与ダメージが20%防御が20上昇 *//* eslint-disable-line */
-    // new AbilityAttrMatchPattern([/\d+秒間/g, /ずつ/g, /(与ダメージ|与ダメ)と[^\d上昇低下]+が(\d+)%上昇/g], 'DamageUpPercent', 2), /* 与ダメージと防御が20%上昇 *//* eslint-disable-line */
-    // new AbilityAttrMatchPattern([/\d+秒間/g, /ずつ/g, /(与ダメージ|与ダメ)が(\d+)%[^\d上昇低下]+が\d+%?[^\d上昇低下]+が\d+%?上昇/g], 'DamageUpPercent', 2), /* 与ダメージが7%近接城娘の射程が10、遠隔城娘の攻撃が50上昇 *//* eslint-disable-line */
-    // //
-    // // Taken damage up (percent)
-    // //
-    // new AbilityAttrMatchPattern([/\d+秒間/g, /ずつ/g, /(敵|兜)の(被ダメージ|被ダメ)が(\d+)%上昇/g], 'TakenDamageUpPercent', 3), /* 敵の被ダメージが20%上昇 *//* eslint-disable-line */
-    // new AbilityAttrMatchPattern([/\d+秒間/g, /ずつ/g, /(敵|兜)の(被ダメージ|被ダメ)が(\d+)倍/g], 'TakenDamageUpPercent', 3, 100, -100), /* 敵の被ダメージが1.2倍 *//* eslint-disable-line */
-    // new AbilityAttrMatchPattern([/\d+秒間/g, /ずつ/g, /(敵|兜)の[^\d]+が\d+%?低下、?(被ダメージ|被ダメ)が?(\d+)%上昇/g], 'TakenDamageUpPercent', 3), /* 敵の攻撃が10%低下、被ダメージが10%上昇 *//* eslint-disable-line */
-    // new AbilityAttrMatchPattern([/\d+秒間/g, /ずつ/g, /(敵|兜)の[^\d]+が\d+%?[^\d]+が\d+%?低下、?(被ダメージ|被ダメ)が?(\d+)%上昇/g], 'TakenDamageUpPercent', 3), /* 敵の防御が45、移動速度が10%低下被ダメージが5%上昇 *//* eslint-disable-line */
+    //
+    // Attack up (percent)
+    //
+    new AbilityAttrMatchPattern([/ずつ/g, /攻撃が(\d+)%上昇/g], 'AttackUpPercent', 1), /* 攻撃が20%上昇 *//* eslint-disable-line */
+    new AbilityAttrMatchPattern([/ずつ/g, /攻撃が\d+%上昇\((上限|最大)(\d+)%\)/g], 'AttackUpPercent', 2), /* 攻撃が4%ずつ上昇(最大40%) *//* eslint-disable-line */
+    new AbilityAttrMatchPattern([/特殊攻撃が/g, /攻撃が(\d+.?\d?)倍/g], 'AttackUpPercent', 1, 100, -100), /* 攻撃が1.2倍 *//* eslint-disable-line */
+    new AbilityAttrMatchPattern([/特殊攻撃が/g, /攻撃が[^\d]{1,6}に対して(\d+.?\d?)倍/g], 'AttackUpPercent', 1, 100, -100), /* 攻撃が飛行敵に対して1.2倍 *//* eslint-disable-line */
+    new AbilityAttrMatchPattern([/攻撃が(\d+)%と\d+上昇/g], 'AttackUpPercent', 1), /* 攻撃が20%と10上昇 *//* eslint-disable-line */
+    new AbilityAttrMatchPattern([/ずつ/g, /攻撃と[^上昇\d]+が(\d+)%上昇/g], 'AttackUpPercent', 1), /* 攻撃と耐久が20%上昇 *//* eslint-disable-line */
+    new AbilityAttrMatchPattern([/ずつ/g, /攻撃と[^上昇\d]+が\d+%上昇\((上限|最大)(\d+)%\)/g], 'AttackUpPercent', 2), /* 攻撃と耐久が4%ずつ上昇(最大40%) *//* eslint-disable-line */
+    new AbilityAttrMatchPattern([/ずつ/g, /攻撃と[^上昇\d]+が(\d+.?\d?)倍/g], 'AttackUpPercent', 1, 100, -100), /* 攻撃と耐久が1.2倍 *//* eslint-disable-line */
+    new AbilityAttrMatchPattern([/攻撃と[^上昇\d]+が(\d+)%と\d+上昇/g], 'AttackUpPercent', 1), /* 攻撃と耐久が20%と50上昇 *//* eslint-disable-line */
+    new AbilityAttrMatchPattern([/低下効果/g, /大きく/g, /攻撃が(\d+)%[^上昇低下]*が\d*%?に?上昇/g], 'AttackUpPercent', 1), /* 攻撃が20%、砲弾直撃ボーナスが60%に上昇 *//* eslint-disable-line */
+    new AbilityAttrMatchPattern([/低下効果/g, /大きく/g, /攻撃と[^上昇\d]+が(\d+)%[^上昇低下]+が\d*%?に?上昇/g], 'AttackUpPercent', 1), /* 攻撃と耐久が20%、防御が10%上昇 *//* eslint-disable-line */
+    //
+    // Attack down (percent)
+    //
+    new AbilityAttrMatchPattern([/\d+秒間/g, /ずつ/g, /(敵|兜)の攻撃(が|を)(\d+)%低下/g], 'AttackDownPercent', 3), /* 敵の攻撃が20%低下 *//* eslint-disable-line */
+    new AbilityAttrMatchPattern([/\d+秒間/g, /ずつ/g, /(敵|兜)の攻撃(が|を)\d+%低下\((上限|最大)(\d+)%\)/g], 'AttackDownPercent', 4), /* 敵の攻撃が2%ずつ低下(上限10%) *//* eslint-disable-line */
+    new AbilityAttrMatchPattern([/\d+秒間/g, /(敵|兜)の攻撃(が|を)(\d+)%と\d+低下/g], 'AttackDownPercent', 3), /* 敵の攻撃が20%と20低下 *//* eslint-disable-line */
+    new AbilityAttrMatchPattern([/\d+秒間/g, /(敵|兜)の攻撃(が|を)(\d+)%[^\d]+は\d+%低下/g], 'AttackDownPercent', 3), /* 敵の攻撃が20%、妖怪は30%低下 *//* eslint-disable-line */
+    new AbilityAttrMatchPattern([/\d+秒間/g, /(敵|兜)の攻撃(が|を)\d+%[^\d]+は(\d+)%低下/g], 'AttackDownPercent', 3), /* eslint-disable-line */
+    new AbilityAttrMatchPattern([/\d+秒間/g, /ずつ/g, /(敵|兜)の攻撃と[^\d]+(が|を)(\d+)%低下/g], 'AttackDownPercent', 3), /* 敵の攻撃と移動速度が20%低下 *//* eslint-disable-line */
+    new AbilityAttrMatchPattern([/\d+秒間/g, /ずつ/g, /(敵|兜)の攻撃と[^\d]+(が|を)\d+%低下\((上限|最大)(\d+)%\)/g], 'AttackDownPercent', 4), // eslint-disable-line
+    new AbilityAttrMatchPattern([/\d+秒間/g, /(敵|兜)の攻撃と[^\d]+(が|を)(\d+)%と\d+低下/g], 'AttackDownPercent', 3), /* 敵の攻撃と移動速度が20%と100低下 *//* eslint-disable-line */
+    new AbilityAttrMatchPattern([/\d+秒間/g, /(敵|兜)の攻撃が(\d+)%[^\d]+が\d+%低下/g], 'AttackDownPercent', 2), /* 敵の攻撃が20%、攻撃速度が10%低下 *//* eslint-disable-line */
+    new AbilityAttrMatchPattern([/\d+秒間/g, /(敵|兜)の攻撃が(\d+)%と\d+[^\d]+が\d+%低下/g], 'AttackDownPercent', 2), /* 敵の攻撃が5%と20、攻撃速度が10%低下 *//* eslint-disable-line */
+    new AbilityAttrMatchPattern([/(敵|兜)の攻撃と[^\d]+(が|を)(\d+)%[^\d]+は\d+%低下/g], 'AttackDownPercent', 3), /* 敵の攻撃と射程が25%、妖怪は35%低下 *//* eslint-disable-line */
+    new AbilityAttrMatchPattern([/(敵|兜)の攻撃と[^\d]+(が|を)\d+%[^\d]+は(\d+)%低下/g], 'AttackDownPercent', 3), /* eslint-disable-line */
+    new AbilityAttrMatchPattern([/\d+秒間/g, /ダメージを与え、?攻撃(が|を)(\d+)%低下/g], 'AttackDownPercent', 2), /* ダメージを与え攻撃が20%低下 *//* eslint-disable-line */
+    new AbilityAttrMatchPattern([/\d+秒間/g, /ダメージを与え、?攻撃と[^\d]+(が|を)(\d+)%低下/g], 'AttackDownPercent', 2), /* ダメージを与え攻撃と移動速度が20%低下 *//* eslint-disable-line */
+    new AbilityAttrMatchPattern([/\d+秒間/g, /攻撃し、?攻撃(が|を)(\d+)%低下させ/g], 'AttackDownPercent', 2), /* 攻撃し攻撃を20%低下させる *//* eslint-disable-line */
+    new AbilityAttrMatchPattern([/\d+秒間/g, /攻撃し、?攻撃と[^\d]+(が|を)(\d+)%低下/g], 'AttackDownPercent', 2), /* 攻撃し攻撃と攻撃速度を20%低下させる *//* eslint-disable-line */
+    new AbilityAttrMatchPattern([/\d+秒間/g, /(敵|兜)の[^\d]+が\d+%?、?攻撃(が|を)(\d+)%低下/g], 'AttackDownPercent', 3), /* 敵の与ダメージが30%、攻撃が20%低下 *//* eslint-disable-line */
+    new AbilityAttrMatchPattern([/\d+秒間/g, /(敵|兜)の[^\d]+が\d+%?低下、?攻撃(が|を)(\d+)%低下/g], 'AttackDownPercent', 3), /* 敵の移動速度が60%低下攻撃が20%低下 *//* eslint-disable-line */
+    new AbilityAttrMatchPattern([/\d+秒間/g, /(敵|兜)の[^\d]+が\d+%?、?攻撃と[^\d]+(が|を)(\d+)%低下/g], 'AttackDownPercent', 3), /* 敵の与ダメージが30%、攻撃と防御が20%低下 *//* eslint-disable-line */
+    new AbilityAttrMatchPattern([/\d+秒間/g, /(敵|兜)の攻撃と[^\d]+(が|を)(\d+)%[^\d]+(が|を)\d+%?低下/g], 'AttackDownPercent', 3), /* 敵の攻撃と防御が25%移動速度が25%低下 *//* eslint-disable-line */
+    //
+    // Damage up (percent)
+    //
+    new AbilityAttrMatchPattern([/\d+秒間/g, /ずつ/g, /(与ダメージ|与ダメ)が(\d+)%上昇/g], 'DamageUpPercent', 2), /* 与ダメージが20%上昇 *//* eslint-disable-line */
+    new AbilityAttrMatchPattern([/\d+秒間/g, /ずつ/g, /(与ダメージ|与ダメ)が(\d+)倍/g], 'DamageUpPercent', 2, 100, -100), /* 与ダメージが1.2倍 *//* eslint-disable-line */
+    new AbilityAttrMatchPattern([/\d+秒間/g, /ずつ/g, /(与ダメージ|与ダメ)が(\d+)%[^\d上昇低下]+が\d+%?上昇/g], 'DamageUpPercent', 2), /* 与ダメージが20%防御が20上昇 *//* eslint-disable-line */
+    new AbilityAttrMatchPattern([/\d+秒間/g, /ずつ/g, /(与ダメージ|与ダメ)と[^\d上昇低下]+が(\d+)%上昇/g], 'DamageUpPercent', 2), /* 与ダメージと防御が20%上昇 *//* eslint-disable-line */
+    new AbilityAttrMatchPattern([/\d+秒間/g, /ずつ/g, /(与ダメージ|与ダメ)が(\d+)%[^\d上昇低下]+が\d+%?[^\d上昇低下]+が\d+%?上昇/g], 'DamageUpPercent', 2), /* 与ダメージが7%近接城娘の射程が10、遠隔城娘の攻撃が50上昇 *//* eslint-disable-line */
+    //
+    // Taken damage up (percent)
+    //
+    new AbilityAttrMatchPattern([/\d+秒間/g, /ずつ/g, /(敵|兜)の(被ダメージ|被ダメ)が(\d+)%上昇/g], 'TakenDamageUpPercent', 3), /* 敵の被ダメージが20%上昇 *//* eslint-disable-line */
+    new AbilityAttrMatchPattern([/\d+秒間/g, /ずつ/g, /(敵|兜)の(被ダメージ|被ダメ)が(\d+)倍/g], 'TakenDamageUpPercent', 3, 100, -100), /* 敵の被ダメージが1.2倍 *//* eslint-disable-line */
+    new AbilityAttrMatchPattern([/\d+秒間/g, /ずつ/g, /(敵|兜)の[^\d]+が\d+%?低下、?(被ダメージ|被ダメ)が?(\d+)%上昇/g], 'TakenDamageUpPercent', 3), /* 敵の攻撃が10%低下、被ダメージが10%上昇 *//* eslint-disable-line */
+    new AbilityAttrMatchPattern([/\d+秒間/g, /ずつ/g, /(敵|兜)の[^\d]+が\d+%?[^\d]+が\d+%?低下、?(被ダメージ|被ダメ)が?(\d+)%上昇/g], 'TakenDamageUpPercent', 3), /* 敵の防御が45、移動速度が10%低下被ダメージが5%上昇 *//* eslint-disable-line */
     //
     // Sortie interval shorten (percent)
     //
