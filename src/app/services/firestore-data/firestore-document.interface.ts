@@ -52,6 +52,12 @@ export const AbilityAttrTypes = [
   'TakenDamageUpPercent',
   'ShortSortieIntervalPercent',
   'ShortKeiryakuIntervalPercent',
+  'RangeUpFixedValue',
+  'RangeUpPercent',
+  'RangeDownPercent',
+  'HideShiromusume',
+  'HideToken',
+  'HideWarehouse',
 ];
 export type AbilityAttrType = typeof AbilityAttrTypes[number]; // <-- Define union data type from string const array.
 

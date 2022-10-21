@@ -44,12 +44,12 @@ export class AbilityAnalyzer {
     //
     new AbilityAttrMatchPattern([/ずつ/g, /攻撃が(\d+)%上昇/g], 'AttackUpPercent', 1), /* 攻撃が20%上昇 *//* eslint-disable-line */
     new AbilityAttrMatchPattern([/ずつ/g, /攻撃が\d+%上昇\((上限|最大)(\d+)%\)/g], 'AttackUpPercent', 2), /* 攻撃が4%ずつ上昇(最大40%) *//* eslint-disable-line */
-    new AbilityAttrMatchPattern([/特殊攻撃が/g, /攻撃が(\d+.?\d?)倍/g], 'AttackUpPercent', 1, 100, -100), /* 攻撃が1.2倍 *//* eslint-disable-line */
-    new AbilityAttrMatchPattern([/特殊攻撃が/g, /攻撃が[^\d]{1,6}に対して(\d+.?\d?)倍/g], 'AttackUpPercent', 1, 100, -100), /* 攻撃が飛行敵に対して1.2倍 *//* eslint-disable-line */
+    new AbilityAttrMatchPattern([/特殊攻撃が/g, /攻撃が(\d+\.?\d?)倍/g], 'AttackUpPercent', 1, 100, -100), /* 攻撃が1.2倍 *//* eslint-disable-line */
+    new AbilityAttrMatchPattern([/特殊攻撃が/g, /攻撃が[^\d]{1,6}に対して(\d+\.?\d?)倍/g], 'AttackUpPercent', 1, 100, -100), /* 攻撃が飛行敵に対して1.2倍 *//* eslint-disable-line */
     new AbilityAttrMatchPattern([/攻撃が(\d+)%と\d+上昇/g], 'AttackUpPercent', 1), /* 攻撃が20%と10上昇 *//* eslint-disable-line */
     new AbilityAttrMatchPattern([/ずつ/g, /攻撃と[^上昇\d]+が(\d+)%上昇/g], 'AttackUpPercent', 1), /* 攻撃と耐久が20%上昇 *//* eslint-disable-line */
     new AbilityAttrMatchPattern([/ずつ/g, /攻撃と[^上昇\d]+が\d+%上昇\((上限|最大)(\d+)%\)/g], 'AttackUpPercent', 2), /* 攻撃と耐久が4%ずつ上昇(最大40%) *//* eslint-disable-line */
-    new AbilityAttrMatchPattern([/ずつ/g, /攻撃と[^上昇\d]+が(\d+.?\d?)倍/g], 'AttackUpPercent', 1, 100, -100), /* 攻撃と耐久が1.2倍 *//* eslint-disable-line */
+    new AbilityAttrMatchPattern([/ずつ/g, /攻撃と[^上昇\d]+が(\d+\.?\d?)倍/g], 'AttackUpPercent', 1, 100, -100), /* 攻撃と耐久が1.2倍 *//* eslint-disable-line */
     new AbilityAttrMatchPattern([/攻撃と[^上昇\d]+が(\d+)%と\d+上昇/g], 'AttackUpPercent', 1), /* 攻撃と耐久が20%と50上昇 *//* eslint-disable-line */
     new AbilityAttrMatchPattern([/低下効果/g, /大きく/g, /攻撃が(\d+)%[^上昇低下]*が\d*%?に?上昇/g], 'AttackUpPercent', 1), /* 攻撃が20%、砲弾直撃ボーナスが60%に上昇 *//* eslint-disable-line */
     new AbilityAttrMatchPattern([/低下効果/g, /大きく/g, /攻撃と[^上昇\d]+が(\d+)%[^上昇低下]+が\d*%?に?上昇/g], 'AttackUpPercent', 1), /* 攻撃と耐久が20%、防御が10%上昇 *//* eslint-disable-line */
@@ -80,7 +80,7 @@ export class AbilityAnalyzer {
     // Damage up (percent)
     //
     new AbilityAttrMatchPattern([/\d+秒間/g, /ずつ/g, /(与ダメージ|与ダメ)が(\d+)%上昇/g], 'DamageUpPercent', 2), /* 与ダメージが20%上昇 *//* eslint-disable-line */
-    new AbilityAttrMatchPattern([/\d+秒間/g, /ずつ/g, /(与ダメージ|与ダメ)が(\d+)倍/g], 'DamageUpPercent', 2, 100, -100), /* 与ダメージが1.2倍 *//* eslint-disable-line */
+    new AbilityAttrMatchPattern([/\d+秒間/g, /ずつ/g, /(与ダメージ|与ダメ)が(\d+\.?\d*)倍/g], 'DamageUpPercent', 2, 100, -100), /* 与ダメージが1.2倍 *//* eslint-disable-line */
     new AbilityAttrMatchPattern([/\d+秒間/g, /ずつ/g, /(与ダメージ|与ダメ)が(\d+)%[^\d上昇低下]+が\d+%?上昇/g], 'DamageUpPercent', 2), /* 与ダメージが20%防御が20上昇 *//* eslint-disable-line */
     new AbilityAttrMatchPattern([/\d+秒間/g, /ずつ/g, /(与ダメージ|与ダメ)と[^\d上昇低下]+が(\d+)%上昇/g], 'DamageUpPercent', 2), /* 与ダメージと防御が20%上昇 *//* eslint-disable-line */
     new AbilityAttrMatchPattern([/\d+秒間/g, /ずつ/g, /(与ダメージ|与ダメ)が(\d+)%[^\d上昇低下]+が\d+%?[^\d上昇低下]+が\d+%?上昇/g], 'DamageUpPercent', 2), /* 与ダメージが7%近接城娘の射程が10、遠隔城娘の攻撃が50上昇 *//* eslint-disable-line */
@@ -88,7 +88,7 @@ export class AbilityAnalyzer {
     // Taken damage up (percent)
     //
     new AbilityAttrMatchPattern([/\d+秒間/g, /ずつ/g, /(敵|兜)の(被ダメージ|被ダメ)が(\d+)%上昇/g], 'TakenDamageUpPercent', 3), /* 敵の被ダメージが20%上昇 *//* eslint-disable-line */
-    new AbilityAttrMatchPattern([/\d+秒間/g, /ずつ/g, /(敵|兜)の(被ダメージ|被ダメ)が(\d+)倍/g], 'TakenDamageUpPercent', 3, 100, -100), /* 敵の被ダメージが1.2倍 *//* eslint-disable-line */
+    new AbilityAttrMatchPattern([/\d+秒間/g, /ずつ/g, /(敵|兜)の(被ダメージ|被ダメ)が(\d+\.?\d*)倍/g], 'TakenDamageUpPercent', 3, 100, -100), /* 敵の被ダメージが1.2倍 *//* eslint-disable-line */
     new AbilityAttrMatchPattern([/\d+秒間/g, /ずつ/g, /(敵|兜)の[^\d]+が\d+%?低下、?(被ダメージ|被ダメ)が?(\d+)%上昇/g], 'TakenDamageUpPercent', 3), /* 敵の攻撃が10%低下、被ダメージが10%上昇 *//* eslint-disable-line */
     new AbilityAttrMatchPattern([/\d+秒間/g, /ずつ/g, /(敵|兜)の[^\d]+が\d+%?[^\d]+が\d+%?低下、?(被ダメージ|被ダメ)が?(\d+)%上昇/g], 'TakenDamageUpPercent', 3), /* 敵の防御が45、移動速度が10%低下被ダメージが5%上昇 *//* eslint-disable-line */
     //
@@ -99,6 +99,39 @@ export class AbilityAnalyzer {
     // Keiryaku interval shorten (percent)
     //
     new AbilityAttrMatchPattern([/計略再?使用(までの)?時間(が|を)?(\d+)%短縮/g], 'ShortKeiryakuIntervalPercent', 3),
+    //
+    // Range up (fixed value)
+    //
+    new AbilityAttrMatchPattern([/\d+秒間/g, /ずつ/g, /射程が上昇/g], 'RangeUpFixedValue', 0), /* 射程が上昇 *//* eslint-disable-line */
+    new AbilityAttrMatchPattern([/\d+秒間/g, /ずつ/g, /射程が(\d+)上昇/g], 'RangeUpFixedValue', 1), /* 射程が40上昇 *//* eslint-disable-line */
+    new AbilityAttrMatchPattern([/\d+秒間/g, /ずつ/g, /射程が\d+%と(\d+)上昇/g], 'RangeUpFixedValue', 1), /* 射程が10%と20上昇 *//* eslint-disable-line */
+    new AbilityAttrMatchPattern([/\d+秒間/g, /ずつ/g, /低下効果/g, /大きく/g, /射程と[^\d上下]+が(\d+)上昇/g], 'RangeUpFixedValue', 1), /* 射程と攻撃が20上昇 *//* eslint-disable-line */
+    new AbilityAttrMatchPattern([/\d+秒間/g, /ずつ/g, /低下効果/g, /大きく/g, /射程が(\d+)[^%\d上下]+が(\d+)?%?上昇/g], 'RangeUpFixedValue', 1), /* 射程が20、攻撃が30上昇 *//* eslint-disable-line */
+    new AbilityAttrMatchPattern([/\d+秒間/g, /ずつ/g, /低下効果/g, /大きく/g, /射程が(\d+)[^%\d上下]+が(\d+)?%?[^\d上下]+が(\d+)?%?上昇/g], 'RangeUpFixedValue', 1), /* 射程が50、与ダメージが35%特殊攻撃ゲージの蓄積量が25%上昇 *//* eslint-disable-line */
+    new AbilityAttrMatchPattern([/\d+秒間/g, /ずつ/g, /低下効果/g, /大きく/g, /射程と[^\d上下]+が(\d+)[^%\d上下]+が(\d+)?%?上昇/g], 'RangeUpFixedValue', 1), /* 射程と防御が50、与ダメージが35%上昇 *//* eslint-disable-line */
+    //
+    // Range up (percent)
+    //
+    new AbilityAttrMatchPattern([/回復射程/g, /\d+秒間/g, /ずつ/g, /射程が(\d+)%上昇/g], 'RangeUpPercent', 1), /* 射程が40%上昇 *//* eslint-disable-line */
+    new AbilityAttrMatchPattern([/回復射程/g, /\d+秒間/g, /ずつ/g, /射程が(\d+\.?\d*)倍/g], 'RangeUpPercent', 1, 100, -100), /* 射程が2倍 *//* eslint-disable-line */
+    new AbilityAttrMatchPattern([/回復射程/g, /\d+秒間/g, /ずつ/g, /射程が(\d+)%と\d+上昇/g], 'RangeUpPercent', 1), /* 射程が10%と20上昇 *//* eslint-disable-line */
+    new AbilityAttrMatchPattern([/回復射程/g, /\d+秒間/g, /ずつ/g, /低下効果/g, /大きく/g, /射程と[^\d上下]+が(\d+)%上昇/g], 'RangeUpPercent', 1), /* 射程と攻撃が20%上昇 *//* eslint-disable-line */
+    new AbilityAttrMatchPattern([/回復射程/g, /\d+秒間/g, /ずつ/g, /低下効果/g, /大きく/g, /射程と[^\d上下]+が(\d+\.?\d*)倍/g], 'RangeUpPercent', 1, 100, -100), /* 射程と攻撃が1.2倍 *//* eslint-disable-line */
+    new AbilityAttrMatchPattern([/回復射程/g, /\d+秒間/g, /ずつ/g, /低下効果/g, /大きく/g, /射程が(\d+)%[^\d上下]+が(\d+)?%?上昇/g], 'RangeUpPercent', 1), /* 射程が20%、攻撃が30上昇 *//* eslint-disable-line */
+    new AbilityAttrMatchPattern([/回復射程/g, /\d+秒間/g, /ずつ/g, /低下効果/g, /大きく/g, /射程が(\d+)%[^\d上下]+が(\d+)?%?[^\d上下]+が(\d+)?%?上昇/g], 'RangeUpPercent', 1), /* 射程が50%、与ダメージが35%特殊攻撃ゲージの蓄積量が25%上昇 *//* eslint-disable-line */
+    new AbilityAttrMatchPattern([/回復射程/g, /\d+秒間/g, /ずつ/g, /低下効果/g, /大きく/g, /射程と[^\d上下]+が(\d+)%[^\d上下]+が(\d+)?%?上昇/g], 'RangeUpPercent', 1), /* 射程と防御が50%、与ダメージが35%上昇 *//* eslint-disable-line */
+    //
+    // HideShiromusume
+    //
+    new AbilityAttrMatchPattern([/\d+秒間/g, /(城娘|対象|自身)が敵から狙われ(ない|なくなる|ず)/g], 'HideShiromusume', 0),
+    new AbilityAttrMatchPattern([/\d+秒間/g, /再配置時、?敵から狙われ(ない|なくなる|ず)/g], 'HideShiromusume', 0),
+    new AbilityAttrMatchPattern([/\d+秒間/g, /(城娘|対象|自身)と[^\d上下]+が敵から狙われ(ない|なくなる|ず)/g], 'HideShiromusume', 0),
+    new AbilityAttrMatchPattern([/\d+秒間/g, /(城娘|対象|自身)と[^\d上下]+と[^\d上下]+が敵から狙われ(ない|なくなる|ず)/g], 'HideShiromusume', 0),
+    new AbilityAttrMatchPattern([/\d+秒間/g, /(城娘|対象|自身)の[\d上下]+が(\d+\.?\d*倍|\d+%?上昇|半減|敵の防御を(\d+%)?無視)し?、?敵から狙われ(ない|なくなる|ず)/g], 'HideShiromusume', 0 ), /* eslint-disable-line */
+    new AbilityAttrMatchPattern([/\d+秒間/g, /(城娘|対象|自身)の[\d上下]+が(\d+\.?\d*倍|\d+%?上昇|半減|敵の防御を(\d+%)?無視)し?、?[\d上下]+が(\d+\.?\d*倍|\d+%?上昇|半減|敵の防御を(\d+%)?無視)し?、?敵から狙われ(ない|なくなる|ず)/g,], 'HideShiromusume', 0), /* eslint-disable-line */
+    new AbilityAttrMatchPattern([/\d+秒間/g, /敵から狙われ(ない|なくなる|ず).*\(.*(自分のみ|城娘(\/伏兵)?(\/蔵)?が対象)/g], 'HideShiromusume', 0),
+    new AbilityAttrMatchPattern([/\d+秒間/g, /^[^伏兵蔵]*敵から狙われ(ない|なくなる|ず)[^伏兵蔵]*$/g], 'HideShiromusume', 0),
+    new AbilityAttrMatchPattern([/\d+秒間/g, /自身は攻撃を行わず、?敵から狙われ(ない|なくなる|ず)/g], 'HideShiromusume', 0),
   ];
 
   analyze(descriptions: string[]): AbilityAttr[] {
@@ -171,8 +204,14 @@ export class AbilityAnalyzer {
           const matchObj = text.matchAll(pattern.queries[j]);
           const matches = Array.from(matchObj);
           for (let k = 0; k < matches.length; ++k) {
-            const value = Math.round(Number(matches[k][pattern.index]) * pattern.factor) + pattern.offset;
-            result.push(new AbilityAttr(pattern.type, value, false, matches[k][0]));
+            if (pattern.index === 0) {
+              // Set 0 as value if the index is 0.
+              result.push(new AbilityAttr(pattern.type, 0, false, matches[k][0]));
+            } else {
+              // Set calculated value.
+              const value = Math.round(Number(matches[k][pattern.index]) * pattern.factor) + pattern.offset;
+              result.push(new AbilityAttr(pattern.type, value, false, matches[k][0]));
+            }
           }
         }
       }

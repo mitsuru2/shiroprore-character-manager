@@ -1252,7 +1252,7 @@ const abilityDescriptions: string[] = [
   '部隊の城娘の回復が6上昇',
   '40秒間対象の防御が1.5倍足止め数が2増加(自分のみが対象)',
   '大破時に射程内全ての敵に攻撃の2.5倍のダメージを与え15秒間「猛毒」にする',
-  '20秒対象の射程100上昇、攻撃対象が3増加範囲攻撃の範囲が半減(槌城娘が対象)',
+  '20秒間対象の射程が100上昇、攻撃対象が3増加範囲攻撃の範囲が半減(槌城娘が対象)',
   '20秒間対象の射程内の城娘の攻撃が200上昇攻撃対象が1増加(自分のみが対象)',
   '敵1体に攻撃の2倍のダメージを与え3秒間動きを封じる。攻撃した敵の撃破獲得気が5増加(同じ効果の重複なし。ゲージ蓄積:小)',
   '自身の攻撃速度が30%、射程が25上昇攻撃した敵の移動速度が2秒間20%低下',
@@ -1554,7 +1554,7 @@ const abilityDescriptions: string[] = [
   '自身の射程が35上昇射程内の城娘の攻撃速度が15%上昇',
   '自身の攻撃対象が1増加全ての遠隔城娘の攻撃が100上昇射程内の敵に2秒毎に攻撃の0.4倍の術ダメージ',
   '自身の攻撃が25%上昇攻撃時に耐久が与ダメージの20%回復。射程内の城娘の攻撃時に耐久が与ダメージの10%回復',
-  '25秒対象の射程120上昇、攻撃対象が3増加範囲攻撃の範囲が半減(槌城娘が対象)',
+  '25秒間対象の射程が120上昇、攻撃対象が3増加範囲攻撃の範囲が半減(槌城娘が対象)',
   '10秒間対象が受けるダメージを配置中の城娘全員で分割して受ける',
   '自身の攻撃速度が20%上昇敵撃破時に耐久が最大の10%回復',
   '全ての近接城娘の攻撃後の隙が30%短縮自身と自身の伏兵の射程が30、攻撃速度と与ダメージが35%上昇',
@@ -2254,19 +2254,21 @@ describe('AnalyzeAbility', () => {
         console.log(`${abilityDescriptions[i]},${result[0].debug},${result[0].value},${result[0].isStepEffect}`)
       } else {
         let text = abilityDescriptions[i];
-        let index = text.indexOf("計略");
+        // text = text.replace(/射程内/g, '');
+        // text = text.replace(/射程外/g, '');
+        let index = text.indexOf("狙われ");
         if (index >= 0) {
-          text = text.slice(index);
-          index = text.indexOf("時間");
-          if (index >= 0) {
-            text = text.slice(index);
-            index = text.indexOf("秒");
+          // text = text.slice(index);
+          // index = text.indexOf("%");
+          // if (index >= 0) {
+            // text = text.slice(index);
+            // index = text.indexOf("上昇");
             // const index2 = text.indexOf("倍");
-            if (index >= 0 /*|| index2 >= 0*/) {
+            // if (index >= 0 || index2 >= 0) {
               console.log(abilityDescriptions[i]);
               cnt++;
-            }
-          }
+            // }
+          // }
         }
       }
     }
