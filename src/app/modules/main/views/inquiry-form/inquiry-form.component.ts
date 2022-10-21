@@ -5,7 +5,7 @@ import { CloudStorageService } from 'src/app/services/cloud-storage/cloud-storag
 import { ErrorHandlerService } from 'src/app/services/error-handler/error-handler.service';
 import { FsCollectionName } from 'src/app/services/firestore-data/firestore-collection-name.enum';
 import { FirestoreDataService } from 'src/app/services/firestore-data/firestore-data.service';
-import { AbilityAttrType, FsAbility } from 'src/app/services/firestore-data/firestore-document.interface';
+import { AbilityAttrType, abilityAttrTypes, FsAbility } from 'src/app/services/firestore-data/firestore-document.interface';
 import { SpinnerService } from '../../services/spinner/spinner.service';
 import { UserAuthService } from '../../services/user-auth/user-auth.service';
 import { AbilityAnalyzer, AbilityAttr } from '../../utils/ability-analyzer/ability-analyzer.class';
@@ -151,7 +151,11 @@ export class InquiryFormComponent /*implements OnInit*/ {
 
   //   this.spinner.show();
 
-  //   this.inquiryData.body = 'Name,Description,AttackUp,AttackDown,DamageUp\n';
+  //   this.inquiryData.body = 'Index,Name,Description';
+  //   for (let i = 0; i < abilityAttrTypes.length; ++i) {
+  //     this.inquiryData.body += `,${abilityAttrTypes[i]}`;
+  //   }
+  //   this.inquiryData.body += '\n';
 
   //   for (let i = 0; i < abilities.length; ++i) {
   //     const ability = abilities[i];
@@ -159,20 +163,14 @@ export class InquiryFormComponent /*implements OnInit*/ {
   //     const attributes = analyzer.analyze(ability.descriptions);
   //     let index = 0;
 
-  //     this.inquiryData.body += `${ability.name},${desc},`;
-  //     index = attributes.findIndex((item) => item.type === 'AttackUpPercent');
-  //     if (index >= 0) {
-  //       this.inquiryData.body += `${attributes[index].value}(${attributes[index].isStepEffect})`;
-  //     }
-  //     this.inquiryData.body += ',';
-  //     index = attributes.findIndex((item) => item.type === 'AttackDownPercent');
-  //     if (index >= 0) {
-  //       this.inquiryData.body += `${attributes[index].value}(${attributes[index].isStepEffect})`;
-  //     }
-  //     this.inquiryData.body += ',';
-  //     index = attributes.findIndex((item) => item.type === 'DamageUpPercent');
-  //     if (index >= 0) {
-  //       this.inquiryData.body += `${attributes[index].value}(${attributes[index].isStepEffect})`;
+  //     this.inquiryData.body += `${i},${ability.name},${desc}`;
+
+  //     for (let j = 0; j < abilityAttrTypes.length; ++j) {
+  //       this.inquiryData.body += ',';
+  //       index = attributes.findIndex((item) => item.type === abilityAttrTypes[j]);
+  //       if (index >= 0) {
+  //         this.inquiryData.body += `${attributes[index].value}(${attributes[index].isStepEffect})`;
+  //       }
   //     }
   //     this.inquiryData.body += '\n';
   //   }

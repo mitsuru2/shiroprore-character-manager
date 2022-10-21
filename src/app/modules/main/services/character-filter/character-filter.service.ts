@@ -6,7 +6,7 @@ import { FsCollectionName } from 'src/app/services/firestore-data/firestore-coll
 import { FirestoreDataService } from 'src/app/services/firestore-data/firestore-data.service';
 import {
   AbilityAttrType,
-  AbilityAttrTypes,
+  abilityAttrTypes,
   FsAbility,
   FsAbilityType,
   FsCharacter,
@@ -551,7 +551,7 @@ export class CharacterFilterService {
           }
         }
       });
-    } else if (AbilityAttrTypes.includes(settings.indexType)) {
+    } else if (abilityAttrTypes.includes(settings.indexType)) {
       this.sortByAbilityAttrValue(characters, settings.indexType, settings.direction);
     } else {
       const error = new Error(ErrorCode.Unexpected);
