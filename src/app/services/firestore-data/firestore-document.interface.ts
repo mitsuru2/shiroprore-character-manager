@@ -58,7 +58,7 @@ export const abilityAttrTypes = [
   'HideShiromusume',
   'HideToken',
   'HideWarehouse',
-];
+] as const;
 export type AbilityAttrType = typeof abilityAttrTypes[number]; // <-- Define union data type from string const array.
 
 export class FsAbility extends FsDocumentBase {
