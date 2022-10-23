@@ -105,6 +105,9 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
 
   sortSettingsCopy = new CharacterSortSettings();
 
+  /** Team edit values. */
+  teamCheckFlags!: number[][];
+
   //============================================================================
   // Class methods.
   //
@@ -185,6 +188,12 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     this.ownershipStatues = Array(this.paginator.rowNum);
     this.ownershipStatues.fill(true);
     await sleep(10);
+
+    // Make team check flags array.
+    this.teamCheckFlags = new Array(3);
+    for (let i = 0; i < this.teamCheckFlags.length; ++i) {
+      this.teamCheckFlags[i] = [];
+    }
 
     // Update thumbnail images.
     await this.loadThumbImages();

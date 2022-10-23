@@ -27,9 +27,16 @@
       grid-template-columns: repeat(auto-fill, 105px);  // 105px: Width of <img> element which show the thumbnails.
       gap: 12px;
       justify-content: space-between;
+
+      .team-checkbox {
+        display: none;
+      }
     }
 
     .list-layout {
+      .team-checkbox {
+        display: block;
+      }
     }
 
     .item {
