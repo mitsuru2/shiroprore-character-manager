@@ -84,39 +84,29 @@ export class AbilityAnalyzer {
     //
     new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく/g, /回復射程/g, /射程(?:と[^\d上下]+){0,2}が(\d+)%(?:と\d+)?(?:[^\d上下]+が\d*%?){0,2}上昇/g], 'RangeUpPercent', 1), /* 射程が40%上昇 *//* eslint-disable-line */
     new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく/g, /回復射程/g, /射程(?:と[^\d上下]+){0,2}が(\d+\.?\d*)倍/g], 'RangeUpPercent', 1, 100, -100), /* 射程が2倍 *//* eslint-disable-line */
-    // new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく/g, /回復射程/g, /射程が(\d+)%と\d+上昇/g], 'RangeUpPercent', 1), /* 射程が10%と20上昇 *//* eslint-disable-line */
-    // new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく/g, /回復射程/g, /低下効果/g, /射程と[^\d上下]+が(\d+)%上昇/g], 'RangeUpPercent', 1), /* 射程と攻撃が20%上昇 *//* eslint-disable-line */
-    // new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく/g, /回復射程/g, /低下効果/g, /射程と[^\d上下]+が(\d+\.?\d*)倍/g], 'RangeUpPercent', 1, 100, -100), /* 射程と攻撃が1.2倍 *//* eslint-disable-line */
-    // new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく/g, /回復射程/g, /低下効果/g, /射程が(\d+)%[^\d上下]+が(\d+)?%?上昇/g], 'RangeUpPercent', 1), /* 射程が20%、攻撃が30上昇 *//* eslint-disable-line */
-    // new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく/g, /回復射程/g, /低下効果/g, /射程が(\d+)%[^\d上下]+が(\d+)?%?[^\d上下]+が(\d+)?%?上昇/g], 'RangeUpPercent', 1), /* 射程が50%、与ダメージが35%特殊攻撃ゲージの蓄積量が25%上昇 *//* eslint-disable-line */
-    // new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく/g, /回復射程/g, /低下効果/g, /射程と[^\d上下]+が(\d+)%[^\d上下]+が(\d+)?%?上昇/g], 'RangeUpPercent', 1), /* 射程と防御が50%、与ダメージが35%上昇 *//* eslint-disable-line */
     //
     // HideShiromusume
     //
-    new AbilityAttrMatchPattern([/\d+秒間/g, /(城娘|対象|自身)が敵から狙われ(ない|なくなる|ず)/g], 'HideShiromusume', 0),
-    new AbilityAttrMatchPattern([/\d+秒間/g, /再配置時、?敵から狙われ(ない|なくなる|ず)/g], 'HideShiromusume', 0),
-    new AbilityAttrMatchPattern([/\d+秒間/g, /(城娘|対象|自身)と[^\d上下]+が敵から狙われ(ない|なくなる|ず)/g], 'HideShiromusume', 0),
-    new AbilityAttrMatchPattern([/\d+秒間/g, /(城娘|対象|自身)と[^\d上下]+と[^\d上下]+が敵から狙われ(ない|なくなる|ず)/g], 'HideShiromusume', 0),
-    new AbilityAttrMatchPattern([/\d+秒間/g, /(城娘|対象|自身)の[\d上下]+が(\d+\.?\d*倍|\d+%?上昇|半減|敵の防御を(\d+%)?無視)し?、?敵から狙われ(ない|なくなる|ず)/g], 'HideShiromusume', 0 ), /* eslint-disable-line */
-    new AbilityAttrMatchPattern([/\d+秒間/g, /(城娘|対象|自身)の[\d上下]+が(\d+\.?\d*倍|\d+%?上昇|半減|敵の防御を(\d+%)?無視)し?、?[\d上下]+が(\d+\.?\d*倍|\d+%?上昇|半減|敵の防御を(\d+%)?無視)し?、?敵から狙われ(ない|なくなる|ず)/g,], 'HideShiromusume', 0), /* eslint-disable-line */
-    new AbilityAttrMatchPattern([/\d+秒間/g, /敵から狙われ(ない|なくなる|ず).*\(.*(自分のみ|城娘(\/伏兵)?(\/蔵)?が対象)/g], 'HideShiromusume', 0),
-    new AbilityAttrMatchPattern([/\d+秒間/g, /^[^伏兵蔵]*敵から狙われ(ない|なくなる|ず)[^伏兵蔵]*$/g], 'HideShiromusume', 0),
-    new AbilityAttrMatchPattern([/\d+秒間/g, /自身は攻撃を行わず、?敵から狙われ(ない|なくなる|ず)/g], 'HideShiromusume', 0),
-    //
-    // Hide wherehouse
-    //
-    new AbilityAttrMatchPattern([/\d+秒間/g, /蔵(と伏兵)?が敵から狙われ(ない|なくなる|ず)/g], 'HideWarehouse', 0),
-    new AbilityAttrMatchPattern([/\d+秒間/g, /敵から狙われ(ない|なくなる|ず).*\(.*蔵が対象/g], 'HideWarehouse', 0),
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく/g, /(?:城娘|対象|自身)(?:と[^\d上下短倍]+){0,2}が敵から狙われ(?:ない|なくなる|ず)/g], 'HideShiromusume', 0), /* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく/g, /再配置時敵から狙われ(?:ない|なくなる|ず)/g], 'HideShiromusume', 0), /* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく/g, /(?:城娘|対象|自身)の(?:[^\d上下]+が(?:\d+\.?\d*倍|\d*%?上昇|半減|敵の防御を\d*%?無視)し?){0,2}敵から狙われ(?:ない|なくなる|ず)/g], 'HideShiromusume', 0 ), /* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく/g, /敵から狙われ(?:ない|なくなる|ず).*\(.*(?:自分のみ|城娘(\/伏兵)?(\/蔵)?が対象)/g], 'HideShiromusume', 0), /* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく/g, /^[^伏兵蔵]*敵から狙われ(?:ない|なくなる|ず)[^伏兵蔵]*$/g], 'HideShiromusume', 0), /* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく/g, /自身は攻撃を行わず敵から狙われ(?:ない|なくなる|ず)/g], 'HideShiromusume', 0), /* eslint-disable-line */
     //
     // Hide token.
     //
-    new AbilityAttrMatchPattern([/\d+秒間/g, /敵(から|に)狙われず、?.+伏兵を配置/g], 'HideToken', 0),
-    new AbilityAttrMatchPattern([/\d+秒間/g, /敵(から|に)狙われ(ない|なくなる|ず).*\(.*伏兵(\/蔵)?が対象/g], 'HideToken', 0),
-    new AbilityAttrMatchPattern([/\d+秒間/g, /伏兵(と蔵)?が敵(から|に)狙われ(ない|なくなる|ず)/g], 'HideToken', 0),
-    new AbilityAttrMatchPattern([/\d+秒間/g, /伏兵(と蔵)?が敵の攻撃対象になら(ない|なくなる|ず)/g], 'HideToken', 0),
-    new AbilityAttrMatchPattern([/\d+秒間/g, /敵(から|に)狙われず、?敵\d体を攻撃し敵味方問わず最も近い対象を攻撃させる伏兵/g], 'HideToken', 0),
-    new AbilityAttrMatchPattern([/\d+秒間/g, /敵(から|に)狙われず、?自身の\d+\.?\d*倍の攻撃で射程内の全?敵(\d体)?(に.*攻撃を行い|を攻撃し)(大きく)?後退させる伏兵/g], 'HideToken', 0), /* eslint-disable-line */
-    new AbilityAttrMatchPattern([/\d+秒間/g, /\d種類の[^\d]+伏兵をランダムで配置.*敵(から|に)狙われ(ない|なくなる|ず)/g], 'HideToken', 0),
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく/g, /敵(?:から|に)狙われず.+伏兵を配置/g], 'HideToken', 0), /* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく/g, /敵(?:から|に)狙われ(?:ない|なくなる|ず).*\(.*伏兵(\/蔵)?が対象/g], 'HideToken', 0), /* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく/g, /伏兵(?:と蔵)?が敵(?:から|に)狙われ(?:ない|なくなる|ず)/g], 'HideToken', 0), /* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく/g, /伏兵(?:と蔵)?が敵の攻撃対象になら(?:ない|なくなる|ず)/g], 'HideToken', 0), /* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく/g, /敵(?:から|に)狙われず.+(?:最も近い対象を攻撃させる|後退させる)伏兵/g], 'HideToken', 0), /* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく/g, /伏兵をランダムで配置.*敵(?:から|に)狙われ(?:ない|なくなる|ず)/g], 'HideToken', 0), /* eslint-disable-line */
+    //
+    // Hide wherehouse
+    //
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく/g, /蔵(?:と伏兵)?が敵から狙われ(?:ない|なくなる|ず)/g], 'HideWarehouse', 0), /* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく/g, /敵から狙われ(?:ない|なくなる|ず).*\(.*蔵が対象/g], 'HideWarehouse', 0), /* eslint-disable-line */
   ];
 
   analyze(descriptions: string[]): AbilityAttr[] {
