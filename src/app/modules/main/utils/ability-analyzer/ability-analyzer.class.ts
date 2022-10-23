@@ -77,13 +77,8 @@ export class AbilityAnalyzer {
     //
     // Range up (fixed value)
     //
-    new AbilityAttrMatchPattern([/\d+秒間/g, /ずつ/g, /射程が上昇/g], 'RangeUpFixedValue', 0), /* 射程が上昇 *//* eslint-disable-line */
-    new AbilityAttrMatchPattern([/\d+秒間/g, /ずつ/g, /射程が(\d+)上昇/g], 'RangeUpFixedValue', 1), /* 射程が40上昇 *//* eslint-disable-line */
-    new AbilityAttrMatchPattern([/\d+秒間/g, /ずつ/g, /射程が\d+%と(\d+)上昇/g], 'RangeUpFixedValue', 1), /* 射程が10%と20上昇 *//* eslint-disable-line */
-    new AbilityAttrMatchPattern([/\d+秒間/g, /ずつ/g, /低下効果/g, /大きく/g, /射程と[^\d上下]+が(\d+)上昇/g], 'RangeUpFixedValue', 1), /* 射程と攻撃が20上昇 *//* eslint-disable-line */
-    new AbilityAttrMatchPattern([/\d+秒間/g, /ずつ/g, /低下効果/g, /大きく/g, /射程が(\d+)[^%\d上下]+が(\d+)?%?上昇/g], 'RangeUpFixedValue', 1), /* 射程が20、攻撃が30上昇 *//* eslint-disable-line */
-    new AbilityAttrMatchPattern([/\d+秒間/g, /ずつ/g, /低下効果/g, /大きく/g, /射程が(\d+)[^%\d上下]+が(\d+)?%?[^\d上下]+が(\d+)?%?上昇/g], 'RangeUpFixedValue', 1), /* 射程が50、与ダメージが35%特殊攻撃ゲージの蓄積量が25%上昇 *//* eslint-disable-line */
-    new AbilityAttrMatchPattern([/\d+秒間/g, /ずつ/g, /低下効果/g, /大きく/g, /射程と[^\d上下]+が(\d+)[^%\d上下]+が(\d+)?%?上昇/g], 'RangeUpFixedValue', 1), /* 射程と防御が50、与ダメージが35%上昇 *//* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく/g, /低下効果/g, /射程が上昇/g], 'RangeUpFixedValue', 0), /* 射程が上昇 *//* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく/g, /低下効果/g, /射程(?:と[^\d上下倍]+){0,2}が(?:\d+%と)?(\d+)(?:[^\d上下倍]+が\d*%?){0,2}上昇/g], 'RangeUpFixedValue', 1), /* 射程が40上昇 *//* eslint-disable-line */
     //
     // Range up (percent)
     //
