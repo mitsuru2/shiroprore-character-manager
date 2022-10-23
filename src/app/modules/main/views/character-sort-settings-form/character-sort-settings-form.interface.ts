@@ -13,6 +13,8 @@ export const CharacterSortIndexTypes: { label: string; value: CharacterSortIndex
 export const CharacterSortAbilityAttrTypes: { label: string; value: AbilityAttrType }[] = [
   { label: '攻撃上昇(%)', value: 'AttackUpPercent' },
   { label: '与ダメ上昇(%)', value: 'DamageUpPercent' },
+  { label: '射程上昇(%)', value: 'RangeUpPercent' },
+  { label: '射程上昇(値)', value: 'RangeUpFixedValue' },
   { label: '再配置CT短縮(%)', value: 'ShortSortieIntervalPercent' },
   { label: '計略CT短縮(%)', value: 'ShortKeiryakuIntervalPercent' },
   { label: '敵攻撃低下(%)', value: 'AttackDownPercent' },
