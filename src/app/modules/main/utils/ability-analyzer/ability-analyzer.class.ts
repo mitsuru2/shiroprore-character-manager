@@ -59,11 +59,8 @@ export class AbilityAnalyzer {
     //
     // Damage up (percent)
     //
-    new AbilityAttrMatchPattern([/\d+秒間/g, /ずつ/g, /(与ダメージ|与ダメ)が(\d+)%上昇/g], 'DamageUpPercent', 2), /* 与ダメージが20%上昇 *//* eslint-disable-line */
-    new AbilityAttrMatchPattern([/\d+秒間/g, /ずつ/g, /(与ダメージ|与ダメ)が(\d+\.?\d*)倍/g], 'DamageUpPercent', 2, 100, -100), /* 与ダメージが1.2倍 *//* eslint-disable-line */
-    new AbilityAttrMatchPattern([/\d+秒間/g, /ずつ/g, /(与ダメージ|与ダメ)が(\d+)%[^\d上昇低下]+が\d+%?上昇/g], 'DamageUpPercent', 2), /* 与ダメージが20%防御が20上昇 *//* eslint-disable-line */
-    new AbilityAttrMatchPattern([/\d+秒間/g, /ずつ/g, /(与ダメージ|与ダメ)と[^\d上昇低下]+が(\d+)%上昇/g], 'DamageUpPercent', 2), /* 与ダメージと防御が20%上昇 *//* eslint-disable-line */
-    new AbilityAttrMatchPattern([/\d+秒間/g, /ずつ/g, /(与ダメージ|与ダメ)が(\d+)%[^\d上昇低下]+が\d+%?[^\d上昇低下]+が\d+%?上昇/g], 'DamageUpPercent', 2), /* 与ダメージが7%近接城娘の射程が10、遠隔城娘の攻撃が50上昇 *//* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく/g, /低下効果/g, /(?:与ダメージ|与ダメ)(?:と[^\d上下短]+){0,2}が(\d+)%(?:[^\d上下短]+が\d+%?){0,2}上昇/g], 'DamageUpPercent', 1), /* 与ダメージが20%上昇 *//* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく/g, /低下効果/g, /(?:与ダメージ|与ダメ)(?:と[^\d上下短]+){0,2}が(\d+\.?\d*)倍/g], 'DamageUpPercent', 1, 100, -100), /* 与ダメージが1.2倍 *//* eslint-disable-line */
     //
     // Taken damage up (percent)
     //
