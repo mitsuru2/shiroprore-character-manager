@@ -64,10 +64,8 @@ export class AbilityAnalyzer {
     //
     // Taken damage up (percent)
     //
-    new AbilityAttrMatchPattern([/\d+秒間/g, /ずつ/g, /(敵|兜)の(被ダメージ|被ダメ)が(\d+)%上昇/g], 'TakenDamageUpPercent', 3), /* 敵の被ダメージが20%上昇 *//* eslint-disable-line */
-    new AbilityAttrMatchPattern([/\d+秒間/g, /ずつ/g, /(敵|兜)の(被ダメージ|被ダメ)が(\d+\.?\d*)倍/g], 'TakenDamageUpPercent', 3, 100, -100), /* 敵の被ダメージが1.2倍 *//* eslint-disable-line */
-    new AbilityAttrMatchPattern([/\d+秒間/g, /ずつ/g, /(敵|兜)の[^\d]+が\d+%?低下、?(被ダメージ|被ダメ)が?(\d+)%上昇/g], 'TakenDamageUpPercent', 3), /* 敵の攻撃が10%低下、被ダメージが10%上昇 *//* eslint-disable-line */
-    new AbilityAttrMatchPattern([/\d+秒間/g, /ずつ/g, /(敵|兜)の[^\d]+が\d+%?[^\d]+が\d+%?低下、?(被ダメージ|被ダメ)が?(\d+)%上昇/g], 'TakenDamageUpPercent', 3), /* 敵の防御が45、移動速度が10%低下被ダメージが5%上昇 *//* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく/g, /(?:敵|兜)の(?:[^\d上下短]+(?:と[^\d上下短]+){0,1}が\d+%?){0,2}(?:低下)?(?:被ダメージ|被ダメ)が?(\d+)%上昇/g], 'TakenDamageUpPercent', 1), /* 敵の被ダメージが20%上昇 *//* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく/g, /(?:敵|兜)の(?:[^\d上下短]+(?:と[^\d上下短]+){0,1}が\d+%?){0,2}(?:低下)?(?:被ダメージ|被ダメ)が?(\d+\.?\d*)倍/g], 'TakenDamageUpPercent', 1, 100, -100), /* 敵の被ダメージが1.2倍 *//* eslint-disable-line */
     //
     // Sortie interval shorten (percent)
     //
