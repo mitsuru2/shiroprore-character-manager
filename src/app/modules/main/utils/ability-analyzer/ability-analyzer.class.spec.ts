@@ -1541,7 +1541,7 @@ const abilityDescriptions: string[] = [
   '5秒間対象の攻撃が7086上昇射程内の殿と城娘に対して継続的に回復を行う妖怪へのダメージは発生しない(自分のみが対象)',
   '所持しているだけで獲得金が35%上昇(像の効果は上乗せ)',
   '15秒間対象の射程が40上昇、攻撃対象が1増加(石弓城娘が対象)',
-  '巨大化する度に射程内の城娘の防御が30攻撃速度が6%上昇被ダメージがを4%軽減',
+  '巨大化する度に射程内の城娘の防御が30攻撃速度が6%上昇被ダメージを4%軽減',
   '殿と射程内の城娘、伏兵の攻撃が20%射程が10上昇',
   '20秒間対象の攻撃と射程が1.4倍、耐久が100%の敵に対して攻撃が3倍になる。攻撃後の隙が延長(自分のみが対象)',
   '30秒間対象の回復が30上昇被ダメージを50%軽減',
@@ -2256,19 +2256,19 @@ describe('AnalyzeAbility', () => {
         let text = abilityDescriptions[i];
         // text = text.replace(/射程内/g, '');
         // text = text.replace(/射程外/g, '');
-        let index = text.indexOf("狙われ");
+        let index = text.indexOf("被ダメ");
         if (index >= 0) {
-          // text = text.slice(index);
-          // index = text.indexOf("%");
-          // if (index >= 0) {
-            // text = text.slice(index);
-            // index = text.indexOf("上昇");
-            // const index2 = text.indexOf("倍");
-            // if (index >= 0 || index2 >= 0) {
+          text = text.slice(index);
+          index = text.indexOf("%");
+          if (index >= 0) {
+            text = text.slice(index);
+            index = text.indexOf("減");
+            const index2 = text.indexOf("下");
+            if (index >= 0 || index2 >= 0) {
               console.log(abilityDescriptions[i]);
               cnt++;
-            // }
-          // }
+            }
+          }
         }
       }
     }

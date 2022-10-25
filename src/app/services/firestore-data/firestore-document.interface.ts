@@ -50,6 +50,7 @@ export const abilityAttrTypes = [
   'AttackDownPercent',
   'DamageUpPercent',
   'TakenDamageUpPercent',
+  'TakenDamageDownPercent',
   'ShortSortieIntervalPercent',
   'ShortKeiryakuIntervalPercent',
   'RangeUpFixedValue',

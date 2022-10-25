@@ -67,6 +67,10 @@ export class AbilityAnalyzer {
     new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく/g, /(?:敵|兜)の(?:[^\d上下]+(?:と[^\d上下]+){0,1}が\d+%?){0,2}(?:低下)?(?:被ダメージ|被ダメ)が?(\d+)%上昇/g], 'TakenDamageUpPercent', 1), /* 敵の被ダメージが20%上昇 *//* eslint-disable-line */
     new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく/g, /(?:敵|兜)の(?:[^\d上下]+(?:と[^\d上下]+){0,1}が\d+%?){0,2}(?:低下)?(?:被ダメージ|被ダメ)が?(\d+\.?\d*)倍/g], 'TakenDamageUpPercent', 1, 100, -100), /* 敵の被ダメージが1.2倍 *//* eslint-disable-line */
     //
+    // Taken damage down (percent)
+    //
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく/g, /(?:被ダメージ|被ダメ)(?:と[^\d上下減]+){0,2}(?:を|が)?(\d+)%(?:軽減|減少)/g], 'TakenDamageDownPercent', 1), /* 敵の被ダメージが20%上昇 *//* eslint-disable-line */
+    //
     // Sortie interval shorten (percent)
     //
     new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく/g, /再配置(?:までの|の|時の)?時間が?(\d+)%短縮/g], 'ShortSortieIntervalPercent', 1),
