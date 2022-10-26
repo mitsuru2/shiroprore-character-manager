@@ -53,6 +53,9 @@ export class FirestoreCollectionWrapper<T extends FsDocumentBase> {
    * IndexedDB is used as cache.
    * @uid User ID.
    * @returns Promise<number>. Data length.
+   * @note It will load data from remote server if there is data updated/created after local timestamp.
+   * The local timestamp is rollbacked 1 minute as margin. If it does still not work,
+   * it should be modified to get at least newly created data using 'NotIn' statement.
    */
   async load(uid = ''): Promise<number> {
     // Get timestamp of local storage.
