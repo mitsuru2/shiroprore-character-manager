@@ -57,6 +57,7 @@ export class FirestoreCollectionWrapper<T extends FsDocumentBase> {
   async load(uid = ''): Promise<number> {
     // Get timestamp of local storage.
     let timestamp = await indexedDbWrapper.getTimestamp(this.name);
+    timestamp.setMinutes(timestamp.getMinutes() - 1); // Margin 1 minutes.
 
     // Clear existing data.
     this.clearData();
@@ -67,9 +68,9 @@ export class FirestoreCollectionWrapper<T extends FsDocumentBase> {
     this.mergeData(localData);
 
     // Make query for firestore db.
-    let q = query(this.collection, where('updatedAt', '>', timestamp));
+    let q = query(this.collection, where('updatedAt', '>=', timestamp));
     if (uid !== '') {
-      q = query(this.collection, where('updatedAt', '>', timestamp), where('name', '==', uid));
+      q = query(this.collection, where('updatedAt', '>=', timestamp), where('name', '==', uid));
     }
 
     // Load data from firestore db.
