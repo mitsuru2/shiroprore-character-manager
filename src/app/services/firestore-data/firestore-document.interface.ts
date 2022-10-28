@@ -59,6 +59,16 @@ export const abilityAttrTypes = [
   'HideShiromusume',
   'HideToken',
   'HideWarehouse',
+  'MapWeapon',
+  'MapWeaponFire',
+  'MapWeaponThunder',
+  'MapWeaponRock',
+  'MapWeaponWind',
+  'MapWeaponIce',
+  'MapWeaponWater',
+  'MapWeaponPoison',
+  'MapWeaponSeal',
+  'MapWeaponOthers',
 ] as const;
 export type AbilityAttrType = typeof abilityAttrTypes[number]; // <-- Define union data type from string const array.
 

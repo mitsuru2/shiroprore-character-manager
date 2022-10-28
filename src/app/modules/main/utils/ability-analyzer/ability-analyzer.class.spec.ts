@@ -329,7 +329,7 @@ const abilityDescriptions: string[] = [
   '25秒間対象の攻撃が妖怪に対して1.7倍対象が攻撃した敵は5秒間攻撃速度が50%低下攻撃後の隙が50%延長(自分のみが対象)',
   '30秒間対象の攻撃速度が2倍敵の防御を50%無視与ダメージの25%耐久が回復(遠隔城娘が対象)',
   '40秒間対象の攻撃が術攻撃になる射程が80上昇、攻撃対象が1増加(自分のみが対象)',
-  '【雷属性】範囲内に敵の攻撃の2.5倍の術ダメージを与える(範囲:特大)',
+  '【雷属性】範囲内の敵に攻撃の2.5倍の術ダメージを与える(範囲:特大)',
   '自身の攻撃が25%上昇攻撃した敵の移動速度が5秒間40%低下',
   '20秒間対象の射程が50上昇武器攻撃が標的の周囲の敵にもダメージを与える(自分のみが対象)',
   '30秒間対象の射程が50上昇攻撃対象が1増加(自分のみが対象)',
@@ -2251,25 +2251,30 @@ describe('AnalyzeAbility', () => {
       const result = e.analyze([abilityDescriptions[i]]);
       if (result.length > 0) {
         cnt++;
-        console.log(`${abilityDescriptions[i]},${result[0].debug},${result[0].value},${result[0].isStepEffect}`)
+        // console.log(`${abilityDescriptions[i]},${result[0].debug},${result[0].value},${result[0].isStepEffect}`)
+        let logText = `${abilityDescriptions[i]},${result[0].debug},${result[0].value}`;
+        for (let ii = 0; ii < result.length; ++ii) {
+          logText += `,${result[ii].type}`;
+        }
+        console.log(logText);
       } else {
         let text = abilityDescriptions[i];
-        // text = text.replace(/射程内/g, '');
+        text = text.replace(/属性】範囲内の敵/g, '');
         // text = text.replace(/射程外/g, '');
-        let index = text.indexOf("被ダメ");
-        if (index >= 0) {
-          text = text.slice(index);
-          index = text.indexOf("%");
+        let index = text.indexOf("範囲内の敵に");
+        // if (index >= 0) {
+        //   text = text.slice(index);
+        //   index = text.indexOf("ダメージを与");
           if (index >= 0) {
             text = text.slice(index);
-            index = text.indexOf("減");
-            const index2 = text.indexOf("下");
+            index = text.indexOf("ダメージを与");
+            const index2 = text.indexOf("効果を与");
             if (index >= 0 || index2 >= 0) {
               console.log(abilityDescriptions[i]);
               cnt++;
             }
           }
-        }
+        // }
       }
     }
     // console.log(`Count: ${cnt}`);
