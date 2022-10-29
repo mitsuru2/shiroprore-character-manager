@@ -19,6 +19,7 @@ export const CharacterSortAbilityAttrTypes: { label: string; value: AbilityAttrT
   { label: '計略CT短縮(%)', value: 'ShortKeiryakuIntervalPercent' },
   { label: '敵攻撃低下(%)', value: 'AttackDownPercent' },
   { label: '敵被ダメ上昇(%)', value: 'TakenDamageUpPercent' },
+  { label: 'ダメ計倍率(%)', value: 'MapWeapon' },
 ];
 
 export const CharacterSortDirectionTypes: { label: string; value: CharacterSortDirectionType }[] = [

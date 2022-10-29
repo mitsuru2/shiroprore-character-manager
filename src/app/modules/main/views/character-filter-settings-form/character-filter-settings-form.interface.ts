@@ -41,6 +41,15 @@ export const CharacterFilterOptionAbilityAttrLabels: { label: string; value: Abi
   { label: '蔵隠密', value: 'HideWarehouse' },
   { label: '敵攻撃低下(%)', value: 'AttackDownPercent' },
   { label: '敵被ダメ上昇(%)', value: 'TakenDamageUpPercent' },
+  { label: 'ダメ計(火)', value: 'MapWeaponFire' },
+  { label: 'ダメ計(雷)', value: 'MapWeaponThunder' },
+  { label: 'ダメ計(岩)', value: 'MapWeaponRock' },
+  { label: 'ダメ計(風)', value: 'MapWeaponWind' },
+  { label: 'ダメ計(水)', value: 'MapWeaponWater' },
+  { label: 'ダメ計(氷)', value: 'MapWeaponIce' },
+  { label: 'ダメ計(毒)', value: 'MapWeaponPoison' },
+  { label: 'ダメ計(封)', value: 'MapWeaponSeal' },
+  { label: 'ダメ計(他)', value: 'MapWeaponOthers' },
 ];
 export const CharacterFilterOptionTokenTypeLabels: { label: string; value: CharacterFilterOptionOthersType }[] = [
   { label: '伏兵(赤)', value: 'tokenRed' },

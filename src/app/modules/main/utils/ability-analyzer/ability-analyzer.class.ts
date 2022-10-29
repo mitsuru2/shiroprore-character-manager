@@ -1,4 +1,4 @@
-import { AbilityAttrType } from 'src/app/services/firestore-data/firestore-document.interface';
+import { AbilityAttrType, FsAbilityAttribute } from 'src/app/services/firestore-data/firestore-document.interface';
 
 class AbilityAttrMatchPattern {
   queries: RegExp[];
@@ -20,23 +20,6 @@ class AbilityAttrMatchPattern {
     this.factor = factor;
     this.offset = offset;
     this.countIndex = countIndex;
-  }
-}
-
-export class AbilityAttr {
-  type: AbilityAttrType;
-
-  value: number;
-
-  isStepEffect: boolean;
-
-  debug: string;
-
-  constructor(type: AbilityAttrType, value = 0, isStepEffect = false, debug = '') {
-    this.type = type;
-    this.value = value;
-    this.isStepEffect = isStepEffect;
-    this.debug = debug;
   }
 }
 
@@ -147,7 +130,9 @@ export class AbilityAnalyzer {
     //
     // Map weapon (seal)
     //
-    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /^範囲内の敵に攻撃の(\d\.?\d*)倍の?ダメージを与え動きを封じる/g], ['MapWeapon', "MapWeaponSeal"], 1, 100), /* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /^範囲内の敵の動きを封じる/g], ['MapWeapon', "MapWeaponSeal"], 0), /* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /^範囲内の敵に攻撃の(\d\.?\d*)倍の?ダメージを与え(?:敵の)?動きを封じる/g], ['MapWeapon', "MapWeaponSeal"], 1, 100), /* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /属性】範囲内の敵に攻撃の(\d\.?\d*)倍の?術?ダメージを与え(?:敵の)?動きを封じる/g], ['MapWeapon', "MapWeaponSeal"], 1, 100), /* eslint-disable-line */
     //
     // Map weapon (others)
     //
@@ -157,8 +142,8 @@ export class AbilityAnalyzer {
     new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /^範囲内の敵に攻撃の(\d\.?\d*)倍の?ダメージを与え(?:殿と)?城娘(?:と伏兵)?を攻撃の\d\.?\d*倍で回復/g], ['MapWeapon', "MapWeaponOthers"], 1, 100), /* eslint-disable-line */
   ];
 
-  analyze(descriptions: string[]): AbilityAttr[] {
-    let result: AbilityAttr[] = [];
+  analyze(descriptions: string[]): FsAbilityAttribute[] {
+    let result: FsAbilityAttribute[] = [];
 
     // Join description text lines to one text.
     const description = descriptions.join('');
@@ -210,8 +195,8 @@ export class AbilityAnalyzer {
     return result;
   }
 
-  private matchAnalyzePattern(description: string): AbilityAttr[] {
-    let result: AbilityAttr[] = [];
+  private matchAnalyzePattern(description: string): FsAbilityAttribute[] {
+    let result: FsAbilityAttribute[] = [];
 
     // Apply all patterns to the input description.
     for (let i = 0; i < this.matchPatterns.length; ++i) {
@@ -237,7 +222,7 @@ export class AbilityAnalyzer {
             }
             // Register attribute info.
             for (let l = 0; l < pattern.types.length; ++l) {
-              result.push(new AbilityAttr(pattern.types[l], value, false, matches[k][0]));
+              result.push(new FsAbilityAttribute(pattern.types[l], value, false));
             }
           }
         }
@@ -247,8 +232,8 @@ export class AbilityAnalyzer {
     return result;
   }
 
-  private slimDownMatchedResult(attrList: AbilityAttr[]): AbilityAttr[] {
-    let result: AbilityAttr[] = [];
+  private slimDownMatchedResult(attrList: FsAbilityAttribute[]): FsAbilityAttribute[] {
+    let result: FsAbilityAttribute[] = [];
 
     // Sort descending order.
     // Priority: Type >> isStepEffect >> Value
