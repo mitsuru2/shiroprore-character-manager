@@ -34,6 +34,13 @@ export class AbilityAnalyzer {
     new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /特殊攻撃|低下効果/g, /攻撃(?:と[^\d上下]+){0,2}が(\d+)%([^\d上下]+が\d*%?){1,2}に?上昇/g], ['AttackUpPercent'], 1), /* 攻撃が20%、砲弾直撃ボーナスが60%に上昇 *//* eslint-disable-line */
     new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /特殊攻撃|低下効果/g, /攻撃が[^\d]{1,6}に対して(\d+\.?\d?)倍/g], ['AttackUpPercent'], 1, 100, -100), /* 攻撃が飛行敵に対して1.2倍 *//* eslint-disable-line */
     //
+    // Attack up (fixed value)
+    //
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /特殊攻撃|低下効果/g, /攻撃(?:と[^\d上下]+){0,2}(?:が|を)(?:\d+%と)?(\d+)上昇/g], ['AttackUpFixedValue'], 1), /* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /特殊攻撃|低下効果/g, /攻撃(?:と[^\d上下]+){0,2}(?:が|を)\d+上昇\((?:上限|最大)(\d+)[^%]?\)/g], ['AttackUpFixedValue'], 1), /* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /特殊攻撃|低下効果/g, /攻撃(?:と[^\d上下]+){0,2}(?:が|を)(\d+)(?:[^\d上下%]+(?:が|を)\d*%?){1,2}に?上昇/g], ['AttackUpFixedValue'], 1), /* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /特殊攻撃|低下効果/g, /射程内の城娘1体につき対象の攻撃(?:が|を)(\d+)上昇/g], ['AttackUpFixedValue'], 1, 8), /* eslint-disable-line */
+    //
     // Attack down (percent)
     //
     new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /(?:敵の|兜の|ダメージを与え|攻撃し)(?:[^\d上下]+と){0,2}攻撃(?:と[^\d上下]+){0,2}(?:が|を)(\d+)%(?:と\d+)?(?:[^\d上下]+(?:が|を)\d+%?){0,2}低下/g], ['AttackDownPercent'], 1), /* 敵の攻撃が20%、攻撃速度が10%低下 *//* eslint-disable-line */
@@ -139,7 +146,9 @@ export class AbilityAnalyzer {
     new AbilityAttrMatchPattern([/範囲内の敵に5種の効果を与える\(範囲:特大\)①1.5倍ダメ②(\d\.?\d*)倍ダメ/g], ['MapWeapon', "MapWeaponOthers"], 1, 100, 150), /* eslint-disable-line */
     new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /^範囲内の敵に攻撃の(\d\.?\d*)倍の?ダメージを与え(?:攻撃|攻撃速度|防御|射程|攻撃後の隙)が\d+%(?:低下|延長)/g], ['MapWeapon', "MapWeaponOthers"], 1, 100), /* eslint-disable-line */
     new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /^範囲内の敵に攻撃の(\d\.?\d*)倍の?ダメージを与え(?:攻撃|攻撃速度|防御|射程)と(?:攻撃|攻撃速度|防御|射程|移動速度)が\d+%低下/g], ['MapWeapon', "MapWeaponOthers"], 1, 100), /* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /^範囲内の敵に攻撃の(\d\.?\d*)倍の?ダメージを(\d)回与え(?:攻撃|攻撃速度|防御|射程)と(?:攻撃|攻撃速度|防御|射程|移動速度)が\d+%低下/g], ['MapWeapon', "MapWeaponOthers"], 1, 100, 0, 2), /* eslint-disable-line */
     new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /^範囲内の敵に攻撃の(\d\.?\d*)倍の?ダメージを与え(?:殿と)?城娘(?:と伏兵)?を攻撃の\d\.?\d*倍で回復/g], ['MapWeapon', "MapWeaponOthers"], 1, 100), /* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /^対象の横方向の敵に攻撃の(\d\.?\d*)倍の?術?ダメージを(\d)回与え防御を0にする/g], ['MapWeapon', "MapWeaponOthers"], 1, 100, 0, 2), /* eslint-disable-line */
   ];
 
   analyze(descriptions: string[]): FsAbilityAttribute[] {

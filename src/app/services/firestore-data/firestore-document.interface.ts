@@ -47,14 +47,15 @@ export class FsDocumentBaseWithCode extends FsDocumentBase {
 export type MapCellType = '赤' | '青' | '赤青' | '水上' | 'なし';
 export const abilityAttrTypes = [
   'AttackUpPercent',
+  'AttackUpFixedValue',
   'AttackDownPercent',
   'DamageUpPercent',
   'TakenDamageUpPercent',
   'TakenDamageDownPercent',
   'ShortSortieIntervalPercent',
   'ShortKeiryakuIntervalPercent',
-  'RangeUpFixedValue',
   'RangeUpPercent',
+  'RangeUpFixedValue',
   'RangeDownPercent',
   'HideShiromusume',
   'HideToken',

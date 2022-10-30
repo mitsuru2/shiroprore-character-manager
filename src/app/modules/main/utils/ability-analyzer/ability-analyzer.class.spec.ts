@@ -2259,16 +2259,16 @@ describe('AnalyzeAbility', () => {
         console.log(logText);
       } else {
         let text = abilityDescriptions[i];
-        text = text.replace(/属性】範囲内の敵/g, '');
+        // text = text.replace(/属性】範囲内の敵/g, '');
         // text = text.replace(/射程外/g, '');
-        let index = text.indexOf("範囲内の敵に");
+        let index = text.indexOf("攻撃");
         // if (index >= 0) {
         //   text = text.slice(index);
         //   index = text.indexOf("ダメージを与");
           if (index >= 0) {
             text = text.slice(index);
-            index = text.indexOf("ダメージを与");
-            const index2 = text.indexOf("効果を与");
+            index = text.indexOf("上昇");
+            const index2 = text.indexOf("増加");
             if (index >= 0 || index2 >= 0) {
               console.log(abilityDescriptions[i]);
               cnt++;
