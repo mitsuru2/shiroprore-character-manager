@@ -5,7 +5,7 @@ import { CloudStorageService } from 'src/app/services/cloud-storage/cloud-storag
 import { ErrorHandlerService } from 'src/app/services/error-handler/error-handler.service';
 import { FsCollectionName } from 'src/app/services/firestore-data/firestore-collection-name.enum';
 import { FirestoreDataService } from 'src/app/services/firestore-data/firestore-data.service';
-import { AbilityAttrType, abilityAttrTypes, FsAbility, FsAbilityAttribute } from 'src/app/services/firestore-data/firestore-document.interface';
+import { AbilityAttrType, abilityAttrTypes, FsAbility, AbilityAttribute } from 'src/app/services/firestore-data/firestore-document.interface';
 import { SpinnerService } from '../../services/spinner/spinner.service';
 import { UserAuthService } from '../../services/user-auth/user-auth.service';
 import { AbilityAnalyzer } from '../../utils/ability-analyzer/ability-analyzer.class';
@@ -104,7 +104,7 @@ export class InquiryFormComponent /*implements OnInit*/ {
   //   this.spinner.hide();
   // }
 
-  // private isAttrChanged(org: FsAbilityAttribute[], mod: FsAbilityAttribute[]): boolean {
+  // private isAttrChanged(org: AbilityAttribute[], mod: AbilityAttribute[]): boolean {
   //   if (org.length !== mod.length) {
   //     return true;
   //   }
