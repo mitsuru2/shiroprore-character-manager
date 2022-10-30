@@ -72,18 +72,10 @@ export const abilityAttrTypes = [
 ] as const;
 export type AbilityAttrType = typeof abilityAttrTypes[number]; // <-- Define union data type from string const array.
 
-export class FsAbilityAttribute {
+export interface AbilityAttribute {
   type: AbilityAttrType;
-
   value: number;
-
-  isStepEffect: boolean = false;
-
-  constructor(type: AbilityAttrType, value: number, isStepEffect: boolean = false) {
-    this.type = type;
-    this.value = value;
-    this.isStepEffect = isStepEffect;
-  }
+  isStepEffect: boolean;
 }
 
 export class FsAbility extends FsDocumentBase {
@@ -97,7 +89,7 @@ export class FsAbility extends FsDocumentBase {
 
   tokenLayouts: MapCellType[] = [];
 
-  attributes: FsAbilityAttribute[] = [];
+  attributes: AbilityAttribute[] = [];
 }
 
 export class FsAbilityType extends FsDocumentBaseWithOrder {

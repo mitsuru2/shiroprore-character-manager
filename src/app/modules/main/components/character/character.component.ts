@@ -10,7 +10,7 @@ import { FsCollectionName } from 'src/app/services/firestore-data/firestore-coll
 import { FirestoreDataService } from 'src/app/services/firestore-data/firestore-data.service';
 import {
   FsAbility,
-  FsAbilityAttribute,
+  AbilityAttribute,
   FsAbilityType,
   FsCharacter,
   FsCharacterTag,
@@ -1224,7 +1224,7 @@ export class CharacterComponent implements OnInit, AfterViewInit {
     return false;
   }
 
-  private isAbilityAttrChanged(org: FsAbilityAttribute[], mod: FsAbilityAttribute[]): boolean {
+  private isAbilityAttrChanged(org: AbilityAttribute[], mod: AbilityAttribute[]): boolean {
     if (org.length !== mod.length) {
       return true;
     }

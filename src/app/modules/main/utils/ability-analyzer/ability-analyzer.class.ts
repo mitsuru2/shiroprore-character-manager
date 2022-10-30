@@ -1,4 +1,4 @@
-import { AbilityAttrType, FsAbilityAttribute } from 'src/app/services/firestore-data/firestore-document.interface';
+import { AbilityAttrType, AbilityAttribute } from 'src/app/services/firestore-data/firestore-document.interface';
 
 class AbilityAttrMatchPattern {
   queries: RegExp[];
@@ -142,8 +142,8 @@ export class AbilityAnalyzer {
     new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /^範囲内の敵に攻撃の(\d\.?\d*)倍の?ダメージを与え(?:殿と)?城娘(?:と伏兵)?を攻撃の\d\.?\d*倍で回復/g], ['MapWeapon', "MapWeaponOthers"], 1, 100), /* eslint-disable-line */
   ];
 
-  analyze(descriptions: string[]): FsAbilityAttribute[] {
-    let result: FsAbilityAttribute[] = [];
+  analyze(descriptions: string[]): AbilityAttribute[] {
+    let result: AbilityAttribute[] = [];
 
     // Join description text lines to one text.
     const description = descriptions.join('');
@@ -195,8 +195,8 @@ export class AbilityAnalyzer {
     return result;
   }
 
-  private matchAnalyzePattern(description: string): FsAbilityAttribute[] {
-    let result: FsAbilityAttribute[] = [];
+  private matchAnalyzePattern(description: string): AbilityAttribute[] {
+    let result: AbilityAttribute[] = [];
 
     // Apply all patterns to the input description.
     for (let i = 0; i < this.matchPatterns.length; ++i) {
@@ -222,7 +222,7 @@ export class AbilityAnalyzer {
             }
             // Register attribute info.
             for (let l = 0; l < pattern.types.length; ++l) {
-              result.push(new FsAbilityAttribute(pattern.types[l], value, false));
+              result.push({ type: pattern.types[l], value: value, isStepEffect: false } as AbilityAttribute);
             }
           }
         }
@@ -232,8 +232,8 @@ export class AbilityAnalyzer {
     return result;
   }
 
-  private slimDownMatchedResult(attrList: FsAbilityAttribute[]): FsAbilityAttribute[] {
-    let result: FsAbilityAttribute[] = [];
+  private slimDownMatchedResult(attrList: AbilityAttribute[]): AbilityAttribute[] {
+    let result: AbilityAttribute[] = [];
 
     // Sort descending order.
     // Priority: Type >> isStepEffect >> Value
