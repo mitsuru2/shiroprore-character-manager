@@ -13,13 +13,28 @@ class AbilityAttrMatchPattern {
 
   countIndex: number;
 
-  constructor(queries: RegExp[], types: AbilityAttrType[], index: number, factor: number = 1, offset: number = 0, countIndex: number = 0) {
+  countFactor: number;
+
+  countOffset: number;
+
+  constructor(
+    queries: RegExp[],
+    types: AbilityAttrType[],
+    index: number,
+    factor: number = 1,
+    offset: number = 0,
+    countIndex: number = 0,
+    countFactor: number = 1,
+    countOffset: number = 0
+  ) {
     this.queries = queries;
     this.types = types;
     this.index = index;
     this.factor = factor;
     this.offset = offset;
     this.countIndex = countIndex;
+    this.countFactor = countFactor;
+    this.countOffset = countOffset;
   }
 }
 
@@ -29,15 +44,28 @@ export class AbilityAnalyzer {
     // Attack up (percent)
     //
     new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /特殊攻撃|低下効果/g, /攻撃(?:と[^\d上下]+){0,2}が(\d+)%(?:と\d+)?上昇/g], ['AttackUpPercent'], 1), /* 攻撃が20%上昇 *//* eslint-disable-line */
-    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /特殊攻撃|低下効果/g, /攻撃(?:と[^\d上下]+){0,2}が\d+%上昇\((上限|最大)(\d+)%\)/g], ['AttackUpPercent'], 2), /* 攻撃が4%ずつ上昇(最大40%) *//* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /特殊攻撃|低下効果/g, /攻撃(?:と[^\d上下]+){0,2}が\d+%上昇\((上限|最大)値?(\d+)%\)/g], ['AttackUpPercent'], 2), /* 攻撃が4%ずつ上昇(最大40%) *//* eslint-disable-line */
     new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /特殊攻撃|低下効果/g, /攻撃(?:と[^\d上下]+){0,2}が(\d+\.?\d?)倍/g], ['AttackUpPercent'], 1, 100, -100), /* 攻撃が1.2倍 *//* eslint-disable-line */
     new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /特殊攻撃|低下効果/g, /攻撃(?:と[^\d上下]+){0,2}が(\d+)%([^\d上下]+が\d*%?){1,2}に?上昇/g], ['AttackUpPercent'], 1), /* 攻撃が20%、砲弾直撃ボーナスが60%に上昇 *//* eslint-disable-line */
     new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /特殊攻撃|低下効果/g, /攻撃が[^\d]{1,6}に対して(\d+\.?\d?)倍/g], ['AttackUpPercent'], 1, 100, -100), /* 攻撃が飛行敵に対して1.2倍 *//* eslint-disable-line */
     //
+    // Attack up (fixed value)
+    //
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /特殊攻撃|低下効果/g, /攻撃(?:と[^\d上下対]+){0,2}(?:が|を)(?:\d+%と)?(\d+)上昇/g], ['AttackUpFixedValue'], 1), /* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /特殊攻撃|低下効果/g, /攻撃(?:と[^\d上下対]+){0,2}(?:が|を)(?:\d+\.?\d*倍更に)?(\d+)上昇/g], ['AttackUpFixedValue'], 1), /* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /特殊攻撃|低下効果/g, /攻撃(?:と[^\d上下対]+){0,2}(?:が|を)(?:射程内の敵1体につき)?\d+上昇\((?:上限|最大)値?(\d+)[^%]?\)/g], ['AttackUpFixedValue'], 1), /* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /特殊攻撃|低下効果/g, /攻撃(?:と[^\d上下対]+){0,2}(?:が|を)(?:射程内の敵1体につき)?\d+上昇\((?:上限|最大)値?(\d+)[^%]?\)対象の射程内の城娘の攻撃が100上昇/g], ['AttackUpFixedValue'], 1, 1, 100), /* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /特殊攻撃|低下効果/g, /攻撃(?:と[^\d上下対]+){0,2}(?:が|を)(\d+)(?:[^\d上下%]+(?:が|を)\d*%?){1,2}に?上昇/g], ['AttackUpFixedValue'], 1), /* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /特殊攻撃|低下効果/g, /射程内の(?:城娘|味方)1体につき(?:対象|自身)の攻撃(?:が|を)(\d+)(?:[^\d上下対]+が\d+)?上昇/g], ['AttackUpFixedValue'], 1, 8), /* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|一度だけ|大きく|少しだけ/g, /特殊攻撃|低下効果/g, /(\d+)秒間対象の射程が\d+上昇2秒毎に攻撃が(\d+)攻撃速度が\d+%防御無視効果が\d+%上昇/g], ['AttackUpFixedValue'], 2, 1, 0, 1, 0.5, -1), /* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /特殊攻撃|低下効果/g, /敵\d体に攻撃を行い少し後退させる伏兵\((\d+)体まで\).+配置中の伏兵1体につき自身の攻撃が(\d+)上昇/g], ['AttackUpFixedValue'], 2, 1, 0, 1, 1, 0), /* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /特殊攻撃|低下効果/g, /攻撃(?:と[^\d上下対]+){0,2}(?:が|を)(\d+)[^\d上下対]+は\d+上昇/g], ['AttackUpFixedValue'], 1), /* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /特殊攻撃|低下効果/g, /攻撃(?:と[^\d上下対]+){0,2}(?:が|を)\d+[^\d上下対]+は(\d+)上昇/g], ['AttackUpFixedValue'], 1), /* eslint-disable-line */
+    //
     // Attack down (percent)
     //
     new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /(?:敵の|兜の|ダメージを与え|攻撃し)(?:[^\d上下]+と){0,2}攻撃(?:と[^\d上下]+){0,2}(?:が|を)(\d+)%(?:と\d+)?(?:[^\d上下]+(?:が|を)\d+%?){0,2}低下/g], ['AttackDownPercent'], 1), /* 敵の攻撃が20%、攻撃速度が10%低下 *//* eslint-disable-line */
-    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /(?:敵の|兜の|ダメージを与え|攻撃し)(?:[^\d上下]+と){0,2}攻撃(?:と[^\d上下]+){0,2}(?:が|を)\d+%低下\((?:上限|最大)(\d+)%\)/g], ['AttackDownPercent'], 1), /* 敵の攻撃が2%ずつ低下(上限10%) *//* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /(?:敵の|兜の|ダメージを与え|攻撃し)(?:[^\d上下]+と){0,2}攻撃(?:と[^\d上下]+){0,2}(?:が|を)\d+%低下\((?:上限|最大)値?(\d+)%\)/g], ['AttackDownPercent'], 1), /* 敵の攻撃が2%ずつ低下(上限10%) *//* eslint-disable-line */
     new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /(?:敵の|兜の|ダメージを与え|攻撃し)(?:[^\d上下]+と){0,2}攻撃(?:と[^\d上下]+){0,2}(?:が|を)(\d+)%[^\d]+は\d+%低下/g], ['AttackDownPercent'], 1), /* 敵の攻撃が20%、妖怪は30%低下 *//* eslint-disable-line */
     new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /(?:敵の|兜の|ダメージを与え|攻撃し)(?:[^\d上下]+と){0,2}攻撃(?:と[^\d上下]+){0,2}(?:が|を)\d+%[^\d]+は(\d+)%低下/g], ['AttackDownPercent'], 1), /* eslint-disable-line */
     new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /(?:敵の|兜の|ダメージを与え|攻撃し)[^\d上下]+(?:と[^\d上下]+){0,2}が\d+%?(?:[^\d上下]+と){0,2}攻撃(?:と[^\d上下]+){0,2}(?:が|を)(\d+)%低下/g], ['AttackDownPercent'], 1), /* 敵の与ダメージが30%、攻撃が20%低下 *//* eslint-disable-line */
@@ -69,6 +97,7 @@ export class AbilityAnalyzer {
     //
     new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /低下効果/g, /射程が上昇/g], ['RangeUpFixedValue'], 0), /* 射程が上昇 *//* eslint-disable-line */
     new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /低下効果/g, /射程(?:と[^\d上下倍]+){0,2}が(?:\d+%と)?(\d+)(?:[^\d上下倍]+が\d*%?){0,2}上昇/g], ['RangeUpFixedValue'], 1), /* 射程が40上昇 *//* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /低下効果/g, /射程内の(?:城娘|味方)1体につき(?:対象|自身)の(?:[^\d上下倍]+が\d+)?射程(?:と[^\d上下倍]+){0,2}が(?:\d+%と)?(\d+)(?:[^\d上下倍]+が\d*%?){0,2}上昇/g], ['RangeUpFixedValue'], 1, 8), /* 射程が40上昇 *//* eslint-disable-line */
     //
     // Range up (percent)
     //
@@ -139,7 +168,9 @@ export class AbilityAnalyzer {
     new AbilityAttrMatchPattern([/範囲内の敵に5種の効果を与える\(範囲:特大\)①1.5倍ダメ②(\d\.?\d*)倍ダメ/g], ['MapWeapon', "MapWeaponOthers"], 1, 100, 150), /* eslint-disable-line */
     new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /^範囲内の敵に攻撃の(\d\.?\d*)倍の?ダメージを与え(?:攻撃|攻撃速度|防御|射程|攻撃後の隙)が\d+%(?:低下|延長)/g], ['MapWeapon', "MapWeaponOthers"], 1, 100), /* eslint-disable-line */
     new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /^範囲内の敵に攻撃の(\d\.?\d*)倍の?ダメージを与え(?:攻撃|攻撃速度|防御|射程)と(?:攻撃|攻撃速度|防御|射程|移動速度)が\d+%低下/g], ['MapWeapon', "MapWeaponOthers"], 1, 100), /* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /^範囲内の敵に攻撃の(\d\.?\d*)倍の?ダメージを(\d)回与え(?:攻撃|攻撃速度|防御|射程)と(?:攻撃|攻撃速度|防御|射程|移動速度)が\d+%低下/g], ['MapWeapon', "MapWeaponOthers"], 1, 100, 0, 2), /* eslint-disable-line */
     new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /^範囲内の敵に攻撃の(\d\.?\d*)倍の?ダメージを与え(?:殿と)?城娘(?:と伏兵)?を攻撃の\d\.?\d*倍で回復/g], ['MapWeapon', "MapWeaponOthers"], 1, 100), /* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /^対象の横方向の敵に攻撃の(\d\.?\d*)倍の?術?ダメージを(\d)回与え防御を0にする/g], ['MapWeapon', "MapWeaponOthers"], 1, 100, 0, 2), /* eslint-disable-line */
   ];
 
   analyze(descriptions: string[]): AbilityAttribute[] {
@@ -203,6 +234,7 @@ export class AbilityAnalyzer {
       const pattern = this.matchPatterns[i];
       let text = description;
       let value = 0;
+      let count = 1;
 
       for (let j = 0; j < pattern.queries.length; ++j) {
         if (j + 1 < pattern.queries.length) {
@@ -218,7 +250,8 @@ export class AbilityAnalyzer {
             } else {
               // Set calculated value.
               value = Math.round(Number(matches[k][pattern.index]) * pattern.factor) + pattern.offset;
-              value = pattern.countIndex === 0 ? value : value * Number(matches[k][pattern.countIndex]);
+              count = pattern.countIndex === 0 ? 1 : Math.round(Number(matches[k][pattern.countIndex]) * pattern.countFactor) + pattern.countOffset;
+              value *= count;
             }
             // Register attribute info.
             for (let l = 0; l < pattern.types.length; ++l) {
