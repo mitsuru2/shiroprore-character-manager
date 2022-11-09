@@ -622,12 +622,17 @@ export class CharacterComponent implements OnInit, AfterViewInit {
 
   private makeAbilityInfoRows(t: HTMLTableElement, character: FsCharacter, type: FsAbilityType) {
     // Filter abilities and abilities(kai).
-    const abilities = this.abilities.filter((item) => character.abilities.includes(item.id)).filter((item) => item.type === type.id);
-    const abilitiesKai = this.abilities.filter((item) => character.abilitiesKai.includes(item.id)).filter((item) => item.type === type.id);
+    // const abilities = this.abilities.filter((item) => character.abilities.includes(item.id)).filter((item) => item.type === type.id);
+    // const abilitiesKai = this.abilities.filter((item) => character.abilitiesKai.includes(item.id)).filter((item) => item.type === type.id);
+    const abilities = (this.firestore.getDataByIds(FsCollectionName.Abilities, character.abilities) as FsAbility[]).filter((item) => item.type === type.id);
+    const abilitiesKai = (this.firestore.getDataByIds(FsCollectionName.Abilities, character.abilitiesKai) as FsAbility[]).filter(
+      (item) => item.type === type.id
+    );
 
-    // Sort ability list by updated date.
-    this.firestore.sortByTimestamp(abilities, 'updatedAt');
-    this.firestore.sortByTimestamp(abilitiesKai, 'updatedAt');
+    // 2022-11-10: Show abilities by order in character ability list.
+    // // Sort ability list by updated date.
+    // this.firestore.sortByTimestamp(abilities, 'updatedAt');
+    // this.firestore.sortByTimestamp(abilitiesKai, 'updatedAt');
 
     // CASE: No abilities. --> Do nothing.
     if (abilities.length === 0 && abilitiesKai.length === 0) {
@@ -666,7 +671,7 @@ export class CharacterComponent implements OnInit, AfterViewInit {
         let descText = this.makeAbilityDescriptionText(ability.descriptions);
 
         // If the ability type is Keiryaku, add interval, cost, and token info.
-        if (type.isKeiryaku) {
+        if (type.isKeiryaku && ability.interval >= 0) {
           descText += '\n' + this.makeKeiryakuPropertiesText(ability);
         }
 
@@ -702,7 +707,7 @@ export class CharacterComponent implements OnInit, AfterViewInit {
         let descText = this.makeAbilityDescriptionText(ability.descriptions);
 
         // If the ability type is Keiryaku, add interval, cost, and token info.
-        if (type.isKeiryaku) {
+        if (type.isKeiryaku && ability.interval >= 0) {
           descText += '\n' + this.makeKeiryakuPropertiesText(ability);
         }
 

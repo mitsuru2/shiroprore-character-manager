@@ -761,7 +761,7 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
         let descText = this.makeAbilityDescriptionText(ability.descriptions);
 
         // If the ability type is Keiryaku, add interval, cost, and token info.
-        if (type.isKeiryaku) {
+        if (type.isKeiryaku && ability.interval >= 0) {
           descText += '\n' + this.makeKeiryakuPropertiesText(ability);
         }
 
@@ -797,7 +797,7 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
         let descText = this.makeAbilityDescriptionText(ability.descriptions);
 
         // If the ability type is Keiryaku, add interval, cost, and token info.
-        if (type.isKeiryaku) {
+        if (type.isKeiryaku && ability.interval >= 0) {
           descText += '\n' + this.makeKeiryakuPropertiesText(ability);
         }
 
