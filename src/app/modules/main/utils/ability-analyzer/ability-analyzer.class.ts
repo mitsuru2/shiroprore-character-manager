@@ -171,6 +171,7 @@ export class AbilityAnalyzer {
     new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /^範囲内の敵に攻撃の(\d\.?\d*)倍の?ダメージを(\d)回与え(?:攻撃|攻撃速度|防御|射程)と(?:攻撃|攻撃速度|防御|射程|移動速度)が\d+%低下/g], ['MapWeapon', "MapWeaponOthers"], 1, 100, 0, 2), /* eslint-disable-line */
     new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /^範囲内の敵に攻撃の(\d\.?\d*)倍の?ダメージを与え(?:殿と)?城娘(?:と伏兵)?を攻撃の\d\.?\d*倍で回復/g], ['MapWeapon', "MapWeaponOthers"], 1, 100), /* eslint-disable-line */
     new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /^対象の横方向の敵に攻撃の(\d\.?\d*)倍の?術?ダメージを(\d)回与え防御を0にする/g], ['MapWeapon', "MapWeaponOthers"], 1, 100, 0, 2), /* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /になり全ての敵に攻撃の(\d\.?\d*)倍の術ダメージを与える/g], ['MapWeapon', "MapWeaponOthers"], 1, 100), /* eslint-disable-line */
   ];
 
   analyze(descriptions: string[]): AbilityAttribute[] {
