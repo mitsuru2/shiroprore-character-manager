@@ -30,12 +30,7 @@ import { sleep } from '../../utils/sleep/sleep.utility';
 import { ThumbnailMakeInfo, XY } from '../make-thumbnail-form/make-thumbnail-form.interface';
 import { NewFacilityFormData } from '../new-facility-form/new-facility-form.interafce';
 import { NewWeaponFormData } from '../new-weapon-form/new-weapon-form.interface';
-import {
-  FsAbilityForNewCharacterForm,
-  ImageDataWithProperty,
-  NewCharacterFormData,
-  NewCharacterFormMode,
-} from './new-character-form.interface';
+import { FsAbilityForNewCharacterForm, ImageDataWithProperty, NewCharacterFormData, NewCharacterFormMode } from './new-character-form.interface';
 
 @Component({
   selector: 'app-new-character-form',
@@ -197,12 +192,7 @@ export class NewCharacterFormComponent implements OnInit, AfterViewInit {
   //============================================================================
   // Class methods.
   //
-  constructor(
-    private logger: NGXLogger,
-    private firestore: FirestoreDataService,
-    private elemRef: ElementRef,
-    private errorHandler: ErrorHandlerService
-  ) {
+  constructor(private logger: NGXLogger, private firestore: FirestoreDataService, private elemRef: ElementRef, private errorHandler: ErrorHandlerService) {
     this.logger.trace(`new ${this.className}()`);
 
     // Initialize thumbnail settings.
@@ -312,10 +302,7 @@ export class NewCharacterFormComponent implements OnInit, AfterViewInit {
         if (this.characterData.imageFiles[i].status !== 'empty') {
           this.inputImageFiles[i] = this.characterData.imageFiles[i].data;
           this.imageLoadStatus[i] = 'loading';
-          await this.loadImageFileAndDrawImage(
-            this.characterData.imageFiles[i].data,
-            `NewCharacterForm_${this.imageTypesAndLabels[i].type}Preview`
-          );
+          await this.loadImageFileAndDrawImage(this.characterData.imageFiles[i].data, `NewCharacterForm_${this.imageTypesAndLabels[i].type}Preview`);
           this.imageLoadStatus[i] = 'loaded';
 
           // Set up thumb info.
@@ -349,9 +336,7 @@ export class NewCharacterFormComponent implements OnInit, AfterViewInit {
     this.clearForm(['characterType']);
 
     // Update sub character type list.
-    this.subCharacterTypeItems = this.subCharacterTypes.filter(
-      (item) => item.parent === this.characterData.characterType.id
-    );
+    this.subCharacterTypeItems = this.subCharacterTypes.filter((item) => item.parent === this.characterData.characterType.id);
     this.firestore.sortByCode(this.subCharacterTypeItems);
     if (this.subCharacterTypeItems.length > 0) {
       this.characterData.subCharacterType = this.subCharacterTypeItems[0];
@@ -365,10 +350,7 @@ export class NewCharacterFormComponent implements OnInit, AfterViewInit {
     }
 
     // Update geograph type item list.
-    this.geographTypeItems = this.makeFilteredFormItems(
-      this.characterData.characterType.geographTypes,
-      this.geographTypes
-    );
+    this.geographTypeItems = this.makeFilteredFormItems(this.characterData.characterType.geographTypes, this.geographTypes);
     this.firestore.sortByOrder(this.geographTypeItems);
     if (this.geographTypeItems.length === 1) {
       this.characterData.geographTypes = [this.geographTypeItems[0]];
@@ -1121,15 +1103,11 @@ export class NewCharacterFormComponent implements OnInit, AfterViewInit {
       // Copy ability info.
       this.characterData.abilities = [];
       for (let i = 0; i < this.inputAbilities.length; ++i) {
-        this.characterData.abilities.push(
-          this.makeAbilityInfoForFormResult(this.inputAbilities[i], this.selectedAbilityTypes[i])
-        );
+        this.characterData.abilities.push(this.makeAbilityInfoForFormResult(this.inputAbilities[i], this.selectedAbilityTypes[i]));
       }
       this.characterData.abilitiesKai = [];
       for (let i = 0; i < this.inputAbilitiesKai.length; ++i) {
-        this.characterData.abilitiesKai.push(
-          this.makeAbilityInfoForFormResult(this.inputAbilitiesKai[i], this.selectedAbilityTypesKai[i])
-        );
+        this.characterData.abilitiesKai.push(this.makeAbilityInfoForFormResult(this.inputAbilitiesKai[i], this.selectedAbilityTypesKai[i]));
       }
     }
 
@@ -1333,10 +1311,7 @@ export class NewCharacterFormComponent implements OnInit, AfterViewInit {
     return tag;
   }
 
-  private makeAbilityInfoForFormResult(
-    input: FsAbilityForNewCharacterForm,
-    type: FsAbilityType
-  ): FsAbilityForNewCharacterForm {
+  private makeAbilityInfoForFormResult(input: FsAbilityForNewCharacterForm, type: FsAbilityType): FsAbilityForNewCharacterForm {
     const result: FsAbilityForNewCharacterForm = new FsAbilityForNewCharacterForm();
 
     result.id = input.id;
@@ -1454,10 +1429,7 @@ export class NewCharacterFormComponent implements OnInit, AfterViewInit {
     return;
   }
 
-  private validateAbilityInputs(
-    inputAbilities: FsAbilityForNewCharacterForm[],
-    selectedAbilityTypes: FsAbilityType[]
-  ): boolean {
+  private validateAbilityInputs(inputAbilities: FsAbilityForNewCharacterForm[], selectedAbilityTypes: FsAbilityType[]): boolean {
     const location = `${this.className}.validateAbilityInputs()`;
 
     for (let i = 0; i < inputAbilities.length; ++i) {
