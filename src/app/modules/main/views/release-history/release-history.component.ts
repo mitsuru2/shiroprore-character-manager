@@ -14,11 +14,19 @@ import { FsVersion } from 'src/app/services/firestore-data/firestore-document.in
 export class ReleaseHistoryComponent implements OnInit {
   private readonly className = 'ReleaseHistoryComponent';
 
+  private readonly recentHistoryNum = 3;
+
   private versions = this.firestore.getData(FsCollectionName.Versions) as FsVersion[];
 
   filteredVersions!: FsVersion[];
 
+  recentVersions: FsVersion[] = [];
+
+  oldVersions: FsVersion[] = [];
+
   createdDates: string[] = [];
+
+  foldEnable: boolean = true;
 
   constructor(private logger: NGXLogger, private firestore: FirestoreDataService) {
     this.logger.trace(`new ${this.className}()`);
@@ -40,6 +48,21 @@ export class ReleaseHistoryComponent implements OnInit {
     // Show version information only equal to or smaller than the current version.
     // (Hide scheduled version.)
     this.filteredVersions = this.versions.filter((item) => this.compareVersionNumber(AppInfo.version, item.name) >= 0);
+
+    // Make recent version list.
+    for (let i = 0; i < this.recentHistoryNum; ++i) {
+      if (this.filteredVersions.length > 0) {
+        this.recentVersions.push(this.filteredVersions.shift() as FsVersion);
+      }
+    }
+
+    // Make old version list.
+    if (this.filteredVersions.length === 0) {
+      this.foldEnable = false;
+    } else {
+      this.foldEnable = true;
+      this.oldVersions = this.filteredVersions;
+    }
 
     // Make date text.
     for (let i = 0; i < this.filteredVersions.length; ++i) {
