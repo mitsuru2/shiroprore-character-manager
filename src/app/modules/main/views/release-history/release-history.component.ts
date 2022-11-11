@@ -14,11 +14,23 @@ import { FsVersion } from 'src/app/services/firestore-data/firestore-document.in
 export class ReleaseHistoryComponent implements OnInit {
   private readonly className = 'ReleaseHistoryComponent';
 
+  private readonly recentHistoryNum = 3;
+
   private versions = this.firestore.getData(FsCollectionName.Versions) as FsVersion[];
 
   filteredVersions!: FsVersion[];
 
+  recentVersions: FsVersion[] = [];
+
+  oldVersions: FsVersion[] = [];
+
+  recentVersionDates: string[] = [];
+
+  oldVersionDates: string[] = [];
+
   createdDates: string[] = [];
+
+  foldEnable: boolean = true;
 
   constructor(private logger: NGXLogger, private firestore: FirestoreDataService) {
     this.logger.trace(`new ${this.className}()`);
@@ -41,11 +53,25 @@ export class ReleaseHistoryComponent implements OnInit {
     // (Hide scheduled version.)
     this.filteredVersions = this.versions.filter((item) => this.compareVersionNumber(AppInfo.version, item.name) >= 0);
 
-    // Make date text.
-    for (let i = 0; i < this.filteredVersions.length; ++i) {
-      // this.logger.debug(location, { seconds: (this.filteredVersions[i].createdAt as Timestamp).seconds });
-      const date = this.firestore.convTimestampToDate(this.filteredVersions[i].createdAt);
-      this.createdDates.push(date.toLocaleDateString());
+    // Make recent version list and date text.
+    for (let i = 0; i < this.recentHistoryNum; ++i) {
+      if (this.filteredVersions.length > 0) {
+        const v = this.filteredVersions.shift() as FsVersion;
+        this.recentVersions.push(v);
+        this.recentVersionDates.push(this.firestore.convTimestampToDate(v.createdAt).toLocaleDateString());
+      }
+    }
+
+    // Make old version list and date text.
+    if (this.filteredVersions.length === 0) {
+      this.foldEnable = false;
+    } else {
+      this.foldEnable = true;
+      this.oldVersions = this.filteredVersions;
+      for (let i = 0; i < this.oldVersions.length; ++i) {
+        const v = this.oldVersions[i];
+        this.oldVersionDates.push(this.firestore.convTimestampToDate(v.createdAt).toLocaleDateString());
+      }
     }
   }
 

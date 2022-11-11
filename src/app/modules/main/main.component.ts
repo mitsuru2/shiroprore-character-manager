@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { NGXLogger } from 'ngx-logger';
 import { ConfirmationService } from 'primeng/api';
 import { AppInfo } from 'src/app/app-info.enum';
+import { FsCollectionName } from 'src/app/services/firestore-data/firestore-collection-name.enum';
 import { FirestoreDataService } from 'src/app/services/firestore-data/firestore-data.service';
 import { NewCharacterComponent } from './components/new-character/new-character.component';
 import { SpinnerService } from './services/spinner/spinner.service';
@@ -14,7 +15,11 @@ import { UserAuthService } from './services/user-auth/user-auth.service';
   styleUrls: ['./main.component.scss'],
 })
 export class MainComponent /*implements OnInit*/ {
-  readonly className = 'MainComponent';
+  private readonly className = 'MainComponent';
+
+  private readonly oneDayInMs = 24 * 60 * 60 * 1000;
+
+  private readonly recentDateNum = 4;
 
   @ViewChild(NewCharacterComponent)
   private newCharacterComponent!: NewCharacterComponent;
@@ -136,6 +141,21 @@ export class MainComponent /*implements OnInit*/ {
     this.spinner.addSpinnerControlFunction('hide', () => {
       this.spinnerShown = false;
     });
+
+    // Check latest version update and add text to the menu item.
+    const versions = this.firestore.getData(FsCollectionName.Versions);
+    if (versions.length > 0) {
+      // Get latest version date and today.
+      this.firestore.sortByTimestamp(versions, 'createdAt', true);
+      const latestVersionDate = this.firestore.convTimestampToDate(versions[0].createdAt);
+      const today = new Date();
+
+      // Add text to the support menu label if the latest version date is within 4 days.
+      if ((today.getTime() - latestVersionDate.getTime()) / this.oneDayInMs <= this.recentDateNum) {
+        this.sideMenuItems[3].label += '(update)';
+        this.sideMenuItemsM[0].items[3].label += '(update)';
+      }
+    }
   }
 
   goToLoginPage() {
