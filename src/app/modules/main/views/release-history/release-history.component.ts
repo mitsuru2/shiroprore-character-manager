@@ -24,6 +24,10 @@ export class ReleaseHistoryComponent implements OnInit {
 
   oldVersions: FsVersion[] = [];
 
+  recentVersionDates: string[] = [];
+
+  oldVersionDates: string[] = [];
+
   createdDates: string[] = [];
 
   foldEnable: boolean = true;
@@ -49,26 +53,25 @@ export class ReleaseHistoryComponent implements OnInit {
     // (Hide scheduled version.)
     this.filteredVersions = this.versions.filter((item) => this.compareVersionNumber(AppInfo.version, item.name) >= 0);
 
-    // Make recent version list.
+    // Make recent version list and date text.
     for (let i = 0; i < this.recentHistoryNum; ++i) {
       if (this.filteredVersions.length > 0) {
-        this.recentVersions.push(this.filteredVersions.shift() as FsVersion);
+        const v = this.filteredVersions.shift() as FsVersion;
+        this.recentVersions.push(v);
+        this.recentVersionDates.push(this.firestore.convTimestampToDate(v.createdAt).toLocaleDateString());
       }
     }
 
-    // Make old version list.
+    // Make old version list and date text.
     if (this.filteredVersions.length === 0) {
       this.foldEnable = false;
     } else {
       this.foldEnable = true;
       this.oldVersions = this.filteredVersions;
-    }
-
-    // Make date text.
-    for (let i = 0; i < this.filteredVersions.length; ++i) {
-      // this.logger.debug(location, { seconds: (this.filteredVersions[i].createdAt as Timestamp).seconds });
-      const date = this.firestore.convTimestampToDate(this.filteredVersions[i].createdAt);
-      this.createdDates.push(date.toLocaleDateString());
+      for (let i = 0; i < this.oldVersions.length; ++i) {
+        const v = this.oldVersions[i];
+        this.oldVersionDates.push(this.firestore.convTimestampToDate(v.createdAt).toLocaleDateString());
+      }
     }
   }
 
