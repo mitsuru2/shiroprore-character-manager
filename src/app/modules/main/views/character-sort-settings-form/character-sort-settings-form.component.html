@@ -8,7 +8,7 @@
             [inputId]="'CharacterSortSettingsForm_IndexTypeInput_' + item.value"
             name="CharacterSortSettingsForm_IndexTypeInput"
             [value]="item.value"
-            [(ngModel)]="sortSettings.indexType"
+            [(ngModel)]="sortSetting.indexType"
           ></p-radioButton>
           <label [for]="'CharacterSortSettingsForm_IndexTypeInput_' + item.value">{{ item.label }}</label>
         </div>
@@ -24,7 +24,7 @@
               [inputId]="'CharacterSortSettingsForm_IndexTypeInput2_' + item.value"
               name="CharacterSortSettingsForm_IndexTypeInput"
               [value]="item.value"
-              [(ngModel)]="sortSettings.indexType"
+              [(ngModel)]="sortSetting.indexType"
             ></p-radioButton>
             <label [for]="'CharacterSortSettingsForm_IndexTypeInput2_' + item.value">{{ item.label }}</label>
           </div>
@@ -41,7 +41,7 @@
             [inputId]="'CharacterSortSettingsForm_DirectionInput_' + item.value"
             name="CharacterSortSettingsForm_DirectionInput"
             [value]="item.value"
-            [(ngModel)]="sortSettings.direction"
+            [(ngModel)]="sortSetting.direction"
           ></p-radioButton>
           <label [for]="'CharacterSortSettingsForm_DirectionInput_' + item.value">{{ item.label }}</label>
         </div>

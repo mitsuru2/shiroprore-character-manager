@@ -4,7 +4,7 @@ import {
   CharacterSortAbilityAttrTypes,
   CharacterSortDirectionTypes,
   CharacterSortIndexTypes,
-  CharacterSortSettings,
+  CharacterSortSetting,
 } from './character-sort-settings-form.interface';
 
 @Component({
@@ -21,9 +21,9 @@ export class CharacterSortSettingsFormComponent {
   @Input() hideButton = false;
 
   /** Form result. */
-  @Input() sortSettings!: CharacterSortSettings;
+  @Input() sortSetting!: CharacterSortSetting;
 
-  @Output() sortSettingsChange = new EventEmitter<CharacterSortSettings>();
+  @Output() sortSettingChange = new EventEmitter<CharacterSortSetting>();
 
   /** Index type. */
   sortIndexTypes = CharacterSortIndexTypes;
@@ -47,7 +47,7 @@ export class CharacterSortSettingsFormComponent {
   onOkClick() {
     const location = `${this.className}.onOkClick()`;
     this.logger.trace(location);
-    this.sortSettingsChange.emit(this.sortSettings);
+    this.sortSettingChange.emit(this.sortSetting);
     this.canceled.emit(false);
   }
 

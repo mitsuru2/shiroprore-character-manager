@@ -29,7 +29,7 @@ export const CharacterSortDirectionTypes: { label: string; value: CharacterSortD
   { label: '降順', value: 'desc' },
 ];
 
-export class CharacterSortSettings {
+export class CharacterSortSetting {
   indexType: CharacterSortIndexType = 'identifier';
 
   direction: CharacterSortDirectionType = 'asc';

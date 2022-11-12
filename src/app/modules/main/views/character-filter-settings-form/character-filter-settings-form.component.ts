@@ -11,7 +11,7 @@ import {
   CharacterFilterOptionAbilityTypeLabels,
   CharacterFilterOptionOthersType,
   CharacterFilterOptionTokenTypeLabels,
-  CharacterFilterSettings,
+  CharacterFilterSetting,
   CharacterOwnershipFilterType,
   CharacterOwnershipFilterTypeLabels,
   CharacterTypeFilterTypeLabels,
@@ -31,9 +31,9 @@ export class CharacterFilterSettingsFormComponent {
   @Input() hideButton = false;
 
   /** Form result. */
-  @Input() filterSettings!: CharacterFilterSettings;
+  @Input() filterSetting!: CharacterFilterSetting;
 
-  @Output() filterSettingsChange = new EventEmitter<CharacterFilterSettings>();
+  @Output() filterSettingChange = new EventEmitter<CharacterFilterSetting>();
 
   /** User character ownership status type. */
   readonly ownershipStatusTypeItems = CharacterOwnershipFilterTypeLabels;
@@ -108,8 +108,8 @@ export class CharacterFilterSettingsFormComponent {
   onOkClick() {
     const location = `${this.className}.onOkClick()`;
     this.logger.trace(location);
-    this.applySelectedOtherOptions(this.filterSettings);
-    this.filterSettingsChange.emit(this.filterSettings);
+    this.applySelectedOtherOptions(this.filterSetting);
+    this.filterSettingChange.emit(this.filterSetting);
     this.canceled.emit(false);
   }
 
@@ -131,7 +131,7 @@ export class CharacterFilterSettingsFormComponent {
   //----------------------------------------------------------------------------
   // Split other options selection.
   //
-  private applySelectedOtherOptions(filter: CharacterFilterSettings) {
+  private applySelectedOtherOptions(filter: CharacterFilterSetting) {
     // Clear option flags.
     filter.ownershipAbility = false;
     filter.teamAbility = false;
@@ -179,10 +179,10 @@ export class CharacterFilterSettingsFormComponent {
       acceptLabel: 'OK',
       rejectVisible: false,
       accept: () => {
-        this.filterSettings.ownershipFilterType = 'all';
+        this.filterSetting.ownershipFilterType = 'all';
       },
       reject: () => {
-        this.filterSettings.ownershipFilterType = 'all';
+        this.filterSetting.ownershipFilterType = 'all';
       },
     });
   }
@@ -191,7 +191,7 @@ export class CharacterFilterSettingsFormComponent {
   // Others.
   //
   private clearSettings() {
-    this.filterSettings = new CharacterFilterSettings();
+    this.filterSetting = new CharacterFilterSetting();
     this.selectedAbilityTypeOptions = [];
     this.selectedAbilityAttrOptions = [];
     this.selectedTokenTypeOptions = [];

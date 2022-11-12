@@ -60,7 +60,7 @@ export const CharacterFilterOptionTokenTypeLabels: { label: string; value: Chara
   { label: '伏兵(水上)', value: 'tokenWater' },
 ];
 
-export class CharacterFilterSettings {
+export class CharacterFilterSetting {
   ownershipFilterType: CharacterOwnershipFilterType = 'all';
 
   characterTypes: CharacterTypeFilterType[] = [];

@@ -14,8 +14,8 @@ import {
   MapCellType,
 } from 'src/app/services/firestore-data/firestore-document.interface';
 import { TextSearch, TextSearchResult } from '../../utils/text-search/text-search.class';
-import { CharacterFilterSettings, CharacterTypeFilterType } from '../../views/character-filter-settings-form/character-filter-settings-form.interface';
-import { CharacterSortDirectionType, CharacterSortSettings } from '../../views/character-sort-settings-form/character-sort-settings-form.interface';
+import { CharacterFilterSetting, CharacterTypeFilterType } from '../../views/character-filter-settings-form/character-filter-settings-form.interface';
+import { CharacterSortDirectionType, CharacterSortSetting } from '../../views/character-sort-settings-form/character-sort-settings-form.interface';
 import { UserAuthService } from '../user-auth/user-auth.service';
 
 interface TextPropertyMap {
@@ -45,7 +45,7 @@ export class CharacterFilterService {
     this.logger.trace(`new ${this.className}()`);
   }
 
-  filter(characters: FsCharacter[], filter: CharacterFilterSettings, query: string): number[] {
+  filter(characters: FsCharacter[], filter: CharacterFilterSetting, query: string): number[] {
     const location = `${this.className}.filter()`;
     this.logger.trace(location, { filter: filter, query: query });
 
@@ -55,7 +55,7 @@ export class CharacterFilterService {
     return this.filteredIndexes;
   }
 
-  sort(characters: FsCharacter[], settings: CharacterSortSettings): number[] {
+  sort(characters: FsCharacter[], settings: CharacterSortSetting): number[] {
     const location = `${this.className}.sort()`;
     this.logger.trace(location, { settings: settings });
 
@@ -74,7 +74,7 @@ export class CharacterFilterService {
   //----------------------------------------------------------------------------
   // Filter by filter settings.
   //
-  private filterByFilterSettings(characters: FsCharacter[], filter: CharacterFilterSettings) {
+  private filterByFilterSettings(characters: FsCharacter[], filter: CharacterFilterSetting) {
     const location = `${this.className}.filterByFilterSettings()`;
 
     this.filteredIndexes = [];
@@ -483,10 +483,10 @@ export class CharacterFilterService {
   //----------------------------------------------------------------------------
   // Sorting
   //
-  private sortCharacterListAndFilteredIndexList(characters: FsCharacter[], sortSettings: CharacterSortSettings) {
+  private sortCharacterListAndFilteredIndexList(characters: FsCharacter[], sortSetting: CharacterSortSetting) {
     // Sort character list.
     this.sortCharacterList(characters, { indexType: 'identifier', direction: 'asc' });
-    this.sortCharacterList(characters, sortSettings);
+    this.sortCharacterList(characters, sortSetting);
 
     // Make filtered index list.
     this.filteredIndexes = [];
@@ -497,7 +497,7 @@ export class CharacterFilterService {
     }
   }
 
-  private sortCharacterList(characters: FsCharacter[], settings: CharacterSortSettings) {
+  private sortCharacterList(characters: FsCharacter[], settings: CharacterSortSetting) {
     if (settings.indexType === 'identifier') {
       characters.sort((a, b) => {
         if (settings.direction === 'asc') {
