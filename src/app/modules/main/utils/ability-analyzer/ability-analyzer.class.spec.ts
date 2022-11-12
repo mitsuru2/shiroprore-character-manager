@@ -1,4 +1,4 @@
-import { AbilityAnalyzer, AbilityAttr } from './ability-analyzer.class';
+import { AbilityAnalyzer } from './ability-analyzer.class';
 
 const abilityDescriptions: string[] = [
   '敵2体に攻撃し、後退させる伏兵を配置(1体まで)',
@@ -2252,29 +2252,29 @@ describe('AnalyzeAbility', () => {
       if (result.length > 0) {
         cnt++;
         // console.log(`${abilityDescriptions[i]},${result[0].debug},${result[0].value},${result[0].isStepEffect}`)
-        let logText = `${abilityDescriptions[i]},${result[0].debug},${result[0].value}`;
+        let logText = `${abilityDescriptions[i]},${result[0].value}`;
         for (let ii = 0; ii < result.length; ++ii) {
           logText += `,${result[ii].type}`;
         }
         console.log(logText);
       } else {
         let text = abilityDescriptions[i];
-        // text = text.replace(/属性】範囲内の敵/g, '');
-        // text = text.replace(/射程外/g, '');
-        let index = text.indexOf("攻撃");
-        // if (index >= 0) {
-        //   text = text.slice(index);
-        //   index = text.indexOf("ダメージを与");
+        text = text.replace(/射程内/g, '');
+        text = text.replace(/射程外/g, '');
+        let index = text.indexOf("射程");
+        if (index >= 0) {
+          text = text.slice(index);
+          index = text.indexOf("%");
           if (index >= 0) {
             text = text.slice(index);
-            index = text.indexOf("上昇");
-            const index2 = text.indexOf("増加");
+            index = text.indexOf("低下");
+            const index2 = text.indexOf("減少");
             if (index >= 0 || index2 >= 0) {
               console.log(abilityDescriptions[i]);
               cnt++;
             }
           }
-        // }
+        }
       }
     }
     // console.log(`Count: ${cnt}`);
