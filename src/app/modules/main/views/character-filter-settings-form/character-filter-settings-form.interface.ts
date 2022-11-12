@@ -42,6 +42,7 @@ export const CharacterFilterOptionAbilityAttrLabels: { label: string; value: Abi
   { label: '蔵隠密', value: 'HideWarehouse' },
   { label: '敵攻撃低下(%)', value: 'AttackDownPercent' },
   { label: '敵被ダメ上昇(%)', value: 'TakenDamageUpPercent' },
+  { label: '敵射程低下(%)', value: 'RangeDownPercent' },
   { label: 'ダメ計(火)', value: 'MapWeaponFire' },
   { label: 'ダメ計(雷)', value: 'MapWeaponThunder' },
   { label: 'ダメ計(岩)', value: 'MapWeaponRock' },

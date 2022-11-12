@@ -104,6 +104,16 @@ export class AbilityAnalyzer {
     new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /回復射程/g, /射程(?:と[^\d上下]+){0,2}が(\d+)%(?:と\d+)?(?:[^\d上下]+が\d*%?){0,2}上昇/g], ['RangeUpPercent'], 1), /* 射程が40%上昇 *//* eslint-disable-line */
     new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /回復射程/g, /射程(?:と[^\d上下]+){0,2}が(\d+\.?\d*)倍/g], ['RangeUpPercent'], 1, 100, -100), /* 射程が2倍 *//* eslint-disable-line */
     //
+    // Range down (percent)
+    //
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /回復射程/g, /(?:敵|兜)の(?:[^\d上下]+と){0,2}射程(?:と[^\d上下]+){0,2}(?:が|を)(\d+)%(?:と\d+)?(?:[^\d上下]+が\d*%?){0,2}低下/g], ['RangeDownPercent'], 1), /* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /回復射程/g, /(?:敵|兜)の(?:[^\d上下]+と){0,1}[^\d上下]+が\d+倍?になり(?:[^\d上下]+と){0,1}射程(?:と[^\d上下]+){0,1}が(\d+)%低下/g], ['RangeDownPercent'], 1), /* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /回復射程/g, /(?:敵|兜)に攻撃の\d\.?\d?倍のダメージを(?:\d回)?与え(?:[^\d上下]+と){0,1}射程(?:と[^\d上下]+){0,1}が(\d+)%低下/g], ['RangeDownPercent'], 1), /* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /回復射程/g, /(?:敵|兜)の(?:[^\d上下]+と){0,2}射程(?:と[^\d上下]+){0,2}(?:が|を)(\d+)%[^\d上下]{0,5}は\d+%低下/g], ['RangeDownPercent'], 1), /* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /回復射程/g, /(?:敵|兜)の(?:[^\d上下]+と){0,2}射程(?:と[^\d上下]+){0,2}(?:が|を)\d+%[^\d上下]{0,5}は(\d+)%低下/g], ['RangeDownPercent'], 1), /* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /回復射程/g, /(?:敵|兜)に\d種の効果を与える.+(?:①|②|③|④|⑤|⑥|⑦|⑧|⑨)(?:\d+秒)?射程が?(\d+)%低下/g], ['RangeDownPercent'], 1), /* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /回復射程/g, /(?:敵|兜)の(?:[^\d上下]+と)?(?:[^\d上下]+が\d+)?(?:[^\d上下]+が\d+%)?(?:低下)?(?:[^\d上下]+と)?射程(?:と[^\d上下]+)?(?:が|を)(\d+)%低下/g], ['RangeDownPercent'], 1), /* eslint-disable-line */
+    //
     // HideShiromusume
     //
     new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /(?:城娘|対象|自身)(?:と[^\d上下短倍]+){0,2}が敵から狙われ(?:ない|なくなる|ず)/g], ['HideShiromusume'], 0), /* eslint-disable-line */
@@ -206,7 +216,14 @@ export class AbilityAnalyzer {
   private splitDescriptionTextByStepEffect(description: string): { text: string; isStepEffect: boolean }[] {
     let result: { text: string; isStepEffect: boolean }[] = [];
 
-    const tmp = description.split('巨大化する度に');
+    // Check if the step effect keyword is included.
+    const keywords = ['巨大化する度に', '巨大化毎に'];
+    let tmp = [description];
+    for (let i = 0; i < keywords.length; ++i) {
+      if (description.indexOf(keywords[i]) >= 0) {
+        tmp = description.split(keywords[i]);
+      }
+    }
 
     // CASE: Not step effect.
     if (tmp.length === 1) {
