@@ -14,8 +14,16 @@ import {
   MapCellType,
 } from 'src/app/services/firestore-data/firestore-document.interface';
 import { TextSearch, TextSearchResult } from '../../utils/text-search/text-search.class';
-import { CharacterFilterSetting, CharacterTypeFilterType } from '../../views/character-filter-settings-form/character-filter-settings-form.interface';
-import { CharacterSortDirectionType, CharacterSortSetting } from '../../views/character-sort-settings-form/character-sort-settings-form.interface';
+import {
+  CharacterFilterOption,
+  CharacterFilterSetting,
+  CharacterTypeFilterType,
+} from '../../views/character-filter-settings-form/character-filter-settings-form.interface';
+import {
+  CharacterSortDirectionType,
+  CharacterSortIndexType,
+  CharacterSortSetting,
+} from '../../views/character-sort-settings-form/character-sort-settings-form.interface';
 import { UserAuthService } from '../user-auth/user-auth.service';
 
 interface TextPropertyMap {
@@ -66,6 +74,30 @@ export class CharacterFilterService {
     }
 
     return this.filteredIndexes;
+  }
+
+  updateSortSettingFromFilterSetting(filter: CharacterFilterSetting, query: string, sorter: CharacterSortSetting): void {
+    // Do nothing if query text is set.
+    if (query !== '') {
+      return;
+    }
+
+    // Do nothing if 2 or more filter options are selected, or no filter options are selected.
+    const filterOptions = this.getSortOptionsFromFilterSetting(filter);
+    if (filterOptions.length !== 1) {
+      return;
+    }
+
+    // Do nothing if 2 or more ability attributes are selected.
+    // Note: All map weapon attributes are integrated as one attributes.
+    const attrOptions = this.getSelectedAbilityAttributeOptionsWhichSupportsSorting(filter.abilityAttributes);
+    if (attrOptions.length >= 2) {
+      return;
+    }
+
+    // Get corresponding sort option.
+    // Do nothing if selected filter option doesn't have corresponding sort option.
+    // Update sorting setting.
   }
 
   //============================================================================
@@ -618,6 +650,62 @@ export class CharacterFilterService {
             result = value;
           }
         }
+      }
+    }
+
+    return result;
+  }
+
+  //----------------------------------------------------------------------------
+  // Auto-sorting related.
+  //
+  private getSortOptionsFromFilterSetting(filterSetting: CharacterFilterSetting): CharacterSortIndexType[] {
+    let result: CharacterSortIndexType[] = [];
+
+    if (filterSetting.ownershipFilterType !== 'all') {
+      // Not support sorting.
+    } else if (filterSetting.characterTypes.length > 0) {
+      // Not support sorting.
+    } else if (filterSetting.rarerities.length > 0) {
+      result.push('rarerity');
+    } else if (filterSetting.weaponTypes.length > 0) {
+      result.push('weaponType');
+    } else if (filterSetting.geographTypes.length > 0) {
+      // Not support sorting.
+    } else if (filterSetting.regions.length > 0) {
+      // Not support sorting.
+    } else if (filterSetting.tokenTypes.length > 0) {
+      // Not support sorting.
+    } else if (filterSetting.ownershipAbility) {
+      // Not support sorting.
+    } else if (filterSetting.teamAbility) {
+      // Not support sorting.
+    } else if (filterSetting.defeatedTimeAbility) {
+      // Not support sorting.
+    } else if (filterSetting.abilityAttributes.length > 0) {
+      // result.push('abilityAttribute');
+    } else if (filterSetting.startDate || filterSetting.endDate) {
+      result.push('implementedDate');
+    }
+
+    return result;
+  }
+
+  private getSelectedAbilityAttributeOptionsWhichSupportsSorting(attributes: AbilityAttrType[]): AbilityAttrType[] {
+    let result: AbilityAttrType[] = [];
+    let isMapWeaponSelected = false;
+
+    for (let i = 0; i < attributes.length; ++i) {
+      const attr = attributes[i];
+
+      // The attribute 'MapWeapon***' is handled as 'MapWeapon'.
+      if (attr.match(/MapWeapon.+/g)) {
+        if (!isMapWeaponSelected) {
+          result.push('MapWeapon');
+        }
+        continue;
+      } else {
+        result.push(attr);
       }
     }
 
