@@ -121,6 +121,11 @@ export class ListCharacterOwnershipComponent /*implements OnInit*/ {
     // Filter characters.
     this.filteredIndexes = this.characterFilter.filter(this.characters, this.filterSetting, this.inputSearchText);
 
+    // Auto-sorting.
+    if (this.characterFilter.updateSortSettingFromFilterSetting(this.filterSetting, this.inputSearchText, this.sortSetting)) {
+      this.filteredIndexes = this.characterFilter.sort(this.characters, this.sortSetting);
+    }
+
     // Update paginate info.
     this.paginator.goToFirstPage();
 
