@@ -5,10 +5,10 @@ import { CloudStorageService } from 'src/app/services/cloud-storage/cloud-storag
 import { ErrorHandlerService } from 'src/app/services/error-handler/error-handler.service';
 import { FsCollectionName } from 'src/app/services/firestore-data/firestore-collection-name.enum';
 import { FirestoreDataService } from 'src/app/services/firestore-data/firestore-data.service';
-import { AbilityAttrType, abilityAttrTypes, FsAbility } from 'src/app/services/firestore-data/firestore-document.interface';
+import { AbilityAttrType, abilityAttrTypes, FsAbility, AbilityAttribute } from 'src/app/services/firestore-data/firestore-document.interface';
 import { SpinnerService } from '../../services/spinner/spinner.service';
 import { UserAuthService } from '../../services/user-auth/user-auth.service';
-import { AbilityAnalyzer, AbilityAttr } from '../../utils/ability-analyzer/ability-analyzer.class';
+import { AbilityAnalyzer } from '../../utils/ability-analyzer/ability-analyzer.class';
 import { sleep } from '../../utils/sleep/sleep.utility';
 import { InquiryFormData } from './inquiry-form.interface';
 
@@ -92,8 +92,7 @@ export class InquiryFormComponent /*implements OnInit*/ {
   //       // Copy attribute information into the FsAbility data type.
   //       a.attributes = [];
   //       for (let j = 0; j < attributes.length; ++j) {
-  //         const attr = attributes[j];
-  //         a.attributes.push({ type: attr.type, value: attr.value, isStepEffect: attr.isStepEffect });
+  //         a.attributes.push(attributes[j]);
   //       }
 
   //       // Update attribute field.
@@ -105,7 +104,7 @@ export class InquiryFormComponent /*implements OnInit*/ {
   //   this.spinner.hide();
   // }
 
-  // private isAttrChanged(org: { type: AbilityAttrType; value: number; isStepEffect: boolean }[], mod: AbilityAttr[]): boolean {
+  // private isAttrChanged(org: AbilityAttribute[], mod: AbilityAttribute[]): boolean {
   //   if (org.length !== mod.length) {
   //     return true;
   //   }

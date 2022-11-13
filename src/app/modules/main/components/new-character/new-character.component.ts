@@ -257,11 +257,7 @@ export class NewCharacterComponent /*implements OnInit*/ {
       // In case of new ability data, it analyzes ability attributes before uploading.
       if (name === FsCollectionName.Abilities) {
         const analyzer = new AbilityAnalyzer();
-        const attributes = analyzer.analyze((data as FsAbility).descriptions);
-        for (let i = 0; i < attributes.length; ++i) {
-          const attr = attributes[i];
-          (data as FsAbility).attributes.push({ type: attr.type, value: attr.value, isStepEffect: attr.isStepEffect });
-        }
+        (data as FsAbility).attributes = analyzer.analyze((data as FsAbility).descriptions);
       }
 
       // Upload voice actor info.

@@ -1,5 +1,21 @@
 import { AbilityAttrType, MapCellType } from 'src/app/services/firestore-data/firestore-document.interface';
 
+export const characterFilterOptions = [
+  'ownershipStatus',
+  'characterType',
+  'rarerity',
+  'weaponType',
+  'geographType',
+  'region',
+  'tokenType',
+  'ownershipAbility',
+  'teamAbility',
+  'defeatedTimeAbility',
+  'abilityAttribute',
+  'implementedDate',
+] as const;
+export type CharacterFilterOption = typeof characterFilterOptions[number]; // <-- Define union data type from string const array.
+
 export type CharacterOwnershipFilterType = 'all' | 'hasOnly' | 'notHasOnly';
 export const CharacterOwnershipFilterTypeLabels: { label: string; value: CharacterOwnershipFilterType }[] = [
   { label: 'すべて', value: 'all' },
@@ -30,17 +46,28 @@ export const CharacterFilterOptionAbilityTypeLabels: { label: string; value: Cha
   { label: '大破特技', value: 'defeatedTimeAbility' },
 ];
 export const CharacterFilterOptionAbilityAttrLabels: { label: string; value: AbilityAttrType }[] = [
-  { label: '攻撃上昇(%)', value: 'AttackUpPercent' },
-  { label: '与ダメ上昇(%)', value: 'DamageUpPercent' },
-  { label: '射程上昇(%)', value: 'RangeUpPercent' },
-  { label: '射程上昇(値)', value: 'RangeUpFixedValue' },
-  { label: '再配置CT短縮(%)', value: 'ShortSortieIntervalPercent' },
-  { label: '計略CT短縮(%)', value: 'ShortKeiryakuIntervalPercent' },
-  { label: '城娘隠密', value: 'HideShiromusume' },
-  { label: '伏兵隠密', value: 'HideToken' },
-  { label: '蔵隠密', value: 'HideWarehouse' },
-  { label: '敵攻撃低下(%)', value: 'AttackDownPercent' },
-  { label: '敵被ダメ上昇(%)', value: 'TakenDamageUpPercent' },
+  { label: '攻撃上昇(%)', value: 'attackUpPercent' },
+  { label: '攻撃上昇(値)', value: 'attackUpFixedValue' },
+  { label: '与ダメ上昇(%)', value: 'damageUpPercent' },
+  { label: '射程上昇(%)', value: 'rangeUpPercent' },
+  { label: '射程上昇(値)', value: 'rangeUpFixedValue' },
+  { label: '再配置CT短縮(%)', value: 'shortSortieIntervalPercent' },
+  { label: '計略CT短縮(%)', value: 'shortKeiryakuIntervalPercent' },
+  { label: '城娘隠密', value: 'hideShiromusume' },
+  { label: '伏兵隠密', value: 'hideToken' },
+  { label: '蔵隠密', value: 'hideWarehouse' },
+  { label: '敵攻撃低下(%)', value: 'attackDownPercent' },
+  { label: '敵被ダメ上昇(%)', value: 'takenDamageUpPercent' },
+  { label: '敵射程低下(%)', value: 'rangeDownPercent' },
+  { label: 'ダメ計(火)', value: 'mapWeaponFire' },
+  { label: 'ダメ計(雷)', value: 'mapWeaponThunder' },
+  { label: 'ダメ計(岩)', value: 'mapWeaponRock' },
+  { label: 'ダメ計(風)', value: 'mapWeaponWind' },
+  { label: 'ダメ計(水)', value: 'mapWeaponWater' },
+  { label: 'ダメ計(氷)', value: 'mapWeaponIce' },
+  { label: 'ダメ計(毒)', value: 'mapWeaponPoison' },
+  { label: 'ダメ計(封)', value: 'mapWeaponSeal' },
+  { label: 'ダメ計(他)', value: 'mapWeaponOthers' },
 ];
 export const CharacterFilterOptionTokenTypeLabels: { label: string; value: CharacterFilterOptionOthersType }[] = [
   { label: '伏兵(赤)', value: 'tokenRed' },
@@ -49,7 +76,7 @@ export const CharacterFilterOptionTokenTypeLabels: { label: string; value: Chara
   { label: '伏兵(水上)', value: 'tokenWater' },
 ];
 
-export class CharacterFilterSettings {
+export class CharacterFilterSetting {
   ownershipFilterType: CharacterOwnershipFilterType = 'all';
 
   characterTypes: CharacterTypeFilterType[] = [];

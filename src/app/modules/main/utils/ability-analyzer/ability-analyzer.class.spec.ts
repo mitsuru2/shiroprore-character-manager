@@ -1,4 +1,4 @@
-import { AbilityAnalyzer, AbilityAttr } from './ability-analyzer.class';
+import { AbilityAnalyzer } from './ability-analyzer.class';
 
 const abilityDescriptions: string[] = [
   '敵2体に攻撃し、後退させる伏兵を配置(1体まで)',
@@ -329,7 +329,7 @@ const abilityDescriptions: string[] = [
   '25秒間対象の攻撃が妖怪に対して1.7倍対象が攻撃した敵は5秒間攻撃速度が50%低下攻撃後の隙が50%延長(自分のみが対象)',
   '30秒間対象の攻撃速度が2倍敵の防御を50%無視与ダメージの25%耐久が回復(遠隔城娘が対象)',
   '40秒間対象の攻撃が術攻撃になる射程が80上昇、攻撃対象が1増加(自分のみが対象)',
-  '【雷属性】範囲内に敵の攻撃の2.5倍の術ダメージを与える(範囲:特大)',
+  '【雷属性】範囲内の敵に攻撃の2.5倍の術ダメージを与える(範囲:特大)',
   '自身の攻撃が25%上昇攻撃した敵の移動速度が5秒間40%低下',
   '20秒間対象の射程が50上昇武器攻撃が標的の周囲の敵にもダメージを与える(自分のみが対象)',
   '30秒間対象の射程が50上昇攻撃対象が1増加(自分のみが対象)',
@@ -399,7 +399,7 @@ const abilityDescriptions: string[] = [
   '城娘合成時に素材にすることで城娘の経験値を上昇させる',
   '自身の射程が50、与ダメージが35%特殊攻撃ゲージの蓄積量が25%上昇射程内の敵の射程が30%低下',
   '自身の防御が25%上昇敵の防御を無視',
-  '巨大化する度に射程内の城娘の攻撃30上昇計略再使用までの時間が6%短縮全ての敵の被ダメージが4%上昇',
+  '巨大化する度に射程内の城娘の攻撃が30上昇計略再使用までの時間が6%短縮全ての敵の被ダメージが4%上昇',
   '範囲内の敵に攻撃の2.5倍の術ダメージを与え10秒間「氷結」にする(範囲:特大)巨大化毎に使用可能回数2増加',
   '35秒間対象の武器攻撃に攻撃の1.4倍のダメージを追加敵の防御を20%無視(弓城娘が対象)',
   '巨大化する度に射程内の城娘の攻撃と防御が40、耐久が150上昇被ダメージを7%軽減',
@@ -1091,7 +1091,7 @@ const abilityDescriptions: string[] = [
   '40秒間対象の被ダメージを50%軽減足止め数が1増加。足止めした敵の攻撃が40%低下(近接城娘が対象)',
   '30秒間対象の射程内の城娘の攻撃が1.5倍敵の防御が50%低下(自分のみが対象)',
   '40秒間対象の攻撃が100上昇8秒毎に攻撃対象が1増加(自分のみが対象)',
-  '巨大化する度に射程内城娘の攻撃35、射程が5上昇計略再使用までの時間が7%短縮全ての敵の被ダメージが5%上昇',
+  '巨大化する度に射程内城娘の攻撃が35、射程が5上昇計略再使用までの時間が7%短縮全ての敵の被ダメージが5%上昇',
   '自身の攻撃が25%上昇',
   '30秒間対象の射程内の敵の攻撃が15%低下対象の射程内の敵1体につき対象の攻撃が15%ずつ上昇(上限60%)(自分のみが対象)',
   '所持しているだけで獲得殿EXPが7%上昇(像の効果は上乗せ)',
@@ -1541,7 +1541,7 @@ const abilityDescriptions: string[] = [
   '5秒間対象の攻撃が7086上昇射程内の殿と城娘に対して継続的に回復を行う妖怪へのダメージは発生しない(自分のみが対象)',
   '所持しているだけで獲得金が35%上昇(像の効果は上乗せ)',
   '15秒間対象の射程が40上昇、攻撃対象が1増加(石弓城娘が対象)',
-  '巨大化する度に射程内の城娘の防御が30攻撃速度が6%上昇被ダメージがを4%軽減',
+  '巨大化する度に射程内の城娘の防御が30攻撃速度が6%上昇被ダメージを4%軽減',
   '殿と射程内の城娘、伏兵の攻撃が20%射程が10上昇',
   '20秒間対象の攻撃と射程が1.4倍、耐久が100%の敵に対して攻撃が3倍になる。攻撃後の隙が延長(自分のみが対象)',
   '30秒間対象の回復が30上昇被ダメージを50%軽減',
@@ -2251,24 +2251,29 @@ describe('AnalyzeAbility', () => {
       const result = e.analyze([abilityDescriptions[i]]);
       if (result.length > 0) {
         cnt++;
-        console.log(`${abilityDescriptions[i]},${result[0].debug},${result[0].value},${result[0].isStepEffect}`)
+        // console.log(`${abilityDescriptions[i]},${result[0].debug},${result[0].value},${result[0].isStepEffect}`)
+        let logText = `${abilityDescriptions[i]},${result[0].value}`;
+        for (let ii = 0; ii < result.length; ++ii) {
+          logText += `,${result[ii].type}`;
+        }
+        console.log(logText);
       } else {
         let text = abilityDescriptions[i];
-        // text = text.replace(/射程内/g, '');
-        // text = text.replace(/射程外/g, '');
-        let index = text.indexOf("狙われ");
+        text = text.replace(/射程内/g, '');
+        text = text.replace(/射程外/g, '');
+        let index = text.indexOf("射程");
         if (index >= 0) {
-          // text = text.slice(index);
-          // index = text.indexOf("%");
-          // if (index >= 0) {
-            // text = text.slice(index);
-            // index = text.indexOf("上昇");
-            // const index2 = text.indexOf("倍");
-            // if (index >= 0 || index2 >= 0) {
+          text = text.slice(index);
+          index = text.indexOf("%");
+          if (index >= 0) {
+            text = text.slice(index);
+            index = text.indexOf("低下");
+            const index2 = text.indexOf("減少");
+            if (index >= 0 || index2 >= 0) {
               console.log(abilityDescriptions[i]);
               cnt++;
-            // }
-          // }
+            }
+          }
         }
       }
     }
@@ -2287,18 +2292,18 @@ describe('AnalyzeAbility', () => {
 
   //   let data: AbilityAttr[] = [
   //     new AbilityAttr('AttackUpFixed', 90),
-  //     new AbilityAttr('AttackUpPercent', 100),
+  //     new AbilityAttr('attackUpPercent', 100),
   //     new AbilityAttr('AttackDownFixed', 10),
-  //     new AbilityAttr('AttackDownPercent', 50),
-  //     new AbilityAttr('AttackUpPercent', 25),
+  //     new AbilityAttr('attackDownPercent', 50),
+  //     new AbilityAttr('attackUpPercent', 25),
   //     new AbilityAttr('AttackDownFixed', 100),
-  //     new AbilityAttr('AttackDownPercent', 25),
-  //     new AbilityAttr('AttackDownPercent', 100),
+  //     new AbilityAttr('attackDownPercent', 25),
+  //     new AbilityAttr('attackDownPercent', 100),
   //     new AbilityAttr('AttackUpFixed', 25),
-  //     new AbilityAttr('AttackUpPercent', 30),
-  //     new AbilityAttr('AttackUpPercent', 70),
+  //     new AbilityAttr('attackUpPercent', 30),
+  //     new AbilityAttr('attackUpPercent', 70),
   //     new AbilityAttr('AttackDownFixed', 30),
-  //     new AbilityAttr('AttackUpPercent', 50),
+  //     new AbilityAttr('attackUpPercent', 50),
   //     new AbilityAttr('AttackUpFixed', 100),
   //   ];
 

@@ -8,7 +8,7 @@
             [inputId]="'CharacterFilterSettingsForm_OwnershipStatusInput_' + item.value"
             name="CharacterFilterSettingsForm_OwnershipStatusInput"
             [value]="item.value"
-            [(ngModel)]="filterSettings.ownershipFilterType"
+            [(ngModel)]="filterSetting.ownershipFilterType"
             (onClick)="onOwnershipStatusTypeClick(item.value)"
           ></p-radioButton>
           <label [for]="'CharacterFilterSettingsForm_OwnershipStatusInput_' + item.value">{{ item.label }}</label>
@@ -25,7 +25,7 @@
             [inputId]="'CharacterFilterSettingsForm_CharacterTypeInput_' + item.value"
             name="CharacterFilterSettingsForm_CharacterTypeInput"
             [value]="item.value"
-            [(ngModel)]="filterSettings.characterTypes"
+            [(ngModel)]="filterSetting.characterTypes"
           ></p-checkbox>
           <label [for]="'CharacterFilterSettingsForm_RarerityInput_' + item.value">{{ item.label }}</label>
         </div>
@@ -41,7 +41,7 @@
             [inputId]="'CharacterFilterSettingsForm_RarerityInput_' + item"
             name="CharacterFilterSettingsForm_RarerityInput"
             [value]="item"
-            [(ngModel)]="filterSettings.rarerities"
+            [(ngModel)]="filterSetting.rarerities"
           ></p-checkbox>
           <label [for]="'CharacterFilterSettingsForm_RarerityInput_' + item">★{{ item }}</label>
         </div>
@@ -57,7 +57,7 @@
             [inputId]="'CharacterFilterSettingsForm_WeaponTypeInput_' + item.name"
             name="CharacterFilterSettingsForm_WeaponTypeInput"
             [value]="item.id"
-            [(ngModel)]="filterSettings.weaponTypes"
+            [(ngModel)]="filterSetting.weaponTypes"
           ></p-checkbox>
           <label [for]="'CharacterFilterSettingsForm_WeaponTypeInput_' + item.name">{{ item.name }}</label>
         </div>
@@ -73,7 +73,7 @@
             [inputId]="'CharacterFilterSettingsForm_GeographTypeInput_' + item.name"
             name="CharacterFilterSettingsForm_GeographTypeInput"
             [value]="item.id"
-            [(ngModel)]="filterSettings.geographTypes"
+            [(ngModel)]="filterSetting.geographTypes"
           ></p-checkbox>
           <label [for]="'CharacterFilterSettingsForm_GeographTypeInput_' + item.name">{{ item.name }}</label>
         </div>
@@ -89,7 +89,7 @@
             [inputId]="'CharacterFilterSettingsForm_RegionInput_' + item.name"
             name="CharacterFilterSettingsForm_RegionInput"
             [value]="item.id"
-            [(ngModel)]="filterSettings.regions"
+            [(ngModel)]="filterSetting.regions"
           ></p-checkbox>
           <label [for]="'CharacterFilterSettingsForm_RegionInput_' + item.name">{{ item.name }}</label>
         </div>
@@ -103,7 +103,7 @@
         <p-calendar
           inputId="CharacterFilterSettingsForm_StartDateInput"
           name="CharacterFilterSettingsForm_StartDateInput"
-          [(ngModel)]="filterSettings.startDate"
+          [(ngModel)]="filterSetting.startDate"
           dateFormat="yy/m/d"
           [showClear]="true"
         ></p-calendar>
@@ -111,7 +111,7 @@
         <p-calendar
           inputId="CharacterFilterSettingsForm_EndDateInput"
           name="CharacterFilterSettingsForm_EndDateInput"
-          [(ngModel)]="filterSettings.endDate"
+          [(ngModel)]="filterSetting.endDate"
           dateFormat="yy/m/d"
           [showClear]="true"
         ></p-calendar>

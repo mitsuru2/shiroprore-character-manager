@@ -8,9 +8,9 @@ import { SpinnerService } from '../../services/spinner/spinner.service';
 import { UserAuthService } from '../../services/user-auth/user-auth.service';
 import { PaginatorControl } from '../../utils/paginator-control/paginator-control.class';
 import { CharacterFilterSettingsFormComponent } from '../../views/character-filter-settings-form/character-filter-settings-form.component';
-import { CharacterFilterSettings } from '../../views/character-filter-settings-form/character-filter-settings-form.interface';
+import { CharacterFilterSetting } from '../../views/character-filter-settings-form/character-filter-settings-form.interface';
 import { CharacterSortSettingsFormComponent } from '../../views/character-sort-settings-form/character-sort-settings-form.component';
-import { CharacterSortSettings } from '../../views/character-sort-settings-form/character-sort-settings-form.interface';
+import { CharacterSortSetting } from '../../views/character-sort-settings-form/character-sort-settings-form.interface';
 
 @Component({
   selector: 'app-list-character-ownership',
@@ -52,16 +52,16 @@ export class ListCharacterOwnershipComponent /*implements OnInit*/ {
   /** Filter dialog. */
   filterDialogShown = false;
 
-  filterSettings = new CharacterFilterSettings();
+  filterSetting = new CharacterFilterSetting();
 
-  filterSettingsCopy = new CharacterFilterSettings();
+  filterSettingCopy = new CharacterFilterSetting();
 
   /** Sort dialog. */
   sortDialogShown = false;
 
-  sortSettings = new CharacterSortSettings();
+  sortSetting = new CharacterSortSetting();
 
-  sortSettingsCopy = new CharacterSortSettings();
+  sortSettingCopy = new CharacterSortSetting();
 
   //============================================================================
   // Class methods.
@@ -81,7 +81,7 @@ export class ListCharacterOwnershipComponent /*implements OnInit*/ {
     });
 
     // Initalize filter service.
-    this.filteredIndexes = this.characterFilter.filter(this.characters, this.filterSettings, '');
+    this.filteredIndexes = this.characterFilter.filter(this.characters, this.filterSetting, '');
 
     // Initialize character label array.
     this.updateCharacterLabels();
@@ -97,7 +97,7 @@ export class ListCharacterOwnershipComponent /*implements OnInit*/ {
   // ngOnInit(): void {}
 
   onFilterButtonClick() {
-    this.filterSettingsCopy = { ...this.filterSettings };
+    this.filterSettingCopy = { ...this.filterSetting };
     this.filterDialogShown = true;
   }
 
@@ -109,17 +109,22 @@ export class ListCharacterOwnershipComponent /*implements OnInit*/ {
 
     // Restore filter settings if canceled.
     if (canceled) {
-      this.filterSettings = { ...this.filterSettingsCopy };
-      this.logger.trace(location, { filter: this.filterSettings, queryText: this.inputSearchText });
+      this.filterSetting = { ...this.filterSettingCopy };
+      this.logger.trace(location, { filter: this.filterSetting, queryText: this.inputSearchText });
       return;
     }
-    this.logger.trace(location, { filter: this.filterSettings, queryText: this.inputSearchText });
+    this.logger.trace(location, { filter: this.filterSetting, queryText: this.inputSearchText });
 
     // Show spinner.
     this.spinner.show();
 
     // Filter characters.
-    this.filteredIndexes = this.characterFilter.filter(this.characters, this.filterSettings, this.inputSearchText);
+    this.filteredIndexes = this.characterFilter.filter(this.characters, this.filterSetting, this.inputSearchText);
+
+    // Auto-sorting.
+    if (this.characterFilter.updateSortSettingFromFilterSetting(this.filterSetting, this.inputSearchText, this.sortSetting)) {
+      this.filteredIndexes = this.characterFilter.sort(this.characters, this.sortSetting);
+    }
 
     // Update paginate info.
     this.paginator.goToFirstPage();
@@ -133,7 +138,7 @@ export class ListCharacterOwnershipComponent /*implements OnInit*/ {
   }
 
   onSortButtonClick() {
-    this.sortSettingsCopy = { ...this.sortSettings };
+    this.sortSettingCopy = { ...this.sortSetting };
     this.sortDialogShown = true;
   }
 
@@ -145,17 +150,17 @@ export class ListCharacterOwnershipComponent /*implements OnInit*/ {
 
     // Restore original setting if canceled.
     if (canceled) {
-      this.sortSettings = { ...this.sortSettingsCopy };
-      this.logger.trace(location, { filter: this.sortSettings });
+      this.sortSetting = { ...this.sortSettingCopy };
+      this.logger.trace(location, { filter: this.sortSetting });
       return;
     }
-    this.logger.trace(location, { filter: this.sortSettings });
+    this.logger.trace(location, { filter: this.sortSetting });
 
     // Show spinner.
     this.spinner.show();
 
     // Sort characters and filtered index list.
-    this.filteredIndexes = this.characterFilter.sort(this.characters, this.sortSettings);
+    this.filteredIndexes = this.characterFilter.sort(this.characters, this.sortSetting);
 
     // Update paginate info.
     this.paginator.goToFirstPage();

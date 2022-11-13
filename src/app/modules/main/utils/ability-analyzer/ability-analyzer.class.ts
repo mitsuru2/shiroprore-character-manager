@@ -1,9 +1,9 @@
-import { AbilityAttrType } from 'src/app/services/firestore-data/firestore-document.interface';
+import { AbilityAttrType, AbilityAttribute } from 'src/app/services/firestore-data/firestore-document.interface';
 
 class AbilityAttrMatchPattern {
   queries: RegExp[];
 
-  type: AbilityAttrType;
+  types: AbilityAttrType[] = [];
 
   factor: number;
 
@@ -11,29 +11,30 @@ class AbilityAttrMatchPattern {
 
   index: number;
 
-  constructor(queries: RegExp[], type: AbilityAttrType, index: number, factor: number = 1, offset: number = 0) {
+  countIndex: number;
+
+  countFactor: number;
+
+  countOffset: number;
+
+  constructor(
+    queries: RegExp[],
+    types: AbilityAttrType[],
+    index: number,
+    factor: number = 1,
+    offset: number = 0,
+    countIndex: number = 0,
+    countFactor: number = 1,
+    countOffset: number = 0
+  ) {
     this.queries = queries;
-    this.type = type;
+    this.types = types;
     this.index = index;
     this.factor = factor;
     this.offset = offset;
-  }
-}
-
-export class AbilityAttr {
-  type: AbilityAttrType;
-
-  value: number;
-
-  isStepEffect: boolean;
-
-  debug: string;
-
-  constructor(type: AbilityAttrType, value = 0, isStepEffect = false, debug = '') {
-    this.type = type;
-    this.value = value;
-    this.isStepEffect = isStepEffect;
-    this.debug = debug;
+    this.countIndex = countIndex;
+    this.countFactor = countFactor;
+    this.countOffset = countOffset;
   }
 }
 
@@ -42,75 +43,150 @@ export class AbilityAnalyzer {
     //
     // Attack up (percent)
     //
-    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく/g, /特殊攻撃|低下効果/g, /攻撃(?:と[^\d上下]+){0,2}が(\d+)%(?:と\d+)?上昇/g], 'AttackUpPercent', 1), /* 攻撃が20%上昇 *//* eslint-disable-line */
-    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく/g, /特殊攻撃|低下効果/g, /攻撃(?:と[^\d上下]+){0,2}が\d+%上昇\((上限|最大)(\d+)%\)/g], 'AttackUpPercent', 2), /* 攻撃が4%ずつ上昇(最大40%) *//* eslint-disable-line */
-    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく/g, /特殊攻撃|低下効果/g, /攻撃(?:と[^\d上下]+){0,2}が(\d+\.?\d?)倍/g], 'AttackUpPercent', 1, 100, -100), /* 攻撃が1.2倍 *//* eslint-disable-line */
-    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく/g, /特殊攻撃|低下効果/g, /攻撃(?:と[^\d上下]+){0,2}が(\d+)%([^\d上下]+が\d*%?){1,2}に?上昇/g], 'AttackUpPercent', 1), /* 攻撃が20%、砲弾直撃ボーナスが60%に上昇 *//* eslint-disable-line */
-    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく/g, /特殊攻撃|低下効果/g, /攻撃が[^\d]{1,6}に対して(\d+\.?\d?)倍/g], 'AttackUpPercent', 1, 100, -100), /* 攻撃が飛行敵に対して1.2倍 *//* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /特殊攻撃|低下効果/g, /攻撃(?:と[^\d上下]+){0,2}が(\d+)%(?:と\d+)?上昇/g], ['attackUpPercent'], 1), /* 攻撃が20%上昇 *//* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /特殊攻撃|低下効果/g, /攻撃(?:と[^\d上下]+){0,2}が\d+%上昇\((上限|最大)値?(\d+)%\)/g], ['attackUpPercent'], 2), /* 攻撃が4%ずつ上昇(最大40%) *//* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /特殊攻撃|低下効果/g, /攻撃(?:と[^\d上下]+){0,2}が(\d+\.?\d?)倍/g], ['attackUpPercent'], 1, 100, -100), /* 攻撃が1.2倍 *//* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /特殊攻撃|低下効果/g, /攻撃(?:と[^\d上下]+){0,2}が(\d+)%([^\d上下]+が\d*%?){1,2}に?上昇/g], ['attackUpPercent'], 1), /* 攻撃が20%、砲弾直撃ボーナスが60%に上昇 *//* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /特殊攻撃|低下効果/g, /攻撃が[^\d]{1,6}に対して(\d+\.?\d?)倍/g], ['attackUpPercent'], 1, 100, -100), /* 攻撃が飛行敵に対して1.2倍 *//* eslint-disable-line */
+    //
+    // Attack up (fixed value)
+    //
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /特殊攻撃|低下効果/g, /攻撃(?:と[^\d上下対]+){0,2}(?:が|を)(?:\d+%と)?(\d+)上昇/g], ['attackUpFixedValue'], 1), /* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /特殊攻撃|低下効果/g, /攻撃(?:と[^\d上下対]+){0,2}(?:が|を)(?:\d+\.?\d*倍更に)?(\d+)上昇/g], ['attackUpFixedValue'], 1), /* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /特殊攻撃|低下効果/g, /攻撃(?:と[^\d上下対]+){0,2}(?:が|を)(?:射程内の敵1体につき)?\d+上昇\((?:上限|最大)値?(\d+)[^%]?\)/g], ['attackUpFixedValue'], 1), /* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /特殊攻撃|低下効果/g, /攻撃(?:と[^\d上下対]+){0,2}(?:が|を)(?:射程内の敵1体につき)?\d+上昇\((?:上限|最大)値?(\d+)[^%]?\)対象の射程内の城娘の攻撃が100上昇/g], ['attackUpFixedValue'], 1, 1, 100), /* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /特殊攻撃|低下効果/g, /攻撃(?:と[^\d上下対]+){0,2}(?:が|を)(\d+)(?:[^\d上下%]+(?:が|を)\d*%?){1,2}に?上昇/g], ['attackUpFixedValue'], 1), /* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /特殊攻撃|低下効果/g, /射程内の(?:城娘|味方)1体につき(?:対象|自身)の攻撃(?:が|を)(\d+)(?:[^\d上下対]+が\d+)?上昇/g], ['attackUpFixedValue'], 1, 8), /* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|一度だけ|大きく|少しだけ/g, /特殊攻撃|低下効果/g, /(\d+)秒間対象の射程が\d+上昇2秒毎に攻撃が(\d+)攻撃速度が\d+%防御無視効果が\d+%上昇/g], ['attackUpFixedValue'], 2, 1, 0, 1, 0.5, -1), /* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /特殊攻撃|低下効果/g, /敵\d体に攻撃を行い少し後退させる伏兵\((\d+)体まで\).+配置中の伏兵1体につき自身の攻撃が(\d+)上昇/g], ['attackUpFixedValue'], 2, 1, 0, 1, 1, 0), /* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /特殊攻撃|低下効果/g, /攻撃(?:と[^\d上下対]+){0,2}(?:が|を)(\d+)[^\d上下対]+は\d+上昇/g], ['attackUpFixedValue'], 1), /* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /特殊攻撃|低下効果/g, /攻撃(?:と[^\d上下対]+){0,2}(?:が|を)\d+[^\d上下対]+は(\d+)上昇/g], ['attackUpFixedValue'], 1), /* eslint-disable-line */
     //
     // Attack down (percent)
     //
-    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく/g, /(?:敵の|兜の|ダメージを与え|攻撃し)(?:[^\d上下]+と){0,2}攻撃(?:と[^\d上下]+){0,2}(?:が|を)(\d+)%(?:と\d+)?(?:[^\d上下]+(?:が|を)\d+%?){0,2}低下/g], 'AttackDownPercent', 1), /* 敵の攻撃が20%、攻撃速度が10%低下 *//* eslint-disable-line */
-    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく/g, /(?:敵の|兜の|ダメージを与え|攻撃し)(?:[^\d上下]+と){0,2}攻撃(?:と[^\d上下]+){0,2}(?:が|を)\d+%低下\((?:上限|最大)(\d+)%\)/g], 'AttackDownPercent', 1), /* 敵の攻撃が2%ずつ低下(上限10%) *//* eslint-disable-line */
-    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく/g, /(?:敵の|兜の|ダメージを与え|攻撃し)(?:[^\d上下]+と){0,2}攻撃(?:と[^\d上下]+){0,2}(?:が|を)(\d+)%[^\d]+は\d+%低下/g], 'AttackDownPercent', 1), /* 敵の攻撃が20%、妖怪は30%低下 *//* eslint-disable-line */
-    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく/g, /(?:敵の|兜の|ダメージを与え|攻撃し)(?:[^\d上下]+と){0,2}攻撃(?:と[^\d上下]+){0,2}(?:が|を)\d+%[^\d]+は(\d+)%低下/g], 'AttackDownPercent', 1), /* eslint-disable-line */
-    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく/g, /(?:敵の|兜の|ダメージを与え|攻撃し)[^\d上下]+(?:と[^\d上下]+){0,2}が\d+%?(?:[^\d上下]+と){0,2}攻撃(?:と[^\d上下]+){0,2}(?:が|を)(\d+)%低下/g], 'AttackDownPercent', 1), /* 敵の与ダメージが30%、攻撃が20%低下 *//* eslint-disable-line */
-    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく/g, /(?:敵の|兜の|ダメージを与え|攻撃し)[^\d上下]+(?:と[^\d上下]+){0,2}が\d+%?低下(?:[^\d上下]+と){0,2}攻撃(?:と[^\d上下]+){0,2}(?:が|を)(\d+)%低下/g], 'AttackDownPercent', 1), /* 敵の移動速度が60%低下攻撃が20%低下 *//* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /(?:敵の|兜の|ダメージを与え|攻撃し)(?:[^\d上下]+と){0,2}攻撃(?:と[^\d上下]+){0,2}(?:が|を)(\d+)%(?:と\d+)?(?:[^\d上下]+(?:が|を)\d+%?){0,2}低下/g], ['attackDownPercent'], 1), /* 敵の攻撃が20%、攻撃速度が10%低下 *//* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /(?:敵の|兜の|ダメージを与え|攻撃し)(?:[^\d上下]+と){0,2}攻撃(?:と[^\d上下]+){0,2}(?:が|を)\d+%低下\((?:上限|最大)値?(\d+)%\)/g], ['attackDownPercent'], 1), /* 敵の攻撃が2%ずつ低下(上限10%) *//* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /(?:敵の|兜の|ダメージを与え|攻撃し)(?:[^\d上下]+と){0,2}攻撃(?:と[^\d上下]+){0,2}(?:が|を)(\d+)%[^\d]+は\d+%低下/g], ['attackDownPercent'], 1), /* 敵の攻撃が20%、妖怪は30%低下 *//* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /(?:敵の|兜の|ダメージを与え|攻撃し)(?:[^\d上下]+と){0,2}攻撃(?:と[^\d上下]+){0,2}(?:が|を)\d+%[^\d]+は(\d+)%低下/g], ['attackDownPercent'], 1), /* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /(?:敵の|兜の|ダメージを与え|攻撃し)[^\d上下]+(?:と[^\d上下]+){0,2}が\d+%?(?:[^\d上下]+と){0,2}攻撃(?:と[^\d上下]+){0,2}(?:が|を)(\d+)%低下/g], ['attackDownPercent'], 1), /* 敵の与ダメージが30%、攻撃が20%低下 *//* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /(?:敵の|兜の|ダメージを与え|攻撃し)[^\d上下]+(?:と[^\d上下]+){0,2}が\d+%?低下(?:[^\d上下]+と){0,2}攻撃(?:と[^\d上下]+){0,2}(?:が|を)(\d+)%低下/g], ['attackDownPercent'], 1), /* 敵の移動速度が60%低下攻撃が20%低下 *//* eslint-disable-line */
     //
     // Damage up (percent)
     //
-    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく/g, /低下効果/g, /(?:与ダメージ|与ダメ)(?:と[^\d上下]+){0,2}が(\d+)%(?:[^\d上下]+が\d+%?){0,2}上昇/g], 'DamageUpPercent', 1), /* 与ダメージが20%上昇 *//* eslint-disable-line */
-    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく/g, /低下効果/g, /(?:与ダメージ|与ダメ)(?:と[^\d上下]+){0,2}が(\d+\.?\d*)倍/g], 'DamageUpPercent', 1, 100, -100), /* 与ダメージが1.2倍 *//* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /低下効果/g, /(?:与ダメージ|与ダメ)(?:と[^\d上下]+){0,2}が(\d+)%(?:[^\d上下]+が\d+%?){0,2}上昇/g], ['damageUpPercent'], 1), /* 与ダメージが20%上昇 *//* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /低下効果/g, /(?:与ダメージ|与ダメ)(?:と[^\d上下]+){0,2}が(\d+\.?\d*)倍/g], ['damageUpPercent'], 1, 100, -100), /* 与ダメージが1.2倍 *//* eslint-disable-line */
     //
     // Taken damage up (percent)
     //
-    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく/g, /(?:敵|兜)の(?:[^\d上下]+(?:と[^\d上下]+){0,1}が\d+%?){0,2}(?:低下)?(?:被ダメージ|被ダメ)が?(\d+)%上昇/g], 'TakenDamageUpPercent', 1), /* 敵の被ダメージが20%上昇 *//* eslint-disable-line */
-    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく/g, /(?:敵|兜)の(?:[^\d上下]+(?:と[^\d上下]+){0,1}が\d+%?){0,2}(?:低下)?(?:被ダメージ|被ダメ)が?(\d+\.?\d*)倍/g], 'TakenDamageUpPercent', 1, 100, -100), /* 敵の被ダメージが1.2倍 *//* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /(?:敵|兜)の(?:[^\d上下]+(?:と[^\d上下]+){0,1}が\d+%?){0,2}(?:低下)?(?:被ダメージ|被ダメ)が?(\d+)%上昇/g], ['takenDamageUpPercent'], 1), /* 敵の被ダメージが20%上昇 *//* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /(?:敵|兜)の(?:[^\d上下]+(?:と[^\d上下]+){0,1}が\d+%?){0,2}(?:低下)?(?:被ダメージ|被ダメ)が?(\d+\.?\d*)倍/g], ['takenDamageUpPercent'], 1, 100, -100), /* 敵の被ダメージが1.2倍 *//* eslint-disable-line */
+    //
+    // Taken damage down (percent)
+    //
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /(?:被ダメージ|被ダメ)(?:と[^\d上下減]+){0,2}(?:を|が)?(\d+)%(?:軽減|減少)/g], ['takenDamageDownPercent'], 1), /* 敵の被ダメージが20%上昇 *//* eslint-disable-line */
     //
     // Sortie interval shorten (percent)
     //
-    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく/g, /再配置(?:までの|の|時の)?時間が?(\d+)%短縮/g], 'ShortSortieIntervalPercent', 1),
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /再配置(?:までの|の|時の)?時間が?(\d+)%短縮/g], ['shortSortieIntervalPercent'], 1),  /* eslint-disable-line */
     //
     // Keiryaku interval shorten (percent)
     //
-    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく/g, /計略再?使用(?:までの)?時間(?:が|を)?(\d+)%短縮/g], 'ShortKeiryakuIntervalPercent', 1),
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /計略再?使用(?:までの)?時間(?:が|を)?(\d+)%短縮/g], ['shortKeiryakuIntervalPercent'], 1), /* eslint-disable-line */
     //
     // Range up (fixed value)
     //
-    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく/g, /低下効果/g, /射程が上昇/g], 'RangeUpFixedValue', 0), /* 射程が上昇 *//* eslint-disable-line */
-    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく/g, /低下効果/g, /射程(?:と[^\d上下倍]+){0,2}が(?:\d+%と)?(\d+)(?:[^\d上下倍]+が\d*%?){0,2}上昇/g], 'RangeUpFixedValue', 1), /* 射程が40上昇 *//* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /低下効果/g, /射程が上昇/g], ['rangeUpFixedValue'], 0), /* 射程が上昇 *//* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /低下効果/g, /射程(?:と[^\d上下倍]+){0,2}が(?:\d+%と)?(\d+)(?:[^\d上下倍]+が\d*%?){0,2}上昇/g], ['rangeUpFixedValue'], 1), /* 射程が40上昇 *//* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /低下効果/g, /射程内の(?:城娘|味方)1体につき(?:対象|自身)の(?:[^\d上下倍]+が\d+)?射程(?:と[^\d上下倍]+){0,2}が(?:\d+%と)?(\d+)(?:[^\d上下倍]+が\d*%?){0,2}上昇/g], ['rangeUpFixedValue'], 1, 8), /* 射程が40上昇 *//* eslint-disable-line */
     //
     // Range up (percent)
     //
-    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく/g, /回復射程/g, /射程(?:と[^\d上下]+){0,2}が(\d+)%(?:と\d+)?(?:[^\d上下]+が\d*%?){0,2}上昇/g], 'RangeUpPercent', 1), /* 射程が40%上昇 *//* eslint-disable-line */
-    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく/g, /回復射程/g, /射程(?:と[^\d上下]+){0,2}が(\d+\.?\d*)倍/g], 'RangeUpPercent', 1, 100, -100), /* 射程が2倍 *//* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /回復射程/g, /射程(?:と[^\d上下]+){0,2}が(\d+)%(?:と\d+)?(?:[^\d上下]+が\d*%?){0,2}上昇/g], ['rangeUpPercent'], 1), /* 射程が40%上昇 *//* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /回復射程/g, /射程(?:と[^\d上下]+){0,2}が(\d+\.?\d*)倍/g], ['rangeUpPercent'], 1, 100, -100), /* 射程が2倍 *//* eslint-disable-line */
+    //
+    // Range down (percent)
+    //
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /回復射程/g, /(?:敵|兜)の(?:[^\d上下]+と){0,2}射程(?:と[^\d上下]+){0,2}(?:が|を)(\d+)%(?:と\d+)?(?:[^\d上下]+が\d*%?){0,2}低下/g], ['rangeDownPercent'], 1), /* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /回復射程/g, /(?:敵|兜)の(?:[^\d上下]+と){0,1}[^\d上下]+が\d+倍?になり(?:[^\d上下]+と){0,1}射程(?:と[^\d上下]+){0,1}が(\d+)%低下/g], ['rangeDownPercent'], 1), /* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /回復射程/g, /(?:敵|兜)に攻撃の\d\.?\d?倍のダメージを(?:\d回)?与え(?:[^\d上下]+と){0,1}射程(?:と[^\d上下]+){0,1}が(\d+)%低下/g], ['rangeDownPercent'], 1), /* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /回復射程/g, /(?:敵|兜)の(?:[^\d上下]+と){0,2}射程(?:と[^\d上下]+){0,2}(?:が|を)(\d+)%[^\d上下]{0,5}は\d+%低下/g], ['rangeDownPercent'], 1), /* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /回復射程/g, /(?:敵|兜)の(?:[^\d上下]+と){0,2}射程(?:と[^\d上下]+){0,2}(?:が|を)\d+%[^\d上下]{0,5}は(\d+)%低下/g], ['rangeDownPercent'], 1), /* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /回復射程/g, /(?:敵|兜)に\d種の効果を与える.+(?:①|②|③|④|⑤|⑥|⑦|⑧|⑨)(?:\d+秒)?射程が?(\d+)%低下/g], ['rangeDownPercent'], 1), /* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /回復射程/g, /(?:敵|兜)の(?:[^\d上下]+と)?(?:[^\d上下]+が\d+)?(?:[^\d上下]+が\d+%)?(?:低下)?(?:[^\d上下]+と)?射程(?:と[^\d上下]+)?(?:が|を)(\d+)%低下/g], ['rangeDownPercent'], 1), /* eslint-disable-line */
     //
     // HideShiromusume
     //
-    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく/g, /(?:城娘|対象|自身)(?:と[^\d上下短倍]+){0,2}が敵から狙われ(?:ない|なくなる|ず)/g], 'HideShiromusume', 0), /* eslint-disable-line */
-    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく/g, /再配置時敵から狙われ(?:ない|なくなる|ず)/g], 'HideShiromusume', 0), /* eslint-disable-line */
-    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく/g, /(?:城娘|対象|自身)の(?:[^\d上下]+が(?:\d+\.?\d*倍|\d*%?上昇|半減|敵の防御を\d*%?無視)し?){0,2}敵から狙われ(?:ない|なくなる|ず)/g], 'HideShiromusume', 0 ), /* eslint-disable-line */
-    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく/g, /敵から狙われ(?:ない|なくなる|ず).*\(.*(?:自分のみ|城娘(\/伏兵)?(\/蔵)?が対象)/g], 'HideShiromusume', 0), /* eslint-disable-line */
-    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく/g, /^[^伏兵蔵]*敵から狙われ(?:ない|なくなる|ず)[^伏兵蔵]*$/g], 'HideShiromusume', 0), /* eslint-disable-line */
-    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく/g, /自身は攻撃を行わず敵から狙われ(?:ない|なくなる|ず)/g], 'HideShiromusume', 0), /* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /(?:城娘|対象|自身)(?:と[^\d上下短倍]+){0,2}が敵から狙われ(?:ない|なくなる|ず)/g], ['hideShiromusume'], 0), /* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /再配置時敵から狙われ(?:ない|なくなる|ず)/g], ['hideShiromusume'], 0), /* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /(?:城娘|対象|自身)の(?:[^\d上下]+が(?:\d+\.?\d*倍|\d*%?上昇|半減|敵の防御を\d*%?無視)し?){0,2}敵から狙われ(?:ない|なくなる|ず)/g], ['hideShiromusume'], 0 ), /* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /敵から狙われ(?:ない|なくなる|ず).*\(.*(?:自分のみ|城娘(\/伏兵)?(\/蔵)?が対象)/g], ['hideShiromusume'], 0), /* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /^[^伏兵蔵]*敵から狙われ(?:ない|なくなる|ず)[^伏兵蔵]*$/g], ['hideShiromusume'], 0), /* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /自身は攻撃を行わず敵から狙われ(?:ない|なくなる|ず)/g], ['hideShiromusume'], 0), /* eslint-disable-line */
     //
     // Hide token.
     //
-    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく/g, /敵(?:から|に)狙われず.+伏兵を配置/g], 'HideToken', 0), /* eslint-disable-line */
-    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく/g, /敵(?:から|に)狙われ(?:ない|なくなる|ず).*\(.*伏兵(\/蔵)?が対象/g], 'HideToken', 0), /* eslint-disable-line */
-    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく/g, /伏兵(?:と蔵)?が敵(?:から|に)狙われ(?:ない|なくなる|ず)/g], 'HideToken', 0), /* eslint-disable-line */
-    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく/g, /伏兵(?:と蔵)?が敵の攻撃対象になら(?:ない|なくなる|ず)/g], 'HideToken', 0), /* eslint-disable-line */
-    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく/g, /敵(?:から|に)狙われず.+(?:最も近い対象を攻撃させる|後退させる)伏兵/g], 'HideToken', 0), /* eslint-disable-line */
-    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく/g, /伏兵をランダムで配置.*敵(?:から|に)狙われ(?:ない|なくなる|ず)/g], 'HideToken', 0), /* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /敵(?:から|に)狙われず.+伏兵を配置/g], ['hideToken'], 0), /* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /敵(?:から|に)狙われ(?:ない|なくなる|ず).*\(.*伏兵(\/蔵)?が対象/g], ['hideToken'], 0), /* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /伏兵(?:と蔵)?が敵(?:から|に)狙われ(?:ない|なくなる|ず)/g], ['hideToken'], 0), /* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /伏兵(?:と蔵)?が敵の攻撃対象になら(?:ない|なくなる|ず)/g], ['hideToken'], 0), /* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /敵(?:から|に)狙われず.+(?:最も近い対象を攻撃させる|後退させる)伏兵/g], ['hideToken'], 0), /* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /伏兵をランダムで配置.*敵(?:から|に)狙われ(?:ない|なくなる|ず)/g], ['hideToken'], 0), /* eslint-disable-line */
     //
     // Hide wherehouse
     //
-    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく/g, /蔵(?:と伏兵)?が敵から狙われ(?:ない|なくなる|ず)/g], 'HideWarehouse', 0), /* eslint-disable-line */
-    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく/g, /敵から狙われ(?:ない|なくなる|ず).*\(.*蔵が対象/g], 'HideWarehouse', 0), /* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /蔵(?:と伏兵)?が敵から狙われ(?:ない|なくなる|ず)/g], ['hideWarehouse'], 0), /* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /敵から狙われ(?:ない|なくなる|ず).*\(.*蔵が対象/g], ['hideWarehouse'], 0), /* eslint-disable-line */
+    //
+    // Map weapon (fire)
+    //
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /【火属性】範囲内の敵に攻撃の(\d\.?\d*)倍の?ダメージ/g], ['mapWeapon', 'mapWeaponFire'], 1, 100), /* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /【火属性】範囲内の敵に攻撃の(\d\.?\d*)倍の?ダメージを(\d)連続で与え/g], ['mapWeapon', 'mapWeaponFire'], 1, 100, 0, 2), /* eslint-disable-line */
+    //
+    // Map weapon (thunder)
+    //
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /【雷属性】範囲内の敵に攻撃の(\d\.?\d*)倍の?術ダメージ/g], ['mapWeapon', 'mapWeaponThunder'], 1, 100), /* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /【雷属性】範囲内の敵に攻撃の(\d\.?\d*)倍の?術ダメージを(\d)連続で与え/g], ['mapWeapon', 'mapWeaponThunder'], 1, 100, 0, 2), /* eslint-disable-line */
+    //
+    // Map weapon (wind)
+    //
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /^範囲内の敵に攻撃の(\d\.?\d*)倍の?ダメージを与え(?:敵を)?(?:劇的に)?後退させる/g], ['mapWeapon', 'mapWeaponWind'], 1, 100), /* eslint-disable-line */
+    //
+    // Map weapon (ice)
+    //
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /^範囲内の敵に攻撃の(\d\.?\d*)倍の?術ダメージを与え「氷結」にする/g], ['mapWeapon', 'mapWeaponIce'], 1, 100), /* eslint-disable-line */
+    //
+    // Map weapon (water)
+    //
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /^範囲内の敵に攻撃の(\d\.?\d*)倍の?ダメージを与え後退させ移動速度(?:を|が)(?:\d+%)?低下/g], ['mapWeapon', 'mapWeaponWater'], 1, 100), /* eslint-disable-line */
+    //
+    // Map weapon (rock)
+    //
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /^範囲内の敵に攻撃の(\d\.?\d*)倍の?ダメージを与え移動速度(?:を|が)(?:\d+%)?低下/g], ['mapWeapon', 'mapWeaponRock'], 1, 100), /* eslint-disable-line */
+    //
+    // Map weapon (poison)
+    //
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /^範囲内の敵に攻撃の(\d\.?\d*)倍の?ダメージを与え「猛毒」にする/g], ['mapWeapon', 'mapWeaponPoison'], 1, 100), /* eslint-disable-line */
+    //
+    // Map weapon (seal)
+    //
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /^範囲内の敵の動きを封じる/g], ['mapWeapon', 'mapWeaponSeal'], 0), /* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /^範囲内の敵に攻撃の(\d\.?\d*)倍の?ダメージを与え(?:敵の)?動きを封じる/g], ['mapWeapon', 'mapWeaponSeal'], 1, 100), /* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /属性】範囲内の敵に攻撃の(\d\.?\d*)倍の?術?ダメージを与え(?:敵の)?動きを封じる/g], ['mapWeapon', 'mapWeaponSeal'], 1, 100), /* eslint-disable-line */
+    //
+    // Map weapon (others)
+    //
+    new AbilityAttrMatchPattern([/範囲内の敵に5種の効果を与える\(範囲:特大\)①1.5倍ダメ②(\d\.?\d*)倍ダメ/g], ['mapWeapon', 'mapWeaponOthers'], 1, 100, 150), /* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /^範囲内の敵に攻撃の(\d\.?\d*)倍の?ダメージを与え(?:攻撃|攻撃速度|防御|射程|攻撃後の隙)が\d+%(?:低下|延長)/g], ['mapWeapon', 'mapWeaponOthers'], 1, 100), /* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /^範囲内の敵に攻撃の(\d\.?\d*)倍の?ダメージを与え(?:攻撃|攻撃速度|防御|射程)と(?:攻撃|攻撃速度|防御|射程|移動速度)が\d+%低下/g], ['mapWeapon', 'mapWeaponOthers'], 1, 100), /* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /^範囲内の敵に攻撃の(\d\.?\d*)倍の?ダメージを(\d)回与え(?:攻撃|攻撃速度|防御|射程)と(?:攻撃|攻撃速度|防御|射程|移動速度)が\d+%低下/g], ['mapWeapon', 'mapWeaponOthers'], 1, 100, 0, 2), /* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /^範囲内の敵に攻撃の(\d\.?\d*)倍の?ダメージを与え(?:殿と)?城娘(?:と伏兵)?を攻撃の\d\.?\d*倍で回復/g], ['mapWeapon', 'mapWeaponOthers'], 1, 100), /* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /^対象の横方向の敵に攻撃の(\d\.?\d*)倍の?術?ダメージを(\d)回与え防御を0にする/g], ['mapWeapon', 'mapWeaponOthers'], 1, 100, 0, 2), /* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /になり全ての敵に攻撃の(\d\.?\d*)倍の術ダメージを与える/g], ['mapWeapon', 'mapWeaponOthers'], 1, 100), /* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /^範囲内の敵を「.{1,4}」状態にする/g], ['mapWeapon', 'mapWeaponOthers'], 0), /* eslint-disable-line */
   ];
 
-  analyze(descriptions: string[]): AbilityAttr[] {
-    let result: AbilityAttr[] = [];
+  analyze(descriptions: string[]): AbilityAttribute[] {
+    let result: AbilityAttribute[] = [];
 
     // Join description text lines to one text.
     const description = descriptions.join('');
@@ -140,7 +216,14 @@ export class AbilityAnalyzer {
   private splitDescriptionTextByStepEffect(description: string): { text: string; isStepEffect: boolean }[] {
     let result: { text: string; isStepEffect: boolean }[] = [];
 
-    const tmp = description.split('巨大化する度に');
+    // Check if the step effect keyword is included.
+    const keywords = ['巨大化する度に', '巨大化毎に'];
+    let tmp = [description];
+    for (let i = 0; i < keywords.length; ++i) {
+      if (description.indexOf(keywords[i]) >= 0) {
+        tmp = description.split(keywords[i]);
+      }
+    }
 
     // CASE: Not step effect.
     if (tmp.length === 1) {
@@ -162,13 +245,15 @@ export class AbilityAnalyzer {
     return result;
   }
 
-  private matchAnalyzePattern(description: string): AbilityAttr[] {
-    let result: AbilityAttr[] = [];
+  private matchAnalyzePattern(description: string): AbilityAttribute[] {
+    let result: AbilityAttribute[] = [];
 
     // Apply all patterns to the input description.
     for (let i = 0; i < this.matchPatterns.length; ++i) {
       const pattern = this.matchPatterns[i];
       let text = description;
+      let value = 0;
+      let count = 1;
 
       for (let j = 0; j < pattern.queries.length; ++j) {
         if (j + 1 < pattern.queries.length) {
@@ -177,15 +262,19 @@ export class AbilityAnalyzer {
         } else {
           // Match query.
           const matchObj = text.matchAll(pattern.queries[j]);
-          const matches = Array.from(matchObj);
+          const matches = Array.from(matchObj); // Convert RegExp object to array.
           for (let k = 0; k < matches.length; ++k) {
             if (pattern.index === 0) {
-              // Set 0 as value if the index is 0.
-              result.push(new AbilityAttr(pattern.type, 0, false, matches[k][0]));
+              value = 0; // Set 0 as value if the index is 0.
             } else {
               // Set calculated value.
-              const value = Math.round(Number(matches[k][pattern.index]) * pattern.factor) + pattern.offset;
-              result.push(new AbilityAttr(pattern.type, value, false, matches[k][0]));
+              value = Math.round(Number(matches[k][pattern.index]) * pattern.factor) + pattern.offset;
+              count = pattern.countIndex === 0 ? 1 : Math.round(Number(matches[k][pattern.countIndex]) * pattern.countFactor) + pattern.countOffset;
+              value *= count;
+            }
+            // Register attribute info.
+            for (let l = 0; l < pattern.types.length; ++l) {
+              result.push({ type: pattern.types[l], value: value, isStepEffect: false } as AbilityAttribute);
             }
           }
         }
@@ -195,8 +284,8 @@ export class AbilityAnalyzer {
     return result;
   }
 
-  private slimDownMatchedResult(attrList: AbilityAttr[]): AbilityAttr[] {
-    let result: AbilityAttr[] = [];
+  private slimDownMatchedResult(attrList: AbilityAttribute[]): AbilityAttribute[] {
+    let result: AbilityAttribute[] = [];
 
     // Sort descending order.
     // Priority: Type >> isStepEffect >> Value

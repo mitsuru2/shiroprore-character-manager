@@ -10,6 +10,7 @@ import { FsCollectionName } from 'src/app/services/firestore-data/firestore-coll
 import { FirestoreDataService } from 'src/app/services/firestore-data/firestore-data.service';
 import {
   FsAbility,
+  AbilityAttribute,
   FsAbilityType,
   FsCharacter,
   FsCharacterTag,
@@ -27,14 +28,11 @@ import {
 } from 'src/app/services/firestore-data/firestore-document.interface';
 import { SpinnerService } from '../../services/spinner/spinner.service';
 import { UserAuthService } from '../../services/user-auth/user-auth.service';
+import { AbilityAnalyzer } from '../../utils/ability-analyzer/ability-analyzer.class';
 import { HtmlElementUtil } from '../../utils/html-element-util/html-element-util.class';
 import { sleep } from '../../utils/sleep/sleep.utility';
 import { NewCharacterFormComponent } from '../../views/new-character-form/new-character-form.component';
-import {
-  FsAbilityForNewCharacterForm,
-  ImageDataWithProperty,
-  NewCharacterFormData,
-} from '../../views/new-character-form/new-character-form.interface';
+import { FsAbilityForNewCharacterForm, ImageDataWithProperty, NewCharacterFormData } from '../../views/new-character-form/new-character-form.interface';
 
 class CharacterImage {
   url = '';
@@ -594,12 +592,7 @@ export class CharacterComponent implements OnInit, AfterViewInit {
     return result;
   }
 
-  private makeTextLinkFromIds(
-    td: HTMLTableCellElement,
-    ids: string[],
-    collectionName: FsCollectionName,
-    separator: string = ', '
-  ) {
+  private makeTextLinkFromIds(td: HTMLTableCellElement, ids: string[], collectionName: FsCollectionName, separator: string = ', ') {
     if (ids.length === 0) {
       HtmlElementUtil.appendTextNode(td, 'n.a.');
     } else {
@@ -629,16 +622,17 @@ export class CharacterComponent implements OnInit, AfterViewInit {
 
   private makeAbilityInfoRows(t: HTMLTableElement, character: FsCharacter, type: FsAbilityType) {
     // Filter abilities and abilities(kai).
-    const abilities = this.abilities
-      .filter((item) => character.abilities.includes(item.id))
-      .filter((item) => item.type === type.id);
-    const abilitiesKai = this.abilities
-      .filter((item) => character.abilitiesKai.includes(item.id))
-      .filter((item) => item.type === type.id);
+    // const abilities = this.abilities.filter((item) => character.abilities.includes(item.id)).filter((item) => item.type === type.id);
+    // const abilitiesKai = this.abilities.filter((item) => character.abilitiesKai.includes(item.id)).filter((item) => item.type === type.id);
+    const abilities = (this.firestore.getDataByIds(FsCollectionName.Abilities, character.abilities) as FsAbility[]).filter((item) => item.type === type.id);
+    const abilitiesKai = (this.firestore.getDataByIds(FsCollectionName.Abilities, character.abilitiesKai) as FsAbility[]).filter(
+      (item) => item.type === type.id
+    );
 
-    // Sort ability list by updated date.
-    this.firestore.sortByTimestamp(abilities, 'updatedAt');
-    this.firestore.sortByTimestamp(abilitiesKai, 'updatedAt');
+    // 2022-11-10: Show abilities by order in character ability list.
+    // // Sort ability list by updated date.
+    // this.firestore.sortByTimestamp(abilities, 'updatedAt');
+    // this.firestore.sortByTimestamp(abilitiesKai, 'updatedAt');
 
     // CASE: No abilities. --> Do nothing.
     if (abilities.length === 0 && abilitiesKai.length === 0) {
@@ -677,7 +671,7 @@ export class CharacterComponent implements OnInit, AfterViewInit {
         let descText = this.makeAbilityDescriptionText(ability.descriptions);
 
         // If the ability type is Keiryaku, add interval, cost, and token info.
-        if (type.isKeiryaku) {
+        if (type.isKeiryaku && ability.interval >= 0) {
           descText += '\n' + this.makeKeiryakuPropertiesText(ability);
         }
 
@@ -713,7 +707,7 @@ export class CharacterComponent implements OnInit, AfterViewInit {
         let descText = this.makeAbilityDescriptionText(ability.descriptions);
 
         // If the ability type is Keiryaku, add interval, cost, and token info.
-        if (type.isKeiryaku) {
+        if (type.isKeiryaku && ability.interval >= 0) {
           descText += '\n' + this.makeKeiryakuPropertiesText(ability);
         }
 
@@ -816,12 +810,7 @@ export class CharacterComponent implements OnInit, AfterViewInit {
       this.spinner.show();
       this.userAuth.userData.characters.push(id);
       this.logger.debug(location, { characters: this.userAuth.userData.characters });
-      await this.firestore.updateField(
-        FsCollectionName.Users,
-        this.userAuth.userData.id,
-        'characters',
-        this.userAuth.userData.characters
-      );
+      await this.firestore.updateField(FsCollectionName.Users, this.userAuth.userData.id, 'characters', this.userAuth.userData.characters);
       await sleep(1000);
       this.spinner.hide();
     }
@@ -835,12 +824,7 @@ export class CharacterComponent implements OnInit, AfterViewInit {
       this.spinner.show();
       this.userAuth.userData.characters = this.userAuth.userData.characters.filter((item) => item !== id);
       this.logger.debug(location, { characters: this.userAuth.userData.characters });
-      await this.firestore.updateField(
-        FsCollectionName.Users,
-        this.userAuth.userData.id,
-        'characters',
-        this.userAuth.userData.characters
-      );
+      await this.firestore.updateField(FsCollectionName.Users, this.userAuth.userData.id, 'characters', this.userAuth.userData.characters);
       await sleep(1000);
       this.spinner.hide();
     }
@@ -855,19 +839,14 @@ export class CharacterComponent implements OnInit, AfterViewInit {
     // Basic information.
     result.characterType = this.firestore.getDataById(FsCollectionName.CharacterTypes, src.type) as FsCharacterType;
     if (result.characterType.hasSubTypes) {
-      result.subCharacterType = this.firestore.getDataById(
-        FsCollectionName.SubCharacterTypes,
-        src.subType
-      ) as FsSubCharacterType;
+      result.subCharacterType = this.firestore.getDataById(FsCollectionName.SubCharacterTypes, src.subType) as FsSubCharacterType;
     }
     result.characterName = src.name;
     result.rarerity = src.rarerity;
     result.weaponType = this.firestore.getDataById(FsCollectionName.WeaponTypes, src.weaponType) as FsWeaponType;
     result.geographTypes = [];
     for (let i = 0; i < src.geographTypes.length; ++i) {
-      result.geographTypes.push(
-        this.firestore.getDataById(FsCollectionName.GeographTypes, src.geographTypes[i]) as FsGeographType
-      );
+      result.geographTypes.push(this.firestore.getDataById(FsCollectionName.GeographTypes, src.geographTypes[i]) as FsGeographType);
     }
     if (src.region !== '') {
       result.region = this.firestore.getDataById(FsCollectionName.Regions, src.region) as FsRegion;
@@ -881,10 +860,7 @@ export class CharacterComponent implements OnInit, AfterViewInit {
       result.voiceActor = this.firestore.getDataById(FsCollectionName.VoiceActors, src.voiceActors[0]) as FsVoiceActor;
     }
     if (src.illustrators.length > 0) {
-      result.illustrator = this.firestore.getDataById(
-        FsCollectionName.Illustrators,
-        src.illustrators[0]
-      ) as FsIllustrator;
+      result.illustrator = this.firestore.getDataById(FsCollectionName.Illustrators, src.illustrators[0]) as FsIllustrator;
     }
 
     // Motif weapons and facilities.
@@ -894,26 +870,19 @@ export class CharacterComponent implements OnInit, AfterViewInit {
     }
     result.motifFacilities = [];
     for (let i = 0; i < src.motifFacilities.length; ++i) {
-      result.motifFacilities.push(
-        this.firestore.getDataById(FsCollectionName.Facilities, src.motifFacilities[i]) as FsFacility
-      );
+      result.motifFacilities.push(this.firestore.getDataById(FsCollectionName.Facilities, src.motifFacilities[i]) as FsFacility);
     }
 
     // Character tags.
     result.characterTags = [];
     for (let i = 0; i < src.tags.length; ++i) {
-      result.characterTags.push(
-        this.firestore.getDataById(FsCollectionName.CharacterTags, src.tags[i]) as FsCharacterTag
-      );
+      result.characterTags.push(this.firestore.getDataById(FsCollectionName.CharacterTags, src.tags[i]) as FsCharacterTag);
     }
 
     // Abilities.
     result.abilities = [];
     for (let i = 0; i < src.abilities.length; ++i) {
-      const ability = this.firestore.getDataById(
-        FsCollectionName.Abilities,
-        src.abilities[i]
-      ) as FsAbilityForNewCharacterForm;
+      const ability = this.firestore.getDataById(FsCollectionName.Abilities, src.abilities[i]) as FsAbilityForNewCharacterForm;
       ability.isExisting = false;
       ability.tokenAvailable = ability.tokenLayouts.length > 0 ? true : false;
       ability.typeName = this.firestore.getDataById(FsCollectionName.AbilityTypes, ability.type).name;
@@ -923,10 +892,7 @@ export class CharacterComponent implements OnInit, AfterViewInit {
     // Abilities. (kaihchiku)
     result.abilitiesKai = [];
     for (let i = 0; i < src.abilitiesKai.length; ++i) {
-      const ability = this.firestore.getDataById(
-        FsCollectionName.Abilities,
-        src.abilitiesKai[i]
-      ) as FsAbilityForNewCharacterForm;
+      const ability = this.firestore.getDataById(FsCollectionName.Abilities, src.abilitiesKai[i]) as FsAbilityForNewCharacterForm;
       ability.isExisting = false;
       ability.tokenAvailable = ability.tokenLayouts.length > 0 ? true : false;
       ability.typeName = this.firestore.getDataById(FsCollectionName.AbilityTypes, ability.type).name;
@@ -954,12 +920,7 @@ export class CharacterComponent implements OnInit, AfterViewInit {
 
     // Sub character type.
     if (original.subType !== modified.subCharacterType.id) {
-      await this.firestore.updateField(
-        FsCollectionName.SubCharacterTypes,
-        original.id,
-        'subType',
-        modified.subCharacterType.id
-      );
+      await this.firestore.updateField(FsCollectionName.SubCharacterTypes, original.id, 'subType', modified.subCharacterType.id);
     }
 
     // Rarerity.
@@ -1176,6 +1137,7 @@ export class CharacterComponent implements OnInit, AfterViewInit {
 
   private async updateAbilities(original: string[], modified: FsAbility[]): Promise<string[]> {
     const abilityIdList: string[] = [];
+    const abilityAnalyzer: AbilityAnalyzer = new AbilityAnalyzer();
 
     // Scan original ability info.
     for (let i = 0; i < original.length; ++i) {
@@ -1185,8 +1147,11 @@ export class CharacterComponent implements OnInit, AfterViewInit {
         continue;
       }
 
-      // Get ability information.
+      // Get original ability information.
       const orgAbility = this.firestore.getDataById(FsCollectionName.Abilities, original[i]) as FsAbility;
+
+      // Update ability attribute of the modified ability.
+      modAbility.attributes = abilityAnalyzer.analyze(modAbility.descriptions);
 
       // If ability name is changed, make new ability.
       if (orgAbility.name !== modAbility.name) {
@@ -1205,12 +1170,12 @@ export class CharacterComponent implements OnInit, AfterViewInit {
 
       // Descriptions.
       if (this.isStringsChanged(orgAbility.descriptions, modAbility.descriptions)) {
-        await this.firestore.updateField(
-          FsCollectionName.Abilities,
-          orgAbility.id,
-          'descriptions',
-          modAbility.descriptions
-        );
+        await this.firestore.updateField(FsCollectionName.Abilities, orgAbility.id, 'descriptions', modAbility.descriptions);
+      }
+
+      // Attributes.
+      if (this.isAbilityAttrChanged(orgAbility.attributes, modAbility.attributes)) {
+        await this.firestore.updateField(FsCollectionName.Abilities, orgAbility.id, 'attributes', modAbility.attributes);
       }
 
       // Interval.
@@ -1225,12 +1190,7 @@ export class CharacterComponent implements OnInit, AfterViewInit {
 
       // Token layouts.
       if (this.isStringsChanged(orgAbility.tokenLayouts, modAbility.tokenLayouts)) {
-        await this.firestore.updateField(
-          FsCollectionName.Abilities,
-          orgAbility.id,
-          'tokenLayouts',
-          modAbility.tokenLayouts
-        );
+        await this.firestore.updateField(FsCollectionName.Abilities, orgAbility.id, 'tokenLayouts', modAbility.tokenLayouts);
       }
     }
 
@@ -1238,6 +1198,7 @@ export class CharacterComponent implements OnInit, AfterViewInit {
     for (let i = 0; i < modified.length; ++i) {
       // CASE: New ability is added.
       if (modified[i].id === '') {
+        modified[i].attributes = abilityAnalyzer.analyze(modified[i].descriptions);
         const docId = await this.firestore.addData(FsCollectionName.Abilities, modified[i]);
         abilityIdList.push(docId);
         modified[i].id = docId;
@@ -1261,6 +1222,26 @@ export class CharacterComponent implements OnInit, AfterViewInit {
     }
     for (let i = 0; i < a.length; ++i) {
       if (a[i] !== b[i]) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  private isAbilityAttrChanged(org: AbilityAttribute[], mod: AbilityAttribute[]): boolean {
+    if (org.length !== mod.length) {
+      return true;
+    }
+
+    for (let i = 0; i < org.length; ++i) {
+      if (org[i].type !== mod[i].type) {
+        return true;
+      }
+      if (org[i].value !== mod[i].value) {
+        return true;
+      }
+      if (org[i].isStepEffect !== mod[i].isStepEffect) {
         return true;
       }
     }

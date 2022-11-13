@@ -26,9 +26,9 @@ import { PaginatorControl } from '../../utils/paginator-control/paginator-contro
 import { sleep } from '../../utils/sleep/sleep.utility';
 import { isMobileMode } from '../../utils/window-size/window-size.util';
 import { CharacterFilterSettingsFormComponent } from '../../views/character-filter-settings-form/character-filter-settings-form.component';
-import { CharacterFilterSettings } from '../../views/character-filter-settings-form/character-filter-settings-form.interface';
+import { CharacterFilterSetting } from '../../views/character-filter-settings-form/character-filter-settings-form.interface';
 import { CharacterSortSettingsFormComponent } from '../../views/character-sort-settings-form/character-sort-settings-form.component';
-import { CharacterSortSettings } from '../../views/character-sort-settings-form/character-sort-settings-form.interface';
+import { CharacterSortSetting } from '../../views/character-sort-settings-form/character-sort-settings-form.interface';
 import { HtmlElementUtil } from '../../utils/html-element-util/html-element-util.class';
 
 export class ThumbImageWrapper {
@@ -94,16 +94,16 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
   /** Filter dialog */
   showFilterDialog: boolean = false;
 
-  filterSettings = new CharacterFilterSettings();
+  filterSetting = new CharacterFilterSetting();
 
-  filterSettingsCopy = new CharacterFilterSettings();
+  filterSettingCopy = new CharacterFilterSetting();
 
   /** Sort dialog */
   showSortDialog: boolean = false;
 
-  sortSettings = new CharacterSortSettings();
+  sortSetting = new CharacterSortSetting();
 
-  sortSettingsCopy = new CharacterSortSettings();
+  sortSettingCopy = new CharacterSortSetting();
 
   /** Team edit values. */
   teamCheckFlags!: number[][];
@@ -128,7 +128,7 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     this.logger.trace(`new ${this.className}()`);
 
     // Initialize filter service.
-    this.filteredIndexes = this.characterFilter.filter(this.characters, this.filterSettings, '');
+    this.filteredIndexes = this.characterFilter.filter(this.characters, this.filterSetting, '');
 
     // Thumbnail image info.
     for (let i = 0; i < this.characters.length; ++i) {
@@ -247,7 +247,7 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
   //
   onFilterButtonClick() {
     // Copy filter settings.
-    this.filterSettingsCopy = { ...this.filterSettings };
+    this.filterSettingCopy = { ...this.filterSetting };
 
     this.showFilterDialog = true;
   }
@@ -260,26 +260,28 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
 
     // Restore filter settings if canceled.
     if (canceled) {
-      this.filterSettings = { ...this.filterSettingsCopy };
-      this.logger.trace(location, { filter: this.filterSettings, queryText: this.inputSearchText });
+      this.filterSetting = { ...this.filterSettingCopy };
+      this.logger.trace(location, { filter: this.filterSetting, queryText: this.inputSearchText });
       return;
     }
-    this.logger.trace(location, { filter: this.filterSettings, queryText: this.inputSearchText });
+    this.logger.trace(location, { filter: this.filterSetting, queryText: this.inputSearchText });
 
     // Show spinner.
     this.spinner.show();
 
     // Filter characters.
-    this.filteredIndexes = this.characterFilter.filter(this.characters, this.filterSettings, this.inputSearchText);
+    this.filteredIndexes = this.characterFilter.filter(this.characters, this.filterSetting, this.inputSearchText);
+
+    // Auto-sorting.
+    if (this.characterFilter.updateSortSettingFromFilterSetting(this.filterSetting, this.inputSearchText, this.sortSetting)) {
+      this.filteredIndexes = this.characterFilter.sort(this.characters, this.sortSetting);
+    }
 
     // Update paginate info.
     this.paginator.goToFirstPage();
 
     // Update thumbnail images.
-    await this.loadThumbImages();
-    this.updateThumbImages();
-    this.makeCharacterInfoTables();
-    this.updateOwnershipStatuses();
+    await this.updateCharacterListPage();
 
     // Hide spinner.
     this.spinner.hide();
@@ -309,7 +311,7 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
 
   onSortButtonClick() {
     // Copy sort settings.
-    this.sortSettingsCopy = { ...this.sortSettings };
+    this.sortSettingCopy = { ...this.sortSetting };
 
     this.showSortDialog = true;
   }
@@ -322,26 +324,23 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
 
     // Restore original setting if canceled.
     if (canceled) {
-      this.sortSettings = { ...this.sortSettingsCopy };
-      this.logger.trace(location, { filter: this.sortSettings });
+      this.sortSetting = { ...this.sortSettingCopy };
+      this.logger.trace(location, { filter: this.sortSetting });
       return;
     }
-    this.logger.trace(location, { filter: this.sortSettings });
+    this.logger.trace(location, { filter: this.sortSetting });
 
     // Show spinner.
     this.spinner.show();
 
     // Sort characters and filtered index list.
-    this.filteredIndexes = this.characterFilter.sort(this.characters, this.sortSettings);
+    this.filteredIndexes = this.characterFilter.sort(this.characters, this.sortSetting);
 
     // Update paginate info.
     this.paginator.goToFirstPage();
 
     // Update thumbnail images.
-    await this.loadThumbImages();
-    this.updateThumbImages();
-    this.makeCharacterInfoTables();
-    this.updateOwnershipStatuses();
+    await this.updateCharacterListPage();
 
     // Hide spinner.
     this.spinner.hide();
@@ -358,6 +357,21 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
   //============================================================================
   // Private methods.
   //
+  //----------------------------------------------------------------------------
+  // Re-draw page.
+  //
+  private async updateCharacterListPage(): Promise<void> {
+    await this.loadThumbImages();
+    this.updateThumbImages();
+    this.makeCharacterInfoTables();
+    this.updateOwnershipStatuses();
+  }
+
+  //----------------------------------------------------------------------------
+  // Filtering and sorting data control.
+  //
+  // private getFilterItemCount(settings);
+
   //----------------------------------------------------------------------------
   // Thumbnail image control.
   //
@@ -770,7 +784,7 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
         let descText = this.makeAbilityDescriptionText(ability.descriptions);
 
         // If the ability type is Keiryaku, add interval, cost, and token info.
-        if (type.isKeiryaku) {
+        if (type.isKeiryaku && ability.interval >= 0) {
           descText += '\n' + this.makeKeiryakuPropertiesText(ability);
         }
 
@@ -806,7 +820,7 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
         let descText = this.makeAbilityDescriptionText(ability.descriptions);
 
         // If the ability type is Keiryaku, add interval, cost, and token info.
-        if (type.isKeiryaku) {
+        if (type.isKeiryaku && ability.interval >= 0) {
           descText += '\n' + this.makeKeiryakuPropertiesText(ability);
         }
 
@@ -959,7 +973,7 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
   }
 
   //----------------------------------------------------------------------------
-  // Uset data.
+  // User data.
   //
   private updateOwnershipStatuses() {
     this.ownershipStatues = Array(this.paginator.rowNum);
@@ -993,20 +1007,20 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     this.navigator.paramStorage['list-character'] = {
       paginator: this.paginator,
       isListLayout: this.isListLayout,
-      filterSettings: this.filterSettings,
+      filterSetting: this.filterSetting,
       inputSearchText: this.inputSearchText,
-      sortSettings: this.sortSettings,
+      sortSetting: this.sortSetting,
     };
   }
 
   private restorePageParameter() {
     this.paginator = this.navigator.paramStorage['list-character'].paginator;
     this.isListLayout = this.navigator.paramStorage['list-character'].isListLayout;
-    this.filterSettings = this.navigator.paramStorage['list-character'].filterSettings;
+    this.filterSetting = this.navigator.paramStorage['list-character'].filterSetting;
     this.inputSearchText = this.navigator.paramStorage['list-character'].inputSearchText;
-    this.sortSettings = this.navigator.paramStorage['list-character'].sortSettings;
-    this.filteredIndexes = this.characterFilter.filter(this.characters, this.filterSettings, this.inputSearchText);
-    this.filteredIndexes = this.characterFilter.sort(this.characters, this.sortSettings);
+    this.sortSetting = this.navigator.paramStorage['list-character'].sortSetting;
+    this.filteredIndexes = this.characterFilter.filter(this.characters, this.filterSetting, this.inputSearchText);
+    this.filteredIndexes = this.characterFilter.sort(this.characters, this.sortSetting);
 
     // Clear parameter storage after restore them once.
     this.clearPageParameter();

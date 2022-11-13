@@ -46,20 +46,38 @@ export class FsDocumentBaseWithCode extends FsDocumentBase {
  */
 export type MapCellType = '赤' | '青' | '赤青' | '水上' | 'なし';
 export const abilityAttrTypes = [
-  'AttackUpPercent',
-  'AttackDownPercent',
-  'DamageUpPercent',
-  'TakenDamageUpPercent',
-  'ShortSortieIntervalPercent',
-  'ShortKeiryakuIntervalPercent',
-  'RangeUpFixedValue',
-  'RangeUpPercent',
-  'RangeDownPercent',
-  'HideShiromusume',
-  'HideToken',
-  'HideWarehouse',
+  'attackUpPercent',
+  'attackUpFixedValue',
+  'attackDownPercent',
+  'damageUpPercent',
+  'takenDamageUpPercent',
+  'takenDamageDownPercent',
+  'shortSortieIntervalPercent',
+  'shortKeiryakuIntervalPercent',
+  'rangeUpPercent',
+  'rangeUpFixedValue',
+  'rangeDownPercent',
+  'hideShiromusume',
+  'hideToken',
+  'hideWarehouse',
+  'mapWeapon',
+  'mapWeaponFire',
+  'mapWeaponThunder',
+  'mapWeaponRock',
+  'mapWeaponWind',
+  'mapWeaponIce',
+  'mapWeaponWater',
+  'mapWeaponPoison',
+  'mapWeaponSeal',
+  'mapWeaponOthers',
 ] as const;
 export type AbilityAttrType = typeof abilityAttrTypes[number]; // <-- Define union data type from string const array.
+
+export interface AbilityAttribute {
+  type: AbilityAttrType;
+  value: number;
+  isStepEffect: boolean;
+}
 
 export class FsAbility extends FsDocumentBase {
   type: string = '';
@@ -72,7 +90,7 @@ export class FsAbility extends FsDocumentBase {
 
   tokenLayouts: MapCellType[] = [];
 
-  attributes: { type: AbilityAttrType; value: number; isStepEffect: boolean }[] = [];
+  attributes: AbilityAttribute[] = [];
 }
 
 export class FsAbilityType extends FsDocumentBaseWithOrder {
