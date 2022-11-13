@@ -1,3 +1,4 @@
+import { isNgTemplate } from '@angular/compiler';
 import { Injectable } from '@angular/core';
 import { NGXLogger } from 'ngx-logger';
 import { ErrorCode } from 'src/app/services/error-handler/error-code.enum';
@@ -14,8 +15,18 @@ import {
   MapCellType,
 } from 'src/app/services/firestore-data/firestore-document.interface';
 import { TextSearch, TextSearchResult } from '../../utils/text-search/text-search.class';
-import { CharacterFilterSetting, CharacterTypeFilterType } from '../../views/character-filter-settings-form/character-filter-settings-form.interface';
-import { CharacterSortDirectionType, CharacterSortSetting } from '../../views/character-sort-settings-form/character-sort-settings-form.interface';
+import {
+  CharacterFilterOption,
+  CharacterFilterSetting,
+  CharacterTypeFilterType,
+} from '../../views/character-filter-settings-form/character-filter-settings-form.interface';
+import {
+  CharacterSortAbilityAttrTypes,
+  CharacterSortDirectionType,
+  CharacterSortIndexType,
+  CharacterSortIndexTypes,
+  CharacterSortSetting,
+} from '../../views/character-sort-settings-form/character-sort-settings-form.interface';
 import { UserAuthService } from '../user-auth/user-auth.service';
 
 interface TextPropertyMap {
@@ -66,6 +77,44 @@ export class CharacterFilterService {
     }
 
     return this.filteredIndexes;
+  }
+
+  updateSortSettingFromFilterSetting(filter: CharacterFilterSetting, query: string, sortSetting: CharacterSortSetting): boolean {
+    const location = `${this.className}.updateSortSettingFromFilterSetting()`;
+    this.logger.trace(location, { filter: filter, query: query, sort: sortSetting });
+
+    // Do nothing if query text is set.
+    if (query !== '') {
+      this.logger.debug(location, 'Do nothing. Query text input.');
+      return false;
+    }
+
+    // Do nothing if 2 or more filter options are selected, or no filter options are selected.
+    const sortOptions = this.getSortOptionsFromFilterSetting(filter);
+    if (sortOptions.length !== 1) {
+      this.logger.debug(location, 'Do nothing. No option or 2 or more options.');
+      return false;
+    }
+
+    // Update sorting setting.
+    let i = CharacterSortIndexTypes.findIndex((item) => item.value === sortOptions[0]);
+    if (i >= 0) {
+      sortSetting.indexType = sortOptions[0];
+      sortSetting.direction = CharacterSortIndexTypes[i].defaultDirection;
+      this.logger.info(location, 'Sort setting has been updated.', { sort: sortSetting });
+      return true;
+    } else {
+      i = CharacterSortAbilityAttrTypes.findIndex((item) => item.value === sortOptions[0]);
+      if (i >= 0) {
+        sortSetting.indexType = sortOptions[0];
+        sortSetting.direction = CharacterSortAbilityAttrTypes[i].defaultDirection;
+        this.logger.info(location, 'Sort setting has been updated.', { sort: sortSetting });
+        return true;
+      }
+    }
+
+    this.logger.error(location, 'Sort option is not found.', { sortOption: sortOptions[0] });
+    return false;
   }
 
   //============================================================================
@@ -618,6 +667,83 @@ export class CharacterFilterService {
             result = value;
           }
         }
+      }
+    }
+
+    return result;
+  }
+
+  //----------------------------------------------------------------------------
+  // Auto-sorting related.
+  //
+  private getSortOptionsFromFilterSetting(filterSetting: CharacterFilterSetting): CharacterSortIndexType[] {
+    let result: CharacterSortIndexType[] = [];
+
+    if (filterSetting.ownershipFilterType !== 'all') {
+      // Not support sorting.
+    }
+    if (filterSetting.characterTypes.length > 0) {
+      // Not support sorting.
+    }
+    if (filterSetting.rarerities.length > 0) {
+      // result.push('rarerity');
+    }
+    if (filterSetting.weaponTypes.length > 0) {
+      // Not support sorting.
+      // result.push('weaponType');
+    }
+    if (filterSetting.geographTypes.length > 0) {
+      // Not support sorting.
+    }
+    if (filterSetting.regions.length > 0) {
+      // Not support sorting.
+    }
+    if (filterSetting.tokenTypes.length > 0) {
+      // Not support sorting.
+    }
+    if (filterSetting.ownershipAbility) {
+      // Not support sorting.
+    }
+    if (filterSetting.teamAbility) {
+      // Not support sorting.
+    }
+    if (filterSetting.defeatedTimeAbility) {
+      // Not support sorting.
+    }
+    if (filterSetting.abilityAttributes.length > 0) {
+      result = result.concat(this.getSortOptionsFromAbilityAttributes(filterSetting.abilityAttributes));
+    }
+    if (filterSetting.startDate || filterSetting.endDate) {
+      // result.push('implementedDate');
+    }
+
+    return result;
+  }
+
+  private getSortOptionsFromAbilityAttributes(attributes: AbilityAttrType[]): CharacterSortIndexType[] {
+    const result: CharacterSortIndexType[] = [];
+    let isMapWeaponFound = false;
+
+    // Convert 'mapWeapon***' to 'mapWeapon'.
+    const filterAttributes: AbilityAttrType[] = [];
+    for (let i = 0; i < attributes.length; ++i) {
+      const attr = attributes[i];
+      if (attr.match(/mapWeapon.+/g)) {
+        if (!isMapWeaponFound) {
+          filterAttributes.push('mapWeapon');
+          isMapWeaponFound = true;
+        }
+      } else {
+        filterAttributes.push(attr);
+      }
+    }
+
+    // Scan selected attributes.
+    // Copy item to 'result' if it is included in the 'sortAttributes'.
+    for (let i = 0; i < filterAttributes.length; ++i) {
+      const attr = filterAttributes[i];
+      if (CharacterSortAbilityAttrTypes.findIndex((item) => item.value === attr) >= 0) {
+        result.push(attr);
       }
     }
 

@@ -1,5 +1,21 @@
 import { AbilityAttrType, MapCellType } from 'src/app/services/firestore-data/firestore-document.interface';
 
+export const characterFilterOptions = [
+  'ownershipStatus',
+  'characterType',
+  'rarerity',
+  'weaponType',
+  'geographType',
+  'region',
+  'tokenType',
+  'ownershipAbility',
+  'teamAbility',
+  'defeatedTimeAbility',
+  'abilityAttribute',
+  'implementedDate',
+] as const;
+export type CharacterFilterOption = typeof characterFilterOptions[number]; // <-- Define union data type from string const array.
+
 export type CharacterOwnershipFilterType = 'all' | 'hasOnly' | 'notHasOnly';
 export const CharacterOwnershipFilterTypeLabels: { label: string; value: CharacterOwnershipFilterType }[] = [
   { label: 'すべて', value: 'all' },
