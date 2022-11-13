@@ -11,17 +11,17 @@ export const CharacterSortIndexTypes: { label: string; value: CharacterSortIndex
 ];
 
 export const CharacterSortAbilityAttrTypes: { label: string; value: AbilityAttrType; defaultDirection: CharacterSortDirectionType }[] = [
-  { label: '攻撃上昇(%)', value: 'AttackUpPercent', defaultDirection: 'desc' },
-  { label: '攻撃上昇(値)', value: 'AttackUpFixedValue', defaultDirection: 'desc' },
-  { label: '与ダメ上昇(%)', value: 'DamageUpPercent', defaultDirection: 'desc' },
-  { label: '射程上昇(%)', value: 'RangeUpPercent', defaultDirection: 'desc' },
-  { label: '射程上昇(値)', value: 'RangeUpFixedValue', defaultDirection: 'desc' },
-  { label: '再配置CT短縮(%)', value: 'ShortSortieIntervalPercent', defaultDirection: 'desc' },
-  { label: '計略CT短縮(%)', value: 'ShortKeiryakuIntervalPercent', defaultDirection: 'desc' },
-  { label: '敵攻撃低下(%)', value: 'AttackDownPercent', defaultDirection: 'desc' },
-  { label: '敵被ダメ上昇(%)', value: 'TakenDamageUpPercent', defaultDirection: 'desc' },
-  { label: '敵射程低下(%)', value: 'RangeDownPercent', defaultDirection: 'desc' },
-  { label: 'ダメ計倍率(%)', value: 'MapWeapon', defaultDirection: 'desc' },
+  { label: '攻撃上昇(%)', value: 'attackUpPercent', defaultDirection: 'desc' },
+  { label: '攻撃上昇(値)', value: 'attackUpFixedValue', defaultDirection: 'desc' },
+  { label: '与ダメ上昇(%)', value: 'damageUpPercent', defaultDirection: 'desc' },
+  { label: '射程上昇(%)', value: 'rangeUpPercent', defaultDirection: 'desc' },
+  { label: '射程上昇(値)', value: 'rangeUpFixedValue', defaultDirection: 'desc' },
+  { label: '再配置CT短縮(%)', value: 'shortSortieIntervalPercent', defaultDirection: 'desc' },
+  { label: '計略CT短縮(%)', value: 'shortKeiryakuIntervalPercent', defaultDirection: 'desc' },
+  { label: '敵攻撃低下(%)', value: 'attackDownPercent', defaultDirection: 'desc' },
+  { label: '敵被ダメ上昇(%)', value: 'takenDamageUpPercent', defaultDirection: 'desc' },
+  { label: '敵射程低下(%)', value: 'rangeDownPercent', defaultDirection: 'desc' },
+  { label: 'ダメ計倍率(%)', value: 'mapWeapon', defaultDirection: 'desc' },
 ];
 
 export const CharacterSortDirectionTypes: { label: string; value: CharacterSortDirectionType }[] = [

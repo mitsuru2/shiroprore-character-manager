@@ -2292,18 +2292,18 @@ describe('AnalyzeAbility', () => {
 
   //   let data: AbilityAttr[] = [
   //     new AbilityAttr('AttackUpFixed', 90),
-  //     new AbilityAttr('AttackUpPercent', 100),
+  //     new AbilityAttr('attackUpPercent', 100),
   //     new AbilityAttr('AttackDownFixed', 10),
-  //     new AbilityAttr('AttackDownPercent', 50),
-  //     new AbilityAttr('AttackUpPercent', 25),
+  //     new AbilityAttr('attackDownPercent', 50),
+  //     new AbilityAttr('attackUpPercent', 25),
   //     new AbilityAttr('AttackDownFixed', 100),
-  //     new AbilityAttr('AttackDownPercent', 25),
-  //     new AbilityAttr('AttackDownPercent', 100),
+  //     new AbilityAttr('attackDownPercent', 25),
+  //     new AbilityAttr('attackDownPercent', 100),
   //     new AbilityAttr('AttackUpFixed', 25),
-  //     new AbilityAttr('AttackUpPercent', 30),
-  //     new AbilityAttr('AttackUpPercent', 70),
+  //     new AbilityAttr('attackUpPercent', 30),
+  //     new AbilityAttr('attackUpPercent', 70),
   //     new AbilityAttr('AttackDownFixed', 30),
-  //     new AbilityAttr('AttackUpPercent', 50),
+  //     new AbilityAttr('attackUpPercent', 50),
   //     new AbilityAttr('AttackUpFixed', 100),
   //   ];
 
