@@ -11,17 +11,17 @@ export const CharacterSortIndexTypes: { label: string; value: CharacterSortIndex
 ];
 
 export const CharacterSortAbilityAttrTypes: { label: string; value: AbilityAttrType }[] = [
-  { label: '攻撃上昇(%)', value: 'AttackUpPercent' },
-  { label: '攻撃上昇(値)', value: 'AttackUpFixedValue' },
-  { label: '与ダメ上昇(%)', value: 'DamageUpPercent' },
-  { label: '射程上昇(%)', value: 'RangeUpPercent' },
-  { label: '射程上昇(値)', value: 'RangeUpFixedValue' },
-  { label: '再配置CT短縮(%)', value: 'ShortSortieIntervalPercent' },
-  { label: '計略CT短縮(%)', value: 'ShortKeiryakuIntervalPercent' },
-  { label: '敵攻撃低下(%)', value: 'AttackDownPercent' },
-  { label: '敵被ダメ上昇(%)', value: 'TakenDamageUpPercent' },
-  { label: '敵射程低下(%)', value: 'RangeDownPercent' },
-  { label: 'ダメ計倍率(%)', value: 'MapWeapon' },
+  { label: '攻撃上昇(%)', value: 'attackUpPercent' },
+  { label: '攻撃上昇(値)', value: 'attackUpFixedValue' },
+  { label: '与ダメ上昇(%)', value: 'damageUpPercent' },
+  { label: '射程上昇(%)', value: 'rangeUpPercent' },
+  { label: '射程上昇(値)', value: 'rangeUpFixedValue' },
+  { label: '再配置CT短縮(%)', value: 'shortSortieIntervalPercent' },
+  { label: '計略CT短縮(%)', value: 'shortKeiryakuIntervalPercent' },
+  { label: '敵攻撃低下(%)', value: 'attackDownPercent' },
+  { label: '敵被ダメ上昇(%)', value: 'takenDamageUpPercent' },
+  { label: '敵射程低下(%)', value: 'rangeDownPercent' },
+  { label: 'ダメ計倍率(%)', value: 'mapWeapon' },
 ];
 
 export const CharacterSortDirectionTypes: { label: string; value: CharacterSortDirectionType }[] = [
