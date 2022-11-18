@@ -17,6 +17,7 @@ import {
   FsRegion,
   FsWeapon,
   FsWeaponType,
+  teamNumMax,
 } from 'src/app/services/firestore-data/firestore-document.interface';
 import { CharacterFilterService } from '../../services/character-filter/character-filter.service';
 import { NavigatorService } from '../../services/navigator/navigator.service';
@@ -190,7 +191,7 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     await sleep(10);
 
     // Make team check flags array.
-    this.teamCheckFlags = new Array(3);
+    this.teamCheckFlags = new Array(teamNumMax);
     for (let i = 0; i < this.teamCheckFlags.length; ++i) {
       this.teamCheckFlags[i] = [];
     }
@@ -352,6 +353,18 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
 
   onSortSettingsCancelButtonClick() {
     this.sortSettingsForm.onCancelClick();
+  }
+
+  onTeamChecked(iCell: number, iTeam: number, event: any) {
+    const location = `${this.className}.onTeamChecked()`;
+
+    // Get the value of the changed checkbox.
+    let checked = false;
+    if (event.checked.includes(iCell)) {
+      checked = true;
+    }
+
+    this.logger.trace(location, { iCell: iCell, iTeam: iTeam, checked: checked, event: event });
   }
 
   //============================================================================

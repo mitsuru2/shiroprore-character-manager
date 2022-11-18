@@ -61,6 +61,7 @@
                 [inputId]="'ListCharacter_CheckTeams_0_' + i"
                 [value]="i"
                 [(ngModel)]="teamCheckFlags[0]"
+                (onChange)="onTeamChecked(i, 0, $event)"
               ></p-checkbox>
               <label [for]="'ListCharacter_CheckTeams_0_' + i">編成1</label>
             </div>
@@ -70,6 +71,7 @@
                 [inputId]="'ListCharacter_CheckTeams_1_' + i"
                 [value]="i"
                 [(ngModel)]="teamCheckFlags[1]"
+                (onChange)="onTeamChecked(i, 1, $event)"
               ></p-checkbox>
               <label [for]="'ListCharacter_CheckTeams_1_' + i">編成2</label>
             </div>
@@ -79,6 +81,7 @@
                 [inputId]="'ListCharacter_CheckTeams_2_' + i"
                 [value]="i"
                 [(ngModel)]="teamCheckFlags[2]"
+                (onChange)="onTeamChecked(i, 2, $event)"
               ></p-checkbox>
               <label [for]="'ListCharacter_CheckTeams_2_' + i">編成3</label>
             </div>

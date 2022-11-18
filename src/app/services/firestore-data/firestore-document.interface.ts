@@ -190,12 +190,21 @@ export class FsIllustrator extends FsDocumentBase {}
 
 export class FsRegion extends FsDocumentBaseWithOrder {}
 
+export const teamNumMax = 3;
+export const teamCharacterNumMax = 16;
+
 export class FsUser extends FsDocumentBase {
   characters: string[] = [];
 
   facilities: string[] = [];
 
   weapons: string[] = [];
+
+  teams: string[][] = [];
+  // teams: list of team
+  // team:list of character ID.
+  // max number of teams: common property. It should be defined as magic number in source code.
+  // max number of characters in one team: common property defined as a magic number.
 
   constructor(id = '', name = '') {
     super(id, name);
