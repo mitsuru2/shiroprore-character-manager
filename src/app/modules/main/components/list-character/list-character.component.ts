@@ -164,6 +164,12 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     this.characters.sort((a, b) => {
       return a.index < b.index ? -1 : 1;
     });
+
+    // Make team check flags array.
+    this.teamCheckFlags = new Array(teamNumMax);
+    for (let i = 0; i < this.teamCheckFlags.length; ++i) {
+      this.teamCheckFlags[i] = [];
+    }
   }
 
   async ngAfterViewInit(): Promise<void> {
@@ -189,12 +195,6 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     this.ownershipStatues = Array(this.paginator.rowNum);
     this.ownershipStatues.fill(true);
     await sleep(10);
-
-    // Make team check flags array.
-    this.teamCheckFlags = new Array(teamNumMax);
-    for (let i = 0; i < this.teamCheckFlags.length; ++i) {
-      this.teamCheckFlags[i] = [];
-    }
 
     // Update thumbnail images.
     await this.loadThumbImages();
@@ -365,6 +365,11 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     }
 
     this.logger.trace(location, { iCell: iCell, iTeam: iTeam, checked: checked, event: event });
+
+    // Calc character index. And get character ID.
+    const iCharacter = this.filteredIndexes[iCell + this.paginator.firstItemIndex];
+    const character = this.characters[iCharacter];
+    this.logger.debug(location, { index: iCharacter, id: character.id, name: character.name });
   }
 
   //============================================================================
