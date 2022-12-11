@@ -1389,7 +1389,7 @@ const abilityDescriptions: string[] = [
   '40秒間対象の射程が1.5倍敵1体とその周囲に1.5倍のダメージを与える攻撃を行う(自分のみが対象)',
   '巨大化する度に射程内の城娘の攻撃が25射程が5、攻撃速度が5%上昇',
   '自身の耐久が1500、攻撃と防御が150上昇足止め数が5増加',
-  '巨大化する度に射程内の味方の与ダメージが7%上昇、15秒間「希望」状態にする。最大化時、射程内の味方の「絶望」無効化。全ての「無」属性の攻撃防御が100上昇',
+  '巨大化する度に射程内の味方の与ダメージが7%上昇、15秒間「希望」状態にする。最大化時、射程内の味方の「絶望」無効化。全ての「無」属性の攻撃と防御が100上昇',
   '30秒間対象が攻撃した敵の移動速度が3秒間40%低下(自分のみが対象)',
   '巨大化する度に射程内の城娘の与ダメージが6%上昇射程内の敵の攻撃が35、防御が10低下',
   '部隊の城娘の耐久が4%上昇',
@@ -2252,28 +2252,28 @@ describe('AnalyzeAbility', () => {
       if (result.length > 0) {
         cnt++;
         // console.log(`${abilityDescriptions[i]},${result[0].debug},${result[0].value},${result[0].isStepEffect}`)
-        let logText = `${abilityDescriptions[i]},${result[0].value}`;
+        let logText = `${abilityDescriptions[i]}`;
         for (let ii = 0; ii < result.length; ++ii) {
-          logText += `,${result[ii].type}`;
+          logText += `,${result[ii].value},${result[ii].type},${result[ii].isStepEffect}`;
         }
         console.log(logText);
       } else {
         let text = abilityDescriptions[i];
-        text = text.replace(/射程内/g, '');
-        text = text.replace(/射程外/g, '');
-        let index = text.indexOf("射程");
+        // text = text.replace(/射程内/g, '');
+        // text = text.replace(/射程外/g, '');
+        let index = text.indexOf("防御");
         if (index >= 0) {
-          text = text.slice(index);
-          index = text.indexOf("%");
-          if (index >= 0) {
+          // text = text.slice(index);
+          // index = text.indexOf("%");
+          // if (index >= 0) {
             text = text.slice(index);
-            index = text.indexOf("低下");
-            const index2 = text.indexOf("減少");
+            index = text.indexOf("上昇");
+            const index2 = text.indexOf("倍");
             if (index >= 0 || index2 >= 0) {
               console.log(abilityDescriptions[i]);
               cnt++;
             }
-          }
+          // }
         }
       }
     }
