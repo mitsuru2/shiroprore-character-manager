@@ -46,21 +46,23 @@ export class FsDocumentBaseWithCode extends FsDocumentBase {
  */
 export type MapCellType = '赤' | '青' | '赤青' | '水上' | 'なし';
 export const abilityAttrTypes = [
-  'attackUpPercent',
-  'attackUpFixedValue',
-  'attackDownPercent',
-  'damageUpPercent',
-  'takenDamageUpPercent',
-  'takenDamageDownPercent',
-  'shortSortieIntervalPercent',
-  'shortKeiryakuIntervalPercent',
-  'rangeUpPercent',
-  'rangeUpFixedValue',
-  'rangeDownPercent',
-  'hideShiromusume',
-  'hideToken',
-  'hideWarehouse',
-  'mapWeapon',
+  'attackUpPercent', // 攻撃上昇(%)
+  'attackUpFixedValue', // 攻撃上昇(値)
+  'defenceUpPercent', /// 防御上昇(%)
+  'defenceUpFixedValue', // 防御上昇(値)
+  'rangeUpPercent', // 射程上昇(%)
+  'rangeUpFixedValue', // 射程上昇(値)
+  'damageUpPercent', // 与ダメ上昇(%)
+  'takenDamageDownPercent', // 被ダメ低下(%)
+  'shortSortieIntervalPercent', // 再配置時間短縮(%)
+  'shortKeiryakuIntervalPercent', // 計略再使用時間短縮(%)
+  'attackDownPercent', // 敵攻撃低下(%)
+  'takenDamageUpPercent', // 敵被ダメ上昇(%)
+  'rangeDownPercent', // 敵射程低下(%)
+  'hideShiromusume', // 城娘隠密
+  'hideToken', // 伏兵隠密
+  'hideWarehouse', // 蔵隠密
+  'mapWeapon', // ダメージ計略
   'mapWeaponFire',
   'mapWeaponThunder',
   'mapWeaponRock',
