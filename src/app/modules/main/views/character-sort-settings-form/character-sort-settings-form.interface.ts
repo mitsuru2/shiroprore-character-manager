@@ -13,6 +13,8 @@ export const CharacterSortIndexTypes: { label: string; value: CharacterSortIndex
 export const CharacterSortAbilityAttrTypes: { label: string; value: AbilityAttrType; defaultDirection: CharacterSortDirectionType }[] = [
   { label: '攻撃上昇(%)', value: 'attackUpPercent', defaultDirection: 'desc' },
   { label: '攻撃上昇(値)', value: 'attackUpFixedValue', defaultDirection: 'desc' },
+  { label: '防御上昇(%)', value: 'defenceUpPercent', defaultDirection: 'desc' },
+  { label: '防御上昇(値)', value: 'defenceUpFixedValue', defaultDirection: 'desc' },
   { label: '与ダメ上昇(%)', value: 'damageUpPercent', defaultDirection: 'desc' },
   { label: '射程上昇(%)', value: 'rangeUpPercent', defaultDirection: 'desc' },
   { label: '射程上昇(値)', value: 'rangeUpFixedValue', defaultDirection: 'desc' },

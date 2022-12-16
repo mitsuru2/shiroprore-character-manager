@@ -48,6 +48,8 @@ export const CharacterFilterOptionAbilityTypeLabels: { label: string; value: Cha
 export const CharacterFilterOptionAbilityAttrLabels: { label: string; value: AbilityAttrType }[] = [
   { label: '攻撃上昇(%)', value: 'attackUpPercent' },
   { label: '攻撃上昇(値)', value: 'attackUpFixedValue' },
+  { label: '防御上昇(%)', value: 'defenceUpPercent' },
+  { label: '防御上昇(値)', value: 'defenceUpFixedValue' },
   { label: '与ダメ上昇(%)', value: 'damageUpPercent' },
   { label: '射程上昇(%)', value: 'rangeUpPercent' },
   { label: '射程上昇(値)', value: 'rangeUpFixedValue' },
