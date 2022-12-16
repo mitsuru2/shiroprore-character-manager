@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { NGXLogger } from 'ngx-logger';
 import { FsCollectionName } from 'src/app/services/firestore-data/firestore-collection-name.enum';
 import { FirestoreDataService } from 'src/app/services/firestore-data/firestore-data.service';
-import { FsFacilityRarerityMax, FsFacilityType } from 'src/app/services/firestore-data/firestore-document.interface';
+import { fsFacilityRarerityMax, FsFacilityType } from 'src/app/services/firestore-data/firestore-document.interface';
 import { NewFacilityFormData, NewFacilityFormMode } from './new-facility-form.interafce';
 
 @Component({
@@ -61,7 +61,7 @@ export class NewFacilityFormComponent implements OnInit {
     this.logger.trace(`new ${this.className}()`);
 
     // Initialize rarerity list.
-    for (let i = 0; i < FsFacilityRarerityMax; ++i) {
+    for (let i = 0; i < fsFacilityRarerityMax; ++i) {
       this.rarerityItems.push(i + 1);
     }
   }

@@ -55,35 +55,15 @@
         <div [id]="'ListCharacter_ThumbBox_' + i" class="image-box" [class.image-shade]="!ownershipStatues[i]" [class.list-image]="isListLayout">
           <img [id]="'ListCharacter_Thumb_' + i" (click)="onThumbnailClick(i)" />
           <div class="team-checkbox">
-            <div>
+            <div *ngFor="let f of teamCheckFlags; index as j" class="narrow-checkbox">
               <p-checkbox
-                name="ListCharacter_CheckTeams_0"
-                [inputId]="'ListCharacter_CheckTeams_0_' + i"
+                [name]="'ListCharacter_CheckTeams_' + j"
+                [inputId]="'ListCharacter_CheckTeams_' + j + '_' + i"
                 [value]="i"
-                [(ngModel)]="teamCheckFlags[0]"
-                (onChange)="onTeamChecked(i, 0, $event)"
+                [(ngModel)]="teamCheckFlags[j]"
+                (onChange)="onTeamChecked(i, j, $event)"
               ></p-checkbox>
-              <label [for]="'ListCharacter_CheckTeams_0_' + i">編成1</label>
-            </div>
-            <div>
-              <p-checkbox
-                name="ListCharacter_CheckTeams_1"
-                [inputId]="'ListCharacter_CheckTeams_1_' + i"
-                [value]="i"
-                [(ngModel)]="teamCheckFlags[1]"
-                (onChange)="onTeamChecked(i, 1, $event)"
-              ></p-checkbox>
-              <label [for]="'ListCharacter_CheckTeams_1_' + i">編成2</label>
-            </div>
-            <div>
-              <p-checkbox
-                name="ListCharacter_CheckTeams_2"
-                [inputId]="'ListCharacter_CheckTeams_2_' + i"
-                [value]="i"
-                [(ngModel)]="teamCheckFlags[2]"
-                (onChange)="onTeamChecked(i, 2, $event)"
-              ></p-checkbox>
-              <label [for]="'ListCharacter_CheckTeams_2_' + i">編成3</label>
+              <label [for]="'ListCharacter_CheckTeams_0_' + i">編成{{ j + 1 }}</label>
             </div>
           </div>
         </div>

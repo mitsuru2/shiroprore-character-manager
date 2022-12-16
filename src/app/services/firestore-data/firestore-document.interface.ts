@@ -172,7 +172,7 @@ export class FsCharacter extends FsDocumentBase {
 
 export class FsFacilityType extends FsDocumentBaseWithCode {}
 
-export const FsFacilityRarerityMax = 5;
+export const fsFacilityRarerityMax = 5;
 
 export class FsFacility extends FsDocumentBase {
   type: string = '';
@@ -192,7 +192,7 @@ export class FsIllustrator extends FsDocumentBase {}
 
 export class FsRegion extends FsDocumentBaseWithOrder {}
 
-export const teamNumMax = 3;
+export const teamNumMax = 2;
 export const teamCharacterNumMax = 16;
 
 export class FsUser extends FsDocumentBase {
@@ -227,7 +227,7 @@ export class FsWeaponType extends FsDocumentBaseWithCode {
   }
 }
 
-export const FsWeaponRarerityMax = 5;
+export const fsWeaponRarerityMax = 5;
 
 export class FsWeapon extends FsDocumentBase {
   type: string = '';

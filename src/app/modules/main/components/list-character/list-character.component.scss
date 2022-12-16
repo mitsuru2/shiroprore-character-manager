@@ -170,3 +170,13 @@ table {
     }
   }
 }
+
+.narrow-checkbox {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.2rem;
+}
+
+.narrow-checkbox > label {
+  margin-left: 0.5rem;
+}
