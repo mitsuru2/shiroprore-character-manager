@@ -31,6 +31,7 @@ import { CharacterFilterSetting } from '../../views/character-filter-settings-fo
 import { CharacterSortSettingsFormComponent } from '../../views/character-sort-settings-form/character-sort-settings-form.component';
 import { CharacterSortSetting } from '../../views/character-sort-settings-form/character-sort-settings-form.interface';
 import { HtmlElementUtil } from '../../utils/html-element-util/html-element-util.class';
+import { ConfirmationService } from 'primeng/api';
 
 export class ThumbImageWrapper {
   url: string = '';
@@ -109,6 +110,9 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
   /** Team edit values. */
   teamCheckFlags!: number[][];
 
+  /** Warning message. */
+  private readonly teamEditWarning = '編成管理機能にはログインが必要です。';
+
   //============================================================================
   // Class methods.
   //
@@ -124,7 +128,8 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     private navigator: NavigatorService,
     private userAuth: UserAuthService,
     private spinner: SpinnerService,
-    private characterFilter: CharacterFilterService
+    private characterFilter: CharacterFilterService,
+    private confirmationDialog: ConfirmationService
   ) {
     this.logger.trace(`new ${this.className}()`);
 
@@ -358,6 +363,11 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
   onTeamChecked(iCell: number, iTeam: number, event: any) {
     const location = `${this.className}.onTeamChecked()`;
 
+    // Check if the user signed in or not.
+    if (!this.userAuth.signedIn) {
+      this.showTeamEditWarning(iTeam);
+    }
+
     // Get the value of the changed checkbox.
     let checked = false;
     if (event.checked.includes(iCell)) {
@@ -370,6 +380,27 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     const iCharacter = this.filteredIndexes[iCell + this.paginator.firstItemIndex];
     const character = this.characters[iCharacter];
     this.logger.debug(location, { index: iCharacter, id: character.id, name: character.name });
+
+    // Update the user's team data.
+
+    //
+  }
+
+  //----------------------------------------------------------------------------
+  // Confirmation dialog.
+  //
+  private showTeamEditWarning(iTeam: number) {
+    this.confirmationDialog.confirm({
+      message: this.teamEditWarning,
+      acceptLabel: 'OK',
+      rejectVisible: false,
+      accept: () => {
+        this.teamCheckFlags[iTeam] = [];
+      },
+      reject: () => {
+        this.teamCheckFlags[iTeam] = [];
+      },
+    });
   }
 
   //============================================================================
