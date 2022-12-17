@@ -52,9 +52,11 @@
         [class.list-item]="isListLayout"
         [class.list-margin-bottom]="i + paginator.firstItemIndex < filteredIndexes.length && isListLayout"
       >
-        <div [id]="'ListCharacter_ThumbBox_' + i" class="image-box" [class.image-shade]="!ownershipStatues[i]" [class.list-image]="isListLayout">
-          <img [id]="'ListCharacter_Thumb_' + i" (click)="onThumbnailClick(i)" />
-          <div class="team-checkbox">
+        <div>
+          <div [id]="'ListCharacter_ThumbBox_' + i" class="image-box" [class.image-shade]="!ownershipStatues[i]" [class.list-image]="isListLayout">
+            <img [id]="'ListCharacter_Thumb_' + i" (click)="onThumbnailClick(i)" />
+          </div>
+          <div *ngIf="i + paginator.firstItemIndex < filteredIndexes.length" class="team-checkbox">
             <div *ngFor="let f of teamCheckFlags; index as j" class="narrow-checkbox">
               <p-checkbox
                 [name]="'ListCharacter_CheckTeams_' + j"
