@@ -205,8 +205,8 @@ export class FsUser extends FsDocumentBase {
   teams: string[][] = [];
   // teams: list of team
   // team:list of character ID.
-  // max number of teams: common property. It should be defined as magic number in source code.
-  // max number of characters in one team: common property defined as a magic number.
+  // max number of teams: common property. See 'teamNumMax'.
+  // max number of characters in each team: common property. See 'teamCharacterNumMax'.
 
   constructor(id = '', name = '') {
     super(id, name);

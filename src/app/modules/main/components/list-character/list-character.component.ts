@@ -206,6 +206,9 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     this.updateThumbImages();
     this.makeCharacterInfoTables();
     this.updateOwnershipStatuses();
+
+    // Update team check status.
+    this.updateTeamCheckboxStatuses();
   }
 
   //----------------------------------------------------------------------------
@@ -226,6 +229,7 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
       this.makeCharacterInfoTables();
 
       this.updateOwnershipStatuses();
+      this.updateTeamCheckboxStatuses();
 
       // Scroll.
       this.scrollToTop();
@@ -360,7 +364,7 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     this.sortSettingsForm.onCancelClick();
   }
 
-  onTeamChecked(iCell: number, iTeam: number, event: any) {
+  async onTeamChecked(iCell: number, iTeam: number, event: any): Promise<void> {
     const location = `${this.className}.onTeamChecked()`;
 
     // Check if the user signed in or not.
@@ -368,12 +372,14 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
       this.showTeamEditWarning(iTeam);
     }
 
+    // Show spinner.
+    this.spinner.show();
+
     // Get the value of the changed checkbox.
     let checked = false;
     if (event.checked.includes(iCell)) {
       checked = true;
     }
-
     this.logger.trace(location, { iCell: iCell, iTeam: iTeam, checked: checked, event: event });
 
     // Calc character index. And get character ID.
@@ -382,25 +388,10 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     this.logger.debug(location, { index: iCharacter, id: character.id, name: character.name });
 
     // Update the user's team data.
+    await this.updateTeam(character.id, iTeam, checked);
 
-    //
-  }
-
-  //----------------------------------------------------------------------------
-  // Confirmation dialog.
-  //
-  private showTeamEditWarning(iTeam: number) {
-    this.confirmationDialog.confirm({
-      message: this.teamEditWarning,
-      acceptLabel: 'OK',
-      rejectVisible: false,
-      accept: () => {
-        this.teamCheckFlags[iTeam] = [];
-      },
-      reject: () => {
-        this.teamCheckFlags[iTeam] = [];
-      },
-    });
+    // Hide spinner.
+    this.spinner.hide();
   }
 
   //============================================================================
@@ -414,6 +405,7 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     this.updateThumbImages();
     this.makeCharacterInfoTables();
     this.updateOwnershipStatuses();
+    this.updateTeamCheckboxStatuses();
   }
 
   //----------------------------------------------------------------------------
@@ -1042,6 +1034,98 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
       const characterId = this.characters[this.filteredIndexes[i + this.paginator.firstItemIndex]].id;
       this.ownershipStatues[i] = userData.includes(characterId);
     }
+  }
+
+  private updateTeamCheckboxStatuses() {
+    // Do nothing if user is not signed in.
+    if (!this.userAuth.signedIn) {
+      return;
+    }
+
+    // Get user team info.
+    const teams = this.userAuth.userData.teams;
+    if (teams === undefined) {
+      return;
+    }
+
+    // Proces for each character shown on the page.
+    for (let i = 0; i < this.paginator.rowNum; ++i) {
+      if (i + this.paginator.firstItemIndex >= this.filteredIndexes.length) {
+        break;
+      }
+
+      // Get character ID.
+      const characterId = this.characters[this.filteredIndexes[i + this.paginator.firstItemIndex]].id;
+
+      // Check for each team.
+      for (let j = 0; j < teamNumMax; ++j) {
+        // Check if the character is included the team.
+        const team = teams[j];
+        if (team.includes(characterId)) {
+          this.teamCheckFlags[j].push(i);
+        }
+      }
+    }
+  }
+
+  private async updateTeam(characterId: string, iTeam: number, added: boolean): Promise<void> {
+    const location = `${this.className}.updateTeam()`;
+    let teams: string[][];
+
+    this.logger.trace(location, { characterId: characterId, iTeam: iTeam, added: added });
+
+    // Init team data.
+    // Get existing team data from the current user data.
+    // Set brank data if the user data doesn't have any team data.
+    if (this.userAuth.userData.teams === undefined) {
+      teams = Array(teamNumMax);
+      for (let i = 0; i < teams.length; ++i) {
+        teams[i] = [];
+      }
+    } else {
+      teams = this.userAuth.userData.teams; // Get from user data.
+    }
+
+    let tmp = [];
+    for (let i = 0; i < teams[iTeam].length; ++i) {
+      tmp.push(teams[iTeam][i]);
+    }
+
+    // Case: Add character.
+    if (added) {
+      if (!teams[iTeam].includes(characterId)) {
+        teams[iTeam].push(characterId);
+      }
+    }
+
+    // Case: Remove character.
+    else {
+      teams[iTeam] = teams[iTeam].filter((item) => item !== characterId);
+    }
+
+    // Update Firestore data.
+    this.userAuth.userData.teams = teams;
+    await this.firestore.updateField(FsCollectionName.Users, this.userAuth.userData.id, 'teams', this.userAuth.userData.teams);
+    await sleep(1000);
+
+    return;
+  }
+
+  //----------------------------------------------------------------------------
+  // Confirmation dialog.
+  //
+  private showTeamEditWarning(iTeam: number) {
+    this.confirmationDialog.confirm({
+      message: this.teamEditWarning,
+      acceptLabel: 'OK',
+      rejectVisible: false,
+      accept: () => {
+        this.teamCheckFlags[iTeam] = [];
+      },
+      reject: () => {
+        this.teamCheckFlags[iTeam] = [];
+      },
+    });
   }
 
   //----------------------------------------------------------------------------
