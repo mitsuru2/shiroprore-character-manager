@@ -173,6 +173,46 @@ export class FirestoreCollectionWrapper<T extends FsDocumentBase> {
   }
 
   /**
+   * It adds an new data field to the specified data document.
+   * @param docId Document ID.
+   * @param fieldName Field name to be added to the document.
+   * @param value Default value.
+   * @param uid User ID who does this operation.
+   * @returns Document ID.
+   */
+  async addField(docId: string, fieldName: string, value: any, uid: string): Promise<string> {
+    const location = `${this.className}.addField()`;
+
+    // Get document reference.
+    const path = `${this.name}/${docId}`;
+    const docRef = doc(this.fs, path);
+
+    // Run transaction.
+    await runTransaction(this.fs, async (transaction) => {
+      // Get target document.
+      // Throw error if the target document is not existing.
+      const docBody = await transaction.get(docRef);
+      if (!docBody.exists()) {
+        const error = new Error(`${location} Document was not found. { path: ${path} }`);
+        error.name = ErrorCode.BadRequest;
+        throw error;
+      }
+
+      // Get data and add the new field.
+      let docData = docBody.data() as any;
+      docData[fieldName] = value;
+      docData.updatedAt = serverTimestamp();
+      docData.updatedBy = uid;
+      console.log(docData);
+
+      // Update specified field.
+      transaction.set(docRef, docData);
+    });
+
+    return docId;
+  }
+
+  /**
    * Increment the 'count' field value.
    * @param docId Document ID.
    * @param uid User ID. It's original user ID stored in Users collection as 'name' field.
