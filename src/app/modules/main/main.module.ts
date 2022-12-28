@@ -64,6 +64,7 @@ import { InquiryFormComponent } from './views/inquiry-form/inquiry-form.componen
 import { ReleaseHistoryComponent } from './views/release-history/release-history.component';
 import { ReadMeComponent } from './views/read-me/read-me.component';
 import { AnnounceComponent } from './views/announce/announce.component';
+import { TeamComponent } from './components/team/team.component';
 
 const firebaseUiAuthConfig: firebaseui.auth.Config = {
   autoUpgradeAnonymousUsers: false, // Disable annymouse users.
@@ -108,6 +109,7 @@ const firebaseUiAuthConfig: firebaseui.auth.Config = {
     ReleaseHistoryComponent,
     ReadMeComponent,
     AnnounceComponent,
+    TeamComponent,
   ],
   imports: [
     CommonModule,

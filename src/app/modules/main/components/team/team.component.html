@@ -1,0 +1,7 @@
+<div>
+  <p-tabView [(activeIndex)]="activeTabIndex">
+    <p-tabPanel *ngFor="let i of tabIndexes" [header]="'編成' + (i + 1)">
+      {{ i }}
+    </p-tabPanel>
+  </p-tabView>
+</div>

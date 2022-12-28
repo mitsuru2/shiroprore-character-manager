@@ -9,6 +9,7 @@ import { NavigatorService } from './services/navigator/navigator.service';
 import { CharacterComponent } from './components/character/character.component';
 import { ListCharacterOwnershipComponent } from './components/list-character-ownership/list-character-ownership.component';
 import { SupportComponent } from './components/support/support.component';
+import { TeamComponent } from './components/team/team.component';
 
 const routes: Routes = [
   {
@@ -25,6 +26,7 @@ const routes: Routes = [
       { path: 'legal/:page', component: LegalComponent },
       { path: 'login', component: LoginComponent },
       { path: 'support', component: SupportComponent },
+      { path: 'team-edit', component: TeamComponent },
     ],
     canActivateChild: [NavigatorService],
   },

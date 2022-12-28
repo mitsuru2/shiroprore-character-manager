@@ -36,6 +36,12 @@ export class MainComponent /*implements OnInit*/ {
       },
     },
     {
+      label: 'キャラクター編成',
+      command: () => {
+        this.onTeamEditMenuClick();
+      },
+    },
+    {
       label: 'キャラクター所持状況',
       command: () => {
         this.onCharacterOwnershipStatusMenuClick();
@@ -70,6 +76,12 @@ export class MainComponent /*implements OnInit*/ {
           label: 'キャラクター一覧',
           command: () => {
             this.router.navigateByUrl('/main/list-character');
+          },
+        },
+        {
+          label: 'キャラクター編成',
+          command: () => {
+            this.onTeamEditMenuClick();
           },
         },
         {
@@ -205,6 +217,18 @@ export class MainComponent /*implements OnInit*/ {
       // Show warning message.
       this.confirmationDialog.confirm({
         message: 'キャラクターデータの作成にはログインが必要です。',
+        acceptLabel: 'OK',
+        rejectVisible: false,
+      });
+    }
+  }
+
+  private onTeamEditMenuClick() {
+    if (this.userAuth.signedIn) {
+      this.router.navigateByUrl('/main/team-edit');
+    } else {
+      this.confirmationDialog.confirm({
+        message: 'キャラクター編成機能にはログインが必要です。',
         acceptLabel: 'OK',
         rejectVisible: false,
       });
