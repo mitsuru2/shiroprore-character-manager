@@ -202,7 +202,11 @@ export class FsUser extends FsDocumentBase {
 
   weapons: string[] = [];
 
-  teams: string[][] = [];
+  team0: string[] = [];
+
+  team1: string[] = [];
+
+  team2: string[] = [];
   // teams: list of team
   // team:list of character ID.
   // max number of teams: common property. See 'teamNumMax'.

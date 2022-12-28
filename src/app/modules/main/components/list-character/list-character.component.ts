@@ -32,6 +32,7 @@ import { CharacterSortSettingsFormComponent } from '../../views/character-sort-s
 import { CharacterSortSetting } from '../../views/character-sort-settings-form/character-sort-settings-form.interface';
 import { HtmlElementUtil } from '../../utils/html-element-util/html-element-util.class';
 import { ConfirmationService } from 'primeng/api';
+import { ErrorCode } from 'src/app/services/error-handler/error-code.enum';
 
 export class ThumbImageWrapper {
   url: string = '';
@@ -1036,16 +1037,24 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     }
   }
 
-  private updateTeamCheckboxStatuses() {
+  private async updateTeamCheckboxStatuses(): Promise<void> {
+    const location = `${this.className}.updateTeamCheckboxStatuses()`;
+    this.logger.trace(location);
+
     // Do nothing if user is not signed in.
     if (!this.userAuth.signedIn) {
       return;
     }
 
     // Get user team info.
-    const teams = this.userAuth.userData.teams;
-    if (teams === undefined) {
-      return;
+    const teams = [Array(teamNumMax)];
+    teams[0] = this.userAuth.userData.team0;
+    teams[1] = this.userAuth.userData.team1;
+    teams[2] = this.userAuth.userData.team2;
+
+    // Clear check status.
+    for (let i = 0; i < this.teamCheckFlags.length; ++i) {
+      this.teamCheckFlags[i] = [];
     }
 
     // Proces for each character shown on the page.
@@ -1066,49 +1075,65 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
         }
       }
     }
+
+    this.logger.debug(location, { teamCheckFlags: this.teamCheckFlags });
   }
 
   private async updateTeam(characterId: string, iTeam: number, added: boolean): Promise<void> {
     const location = `${this.className}.updateTeam()`;
-    let teams: string[][];
 
     this.logger.trace(location, { characterId: characterId, iTeam: iTeam, added: added });
 
     // Init team data.
-    // Get existing team data from the current user data.
-    // Set brank data if the user data doesn't have any team data.
-    if (this.userAuth.userData.teams === undefined) {
-      teams = Array(teamNumMax);
-      for (let i = 0; i < teams.length; ++i) {
-        teams[i] = [];
-      }
-    } else {
-      teams = this.userAuth.userData.teams; // Get from user data.
-    }
-
-    let tmp = [];
-    for (let i = 0; i < teams[iTeam].length; ++i) {
-      tmp.push(teams[iTeam][i]);
+    let team = this.getUserTeam(iTeam);
+    if (team === undefined) {
+      const error = new Error(`${location} Invalid team index.`);
+      error.name = ErrorCode.Unexpected;
+      throw error;
     }
 
     // Case: Add character.
     if (added) {
-      if (!teams[iTeam].includes(characterId)) {
-        teams[iTeam].push(characterId);
+      if (!team.includes(characterId)) {
+        team.push(characterId);
       }
     }
 
     // Case: Remove character.
     else {
-      teams[iTeam] = teams[iTeam].filter((item) => item !== characterId);
+      team = team.filter((item) => item !== characterId);
     }
 
     // Update Firestore data.
-    this.userAuth.userData.teams = teams;
-    await this.firestore.updateField(FsCollectionName.Users, this.userAuth.userData.id, 'teams', this.userAuth.userData.teams);
-    await sleep(1000);
+    await this.updateUserTeam(iTeam, team);
+    await sleep(100);
 
     return;
+  }
+
+  private getUserTeam(index: number): string[] | undefined {
+    if (index === 0) {
+      return this.userAuth.userData.team0;
+    } else if (index === 1) {
+      return this.userAuth.userData.team1;
+    } else if (index === 2) {
+      return this.userAuth.userData.team2;
+    } else {
+      return undefined;
+    }
+  }
+
+  private async updateUserTeam(index: number, team: string[]): Promise<void> {
+    if (index === 0) {
+      this.userAuth.userData.team0 = team;
+      await this.firestore.updateField(FsCollectionName.Users, this.userAuth.userData.id, 'team0', this.userAuth.userData.team0);
+    } else if (index === 1) {
+      this.userAuth.userData.team1 = team;
+      await this.firestore.updateField(FsCollectionName.Users, this.userAuth.userData.id, 'team1', this.userAuth.userData.team1);
+    } else if (index === 2) {
+      this.userAuth.userData.team2 = team;
+      await this.firestore.updateField(FsCollectionName.Users, this.userAuth.userData.id, 'team2', this.userAuth.userData.team2);
+    }
   }
 
   //----------------------------------------------------------------------------
