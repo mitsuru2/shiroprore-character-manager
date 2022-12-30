@@ -1,7 +1,7 @@
 <div>
   <p-tabView [(activeIndex)]="activeTabIndex">
     <p-tabPanel *ngFor="let i of tabIndexes" [header]="'編成' + (i + 1)">
-      {{ i }}
+      <app-team-view [iTeam]="i"></app-team-view>
     </p-tabPanel>
   </p-tabView>
 </div>

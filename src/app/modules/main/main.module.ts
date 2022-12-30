@@ -65,6 +65,7 @@ import { ReleaseHistoryComponent } from './views/release-history/release-history
 import { ReadMeComponent } from './views/read-me/read-me.component';
 import { AnnounceComponent } from './views/announce/announce.component';
 import { TeamComponent } from './components/team/team.component';
+import { TeamViewComponent } from './views/team-view/team-view.component';
 
 const firebaseUiAuthConfig: firebaseui.auth.Config = {
   autoUpgradeAnonymousUsers: false, // Disable annymouse users.
@@ -110,6 +111,7 @@ const firebaseUiAuthConfig: firebaseui.auth.Config = {
     ReadMeComponent,
     AnnounceComponent,
     TeamComponent,
+    TeamViewComponent,
   ],
   imports: [
     CommonModule,
