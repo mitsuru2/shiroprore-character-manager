@@ -43,12 +43,12 @@ export class AbilityAnalyzer {
     //
     // Attack up (percent)
     //
-    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /特殊攻撃|低下効果|倍のダメ―ジ/g, /攻撃(?:と[^\d上下]+){0,2}が(\d+)%(?:と\d+)?上昇/g], ['attackUpPercent'], 1), /* 攻撃が20%上昇 *//* eslint-disable-line */
-    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /特殊攻撃|低下効果|倍のダメ―ジ/g, /攻撃(?:と[^\d上下]+){0,2}が\d+%上昇\((上限|最大)値?(\d+)%\)/g], ['attackUpPercent'], 2), /* 攻撃が4%ずつ上昇(最大40%) *//* eslint-disable-line */
-    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /特殊攻撃|低下効果|倍のダメ―ジ/g, /攻撃(?:と[^\d上下]+){0,2}が(\d+\.?\d?)倍/g], ['attackUpPercent'], 1, 100, -100), /* 攻撃が1.2倍 *//* eslint-disable-line */
-    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /特殊攻撃|低下効果|倍のダメ―ジ/g, /攻撃(?:と[^\d上下]+){0,2}が(\d+)%([^\d上下]+が\d*%?){1,2}に?上昇/g], ['attackUpPercent'], 1), /* 攻撃が20%、砲弾直撃ボーナスが60%に上昇 *//* eslint-disable-line */
-    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /特殊攻撃|低下効果|倍のダメ―ジ/g, /攻撃が[^\d]{1,6}に対して(\d+\.?\d?)倍/g], ['attackUpPercent'], 1, 100, -100), /* 攻撃が飛行敵に対して1.2倍 *//* eslint-disable-line */
-    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /特殊攻撃|低下効果|倍のダメ―ジ/g, /攻撃(?:\/[^\d上下]+){1,2}が(\d+\.?\d?)倍/g], ['attackUpPercent'], 1, 100, -100), /* 攻撃/防御が1.2倍 *//* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /特殊攻撃|低下効果|倍のダメージ/g, /攻撃(?:と[^\d上下]+){0,2}が(\d+)%(?:と\d+)?上昇/g], ['attackUpPercent'], 1), /* 攻撃が20%上昇 *//* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /特殊攻撃|低下効果|倍のダメージ/g, /攻撃(?:と[^\d上下]+){0,2}が\d+%上昇\((上限|最大)値?(\d+)%\)/g], ['attackUpPercent'], 2), /* 攻撃が4%ずつ上昇(最大40%) *//* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /特殊攻撃|低下効果|倍のダメージ/g, /攻撃(?:と[^\d上下]+){0,2}が(\d+\.?\d?)倍/g], ['attackUpPercent'], 1, 100, -100), /* 攻撃が1.2倍 *//* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /特殊攻撃|低下効果|倍のダメージ/g, /攻撃(?:と[^\d上下]+){0,2}が(\d+)%([^\d上下]+が\d*%?){1,2}に?上昇/g], ['attackUpPercent'], 1), /* 攻撃が20%、砲弾直撃ボーナスが60%に上昇 *//* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /特殊攻撃|低下効果|倍のダメージ/g, /攻撃が[^\d]{1,6}に対して(\d+\.?\d?)倍/g], ['attackUpPercent'], 1, 100, -100), /* 攻撃が飛行敵に対して1.2倍 *//* eslint-disable-line */
+    new AbilityAttrMatchPattern([/。|、|ずつ|\d+秒間|一度だけ|大きく|少しだけ/g, /特殊攻撃|低下効果|倍のダメージ/g, /攻撃(?:\/[^\d上下]+){1,2}が(\d+\.?\d?)倍/g], ['attackUpPercent'], 1, 100, -100), /* 攻撃/防御が1.2倍 *//* eslint-disable-line */
     //
     // Attack up (fixed value)
     //
