@@ -1,3 +1,35 @@
-<p>team-view works!</p>
-<p>Team Index: {{ iTeam }}</p>
-<p>Team Members: {{ teams[iTeam] }}</p>
+<div *ngIf="members.length === 0">
+  <p>キャラクターが登録されていません。</p>
+  <p>「キャラクター一覧」画面から編成にキャラクターを追加してください。</p>
+</div>
+<div>
+  <ul class="team-member">
+    <li *ngFor="let member of members">
+      <div class="list-item" [class.hidden]="member.hidden">
+        <div class="image-column">
+          <div [id]="'TeamMember_ThumbBox_' + member.data.index" class="image-box" [class.image-shade]="!member.owned">
+            <img [id]="'TeamMember_Thumb_' + member.data.index" />
+          </div>
+          <div style="text-align: center">
+            <button
+              pButton
+              pRipple
+              type="button"
+              icon="pi pi-trash"
+              class="p-button-rounded p-button-danger p-button-text"
+              (click)="onTrashClick(member.id)"
+            ></button>
+          </div>
+        </div>
+        <div>
+          <table [id]="'TeamMember_Table_' + member.data.index">
+            <colgroup>
+              <col class="short-col" />
+              <col class="long-col" />
+            </colgroup>
+          </table>
+        </div>
+      </div>
+    </li>
+  </ul>
+</div>

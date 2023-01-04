@@ -58,6 +58,12 @@
       height: 105px;
     }
 
+    img {
+      width: 105px;           // You can adjust <img> element size up to
+      height: 105px;          // the original thumbnail image size. (160px)
+      border-radius: 1rem;
+    }
+
     .image-shade {
       background-color: black;
       border-radius: 1rem;
@@ -65,12 +71,6 @@
       img {
         opacity: 0.6;
       }
-    }
-
-    img {
-      width: 105px;           // You can adjust <img> element size up to
-      height: 105px;          // the original thumbnail image size. (160px)
-      border-radius: 1rem;
     }
 
     .list-image {
