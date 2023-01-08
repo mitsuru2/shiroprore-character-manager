@@ -86,6 +86,62 @@ export class TeamViewComponent implements OnInit, AfterViewInit {
     this.logger.trace(location);
     // await sleep(1000);
     // await this.redraw();
+
+    // Set draggable control.
+  }
+
+  private setDragAndDropBehavior() {
+    const location = `${this.className}.setDragAndDropBehavior()`;
+    this.logger.trace(location);
+
+    for (let i = 0; i < this.members.length; ++i) {
+      // Get list element.
+      const elemId = `TeamMember_${this.members[i].data.index}`;
+      const li = document.getElementById(elemId);
+      if (!li) {
+        this.logger.error(location, 'List element was not found.', { id: elemId });
+        return;
+      }
+
+      // Set drag and drop behaviour.
+      li.ondragstart = (event: DragEvent) => {
+        this.logger.debug('ondragstart', { index: li.id });
+        if (event.dataTransfer) {
+          event.dataTransfer.setData('text/plain', li.id);
+        }
+      };
+      li.ondragover = (event) => {
+        // this.logger.debug('ondragover', { index: li.id });
+        event.preventDefault();
+        li.style.borderTop = '2px solid blue';
+      };
+      li.ondragleave = () => {
+        // this.logger.debug('ondragleave', { index: li.id });
+        li.style.borderTop = '';
+      };
+      li.ondrop = (event) => {
+        // this.logger.debug('ondrop', { index: li.id });
+        event.preventDefault();
+        li.style.borderTop = '';
+        if (event.dataTransfer) {
+          // Get dragged element from dataTransfer.
+          const draggedElemId = event.dataTransfer.getData('text/plain');
+          this.logger.debug('ondrop', { draggedElem: draggedElemId, droppedElem: li.id });
+          this.moveListItemBeforeAnotherItem(draggedElemId, li.id);
+        }
+      };
+    }
+  }
+
+  moveListItemBeforeAnotherItem(movedItemId: string, destItemId: string) {
+    const movedItem = document.getElementById(movedItemId) as HTMLLIElement;
+    const destItem = document.getElementById(destItemId) as HTMLLinkElement;
+
+    if (!movedItem || !destItem || !destItem.parentNode) {
+      return;
+    }
+
+    destItem.parentNode.insertBefore(movedItem, destItem);
   }
 
   async onTrashClick(id: string): Promise<void> {
@@ -109,6 +165,7 @@ export class TeamViewComponent implements OnInit, AfterViewInit {
     await this.loadThumbImages();
     this.updateThumbImages();
     this.makeCharacterInfoTables();
+    this.setDragAndDropBehavior();
   }
 
   //============================================================================

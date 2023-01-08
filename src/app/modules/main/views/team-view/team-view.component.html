@@ -4,7 +4,7 @@
 </div>
 <div>
   <ul class="team-member">
-    <li *ngFor="let member of members">
+    <li *ngFor="let member of members" draggable="true" [id]="'TeamMember_' + member.data.index">
       <div class="list-item" [class.hidden]="member.hidden">
         <div class="image-column">
           <div [id]="'TeamMember_ThumbBox_' + member.data.index" class="image-box" [class.image-shade]="!member.owned">
