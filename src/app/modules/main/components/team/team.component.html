@@ -1,5 +1,5 @@
 <div>
-  <p-tabView [(activeIndex)]="activeTabIndex" (onChange)="onTabChange($event)">
+  <p-tabView [(activeIndex)]="activeTabIndex">
     <p-tabPanel *ngFor="let i of tabIndexes" [header]="'編成' + (i + 1)">
       <app-team-view [id]="'TabView_' + i" [iTeam]="i"></app-team-view>
     </p-tabPanel>

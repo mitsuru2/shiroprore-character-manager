@@ -1,15 +1,16 @@
-<div *ngIf="members.length === 0">
+<div *ngIf="teamMembers.length === 0">
   <p>キャラクターが登録されていません。</p>
   <p>「キャラクター一覧」画面から編成にキャラクターを追加してください。</p>
 </div>
 <div>
   <ul class="team-member">
-    <li *ngFor="let member of members" draggable="true" [id]="'TeamMember_' + member.data.index">
+    <li *ngFor="let member of teamMembers" draggable="true" [id]="'TeamMember_' + member.id">
       <div class="list-item" [class.hidden]="member.hidden">
         <div class="image-column">
-          <div [id]="'TeamMember_ThumbBox_' + member.data.index" class="image-box" [class.image-shade]="!member.owned">
+          <!--<div [id]="'TeamMember_ThumbBox_' + member.data.index" class="image-box" [class.image-shade]="!member.owned">
             <img [id]="'TeamMember_Thumb_' + member.data.index" />
-          </div>
+          </div>-->
+          (Thumbnail Area)
           <div style="text-align: center">
             <button
               pButton
@@ -22,7 +23,7 @@
           </div>
         </div>
         <div>
-          <table [id]="'TeamMember_Table_' + member.data.index">
+          <table [id]="'TeamMember_Table_' + member.id">
             <colgroup>
               <col class="short-col" />
               <col class="long-col" />

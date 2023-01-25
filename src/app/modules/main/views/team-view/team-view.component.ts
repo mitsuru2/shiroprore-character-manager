@@ -1,6 +1,8 @@
 import { Component, Input, OnInit, AfterViewInit } from '@angular/core';
 import { NGXLogger } from 'ngx-logger';
 import { CloudStorageService } from 'src/app/services/cloud-storage/cloud-storage.service';
+import { ErrorCode } from 'src/app/services/error-handler/error-code.enum';
+import { ErrorHandlerService } from 'src/app/services/error-handler/error-handler.service';
 import { FsCollectionName } from 'src/app/services/firestore-data/firestore-collection-name.enum';
 import { FirestoreDataService } from 'src/app/services/firestore-data/firestore-data.service';
 import {
@@ -11,7 +13,6 @@ import {
   FsGeographType,
   FsRegion,
   FsWeaponType,
-  teamNumMax,
 } from 'src/app/services/firestore-data/firestore-document.interface';
 import { SpinnerService } from '../../services/spinner/spinner.service';
 import { UserAuthService } from '../../services/user-auth/user-auth.service';
@@ -54,9 +55,13 @@ class TeamMember {
 export class TeamViewComponent implements OnInit, AfterViewInit {
   private readonly className = 'TeamViewComponent';
 
-  @Input() iTeam = 0;
+  @Input() iTeam = -1; // It will become available after ngOnInit().
 
-  members: TeamMember[] = [];
+  private viewInitialized = false; // Flag on ngAfterViewInit().
+
+  private viewCreated = false;
+
+  teamMembers: TeamMember[] = [];
 
   //============================================================================
   // Public functions.
@@ -66,93 +71,40 @@ export class TeamViewComponent implements OnInit, AfterViewInit {
     private userAuth: UserAuthService,
     private firestore: FirestoreDataService,
     private storage: CloudStorageService,
-    private spinner: SpinnerService
+    private spinner: SpinnerService,
+    private errorHandler: ErrorHandlerService
   ) {
     const location = `new ${this.className}()`;
+    this.logger.trace(location);
+  }
+
+  ngOnInit(): void {
+    const location = `${this.className}().ngOnInit()`;
 
     this.logger.trace(location, { iTeam: this.iTeam });
 
     // Get team info when user signed in.
     this.userAuth.addEventListener('signIn', async () => {
       this.logger.debug('callback', { iTeam: this.iTeam });
-      await this.redraw();
+      await this.makeTeamView();
     });
   }
 
-  ngOnInit(): void {}
-
   async ngAfterViewInit(): Promise<void> {
-    const location = `{this.className}.ngAfterViewInit()`;
-    this.logger.trace(location);
-    // await sleep(1000);
-    // await this.redraw();
+    const location = `${this.className}.ngAfterViewInit()`;
+    this.logger.trace(location, { iTeam: this.iTeam });
 
-    // Set draggable control.
-  }
+    // Set view initialized flag.
+    this.viewInitialized = true;
 
-  private setDragAndDropBehavior() {
-    const location = `${this.className}.setDragAndDropBehavior()`;
-    this.logger.trace(location);
-
-    for (let i = 0; i < this.members.length; ++i) {
-      // Get list element.
-      const elemId = `TeamMember_${this.members[i].data.index}`;
-      const li = document.getElementById(elemId);
-      if (!li) {
-        this.logger.error(location, 'List element was not found.', { id: elemId });
-        return;
-      }
-
-      // Set drag and drop behaviour.
-      li.ondragstart = (event: DragEvent) => {
-        this.logger.debug('ondragstart', { index: li.id });
-        if (event.dataTransfer) {
-          event.dataTransfer.setData('text/plain', li.id);
-        }
-      };
-      li.ondragover = (event) => {
-        // this.logger.debug('ondragover', { index: li.id });
-        event.preventDefault();
-        li.style.borderTop = '2px solid blue';
-      };
-      li.ondragleave = () => {
-        // this.logger.debug('ondragleave', { index: li.id });
-        li.style.borderTop = '';
-      };
-      li.ondrop = (event) => {
-        // this.logger.debug('ondrop', { index: li.id });
-        event.preventDefault();
-        li.style.borderTop = '';
-        if (event.dataTransfer) {
-          // Get dragged element from dataTransfer.
-          const draggedElemId = event.dataTransfer.getData('text/plain');
-          this.logger.debug('ondrop', { draggedElem: draggedElemId, droppedElem: li.id });
-          this.moveListItemBeforeAnotherItem(draggedElemId, li.id);
-        }
-      };
-    }
-  }
-
-  moveListItemBeforeAnotherItem(movedItemId: string, destItemId: string) {
-    const movedItem = document.getElementById(movedItemId) as HTMLLIElement;
-    const destItem = document.getElementById(destItemId) as HTMLLinkElement;
-
-    if (!movedItem || !destItem || !destItem.parentNode) {
-      return;
-    }
-
-    destItem.parentNode.insertBefore(movedItem, destItem);
+    // Create view.
+    await this.makeTeamView();
   }
 
   async onTrashClick(id: string): Promise<void> {
     this.spinner.show();
 
     await this.removeTeamMember(id);
-
-    const member = this.members.find((item) => item.id === id);
-    if (member) {
-      member.hidden = true;
-    }
 
     this.spinner.hide();
   }
@@ -161,28 +113,139 @@ export class TeamViewComponent implements OnInit, AfterViewInit {
     const location = `{this.className}.redraw()`;
     this.logger.trace(location, { iTeam: this.iTeam });
 
-    this.importTeamInfo();
-    await this.loadThumbImages();
-    this.updateThumbImages();
-    this.makeCharacterInfoTables();
-    this.setDragAndDropBehavior();
+    // this.importTeamInfo();
+    // await this.loadThumbImages();
+    // this.updateThumbImages();
+    // this.makeCharacterInfoTables();
+    // this.setDragAndDropBehavior();
   }
 
   //============================================================================
   // Private methods.
   //
   //----------------------------------------------------------------------------
+  // View constructor.
+  //
+  private async makeTeamView(): Promise<void> {
+    const location = `${this.className}.makeTeamView()`;
+    this.logger.trace(location, { iTeam: this.iTeam });
+
+    if (!this.makeTeamViewPrecond()) {
+      return;
+    }
+
+    try {
+      // Collect team member information.
+      this.importTeam();
+
+      // Exit if the team if empty.
+      if (this.teamMembers.length === 0) {
+        return;
+      }
+
+      // Wait initializing HTML elements.
+      // <table> tags will be generated by importTeam() method.
+      await this.waitTableTagReady(`TeamMember_Table_${this.teamMembers[0].id}`, 2000);
+
+      // Make character data table.
+      this.makeCharacterInfoTables();
+
+      // Load character thumbnail images.
+
+      // Update image elements.
+
+      // Set view-initalized flag.
+      this.viewCreated = true;
+    } catch (e) {
+      this.errorHandler.notifyError(e);
+    }
+  }
+
+  private makeTeamViewPrecond(): boolean {
+    const location = `${this.className}.makeTeamViewPrecond()`;
+
+    // This function shall be done after view init.
+    if (!this.viewInitialized) {
+      this.logger.warn(location, 'Do nothing as HTML view is not initialized.');
+      return false;
+    }
+
+    // This function is allowed execution only once.
+    if (this.viewCreated) {
+      this.logger.warn(location, 'Do nothing as already created.');
+      return false;
+    }
+
+    // User login is needed.
+    if (!this.userAuth.signedIn) {
+      this.logger.warn(location, 'User is not signed in.');
+      return false;
+    }
+
+    return true;
+  }
+
+  private async waitTableTagReady(tableId: string, timeout: number): Promise<boolean> {
+    const location = `${this.className}.waitTableTagReady()`;
+    // this.logger.trace(location, { tableId: tableId });
+
+    const sleepTime = 20;
+    let waitTime = 0;
+    let result = false;
+
+    while (waitTime < timeout) {
+      const table = document.getElementById(tableId);
+      if (!table) {
+        // Sleep.
+        await sleep(sleepTime);
+        waitTime += sleepTime;
+      } else {
+        result = true;
+        break;
+      }
+    }
+
+    // Additional wait for all table generation.
+    await sleep(100);
+    waitTime += 100;
+
+    if (result) {
+      this.logger.info(location, 'HTML table tag has been generated.', { iTeam: this.iTeam, waitTime: waitTime });
+    } else {
+      this.logger.error(location, 'HTML table generation failed.', { iTeam: this.iTeam });
+    }
+
+    return result;
+  }
+
+  //----------------------------------------------------------------------------
   // Team array control.
   //
-  private importTeamInfo() {
-    const team = this.getUserTeam();
+  private getTeamMemberIds(): string[] {
+    const location = `${this.className}.getTeamMemberIds()`;
+
+    if (this.iTeam === 0) {
+      return this.userAuth.userData.team0;
+    } else if (this.iTeam === 1) {
+      return this.userAuth.userData.team1;
+    } else if (this.iTeam === 2) {
+      return this.userAuth.userData.team2;
+    } else {
+      const error = new Error(`${location} Invalid team index.`);
+      error.name = ErrorCode.Unexpected;
+      throw error;
+    }
+  }
+
+  private importTeam() {
+    const memberIds = this.getTeamMemberIds();
 
     // Clear existing data.
-    this.members = [];
+    this.teamMembers = [];
 
-    for (let i = 0; i < team.length; ++i) {
+    for (let i = 0; i < memberIds.length; ++i) {
       // Get character data.
-      const member = new TeamMember(team[i]);
+      const member = new TeamMember(memberIds[i]);
       member.data = this.firestore.getDataById(FsCollectionName.Characters, member.id) as FsCharacter;
 
       // Get character ownership status.
@@ -190,43 +253,106 @@ export class TeamViewComponent implements OnInit, AfterViewInit {
 
       /**
        * It doesn't load image data here. Because image data loading may take time.
-       * Image data loading shall be done after view initialization.
+       * Image data loading shall be done afterwards.
        */
 
       // Add member info to the list.
-      this.members.push(member);
+      this.teamMembers.push(member);
     }
   }
 
-  private getUserTeam(): string[] {
-    if (this.iTeam === 0) {
-      return this.userAuth.userData.team0;
-    } else if (this.iTeam === 1) {
-      return this.userAuth.userData.team1;
-    } else {
-      return this.userAuth.userData.team2;
-    }
-  }
-
-  private async removeTeamMember(id: string): Promise<void> {
+  private async updateTeamMemberIds(memberIds: string[]): Promise<void> {
     let fieldName = '';
     let fieldValue = [];
 
     if (this.iTeam === 0) {
-      this.userAuth.userData.team0 = this.userAuth.userData.team0.filter((item) => item !== id);
+      this.userAuth.userData.team0 = memberIds;
       fieldName = 'team0';
       fieldValue = this.userAuth.userData.team0;
     } else if (this.iTeam === 1) {
-      this.userAuth.userData.team1 = this.userAuth.userData.team1.filter((item) => item !== id);
+      this.userAuth.userData.team1 = memberIds;
       fieldName = 'team1';
       fieldValue = this.userAuth.userData.team1;
     } else {
-      this.userAuth.userData.team2 = this.userAuth.userData.team2.filter((item) => item !== id);
+      this.userAuth.userData.team2 = memberIds;
       fieldName = 'team2';
       fieldValue = this.userAuth.userData.team2;
     }
 
     await this.firestore.updateField(FsCollectionName.Users, this.userAuth.userData.id, fieldName, fieldValue);
+  }
+
+  private async removeTeamMember(id: string): Promise<void> {
+    const location = `${this.className}.removeTeamMember()`;
+
+    // Find the member and hide him.
+    const index = this.teamMembers.findIndex((item) => item.id === id);
+    if (index >= 0) {
+      this.teamMembers[index].hidden = true;
+    } else {
+      this.logger.warn(location, 'Invalid character ID.', { id: id });
+      return;
+    }
+
+    // Get member ID array from user data.
+    // And remove the ID from member IDs.
+    const filteredMemberIds = this.getTeamMemberIds().filter((item) => item !== id);
+
+    // Update user data.
+    await this.updateTeamMemberIds(filteredMemberIds);
+
+    return;
+  }
+
+  /**
+   * It changes order of the team member array.
+   * And it also updates the user data.
+   * @param changeId Character ID of the moved character.
+   * @param beforeId Character ID. The 'changeId' character will be moved to before of this character.
+   * @returns None
+   */
+  private async changeTeamMemerOrder(changeId: string, beforeId: string): Promise<void> {
+    const location = `${this.className}.changeTeamMemerOrder()`;
+    this.logger.trace(location, { changedId: changeId, beforeId: beforeId });
+
+    // Get user team and check if the input character IDs are valid.
+    const team = this.getTeamMemberIds();
+    if (!team.includes(changeId)) {
+      const error = new Error(`${location} The character ID is not found. changedId: ${changeId}`);
+      error.name = ErrorCode.Unexpected;
+      throw error;
+    }
+    if (beforeId !== '') {
+      if (!team.includes(beforeId)) {
+        const error = new Error(`${location} The character ID is not found. beforeId: ${beforeId}`);
+        error.name = ErrorCode.Unexpected;
+        throw error;
+      }
+    }
+
+    // If changeId is same as beforeId, do nothig.
+    if (changeId === beforeId) {
+      this.logger.info(location, 'Do nothing as same IDs are input.');
+      return;
+    }
+
+    // Remove 'changeId'.
+    let changedTeam = team.filter((item) => item !== changeId);
+
+    // Insert 'changeId' before 'beforeId'.
+    let index = team.length;
+    if (beforeId !== '') {
+      index = changedTeam.findIndex((item) => item === beforeId);
+    }
+    changedTeam.splice(index, 0, changeId);
+
+    // Logging.
+    this.logger.debug(location, { team: team, changedTeam: changedTeam });
+
+    // Update user data.
+    await this.updateTeamMemberIds(changedTeam);
+
+    return;
   }
 
   //----------------------------------------------------------------------------
@@ -238,20 +364,23 @@ export class TeamViewComponent implements OnInit, AfterViewInit {
     let thumbCount = 0;
 
     // Load thumbnail images.
-    for (let i = 0; i < this.members.length; ++i) {
-      if (this.members[i].thumbLoaded) {
+    for (let i = 0; i < this.teamMembers.length; ++i) {
+      const member = this.teamMembers[i];
+
+      // Skip process if the thumbnail image has already been loaded.
+      if (member.thumbLoaded) {
         continue;
       }
 
       // Make storage path and load image.
-      const path = this.storage.makeCharacterThumbnailPath(this.members[i].data.index);
+      const path = this.storage.makeCharacterThumbnailPath(member.data.index);
       const blob = await this.storage.get(path);
       thumbCount++;
 
       // Store image property data.
-      this.members[i].url = window.URL.createObjectURL(blob);
-      this.members[i].thumb = blob;
-      this.members[i].thumbLoaded = true;
+      member.url = window.URL.createObjectURL(blob);
+      member.thumb = blob;
+      member.thumbLoaded = true;
     }
 
     this.logger.info(location, 'Thumbnail images are loaded.', { count: thumbCount });
@@ -259,47 +388,53 @@ export class TeamViewComponent implements OnInit, AfterViewInit {
     return thumbCount;
   }
 
-  private updateThumbImages() {
-    const location = `${this.className}.updateThumbImages()`;
-    this.logger.trace(location, { iTeam: this.iTeam });
+  private drawThumbImages() {
+    const location = `${this.className}.drawThumbImages()`;
 
-    // Update image element on HTML.
-    for (let i = 0; i < this.members.length; ++i) {
-      // Skip process if thumbnail image is not loaded.
-      if (!this.members[i].thumbLoaded) {
+    // Process for each image element.
+    for (let i = 0; i < this.teamMembers.length; ++i) {
+      const member = this.teamMembers[i];
+
+      // Skip process if the member is hidden or not loaded.
+      if (member.hidden || !member.thumbLoaded) {
         continue;
       }
 
       // Get image element.
-      const index = this.members[i].data.index;
-      const img = document.getElementById(`TeamMember_Thumb_${index}`) as HTMLImageElement;
+      const img = document.getElementById(`TeamMember_Thumb_${member.id}`) as HTMLImageElement;
       if (!img) {
-        throw Error(`${location} Image element is not available.`);
+        const error = new Error(`${location} HTML image element is not available.`);
+        error.name = ErrorCode.Unexpected;
+        throw error;
       }
 
-      // Set image URL to the image element.
-      // Hide image element if the index is out of range.
-      img.src = this.members[i].url;
+      // Set image source URL to the HTML image element.
+      img.src = member.url;
     }
+
+    return;
   }
 
   //----------------------------------------------------------------------------
   // Character info table.
   //
   private makeCharacterInfoTables() {
-    const location = `${this.className}.makeCharacterInfoTable()`;
+    const location = `${this.className}.makeCharacterInfoTables()`;
+    this.logger.debug(location);
 
     // Make table for each characters.
-    for (let i = 0; i < this.members.length; ++i) {
-      const index = this.members[i].data.index;
-      const tableId = `TeamMember_Table_${index}`;
+    for (let i = 0; i < this.teamMembers.length; ++i) {
+      const tableId = `TeamMember_Table_${this.teamMembers[i].id}`;
 
       // Make character table for 'a' character.
-      this.makeCharacterInfoTable(tableId, this.members[i].data);
+      this.makeCharacterInfoTable(tableId, this.teamMembers[i].data);
     }
   }
 
   private makeCharacterInfoTable(tableId: string, character: FsCharacter) {
+    const location = `${this.className}.makeCharacterInfoTable()`;
+    this.logger.debug(location, { tableId: tableId });
+
     const abilityTypes = this.firestore.getData(FsCollectionName.AbilityTypes) as FsAbilityType[];
 
     // Clear table.
@@ -333,7 +468,7 @@ export class TeamViewComponent implements OnInit, AfterViewInit {
   private clearTable(tableId: string) {
     const t = document.getElementById(tableId) as HTMLTableElement;
 
-    while (t.rows.length > 0) {
+    while (t.rows && t.rows.length > 0) {
       t.deleteRow(0);
     }
   }
@@ -567,5 +702,81 @@ export class TeamViewComponent implements OnInit, AfterViewInit {
     }
 
     return result;
+  }
+
+  //----------------------------------------------------------------------------
+  // Drag and drop control.
+  //
+  private setDragAndDropBehavior() {
+    const location = `${this.className}.setDragAndDropBehavior()`;
+    this.logger.trace(location);
+
+    for (let i = 0; i < this.teamMembers.length; ++i) {
+      const member = this.teamMembers[i];
+
+      // Get list element.
+      const elemId = `TeamMember_${member.data.index}`;
+      const li = document.getElementById(elemId);
+      if (!li) {
+        this.logger.error(location, 'List element was not found.', { id: elemId });
+        return;
+      }
+
+      // Set drag and drop behaviour.
+      // Start: When a list item is dragged.
+      li.ondragstart = (event: DragEvent) => {
+        this.logger.debug('ondragstart', { index: li.id });
+        if (event.dataTransfer) {
+          event.dataTransfer.setData('text/plain', li.id);
+        }
+      };
+      // Over: WHen a dragged item move over other list item.
+      // !!! The focused item is the covered list item. (not the dragged list item.) !!!
+      li.ondragover = (event) => {
+        event.preventDefault();
+        li.style.borderTop = '2px solid blue';
+      };
+      // Leave: When a dragged item go out of the other list item.
+      // !!! The focused item is the covered list item. (Not the dragged list item.) !!!
+      li.ondragleave = () => {
+        li.style.borderTop = '';
+      };
+      // Drop: When a dragged list item is dropped.
+      // !!! The focused item is the item which is located at the dropped position. (Not the dropped item.) !!!
+      li.ondrop = (event) => {
+        event.preventDefault();
+        li.style.borderTop = '';
+        if (event.dataTransfer) {
+          // Get dragged element from dataTransfer.
+          const draggedElemId = event.dataTransfer.getData('text/plain');
+          this.logger.debug('ondrop', { draggedElem: draggedElemId, droppedElem: li.id });
+
+          // Lock screen.
+          this.spinner.show();
+
+          // Move list item.
+          this.moveListItemBeforeAnotherItem(draggedElemId, li.id);
+
+          // Update user team info.
+          const draggedCharacterId = draggedElemId.replace('TeamMember_', '');
+          const droppedCharacterId = li.id.replace('TeamMember_', '');
+          this.changeTeamMemerOrder(draggedCharacterId, droppedCharacterId);
+
+          // Unlock screen.
+          this.spinner.hide();
+        }
+      };
+    }
+  }
+
+  private moveListItemBeforeAnotherItem(movedItemId: string, destItemId: string) {
+    const movedItem = document.getElementById(movedItemId) as HTMLLIElement;
+    const destItem = document.getElementById(destItemId) as HTMLLinkElement;
+
+    if (!movedItem || !destItem || !destItem.parentNode) {
+      return;
+    }
+
+    destItem.parentNode.insertBefore(movedItem, destItem);
   }
 }
