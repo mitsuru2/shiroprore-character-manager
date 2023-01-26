@@ -7,10 +7,9 @@
     <li *ngFor="let member of teamMembers" draggable="true" [id]="'TeamMember_' + member.id">
       <div class="list-item" [class.hidden]="member.hidden">
         <div class="image-column">
-          <!--<div [id]="'TeamMember_ThumbBox_' + member.data.index" class="image-box" [class.image-shade]="!member.owned">
-            <img [id]="'TeamMember_Thumb_' + member.data.index" />
-          </div>-->
-          (Thumbnail Area)
+          <div [id]="'TeamMember_ThumbBox_' + member.id" class="image-box" [class.image-shade]="!member.owned">
+            <img [id]="'TeamMember_Thumb_' + member.id" />
+          </div>
           <div style="text-align: center">
             <button
               pButton
