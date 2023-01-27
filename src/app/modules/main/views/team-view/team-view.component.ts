@@ -111,17 +111,6 @@ export class TeamViewComponent implements OnInit, AfterViewInit {
     this.spinner.hide();
   }
 
-  async redraw(): Promise<void> {
-    const location = `{this.className}.redraw()`;
-    this.logger.trace(location, { iTeam: this.iTeam });
-
-    // this.importTeamInfo();
-    // await this.loadThumbImages();
-    // this.updateThumbImages();
-    // this.makeCharacterInfoTables();
-    // this.setDragAndDropBehavior();
-  }
-
   //============================================================================
   // Private methods.
   //
@@ -157,6 +146,9 @@ export class TeamViewComponent implements OnInit, AfterViewInit {
 
       // Update image elements.
       this.drawThumbImages();
+
+      // Drag and drop behavior.
+      this.setDragAndDropBehavior();
 
       // Set view-initalized flag.
       this.viewCreated = true;
@@ -721,11 +713,12 @@ export class TeamViewComponent implements OnInit, AfterViewInit {
       const member = this.teamMembers[i];
 
       // Get list element.
-      const elemId = `TeamMember_${member.data.index}`;
+      const elemId = `TeamMember_${member.id}`;
       const li = document.getElementById(elemId);
       if (!li) {
-        this.logger.error(location, 'List element was not found.', { id: elemId });
-        return;
+        const error = new Error(`${location} List element was not found. { id: ${elemId} }`);
+        error.name = ErrorCode.Unexpected;
+        throw error;
       }
 
       // Set drag and drop behaviour.
