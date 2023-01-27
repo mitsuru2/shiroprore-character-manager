@@ -5,6 +5,7 @@
 <div>
   <ul class="team-member">
     <li *ngFor="let member of teamMembers" draggable="true" [id]="'TeamMember_' + member.id">
+      <p-divider *ngIf="!member.hidden && member.onBorder" align="center"><b>編成枠</b></p-divider>
       <div class="list-item" [class.hidden]="member.hidden">
         <div class="image-column">
           <div [id]="'TeamMember_ThumbBox_' + member.id" class="image-box" [class.image-shade]="!member.owned">

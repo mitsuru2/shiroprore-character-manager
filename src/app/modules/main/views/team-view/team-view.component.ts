@@ -41,6 +41,8 @@ class TeamMember {
 
   thumbLoaded: boolean = false;
 
+  onBorder: boolean = false;
+
   constructor(id: string) {
     this.id = id;
     this.data = new FsCharacter(id);
@@ -149,6 +151,9 @@ export class TeamViewComponent implements OnInit, AfterViewInit {
 
       // Drag and drop behavior.
       this.setDragAndDropBehavior();
+
+      // Update border flag.
+      this.updateOnBorderFlag();
 
       // Set view-initalized flag.
       this.viewCreated = true;
@@ -351,6 +356,21 @@ export class TeamViewComponent implements OnInit, AfterViewInit {
     await this.updateTeamMemberIds(changedTeam);
 
     return;
+  }
+
+  private updateOnBorderFlag() {
+    const team = this.getTeamMemberIds();
+
+    for (let i = 0; i < this.teamMembers.length; ++i) {
+      const member = this.teamMembers[i];
+      const j = team.findIndex((item) => item === member.id);
+
+      if (j === 8) {
+        member.onBorder = true;
+      } else {
+        member.onBorder = false;
+      }
+    }
   }
 
   //----------------------------------------------------------------------------
@@ -760,6 +780,7 @@ export class TeamViewComponent implements OnInit, AfterViewInit {
           const draggedCharacterId = draggedElemId.replace('TeamMember_', '');
           const droppedCharacterId = li.id.replace('TeamMember_', '');
           this.changeTeamMemerOrder(draggedCharacterId, droppedCharacterId);
+          this.updateOnBorderFlag();
 
           // Unlock screen.
           this.spinner.hide();
