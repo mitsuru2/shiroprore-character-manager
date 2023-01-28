@@ -193,7 +193,7 @@ export class FsIllustrator extends FsDocumentBase {}
 export class FsRegion extends FsDocumentBaseWithOrder {}
 
 export const teamNumMax = 3;
-export const teamCharacterNumMax = 16;
+export const teamCharacterNumMax = 40;
 
 export class FsUser extends FsDocumentBase {
   characters: string[] = [];

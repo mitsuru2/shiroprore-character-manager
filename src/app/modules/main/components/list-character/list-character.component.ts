@@ -17,6 +17,7 @@ import {
   FsRegion,
   FsWeapon,
   FsWeaponType,
+  teamCharacterNumMax,
   teamNumMax,
 } from 'src/app/services/firestore-data/firestore-document.interface';
 import { CharacterFilterService } from '../../services/character-filter/character-filter.service';
@@ -113,6 +114,8 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
 
   /** Warning message. */
   private readonly teamEditWarning = '編成管理機能にはログインが必要です。';
+
+  private readonly teamMaxWarning = `最大人数(${teamCharacterNumMax}人)に達しています。`;
 
   //============================================================================
   // Class methods.
@@ -371,10 +374,8 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     // Check if the user signed in or not.
     if (!this.userAuth.signedIn) {
       this.showTeamEditWarning(iTeam);
+      return;
     }
-
-    // Show spinner.
-    this.spinner.show();
 
     // Get the value of the changed checkbox.
     let checked = false;
@@ -382,6 +383,20 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
       checked = true;
     }
     this.logger.trace(location, { iCell: iCell, iTeam: iTeam, checked: checked, event: event });
+
+    // Check max number of team members.
+    if (checked) {
+      const team = this.getUserTeam(iTeam);
+      if (team) {
+        if (team.length >= teamCharacterNumMax) {
+          this.showTeamMaxWarning(iTeam, iCell);
+          return;
+        }
+      }
+    }
+
+    // Show spinner.
+    this.spinner.show();
 
     // Calc character index. And get character ID.
     const iCharacter = this.filteredIndexes[iCell + this.paginator.firstItemIndex];
@@ -1149,6 +1164,20 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
       },
       reject: () => {
         this.teamCheckFlags[iTeam] = [];
+      },
+    });
+  }
+
+  private showTeamMaxWarning(iTeam: number, iCell: number) {
+    this.confirmationDialog.confirm({
+      message: this.teamMaxWarning,
+      acceptLabel: 'OK',
+      rejectVisible: false,
+      accept: () => {
+        this.teamCheckFlags[iTeam] = this.teamCheckFlags[iTeam].filter((item) => item !== iCell);
+      },
+      reject: () => {
+        this.teamCheckFlags[iTeam] = this.teamCheckFlags[iTeam].filter((item) => item !== iCell);
       },
     });
   }
