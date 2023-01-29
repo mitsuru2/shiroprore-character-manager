@@ -48,6 +48,12 @@ export class MainComponent /*implements OnInit*/ {
       },
     },
     {
+      label: 'キャラクター改築状況',
+      command: () => {
+        this.onCharacterKaichikuStatusMenuClick();
+      },
+    },
+    {
       label: '新規キャラクター登録',
       command: () => {
         this.onNewCharacterMenuClick();
@@ -88,6 +94,12 @@ export class MainComponent /*implements OnInit*/ {
           label: 'キャラクター所持状況',
           command: () => {
             this.onCharacterOwnershipStatusMenuClick();
+          },
+        },
+        {
+          label: 'キャラクター改築状況',
+          command: () => {
+            this.onCharacterKaichikuStatusMenuClick();
           },
         },
         {
@@ -241,6 +253,18 @@ export class MainComponent /*implements OnInit*/ {
     } else {
       this.confirmationDialog.confirm({
         message: 'キャラクター所持状況の管理にはログインが必要です。',
+        acceptLabel: 'OK',
+        rejectVisible: false,
+      });
+    }
+  }
+
+  private onCharacterKaichikuStatusMenuClick() {
+    if (this.userAuth.signedIn) {
+      this.router.navigateByUrl('/main/list-character-kaichiku');
+    } else {
+      this.confirmationDialog.confirm({
+        message: 'キャラクター改築状況の管理にはログインが必要です。',
         acceptLabel: 'OK',
         rejectVisible: false,
       });

@@ -10,6 +10,7 @@ import { CharacterComponent } from './components/character/character.component';
 import { ListCharacterOwnershipComponent } from './components/list-character-ownership/list-character-ownership.component';
 import { SupportComponent } from './components/support/support.component';
 import { TeamComponent } from './components/team/team.component';
+import { ListCharacterKaichikuComponent } from './components/list-character-kaichiku/list-character-kaichiku.component';
 
 const routes: Routes = [
   {
@@ -22,6 +23,7 @@ const routes: Routes = [
       { path: 'list-character/:query', component: ListCharacterComponent },
       { path: 'character/:id', component: CharacterComponent },
       { path: 'list-character-ownership', component: ListCharacterOwnershipComponent },
+      { path: 'list-character-kaichiku', component: ListCharacterKaichikuComponent },
       { path: 'legal', component: LegalComponent },
       { path: 'legal/:page', component: LegalComponent },
       { path: 'login', component: LoginComponent },

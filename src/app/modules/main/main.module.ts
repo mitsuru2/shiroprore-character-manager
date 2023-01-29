@@ -66,6 +66,7 @@ import { ReadMeComponent } from './views/read-me/read-me.component';
 import { AnnounceComponent } from './views/announce/announce.component';
 import { TeamComponent } from './components/team/team.component';
 import { TeamViewComponent } from './views/team-view/team-view.component';
+import { ListCharacterKaichikuComponent } from './components/list-character-kaichiku/list-character-kaichiku.component';
 
 const firebaseUiAuthConfig: firebaseui.auth.Config = {
   autoUpgradeAnonymousUsers: false, // Disable annymouse users.
@@ -112,6 +113,7 @@ const firebaseUiAuthConfig: firebaseui.auth.Config = {
     AnnounceComponent,
     TeamComponent,
     TeamViewComponent,
+    ListCharacterKaichikuComponent,
   ],
   imports: [
     CommonModule,

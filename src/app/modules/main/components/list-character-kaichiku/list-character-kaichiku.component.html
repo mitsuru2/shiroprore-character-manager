@@ -1,0 +1,135 @@
+<div class="character-kaichiku-list-view">
+  <!---->
+  <!-- Header Area -->
+  <!---->
+  <div class="header">
+    <!-- Filter button -->
+    <button pButton type="button" icon="pi pi-filter" (click)="onFilterButtonClick()" style="flex: none" title="フィルター設定"></button>
+
+    <!-- Sort button -->
+    <button pButton type="button" icon="pi pi-sort" (click)="onSortButtonClick()" style="flex: none" title="ソート設定"></button>
+
+    <!-- Text search input. -->
+    <div style="flex: auto">
+      <span class="p-input-icon-right search-text-input">
+        <i class="pi" [class.pi-times]="inputSearchText !== ''" (click)="onSearchTextClearButtonClick()"></i>
+        <input
+          type="text"
+          id="ListCharacterOwnership_SearchTextInput"
+          pInputText
+          [(ngModel)]="inputSearchText"
+          placeholder="Search"
+          style="width: 100%"
+          (keydown.enter)="onTextSearchButtonClick()"
+        />
+      </span>
+      <button pButton type="button" icon="pi pi-search" [disabled]="inputSearchText === ''" (click)="onTextSearchButtonClick()" title="テキスト検索"></button>
+    </div>
+
+    <!-- Submit button. -->
+    <span>
+      <button
+        id="ListCharacterOwnership_ApplyButton"
+        pButton
+        type="button"
+        icon="pi pi-check"
+        label="SAVE"
+        (click)="onApplyButtonClick()"
+        [disabled]="!changed"
+        style="flex: none"
+        title="保存"
+      ></button>
+    </span>
+  </div>
+
+  <!---->
+  <!-- Contents Area -->
+  <!---->
+  <div class="grid grid-nogutter">
+    <div class="col-fixed" style="width: 38px">
+      <p-checkbox
+        [inputId]="'ListCharacterOwnership_Checkbox_All'"
+        name="ListCharacterOwnership_Checkbox_All"
+        [value]="true"
+        [(ngModel)]="inputAllCheckboxSwitch"
+        (onChange)="onAllCheckboxSwitchClick()"
+      ></p-checkbox>
+    </div>
+    <div class="col">一括チェック</div>
+  </div>
+  <div class="content" id="ListCharacterOwnership_Content">
+    <div *ngFor="let i of paginator.rowIndexes">
+      <div class="formgrid grid grid-nogutter" *ngIf="i + paginator.firstItemIndex < filteredIndexes.length">
+        <div class="field col-fixed" style="width: 38px">
+          <p-checkbox
+            [inputId]="'ListCharacterOwnership_Checkbox_' + i"
+            name="ListCharacterOwnership_Checkbox"
+            [value]="i"
+            [(ngModel)]="inputCharacterOwnershipStatuses"
+            (onChange)="onIndivisualCheckboxClick(i, $event)"
+          ></p-checkbox>
+        </div>
+        <div class="field col">{{ characterLabels[i] }}</div>
+      </div>
+    </div>
+  </div>
+
+  <!---->
+  <!-- Footer Area -->
+  <!---->
+  <div class="footer">
+    <p-paginator
+      [rows]="paginator.rowNum"
+      [first]="paginator.firstItemIndex"
+      [totalRecords]="filteredIndexes.length"
+      [pageLinkSize]="paginator.pageLinkNum"
+      styleClass="paginator"
+      (onPageChange)="onPageChange($event)"
+    ></p-paginator>
+  </div>
+</div>
+
+<!----------------------------------------------------------------------------->
+<!-- Filter setting dialog ---------------------------------------------------->
+<!----------------------------------------------------------------------------->
+<p-dialog header="フィルタ設定" [(visible)]="filterDialogShown" [modal]="true" [closable]="false" [draggable]="false" [resizable]="false" styleClass="dialog">
+  <app-character-filter-settings-form
+    [(filterSetting)]="filterSetting"
+    [hideButton]="true"
+    (canceled)="onFilterSettingsDialogResult($event)"
+  ></app-character-filter-settings-form>
+  <ng-template pTemplate="footer">
+    <div style="margin-top: 1rem">
+      <p-button label="OK" icon="pi pi-check" [styleClass]="'p-button-text'" (onClick)="onFilterSettingsOkButtonClick()"></p-button>
+      <p-button label="CLEAR" icon="pi pi-eraser" [styleClass]="'p-button-text'" (onClick)="onFilterSettingsClearButtonClick()"></p-button>
+      <p-button
+        label="CANCEL"
+        icon="pi pi-times"
+        [style]="{ 'margin-left': '.5rem' }"
+        [styleClass]="'p-button-secondary p-button-text'"
+        (onClick)="onFilterSettingsCancelButtonClick()"
+      ></p-button>
+    </div> </ng-template
+></p-dialog>
+
+<!----------------------------------------------------------------------------->
+<!-- Sort setting dialog ---------------------------------------------------->
+<!----------------------------------------------------------------------------->
+<p-dialog header="ソート設定" [(visible)]="sortDialogShown" [modal]="true" [closable]="false" [draggable]="false" [resizable]="false" styleClass="dialog">
+  <app-character-sort-settings-form
+    [(sortSetting)]="sortSetting"
+    [hideButton]="true"
+    (canceled)="onSortSettingsDialogResult($event)"
+  ></app-character-sort-settings-form>
+  <ng-template pTemplate="footer">
+    <div style="margin-top: 1rem">
+      <p-button label="OK" icon="pi pi-check" [styleClass]="'p-button-text'" (onClick)="onSortSettingsOkButtonClick()"></p-button>
+      <p-button
+        label="CANCEL"
+        icon="pi pi-times"
+        [style]="{ 'margin-left': '.5rem' }"
+        [styleClass]="'p-button-secondary p-button-text'"
+        (onClick)="onSortSettingsCancelButtonClick()"
+      ></p-button>
+    </div> </ng-template
+></p-dialog>

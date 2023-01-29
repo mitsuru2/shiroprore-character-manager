@@ -1,0 +1,68 @@
+.character-kaichiku-list-view {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+  .header {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+
+    .search-text-input {
+      width: calc(100% - 38px);
+      max-width: 380px;
+    }
+  }
+
+  .content {
+    flex-grow: 1;
+    margin: 0.5rem 0;
+    overflow-y: auto;
+  }
+
+  .footer {
+    display: flex;
+    justify-content: center;
+    margin: 0.5rem 0;
+  }
+}
+
+:host ::ng-deep .paginator.p-paginator {
+  .p-paginator-page {
+    border-radius: 50%; // Circle.
+  }
+
+  .p-paginator-first {
+    border-radius: 50%;
+  }
+
+  .p-paginator-prev {
+    border-radius: 50%;
+  }
+
+  .p-paginator-next {
+    border-radius: 50%;
+  }
+
+  .p-paginator-last {
+    border-radius: 50%;
+  }
+}
+
+@media screen and (max-width: 959px) {
+  .character-ownership-list-view {
+    .header {
+      .header-left-div {
+        width: auto;
+      }
+
+      .search-text-input {
+        max-width: none;
+      }
+    }
+
+    .footer {
+      margin: 0;
+    }
+  }
+}
