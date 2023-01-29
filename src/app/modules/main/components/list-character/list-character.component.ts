@@ -212,7 +212,13 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     this.updateOwnershipStatuses();
 
     // Update team check status.
-    this.updateTeamCheckboxStatuses();
+    if (this.userAuth.signedIn) {
+      this.updateTeamCheckboxStatuses();
+    } else {
+      this.userAuth.addEventListener('signIn', () => {
+        this.updateTeamCheckboxStatuses();
+      });
+    }
   }
 
   //----------------------------------------------------------------------------
