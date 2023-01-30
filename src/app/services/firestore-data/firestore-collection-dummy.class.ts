@@ -72,7 +72,7 @@ export const fsWeaponTypesData: FsWeaponType[] = [
   new FsWeaponType('KbBAVH0AUR64qOcPwert', '本', '98', 10, true),
   new FsWeaponType('VSUcK8pUwcfo2X86EtqQ', '投剣', 'a0', 9, false),
   new FsWeaponType('XrpFg0UmTbJ8JRPo7bsy', '鞭', 'a8', 8, false),
-  new FsWeaponType('gpkcXm50DdpkhRRFH9OY', '陣貝', 'b0', 11, false),
+  new FsWeaponType('gpkcXm50DdpkhRRFH9OY', '陣貝', 'b0', 13, false),
   new FsWeaponType('Z6o0nE1PP4FdB52YTECz', '軍船', 'b4', 15, false),
   new FsWeaponType('7SOJv751A3AkKeHjO3RT', '神娘', 'e0', 99, false),
   new FsWeaponType('L4FpZNz6GuDE98CJWgr7', 'その他', 'f0', 99, true),
