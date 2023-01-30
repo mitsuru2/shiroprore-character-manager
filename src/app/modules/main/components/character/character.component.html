@@ -12,7 +12,7 @@
         (onClick)="onImageTypeClick()"
         [disabled]="!images[i].valid"
       ></p-radioButton>
-      <label [for]="'Character_ImageTypeInput_' + item.type">{{ item.label }}</label>
+      <label [for]="'Character_ImageTypeInput_' + item.type" [class.invalid-image-label]="!images[i].valid">{{ item.label }}</label>
     </div>
   </div>
   <div class="right-side field-checkbox">
