@@ -1,8 +1,8 @@
-import { Component, ViewChild, OnInit } from '@angular/core';
+import { Component, ViewChild /*OnInit*/ } from '@angular/core';
 import { NGXLogger } from 'ngx-logger';
 import { FsCollectionName } from 'src/app/services/firestore-data/firestore-collection-name.enum';
 import { FirestoreDataService } from 'src/app/services/firestore-data/firestore-data.service';
-import { FsCharacter, FsGeographType, FsWeaponType } from 'src/app/services/firestore-data/firestore-document.interface';
+import { FsCharacter, FsCharacterType, FsGeographType, FsWeaponType } from 'src/app/services/firestore-data/firestore-document.interface';
 import { CharacterFilterService } from '../../services/character-filter/character-filter.service';
 import { SpinnerService } from '../../services/spinner/spinner.service';
 import { UserAuthService } from '../../services/user-auth/user-auth.service';
@@ -17,7 +17,7 @@ import { CharacterSortSetting } from '../../views/character-sort-settings-form/c
   templateUrl: './list-character-kaichiku.component.html',
   styleUrls: ['./list-character-kaichiku.component.scss'],
 })
-export class ListCharacterKaichikuComponent implements OnInit {
+export class ListCharacterKaichikuComponent /*implements OnInit*/ {
   private readonly className = 'ListCharacterKaichikuComponent';
 
   /** Filter settings form. */
@@ -77,6 +77,13 @@ export class ListCharacterKaichikuComponent implements OnInit {
       return a.index < b.index ? -1 : 1;
     });
 
+    // Filter characters. Characters which enable kaichiku are only needed.
+    const kaichikuTypes = (this.firestore.getData(FsCollectionName.CharacterTypes) as FsCharacterType[])
+      .filter((item) => item.isKaichikuEnable)
+      .map((item) => item.id);
+    this.characters = (this.firestore.getData(FsCollectionName.Characters) as FsCharacter[]).filter((item) => kaichikuTypes.includes(item.type));
+    this.logger.debug('constructor', { kaichikuTypes: kaichikuTypes, characters: this.characters });
+
     // Initalize filter service.
     this.filteredIndexes = this.characterFilter.filter(this.characters, this.filterSetting, '');
 
@@ -91,7 +98,7 @@ export class ListCharacterKaichikuComponent implements OnInit {
     this.updateOwnershipStatuses();
   }
 
-  ngOnInit(): void {}
+  // ngOnInit(): void {}
 
   onFilterButtonClick() {
     this.filterSettingCopy = { ...this.filterSetting };

@@ -16,12 +16,7 @@ export class NavigatorService implements CanActivateChild {
   //============================================================================
   // Class methods.
   //
-  constructor(
-    private logger: NGXLogger,
-    private router: Router,
-    private userAuth: UserAuthService,
-    private firestore: FirestoreDataService
-  ) {
+  constructor(private logger: NGXLogger, private router: Router, private userAuth: UserAuthService, private firestore: FirestoreDataService) {
     this.logger.trace(`new ${this.className}()`);
   }
 
@@ -31,7 +26,7 @@ export class NavigatorService implements CanActivateChild {
 
     this.logger.trace(location, { path: path });
 
-    if (['new-character', 'list-character-ownership'].includes(path)) {
+    if (['new-character', 'list-character-ownership', 'list-character-kaichiku'].includes(path)) {
       if (!this.userAuth.signedIn) {
         this.logger.error(location, 'Anonymous user is not allowed.', { path: path });
         this.router.navigateByUrl('main/login');
