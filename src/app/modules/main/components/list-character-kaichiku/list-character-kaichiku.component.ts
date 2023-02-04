@@ -45,7 +45,7 @@ export class ListCharacterKaichikuComponent /*implements OnInit*/ {
 
   inputAllCheckboxSwitch: boolean[] = [];
 
-  inputCharacterOwnershipStatuses: number[] = [];
+  inputCharacterKaichikuStatuses: number[] = [];
 
   characterLabels: string[] = Array(this.maxRowNum);
 
@@ -95,7 +95,7 @@ export class ListCharacterKaichikuComponent /*implements OnInit*/ {
     this.paginator.goToFirstPage();
 
     // Update each checkbox status.
-    this.updateOwnershipStatuses();
+    this.updateKaichikuStatuses();
   }
 
   // ngOnInit(): void {}
@@ -135,7 +135,7 @@ export class ListCharacterKaichikuComponent /*implements OnInit*/ {
 
     // Update character label texts and checkbox statuses.
     this.updateCharacterLabels();
-    this.updateOwnershipStatuses();
+    this.updateKaichikuStatuses();
 
     // Hide spinner.
     this.spinner.hide();
@@ -171,7 +171,7 @@ export class ListCharacterKaichikuComponent /*implements OnInit*/ {
 
     // Update character label texts and checkbox statuses.
     this.updateCharacterLabels();
-    this.updateOwnershipStatuses();
+    this.updateKaichikuStatuses();
 
     // Hide spinner.
     this.spinner.hide();
@@ -196,7 +196,7 @@ export class ListCharacterKaichikuComponent /*implements OnInit*/ {
 
   onTextSearchButtonClick() {
     this.onFilterSettingsDialogResult(false);
-    document.getElementById('ListCharacterOwnership_SearchTextInput')?.focus();
+    document.getElementById('ListCharacterKaichiku_SearchTextInput')?.focus();
   }
 
   async onApplyButtonClick() {
@@ -209,7 +209,7 @@ export class ListCharacterKaichikuComponent /*implements OnInit*/ {
     this.updateUserData();
 
     // Upload updated user data.
-    await this.firestore.updateField(FsCollectionName.Users, this.userAuth.userData.id, 'characters', this.userAuth.userData.characters);
+    await this.firestore.updateField(FsCollectionName.Users, this.userAuth.userData.id, 'kaichikuCharacters', this.userAuth.userData.kaichikuCharacters);
 
     // Clear changed flag.
     this.changed = false;
@@ -227,17 +227,17 @@ export class ListCharacterKaichikuComponent /*implements OnInit*/ {
 
     // CASE: Checked.
     if (checked) {
-      // Add all row indexes to inputCharacterOwnershipStatuses.
-      this.inputCharacterOwnershipStatuses = [];
+      // Add all row indexes to inputCharacterKaichikuStatuses.
+      this.inputCharacterKaichikuStatuses = [];
       for (let i = 0; i < this.paginator.rowNum; ++i) {
-        this.inputCharacterOwnershipStatuses.push(i);
+        this.inputCharacterKaichikuStatuses.push(i);
       }
     }
 
     // CASE: Unchecked.
     else {
       // Clear checkbox input values.
-      this.inputCharacterOwnershipStatuses = [];
+      this.inputCharacterKaichikuStatuses = [];
     }
   }
 
@@ -263,7 +263,7 @@ export class ListCharacterKaichikuComponent /*implements OnInit*/ {
 
       // Clear checkbox.
       this.inputAllCheckboxSwitch = [];
-      this.updateOwnershipStatuses();
+      this.updateKaichikuStatuses();
 
       // Clear changed flag.
       this.changed = false;
@@ -285,15 +285,15 @@ export class ListCharacterKaichikuComponent /*implements OnInit*/ {
   // Private methods.
   //
   //----------------------------------------------------------------------------
-  // Character ownership status.
+  // Character kaichiku status.
   //
   /**
-   * It updates 'this.inputCharacterOwnershipStatuses'.
+   * It updates 'this.inputCharacterKaichikuStatuses'.
    * Filtering, sorting, and paginator information shall be updated beforehand.
    */
-  private updateOwnershipStatuses() {
+  private updateKaichikuStatuses() {
     // Clear checkboxes.
-    this.inputCharacterOwnershipStatuses = [];
+    this.inputCharacterKaichikuStatuses = [];
 
     // Scan paginator rows.
     for (let i = 0; i < this.paginator.rowNum; ++i) {
@@ -306,8 +306,8 @@ export class ListCharacterKaichikuComponent /*implements OnInit*/ {
       const characterId = this.characters[this.filteredIndexes[i + this.paginator.firstItemIndex]].id;
 
       // Check if the user has that character.
-      if (this.userAuth.userData.characters.includes(characterId)) {
-        this.inputCharacterOwnershipStatuses.push(i);
+      if (this.userAuth.userData.kaichikuCharacters.includes(characterId)) {
+        this.inputCharacterKaichikuStatuses.push(i);
       }
     }
   }
@@ -361,7 +361,7 @@ export class ListCharacterKaichikuComponent /*implements OnInit*/ {
   // User data.
   //
   private updateUserData() {
-    const userData = this.userAuth.userData.characters;
+    const userData = this.userAuth.userData.kaichikuCharacters;
 
     for (let i = 0; i < this.paginator.rowNum; ++i) {
       if (i + this.paginator.firstItemIndex >= this.filteredIndexes.length) {
@@ -369,7 +369,7 @@ export class ListCharacterKaichikuComponent /*implements OnInit*/ {
       }
 
       // Get checkbox status and character ID.
-      const checked = this.inputCharacterOwnershipStatuses.includes(i);
+      const checked = this.inputCharacterKaichikuStatuses.includes(i);
       const characterId = this.characters[this.filteredIndexes[i + this.paginator.firstItemIndex]].id;
 
       // Update user data.
@@ -386,6 +386,6 @@ export class ListCharacterKaichikuComponent /*implements OnInit*/ {
   //
   private scrollToTop() {
     this.logger.trace('scrollToTop()');
-    document.getElementById('ListCharacterOwnership_Content')?.scrollTo({ top: 0, behavior: 'auto' });
+    document.getElementById('ListCharacterKaichiku_Content')?.scrollTo({ top: 0, behavior: 'auto' });
   }
 }

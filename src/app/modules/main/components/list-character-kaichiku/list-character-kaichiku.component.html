@@ -15,7 +15,7 @@
         <i class="pi" [class.pi-times]="inputSearchText !== ''" (click)="onSearchTextClearButtonClick()"></i>
         <input
           type="text"
-          id="ListCharacterOwnership_SearchTextInput"
+          id="ListCharacterKaichiku_SearchTextInput"
           pInputText
           [(ngModel)]="inputSearchText"
           placeholder="Search"
@@ -29,7 +29,7 @@
     <!-- Submit button. -->
     <span>
       <button
-        id="ListCharacterOwnership_ApplyButton"
+        id="ListCharacterKaichiku_ApplyButton"
         pButton
         type="button"
         icon="pi pi-check"
@@ -48,8 +48,8 @@
   <div class="grid grid-nogutter">
     <div class="col-fixed" style="width: 38px">
       <p-checkbox
-        [inputId]="'ListCharacterOwnership_Checkbox_All'"
-        name="ListCharacterOwnership_Checkbox_All"
+        [inputId]="'ListCharacterKaichiku_Checkbox_All'"
+        name="ListCharacterKaichiku_Checkbox_All"
         [value]="true"
         [(ngModel)]="inputAllCheckboxSwitch"
         (onChange)="onAllCheckboxSwitchClick()"
@@ -57,15 +57,15 @@
     </div>
     <div class="col">一括チェック</div>
   </div>
-  <div class="content" id="ListCharacterOwnership_Content">
+  <div class="content" id="ListCharacterKaichiku_Content">
     <div *ngFor="let i of paginator.rowIndexes">
       <div class="formgrid grid grid-nogutter" *ngIf="i + paginator.firstItemIndex < filteredIndexes.length">
         <div class="field col-fixed" style="width: 38px">
           <p-checkbox
-            [inputId]="'ListCharacterOwnership_Checkbox_' + i"
-            name="ListCharacterOwnership_Checkbox"
+            [inputId]="'ListCharacterKaichiku_Checkbox_' + i"
+            name="ListCharacterKaichiku_Checkbox"
             [value]="i"
-            [(ngModel)]="inputCharacterOwnershipStatuses"
+            [(ngModel)]="inputCharacterKaichikuStatuses"
             (onChange)="onIndivisualCheckboxClick(i, $event)"
           ></p-checkbox>
         </div>

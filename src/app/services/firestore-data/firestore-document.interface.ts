@@ -198,6 +198,8 @@ export const teamCharacterNumMax = 40;
 export class FsUser extends FsDocumentBase {
   characters: string[] = [];
 
+  kaichikuCharacters: string[] = [];
+
   facilities: string[] = [];
 
   weapons: string[] = [];
