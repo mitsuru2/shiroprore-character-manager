@@ -374,7 +374,7 @@ export class ListCharacterKaichikuComponent /*implements OnInit*/ {
 
       // Update user data.
       if (checked && !userData.includes(characterId)) {
-        this.userAuth.userData.characters.push(characterId);
+        userData.push(characterId);
       } else if (!checked && userData.includes(characterId)) {
         userData.splice(userData.indexOf(characterId), 1);
       }
