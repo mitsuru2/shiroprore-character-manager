@@ -43,6 +43,8 @@ class TeamMember {
 
   onBorder: boolean = false;
 
+  isKaichiku: boolean = false;
+
   constructor(id: string) {
     this.id = id;
     this.data = new FsCharacter(id);
@@ -66,6 +68,8 @@ export class TeamViewComponent implements OnInit, AfterViewInit {
   private viewCreated = false;
 
   teamMembers: TeamMember[] = [];
+
+  isAllHidden = false;
 
   //============================================================================
   // Public functions.
@@ -109,6 +113,8 @@ export class TeamViewComponent implements OnInit, AfterViewInit {
     this.spinner.show();
 
     await this.removeTeamMember(id);
+
+    this.updateOnBorderFlag();
 
     this.spinner.hide();
   }
@@ -254,6 +260,9 @@ export class TeamViewComponent implements OnInit, AfterViewInit {
       // Get character ownership status.
       member.owned = this.userAuth.userData.characters.includes(member.id);
 
+      // Get kaichiku status.
+      member.isKaichiku = this.userAuth.userData.kaichikuCharacters.includes(member.id);
+
       /**
        * It doesn't load image data here. Because image data loading may take time.
        * Image data loading shall be done afterwards.
@@ -303,6 +312,15 @@ export class TeamViewComponent implements OnInit, AfterViewInit {
 
     // Update user data.
     await this.updateTeamMemberIds(filteredMemberIds);
+
+    // Check all members are hidden or not.
+    this.isAllHidden = true;
+    for (let i = 0; i < this.teamMembers.length; ++i) {
+      if (!this.teamMembers[i].hidden) {
+        this.isAllHidden = false;
+        break;
+      }
+    }
 
     return;
   }
@@ -360,15 +378,20 @@ export class TeamViewComponent implements OnInit, AfterViewInit {
 
   private updateOnBorderFlag() {
     const team = this.getTeamMemberIds();
+    let threshold = 8;
 
-    for (let i = 0; i < this.teamMembers.length; ++i) {
-      const member = this.teamMembers[i];
-      const j = team.findIndex((item) => item === member.id);
-
-      if (j === 8) {
-        member.onBorder = true;
-      } else {
-        member.onBorder = false;
+    for (let i = 0; i < team.length; ++i) {
+      const member = this.teamMembers.find((item) => item.id === team[i]);
+      if (member) {
+        if (member.hidden) {
+          threshold++;
+        } else {
+          if (i === threshold) {
+            member.onBorder = true;
+          } else {
+            member.onBorder = false;
+          }
+        }
       }
     }
   }
@@ -445,11 +468,11 @@ export class TeamViewComponent implements OnInit, AfterViewInit {
       const tableId = `TeamMember_Table_${this.teamMembers[i].id}`;
 
       // Make character table for 'a' character.
-      this.makeCharacterInfoTable(tableId, this.teamMembers[i].data);
+      this.makeCharacterInfoTable(tableId, this.teamMembers[i].data, this.teamMembers[i].isKaichiku);
     }
   }
 
-  private makeCharacterInfoTable(tableId: string, character: FsCharacter) {
+  private makeCharacterInfoTable(tableId: string, character: FsCharacter, isKaichiku: boolean) {
     const location = `${this.className}.makeCharacterInfoTable()`;
     this.logger.debug(location, { tableId: tableId });
 
@@ -479,7 +502,7 @@ export class TeamViewComponent implements OnInit, AfterViewInit {
 
     // Make ability info rows.
     for (let i = 0; i < abilityTypes.length; ++i) {
-      this.makeAbilityInfoRows(t, character, abilityTypes[i]);
+      this.makeAbilityInfoRows(t, character, abilityTypes[i], isKaichiku);
     }
   }
 
@@ -550,14 +573,10 @@ export class TeamViewComponent implements OnInit, AfterViewInit {
     HtmlElementUtil.appendTextNode(td, result);
   }
 
-  private makeAbilityInfoRows(t: HTMLTableElement, character: FsCharacter, type: FsAbilityType) {
+  private makeAbilityInfoRows(t: HTMLTableElement, character: FsCharacter, type: FsAbilityType, isKaichiku: boolean) {
     // Filter abilities and abilities(kai).
-    // const abilities = this.abilities.filter((item) => character.abilities.includes(item.id)).filter((item) => item.type === type.id);
-    // const abilitiesKai = this.abilities.filter((item) => character.abilitiesKai.includes(item.id)).filter((item) => item.type === type.id);
-    const abilities = (this.firestore.getDataByIds(FsCollectionName.Abilities, character.abilities) as FsAbility[]).filter((item) => item.type === type.id);
-    const abilitiesKai = (this.firestore.getDataByIds(FsCollectionName.Abilities, character.abilitiesKai) as FsAbility[]).filter(
-      (item) => item.type === type.id
-    );
+    const abilityIds = !isKaichiku ? character.abilities : character.abilitiesKai;
+    const abilities = (this.firestore.getDataByIds(FsCollectionName.Abilities, abilityIds) as FsAbility[]).filter((item) => item.type === type.id);
 
     // 2022-10-09: Show abilities by order in character ability list.
     // // Sort ability list by updated date.
@@ -565,7 +584,7 @@ export class TeamViewComponent implements OnInit, AfterViewInit {
     // this.firestore.sortByTimestamp(abilitiesKai, 'updatedAt');
 
     // CASE: No abilities. --> Do nothing.
-    if (abilities.length === 0 && abilitiesKai.length === 0) {
+    if (abilities.length === 0) {
       return;
     }
 
@@ -585,43 +604,7 @@ export class TeamViewComponent implements OnInit, AfterViewInit {
       // Make ability name text.
       tr = t.insertRow();
       td = tr.insertCell();
-      td.textContent = `[無印] ${ability.name}`;
-      this.setTdStyle(td);
-
-      // If previous ability is same, it expands row span.
-      if (ability.name === prevAbilityName) {
-        if (prevAbilityDescCell) {
-          prevAbilityDescCell.rowSpan = 2;
-        }
-      }
-
-      // Make ability description text.
-      else {
-        td = tr.insertCell();
-        let descText = this.makeAbilityDescriptionText(ability.descriptions);
-
-        // If the ability type is Keiryaku, add interval, cost, and token info.
-        if (type.isKeiryaku && ability.interval >= 0) {
-          descText += '\n' + this.makeKeiryakuPropertiesText(ability);
-        }
-
-        td.innerText = descText; // User 'innerText' property to activate line feed.
-        this.setTdStyle(td);
-      }
-
-      // Update prev*** variables.
-      prevAbilityName = ability.name;
-      prevAbilityDescCell = td;
-    }
-
-    // Make ability info (kaichiku)
-    for (let i = 0; i < abilitiesKai.length; ++i) {
-      const ability = abilitiesKai[i];
-
-      // Make ability name text.
-      tr = t.insertRow();
-      td = tr.insertCell();
-      td.textContent = `[改壱] ${ability.name}`;
+      td.textContent = (!isKaichiku ? '[無印] ' : '[改壱] ') + ability.name;
       this.setTdStyle(td);
 
       // If previous ability is same, it expands row span.
