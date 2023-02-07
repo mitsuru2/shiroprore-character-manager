@@ -4,12 +4,12 @@
 </div>
 <div>
   <ul class="team-member">
-    <li *ngFor="let member of teamMembers" draggable="true" [id]="'TeamMember_' + member.id">
+    <li *ngFor="let member of teamMembers" draggable="true" [id]="'Team_' + iTeam + '_Member_' + member.id">
       <p-divider *ngIf="!member.hidden && member.onBorder" align="center"><b>編成枠</b></p-divider>
       <div class="list-item" [class.hidden]="member.hidden">
         <div class="image-column">
-          <div [id]="'TeamMember_ThumbBox_' + member.id" class="image-box" [class.image-shade]="!member.owned">
-            <img [id]="'TeamMember_Thumb_' + member.id" />
+          <div [id]="'Team_' + iTeam + '_Member_ThumbBox_' + member.id" class="image-box" [class.image-shade]="!member.owned">
+            <img [id]="'Team_' + iTeam + '_Member_Thumb_' + member.id" />
           </div>
           <div style="text-align: center">
             <button
@@ -23,7 +23,7 @@
           </div>
         </div>
         <div>
-          <table [id]="'TeamMember_Table_' + member.id">
+          <table [id]="'Team_' + iTeam + '_Member_Table_' + member.id">
             <colgroup>
               <col class="short-col" />
               <col class="long-col" />
@@ -32,5 +32,8 @@
         </div>
       </div>
     </li>
+    <!-- Dummy list element at the bottom of the list. -->
+    <!-- It is needed to drag an element to the bottom. -->
+    <li style="border: 0; list-style-type: none" id="DummyMemberElement">&nbsp;</li>
   </ul>
 </div>

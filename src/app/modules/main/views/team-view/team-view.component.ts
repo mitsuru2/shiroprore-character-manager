@@ -203,7 +203,7 @@ export class TeamViewComponent implements OnInit, AfterViewInit {
     for (let i = 0; i < this.teamMembers.length; ++i) {
       result = false;
       const member = this.teamMembers[i];
-      const tableId = `TeamMember_Table_${member.id}`;
+      const tableId = `Team_${this.iTeam}_Member_Table_${member.id}`;
 
       while (waitTime < timeout) {
         const table = document.getElementById(tableId);
@@ -442,7 +442,7 @@ export class TeamViewComponent implements OnInit, AfterViewInit {
       }
 
       // Get image element.
-      const img = document.getElementById(`TeamMember_Thumb_${member.id}`) as HTMLImageElement;
+      const img = document.getElementById(`Team_${this.iTeam}_Member_Thumb_${member.id}`) as HTMLImageElement;
       if (!img) {
         const error = new Error(`${location} HTML image element is not available.`);
         error.name = ErrorCode.Unexpected;
@@ -461,11 +461,11 @@ export class TeamViewComponent implements OnInit, AfterViewInit {
   //
   private makeCharacterInfoTables() {
     const location = `${this.className}.makeCharacterInfoTables()`;
-    this.logger.debug(location);
+    this.logger.debug(location, { iTeam: this.iTeam });
 
     // Make table for each characters.
     for (let i = 0; i < this.teamMembers.length; ++i) {
-      const tableId = `TeamMember_Table_${this.teamMembers[i].id}`;
+      const tableId = `Team_${this.iTeam}_Member_Table_${this.teamMembers[i].id}`;
 
       // Make character table for 'a' character.
       this.makeCharacterInfoTable(tableId, this.teamMembers[i].data, this.teamMembers[i].isKaichiku);
@@ -474,7 +474,7 @@ export class TeamViewComponent implements OnInit, AfterViewInit {
 
   private makeCharacterInfoTable(tableId: string, character: FsCharacter, isKaichiku: boolean) {
     const location = `${this.className}.makeCharacterInfoTable()`;
-    this.logger.debug(location, { tableId: tableId });
+    this.logger.debug(location, { iTeam: this.iTeam, tableId: tableId });
 
     const abilityTypes = this.firestore.getData(FsCollectionName.AbilityTypes) as FsAbilityType[];
 
@@ -714,62 +714,67 @@ export class TeamViewComponent implements OnInit, AfterViewInit {
 
     for (let i = 0; i < this.teamMembers.length; ++i) {
       const member = this.teamMembers[i];
-
       // Get list element.
-      const elemId = `TeamMember_${member.id}`;
-      const li = document.getElementById(elemId);
-      if (!li) {
-        const error = new Error(`${location} List element was not found. { id: ${elemId} }`);
-        error.name = ErrorCode.Unexpected;
-        throw error;
-      }
-
-      // Set drag and drop behaviour.
-      // Start: When a list item is dragged.
-      li.ondragstart = (event: DragEvent) => {
-        this.logger.debug('ondragstart', { index: li.id });
-        if (event.dataTransfer) {
-          event.dataTransfer.setData('text/plain', li.id);
-        }
-      };
-      // Over: WHen a dragged item move over other list item.
-      // !!! The focused item is the covered list item. (not the dragged list item.) !!!
-      li.ondragover = (event) => {
-        event.preventDefault();
-        li.style.borderTop = '2px solid blue';
-      };
-      // Leave: When a dragged item go out of the other list item.
-      // !!! The focused item is the covered list item. (Not the dragged list item.) !!!
-      li.ondragleave = () => {
-        li.style.borderTop = '';
-      };
-      // Drop: When a dragged list item is dropped.
-      // !!! The focused item is the item which is located at the dropped position. (Not the dropped item.) !!!
-      li.ondrop = (event) => {
-        event.preventDefault();
-        li.style.borderTop = '';
-        if (event.dataTransfer) {
-          // Get dragged element from dataTransfer.
-          const draggedElemId = event.dataTransfer.getData('text/plain');
-          this.logger.debug('ondrop', { draggedElem: draggedElemId, droppedElem: li.id });
-
-          // Lock screen.
-          this.spinner.show();
-
-          // Move list item.
-          this.moveListItemBeforeAnotherItem(draggedElemId, li.id);
-
-          // Update user team info.
-          const draggedCharacterId = draggedElemId.replace('TeamMember_', '');
-          const droppedCharacterId = li.id.replace('TeamMember_', '');
-          this.changeTeamMemerOrder(draggedCharacterId, droppedCharacterId);
-          this.updateOnBorderFlag();
-
-          // Unlock screen.
-          this.spinner.hide();
-        }
-      };
+      const elemId = `Team_${this.iTeam}_Member_${member.id}`;
+      this.setDragAndDropBehaviorToElementById(elemId);
     }
+
+    this.setDragAndDropBehaviorToElementById('DummyMemberElement');
+  }
+
+  private setDragAndDropBehaviorToElementById(elemId: string) {
+    const li = document.getElementById(elemId);
+    if (!li) {
+      const error = new Error(`${location} List element was not found. { id: ${elemId} }`);
+      error.name = ErrorCode.Unexpected;
+      throw error;
+    }
+
+    // Set drag and drop behaviour.
+    // Start: When a list item is dragged.
+    li.ondragstart = (event: DragEvent) => {
+      this.logger.debug('ondragstart', { index: li.id });
+      if (event.dataTransfer) {
+        event.dataTransfer.setData('text/plain', li.id);
+      }
+    };
+    // Over: WHen a dragged item move over other list item.
+    // !!! The focused item is the covered list item. (not the dragged list item.) !!!
+    li.ondragover = (event) => {
+      event.preventDefault();
+      li.style.borderTop = '2px solid blue';
+    };
+    // Leave: When a dragged item go out of the other list item.
+    // !!! The focused item is the covered list item. (Not the dragged list item.) !!!
+    li.ondragleave = () => {
+      li.style.borderTop = '';
+    };
+    // Drop: When a dragged list item is dropped.
+    // !!! The focused item is the item which is located at the dropped position. (Not the dropped item.) !!!
+    li.ondrop = (event) => {
+      event.preventDefault();
+      li.style.borderTop = '';
+      if (event.dataTransfer) {
+        // Get dragged element from dataTransfer.
+        const draggedElemId = event.dataTransfer.getData('text/plain');
+        this.logger.debug('ondrop', { draggedElem: draggedElemId, droppedElem: li.id });
+
+        // Lock screen.
+        this.spinner.show();
+
+        // Move list item.
+        this.moveListItemBeforeAnotherItem(draggedElemId, li.id);
+
+        // Update user team info.
+        const draggedCharacterId = draggedElemId.replace(`Team_${this.iTeam}_Member_`, '');
+        const droppedCharacterId = li.id.replace(`Team_${this.iTeam}_Member_`, '');
+        this.changeTeamMemerOrder(draggedCharacterId, droppedCharacterId);
+        this.updateOnBorderFlag();
+
+        // Unlock screen.
+        this.spinner.hide();
+      }
+    };
   }
 
   private moveListItemBeforeAnotherItem(movedItemId: string, destItemId: string) {
