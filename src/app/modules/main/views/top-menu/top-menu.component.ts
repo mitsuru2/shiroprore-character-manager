@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { NGXLogger } from 'ngx-logger';
+import { MenuItem } from 'primeng/api';
 import { AppInfo } from 'src/app/app-info.enum';
 
 @Component({
@@ -14,11 +15,16 @@ export class TopMenuComponent /*implements OnInit*/ {
 
   @Input() signedIn: boolean = false;
 
+  /** Menu dialog. */
+  @Input() menuItems: MenuItem[] = [];
+
   @Output() requestSignInEvent = new EventEmitter<boolean>();
 
   @Output() requestSignOutEvent = new EventEmitter<boolean>();
 
   @Output() requestGoHomeEvent = new EventEmitter<boolean>();
+
+  helpDialogShown = false;
 
   constructor(private logger: NGXLogger) {
     this.logger.trace('new TopMenuComponent()');
@@ -44,5 +50,9 @@ export class TopMenuComponent /*implements OnInit*/ {
     this.logger.trace(location);
 
     this.requestGoHomeEvent.emit(true);
+  }
+
+  onHelpIconClick() {
+    this.helpDialogShown = true;
   }
 }

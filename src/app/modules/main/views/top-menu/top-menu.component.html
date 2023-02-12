@@ -1,11 +1,24 @@
 <div class="tool-bar-body" #toolBar>
-  <div>
+  <div class="pc-only">
     <img src="../../../../../assets/icon_home.png" style="vertical-align: middle" (click)="onLogoIconClick()" />
     <span class="title h2">{{ appInfo.title }} {{ appInfo.subTitle }} </span>
   </div>
-  <div>
-    <!--<p-button icon="pi pi-user" [style]="{ margin: '0 1rem' }"></p-button>-->
+  <div class="mobile-only">
+    <p-button icon="pi pi-bars" (onClick)="menu.toggle($event)"></p-button>
+    <p-menu #menu [popup]="true" [model]="menuItems" [style]="{ width: 'auto' }"></p-menu>
+  </div>
+  <div class="mobile-only">
+    <img src="../../../../../assets/icon_home_m.png" (click)="onLogoIconClick()" />
+  </div>
+  <div class="pc-only">
+    <p-button icon="pi pi-question" title="ヘルプ" (onClick)="onHelpIconClick()" [style]="{ margin: '0 0.5rem' }"></p-button>
     <p-button *ngIf="!signedIn" icon="pi pi-sign-in" (onClick)="onSignInClick()" title="ログイン"></p-button>
     <p-button *ngIf="signedIn" icon="pi pi-sign-out" (onClick)="onSignOutClick()" title="ログアウト"></p-button>
   </div>
+  <div class="mobile-only">
+    <p-button icon="pi pi-question" title="ヘルプ" (onClick)="onHelpIconClick()"></p-button>
+  </div>
 </div>
+
+<!-- Dialog -->
+<p-dialog [(visible)]="helpDialogShown" [modal]="true" [style]="{ width: '50vw' }" [breakpoints]="{ '960px': '90vw' }"> Content </p-dialog>
