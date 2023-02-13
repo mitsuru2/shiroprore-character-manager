@@ -719,7 +719,7 @@ export class TeamViewComponent implements OnInit, AfterViewInit {
       this.setDragAndDropBehaviorToElementById(elemId);
     }
 
-    this.setDragAndDropBehaviorToElementById('DummyMemberElement');
+    this.setDragAndDropBehaviorToElementById('dummy-member-element');
   }
 
   private setDragAndDropBehaviorToElementById(elemId: string) {

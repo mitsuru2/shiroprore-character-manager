@@ -56,7 +56,30 @@
     }
   }
 
-  #DummyMemberElement {
+  #dummy-member-element {
     height: 2rem;
+  }
+}
+
+@media screen and (max-width: 959px) {
+  .team-member {
+    // !!! ATTENTION !!!
+    // Please be careful when you change these properties.
+    // You shall check ListCharacterComponent::calcGridRowNum() too.
+    .list-item {
+      font-size: xx-small;
+      font-weight: lighter;
+
+      .image-box {
+        width: 80px;
+        height: 80px;
+      }
+
+      img {
+        width: 80px;
+        height: 80px;
+        border-radius: 1rem;
+      }
+    }
   }
 }
