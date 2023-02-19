@@ -497,7 +497,11 @@ export class TeamViewComponent implements OnInit, AfterViewInit {
     // 1st row: Character name.
     let tr = t.insertRow();
     let td = tr.insertCell();
-    td.textContent = `${character.name} (★${character.rarerity})`;
+    if (!isKaichiku) {
+      td.textContent = `${character.name} (★${character.rarerity})`;
+    } else {
+      td.textContent = `${character.name} [改壱] (★${character.rarerity + 1})`;
+    }
     td.colSpan = 2;
     this.setTdStyle(td, TableCellType.h1);
 
