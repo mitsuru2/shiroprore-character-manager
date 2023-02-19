@@ -1,7 +1,9 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { NGXLogger } from 'ngx-logger';
 import { MenuItem } from 'primeng/api';
 import { AppInfo } from 'src/app/app-info.enum';
+import { NavigatorService } from '../../services/navigator/navigator.service';
+import { DynamicHelpComponent } from '../dynamic-help/dynamic-help.component';
 
 @Component({
   selector: 'app-top-menu',
@@ -24,9 +26,12 @@ export class TopMenuComponent /*implements OnInit*/ {
 
   @Output() requestGoHomeEvent = new EventEmitter<boolean>();
 
+  /** Dynamic help. */
+  @ViewChild(DynamicHelpComponent) private dynamicHelp!: DynamicHelpComponent;
+
   helpDialogShown = false;
 
-  constructor(private logger: NGXLogger) {
+  constructor(private logger: NGXLogger, private navigator: NavigatorService) {
     this.logger.trace('new TopMenuComponent()');
   }
 
@@ -53,6 +58,7 @@ export class TopMenuComponent /*implements OnInit*/ {
   }
 
   onHelpIconClick() {
+    this.dynamicHelp.path = this.navigator.currentPath;
     this.helpDialogShown = true;
   }
 }

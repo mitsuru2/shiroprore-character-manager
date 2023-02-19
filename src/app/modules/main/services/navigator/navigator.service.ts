@@ -11,7 +11,19 @@ export class NavigatorService implements CanActivateChild {
 
   paramStorage: {
     [key: string]: any;
-  } = { 'list-character': undefined, 'new-character': undefined, character: undefined, legal: undefined };
+  } = {
+    'list-character': undefined,
+    'new-character': undefined,
+    character: undefined,
+    legal: undefined,
+    'list-character-ownership': undefined,
+    'list-character-kaichiku': undefined,
+    login: undefined,
+    support: undefined,
+    'team-edit': undefined,
+  };
+
+  private _curerntPath = '';
 
   //============================================================================
   // Class methods.
@@ -29,11 +41,13 @@ export class NavigatorService implements CanActivateChild {
     if (['new-character', 'list-character-ownership', 'list-character-kaichiku'].includes(path)) {
       if (!this.userAuth.signedIn) {
         this.logger.error(location, 'Anonymous user is not allowed.', { path: path });
+        this._curerntPath = 'login';
         this.router.navigateByUrl('main/login');
         return false;
       }
       if (!this.firestore.loaded) {
         await this.waitUntilLoaded(10); // 10s.
+        this._curerntPath = path;
         return true;
       }
     }
@@ -41,11 +55,13 @@ export class NavigatorService implements CanActivateChild {
     if (path === 'list-character') {
       if (!this.firestore.loaded) {
         await this.waitUntilLoaded(10); // 10s.
+        this._curerntPath = path;
         return true;
       }
     }
 
     // Default true;
+    this._curerntPath = path;
     return true;
   }
 
@@ -58,5 +74,9 @@ export class NavigatorService implements CanActivateChild {
         break;
       }
     }
+  }
+
+  get currentPath() {
+    return this._curerntPath;
   }
 }
