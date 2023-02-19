@@ -1,5 +1,6 @@
 import { Component, Input, OnInit, AfterViewInit } from '@angular/core';
 import { NGXLogger } from 'ngx-logger';
+import { switchMapTo } from 'rxjs';
 import { CloudStorageService } from 'src/app/services/cloud-storage/cloud-storage.service';
 import { ErrorCode } from 'src/app/services/error-handler/error-code.enum';
 import { ErrorHandlerService } from 'src/app/services/error-handler/error-handler.service';
@@ -117,6 +118,14 @@ export class TeamViewComponent implements OnInit, AfterViewInit {
     this.updateOnBorderFlag();
 
     this.spinner.hide();
+  }
+
+  async onDownButtonClick(id: string): Promise<void> {
+    await this.shiftTeamMemberElem(id, false);
+  }
+
+  async onUpButtonClick(id: string): Promise<void> {
+    await this.shiftTeamMemberElem(id, true);
   }
 
   //============================================================================
@@ -377,20 +386,21 @@ export class TeamViewComponent implements OnInit, AfterViewInit {
   }
 
   private updateOnBorderFlag() {
-    const team = this.getTeamMemberIds();
     let threshold = 8;
 
-    for (let i = 0; i < team.length; ++i) {
-      const member = this.teamMembers.find((item) => item.id === team[i]);
+    const teamMemberListElem = document.getElementById(`team-member-list-${this.iTeam}`) as HTMLUListElement;
+    const teamMemberElems = Array.from(teamMemberListElem.getElementsByTagName('li'));
+
+    for (let i = 0; i < teamMemberElems.length; ++i) {
+      const node = teamMemberElems[i];
+      const characterId = node.id.replace(`Team_${this.iTeam}_Member_`, '');
+
+      const member = this.teamMembers.find((item) => item.id === characterId);
       if (member) {
-        if (member.hidden) {
-          threshold++;
+        if (i === threshold) {
+          member.onBorder = true;
         } else {
-          if (i === threshold) {
-            member.onBorder = true;
-          } else {
-            member.onBorder = false;
-          }
+          member.onBorder = false;
         }
       }
     }
@@ -719,7 +729,7 @@ export class TeamViewComponent implements OnInit, AfterViewInit {
       this.setDragAndDropBehaviorToElementById(elemId);
     }
 
-    this.setDragAndDropBehaviorToElementById('dummy-member-element');
+    this.setDragAndDropBehaviorToElementById(`dummy-member-element-${this.iTeam}`);
   }
 
   private setDragAndDropBehaviorToElementById(elemId: string) {
@@ -786,5 +796,60 @@ export class TeamViewComponent implements OnInit, AfterViewInit {
     }
 
     destItem.parentNode.insertBefore(movedItem, destItem);
+  }
+
+  /**
+   * Shift up/down the selected character in the team member list.
+   * @param id Character ID.
+   * @param isUp Shift direction.
+   * @returns None.
+   */
+  private async shiftTeamMemberElem(id: string, isUp: boolean): Promise<void> {
+    // const location = `${this.className}.shiftTeamMemberElem()`;
+    this.spinner.show();
+
+    const teamMemberListElem = document.getElementById(`team-member-list-${this.iTeam}`) as HTMLUListElement;
+    const teamMemberElems = Array.from(teamMemberListElem.getElementsByTagName('li'));
+    let dstNodeId = '';
+    let dstCharacterId = '';
+
+    for (let i = 0; i < teamMemberElems.length; ++i) {
+      const node = teamMemberElems[i];
+      const characterId = node.id.replace(`Team_${this.iTeam}_Member_`, '');
+
+      if (characterId === id) {
+        if (isUp) {
+          if (i === 0) {
+            // Do nothing.
+            break;
+          }
+          dstNodeId = teamMemberElems[i - 1].id;
+          dstCharacterId = teamMemberElems[i - 1].id.replace(`Team_${this.iTeam}_Member_`, '');
+        }
+        if (!isUp) {
+          if (i >= teamMemberElems.length - 2) {
+            // -2: Because of the dummy node.
+            // Do nothing.
+            break;
+          }
+          dstNodeId = teamMemberElems[i + 2].id;
+          dstCharacterId = teamMemberElems[i + 1].id.replace(`Team_${this.iTeam}_Member_`, '');
+        }
+        break;
+      }
+    }
+
+    if (dstNodeId !== '') {
+      // Swap list element.
+      this.moveListItemBeforeAnotherItem(`Team_${this.iTeam}_Member_${id}`, dstNodeId);
+
+      // Update user team info.
+      await this.changeTeamMemerOrder(id, dstCharacterId);
+
+      // Border line.
+      this.updateOnBorderFlag();
+    }
+
+    this.spinner.hide();
   }
 }

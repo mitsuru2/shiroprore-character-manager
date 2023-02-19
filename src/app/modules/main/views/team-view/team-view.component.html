@@ -3,23 +3,26 @@
   <p>「キャラクター一覧」画面から編成にキャラクターを追加してください。</p>
 </div>
 <div>
-  <ul class="team-member">
+  <ul class="team-member" [id]="'team-member-list-' + iTeam">
     <li *ngFor="let member of teamMembers" draggable="true" [id]="'Team_' + iTeam + '_Member_' + member.id">
       <p-divider *ngIf="!member.hidden && member.onBorder" align="center"><b>編成枠</b></p-divider>
       <div class="list-item" [class.hidden]="member.hidden">
         <div class="image-column">
           <div [id]="'Team_' + iTeam + '_Member_ThumbBox_' + member.id" class="image-box" [class.image-shade]="!member.owned">
             <img [id]="'Team_' + iTeam + '_Member_Thumb_' + member.id" />
-          </div>
-          <div style="text-align: center">
             <button
               pButton
               pRipple
               type="button"
-              icon="pi pi-trash"
-              class="p-button-rounded p-button-danger p-button-text"
+              icon="pi pi-times"
+              class="p-button-rounded p-button-danger p-button-outlined delete-button"
+              style="width: 20px; height: 20px"
               (click)="onTrashClick(member.id)"
             ></button>
+          </div>
+          <div class="sort-button-area">
+            <button pButton pRipple type="button" icon="pi pi-chevron-down" style="width: 20px; height: 20px" (click)="onDownButtonClick(member.id)"></button>
+            <button pButton pRipple type="button" icon="pi pi-chevron-up" style="width: 20px; height: 20px" (click)="onUpButtonClick(member.id)"></button>
           </div>
         </div>
         <div>
@@ -34,6 +37,6 @@
     </li>
     <!-- Dummy list element at the bottom of the list. -->
     <!-- It is needed to drag an element to the bottom. -->
-    <li style="border: 0; list-style-type: none" id="dummy-member-element">&nbsp;</li>
+    <li style="border: 0; list-style-type: none" [id]="'dummy-member-element-' + iTeam" draggable="false" class="dummy-member-element">&nbsp;</li>
   </ul>
 </div>
