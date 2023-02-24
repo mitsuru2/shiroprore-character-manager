@@ -1,2 +1,27 @@
-<p>dynamic-help works!</p>
-<p>path: {{ path }}</p>
+<div *ngIf="path === 'new-character'">
+  <p>New character page help.</p>
+</div>
+<div *ngIf="path === 'list-character'">
+  <p>List character page help.</p>
+</div>
+<div *ngIf="path === 'character'">
+  <p>Character page help.</p>
+</div>
+<div *ngIf="path === 'list-character-ownership'">
+  <p>List character ownership page help.</p>
+</div>
+<div *ngIf="path === 'list-character-kaichiku'">
+  <p>List character Kaichiku page help.</p>
+</div>
+<div *ngIf="path === 'legal'">
+  <p>Legal page help.</p>
+</div>
+<div *ngIf="path === 'login'">
+  <p>Login page help.</p>
+</div>
+<div *ngIf="path === 'support'">
+  <p>Support page help.</p>
+</div>
+<div *ngIf="path === 'team-edit'">
+  <p>Team edit page help.</p>
+</div>

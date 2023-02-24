@@ -58,6 +58,9 @@ export class TopMenuComponent /*implements OnInit*/ {
   }
 
   onHelpIconClick() {
+    const location = `${this.className}.onHelpIconClick()`;
+    this.logger.trace(location, { path: this.navigator.currentPath });
+
     this.dynamicHelp.path = this.navigator.currentPath;
     this.helpDialogShown = true;
   }
