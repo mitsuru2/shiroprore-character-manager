@@ -1,0 +1,107 @@
+.team-member {
+  padding-top: 0;
+  padding-left: 0;
+  margin-top: 0;
+  margin-left: 0;
+  list-style: none;
+
+  li {
+    cursor: pointer;
+  }
+
+  .hidden {
+    display: none;
+  }
+
+  .list-item {
+    display: flex;
+    margin-top: 0.25rem;
+    margin-bottom: 0.25rem;
+
+    .image-column {
+      position: relative;
+      margin-right: 1rem;
+    }
+
+    .delete-button {
+      position: absolute;
+      top: 0;
+      left: calc(100% - 20px);
+      background-color: white;
+    }
+
+    .sort-button-area {
+      display: none;
+      justify-content: space-around;
+      margin-bottom: 0.5rem;
+    }
+
+    .image-box {
+      width: 105px;
+      height: 105px;
+      margin-bottom: 0.5rem;
+    }
+
+    img {
+      width: 105px;           // You can adjust <img> element size up to
+      height: 105px;          // the original thumbnail image size. (160px)
+      border-radius: 1rem;
+    }
+
+    .image-shade {
+      background-color: black;
+      border-radius: 1rem;
+
+      img {
+        opacity: 0.6;
+      }
+    }
+
+    table {
+      width: 100%;
+      table-layout: fixed;
+      border-collapse: collapse;
+
+      .short-col {
+        width: 35%;
+      }
+
+      .long-col {}
+    }
+  }
+
+  .dummy-member-element {
+    height: 2rem;
+  }
+}
+
+@media screen and (max-width: 959px) {
+  .team-member {
+    // !!! ATTENTION !!!
+    // Please be careful when you change these properties.
+    // You shall check ListCharacterComponent::calcGridRowNum() too.
+    .list-item {
+      font-size: xx-small;
+      font-weight: lighter;
+
+      .image-column {
+        margin-right: 0.2rem;
+      }
+
+      .image-box {
+        width: 80px;
+        height: 80px;
+      }
+
+      img {
+        width: 80px;
+        height: 80px;
+        border-radius: 1rem;
+      }
+
+      .sort-button-area {
+        display: flex;
+      }
+    }
+  }
+}

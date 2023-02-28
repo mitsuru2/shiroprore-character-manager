@@ -17,6 +17,8 @@ import {
   FsRegion,
   FsWeapon,
   FsWeaponType,
+  teamCharacterNumMax,
+  teamNumMax,
 } from 'src/app/services/firestore-data/firestore-document.interface';
 import { CharacterFilterService } from '../../services/character-filter/character-filter.service';
 import { NavigatorService } from '../../services/navigator/navigator.service';
@@ -30,6 +32,8 @@ import { CharacterFilterSetting } from '../../views/character-filter-settings-fo
 import { CharacterSortSettingsFormComponent } from '../../views/character-sort-settings-form/character-sort-settings-form.component';
 import { CharacterSortSetting } from '../../views/character-sort-settings-form/character-sort-settings-form.interface';
 import { HtmlElementUtil } from '../../utils/html-element-util/html-element-util.class';
+import { ConfirmationService } from 'primeng/api';
+import { ErrorCode } from 'src/app/services/error-handler/error-code.enum';
 
 export class ThumbImageWrapper {
   url: string = '';
@@ -105,6 +109,14 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
 
   sortSettingCopy = new CharacterSortSetting();
 
+  /** Team edit values. */
+  teamCheckFlags!: number[][];
+
+  /** Warning message. */
+  private readonly teamEditWarning = '編成管理機能にはログインが必要です。';
+
+  private readonly teamMaxWarning = `最大人数(${teamCharacterNumMax}人)に達しています。`;
+
   //============================================================================
   // Class methods.
   //
@@ -120,7 +132,8 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     private navigator: NavigatorService,
     private userAuth: UserAuthService,
     private spinner: SpinnerService,
-    private characterFilter: CharacterFilterService
+    private characterFilter: CharacterFilterService,
+    private confirmationDialog: ConfirmationService
   ) {
     this.logger.trace(`new ${this.className}()`);
 
@@ -160,6 +173,12 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     this.characters.sort((a, b) => {
       return a.index < b.index ? -1 : 1;
     });
+
+    // Make team check flags array.
+    this.teamCheckFlags = new Array(teamNumMax);
+    for (let i = 0; i < this.teamCheckFlags.length; ++i) {
+      this.teamCheckFlags[i] = [];
+    }
   }
 
   async ngAfterViewInit(): Promise<void> {
@@ -191,6 +210,15 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     this.updateThumbImages();
     this.makeCharacterInfoTables();
     this.updateOwnershipStatuses();
+
+    // Update team check status.
+    if (this.userAuth.signedIn) {
+      this.updateTeamCheckboxStatuses();
+    } else {
+      this.userAuth.addEventListener('signIn', () => {
+        this.updateTeamCheckboxStatuses();
+      });
+    }
   }
 
   //----------------------------------------------------------------------------
@@ -211,6 +239,7 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
       this.makeCharacterInfoTables();
 
       this.updateOwnershipStatuses();
+      this.updateTeamCheckboxStatuses();
 
       // Scroll.
       this.scrollToTop();
@@ -345,6 +374,48 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     this.sortSettingsForm.onCancelClick();
   }
 
+  async onTeamChecked(iCell: number, iTeam: number, event: any): Promise<void> {
+    const location = `${this.className}.onTeamChecked()`;
+
+    // Check if the user signed in or not.
+    if (!this.userAuth.signedIn) {
+      this.showTeamEditWarning(iTeam);
+      return;
+    }
+
+    // Get the value of the changed checkbox.
+    let checked = false;
+    if (event.checked.includes(iCell)) {
+      checked = true;
+    }
+    this.logger.trace(location, { iCell: iCell, iTeam: iTeam, checked: checked, event: event });
+
+    // Check max number of team members.
+    if (checked) {
+      const team = this.getUserTeam(iTeam);
+      if (team) {
+        if (team.length >= teamCharacterNumMax) {
+          this.showTeamMaxWarning(iTeam, iCell);
+          return;
+        }
+      }
+    }
+
+    // Show spinner.
+    this.spinner.show();
+
+    // Calc character index. And get character ID.
+    const iCharacter = this.filteredIndexes[iCell + this.paginator.firstItemIndex];
+    const character = this.characters[iCharacter];
+    this.logger.debug(location, { index: iCharacter, id: character.id, name: character.name });
+
+    // Update the user's team data.
+    await this.updateTeam(character.id, iTeam, checked);
+
+    // Hide spinner.
+    this.spinner.hide();
+  }
+
   //============================================================================
   // Private methods.
   //
@@ -356,6 +427,7 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
     this.updateThumbImages();
     this.makeCharacterInfoTables();
     this.updateOwnershipStatuses();
+    this.updateTeamCheckboxStatuses();
   }
 
   //----------------------------------------------------------------------------
@@ -984,6 +1056,136 @@ export class ListCharacterComponent implements OnInit, AfterViewInit {
       const characterId = this.characters[this.filteredIndexes[i + this.paginator.firstItemIndex]].id;
       this.ownershipStatues[i] = userData.includes(characterId);
     }
+  }
+
+  private async updateTeamCheckboxStatuses(): Promise<void> {
+    const location = `${this.className}.updateTeamCheckboxStatuses()`;
+    this.logger.trace(location);
+
+    // Do nothing if user is not signed in.
+    if (!this.userAuth.signedIn) {
+      return;
+    }
+
+    // Get user team info.
+    const teams = [Array(teamNumMax)];
+    teams[0] = this.userAuth.userData.team0;
+    teams[1] = this.userAuth.userData.team1;
+    teams[2] = this.userAuth.userData.team2;
+
+    // Clear check status.
+    for (let i = 0; i < this.teamCheckFlags.length; ++i) {
+      this.teamCheckFlags[i] = [];
+    }
+
+    // Proces for each character shown on the page.
+    for (let i = 0; i < this.paginator.rowNum; ++i) {
+      if (i + this.paginator.firstItemIndex >= this.filteredIndexes.length) {
+        break;
+      }
+
+      // Get character ID.
+      const characterId = this.characters[this.filteredIndexes[i + this.paginator.firstItemIndex]].id;
+
+      // Check for each team.
+      for (let j = 0; j < teamNumMax; ++j) {
+        // Check if the character is included the team.
+        const team = teams[j];
+        if (team.includes(characterId)) {
+          this.teamCheckFlags[j].push(i);
+        }
+      }
+    }
+
+    this.logger.debug(location, { teamCheckFlags: this.teamCheckFlags });
+  }
+
+  private async updateTeam(characterId: string, iTeam: number, added: boolean): Promise<void> {
+    const location = `${this.className}.updateTeam()`;
+
+    this.logger.trace(location, { characterId: characterId, iTeam: iTeam, added: added });
+
+    // Init team data.
+    let team = this.getUserTeam(iTeam);
+    if (team === undefined) {
+      const error = new Error(`${location} Invalid team index.`);
+      error.name = ErrorCode.Unexpected;
+      throw error;
+    }
+
+    // Case: Add character.
+    if (added) {
+      if (!team.includes(characterId)) {
+        team.push(characterId);
+      }
+    }
+
+    // Case: Remove character.
+    else {
+      team = team.filter((item) => item !== characterId);
+    }
+
+    // Update Firestore data.
+    await this.updateUserTeam(iTeam, team);
+    await sleep(100);
+
+    return;
+  }
+
+  private getUserTeam(index: number): string[] | undefined {
+    if (index === 0) {
+      return this.userAuth.userData.team0;
+    } else if (index === 1) {
+      return this.userAuth.userData.team1;
+    } else if (index === 2) {
+      return this.userAuth.userData.team2;
+    } else {
+      return undefined;
+    }
+  }
+
+  private async updateUserTeam(index: number, team: string[]): Promise<void> {
+    if (index === 0) {
+      this.userAuth.userData.team0 = team;
+      await this.firestore.updateField(FsCollectionName.Users, this.userAuth.userData.id, 'team0', this.userAuth.userData.team0);
+    } else if (index === 1) {
+      this.userAuth.userData.team1 = team;
+      await this.firestore.updateField(FsCollectionName.Users, this.userAuth.userData.id, 'team1', this.userAuth.userData.team1);
+    } else if (index === 2) {
+      this.userAuth.userData.team2 = team;
+      await this.firestore.updateField(FsCollectionName.Users, this.userAuth.userData.id, 'team2', this.userAuth.userData.team2);
+    }
+  }
+
+  //----------------------------------------------------------------------------
+  // Confirmation dialog.
+  //
+  private showTeamEditWarning(iTeam: number) {
+    this.confirmationDialog.confirm({
+      message: this.teamEditWarning,
+      acceptLabel: 'OK',
+      rejectVisible: false,
+      accept: () => {
+        this.teamCheckFlags[iTeam] = [];
+      },
+      reject: () => {
+        this.teamCheckFlags[iTeam] = [];
+      },
+    });
+  }
+
+  private showTeamMaxWarning(iTeam: number, iCell: number) {
+    this.confirmationDialog.confirm({
+      message: this.teamMaxWarning,
+      acceptLabel: 'OK',
+      rejectVisible: false,
+      accept: () => {
+        this.teamCheckFlags[iTeam] = this.teamCheckFlags[iTeam].filter((item) => item !== iCell);
+      },
+      reject: () => {
+        this.teamCheckFlags[iTeam] = this.teamCheckFlags[iTeam].filter((item) => item !== iCell);
+      },
+    });
   }
 
   //----------------------------------------------------------------------------

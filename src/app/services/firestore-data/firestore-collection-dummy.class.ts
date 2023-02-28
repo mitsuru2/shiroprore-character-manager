@@ -142,6 +142,18 @@ export class FirestoreCollectionDummy<T extends FsDocumentBase> {
   }
 
   /**
+   * It adds an new data field to the specified data document.
+   * @param docId Document ID.
+   * @param fieldName Field name to be added to the document.
+   * @param value Default value.
+   * @param uid User ID who does this operation.
+   * @returns Document ID.
+   */
+  async addField(docId: string, fieldName: string, value: any, uid: string): Promise<string> { // eslint-disable-line
+    return docId;
+  }
+
+  /**
    * Increment the 'count' field value.
    * @param docId Document ID.
    * @param uid User ID. It's original user ID stored in Users collection as 'name' field.

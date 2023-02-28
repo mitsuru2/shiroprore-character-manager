@@ -11,17 +11,26 @@ export class NavigatorService implements CanActivateChild {
 
   paramStorage: {
     [key: string]: any;
-  } = { 'list-character': undefined, 'new-character': undefined, character: undefined, legal: undefined };
+  } = {
+    'list-character': undefined,
+    'new-character': undefined,
+    character: undefined,
+    legal: undefined,
+    'list-character-ownership': undefined,
+    'list-character-kaichiku': undefined,
+    login: undefined,
+    support: undefined,
+    'team-edit': undefined,
+  };
+
+  private _curerntPath = '';
+
+  private tabIndexMap: { [name: string]: number } = {};
 
   //============================================================================
   // Class methods.
   //
-  constructor(
-    private logger: NGXLogger,
-    private router: Router,
-    private userAuth: UserAuthService,
-    private firestore: FirestoreDataService
-  ) {
+  constructor(private logger: NGXLogger, private router: Router, private userAuth: UserAuthService, private firestore: FirestoreDataService) {
     this.logger.trace(`new ${this.className}()`);
   }
 
@@ -31,14 +40,16 @@ export class NavigatorService implements CanActivateChild {
 
     this.logger.trace(location, { path: path });
 
-    if (['new-character', 'list-character-ownership'].includes(path)) {
+    if (['new-character', 'list-character-ownership', 'list-character-kaichiku'].includes(path)) {
       if (!this.userAuth.signedIn) {
         this.logger.error(location, 'Anonymous user is not allowed.', { path: path });
+        this._curerntPath = 'login';
         this.router.navigateByUrl('main/login');
         return false;
       }
       if (!this.firestore.loaded) {
         await this.waitUntilLoaded(10); // 10s.
+        this._curerntPath = path;
         return true;
       }
     }
@@ -46,11 +57,13 @@ export class NavigatorService implements CanActivateChild {
     if (path === 'list-character') {
       if (!this.firestore.loaded) {
         await this.waitUntilLoaded(10); // 10s.
+        this._curerntPath = path;
         return true;
       }
     }
 
     // Default true;
+    this._curerntPath = path;
     return true;
   }
 
@@ -62,6 +75,22 @@ export class NavigatorService implements CanActivateChild {
       if (this.firestore.loaded) {
         break;
       }
+    }
+  }
+
+  get currentPath() {
+    return this._curerntPath;
+  }
+
+  setTabIndex(name: string, index: number) {
+    this.tabIndexMap[name] = index;
+  }
+
+  getTabIndex(name: string): number {
+    if (this.tabIndexMap[name]) {
+      return this.tabIndexMap[name];
+    } else {
+      return 0;
     }
   }
 }

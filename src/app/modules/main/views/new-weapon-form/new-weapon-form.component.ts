@@ -2,11 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { NGXLogger } from 'ngx-logger';
 import { FsCollectionName } from 'src/app/services/firestore-data/firestore-collection-name.enum';
 import { FirestoreDataService } from 'src/app/services/firestore-data/firestore-data.service';
-import {
-  FsWeapon,
-  FsWeaponRarerityMax,
-  FsWeaponType,
-} from 'src/app/services/firestore-data/firestore-document.interface';
+import { FsWeapon, fsWeaponRarerityMax, FsWeaponType } from 'src/app/services/firestore-data/firestore-document.interface';
 import { NewWeaponFormData, NewWeaponFormMode } from './new-weapon-form.interface';
 
 @Component({
@@ -64,7 +60,7 @@ export class NewWeaponFormComponent implements OnInit {
     this.logger.trace(`new ${this.className}()`);
 
     // Initialize rarerity list.
-    for (let i = 0; i < FsWeaponRarerityMax; ++i) {
+    for (let i = 0; i < fsWeaponRarerityMax; ++i) {
       this.rarerityItems.push(i + 1);
     }
   }

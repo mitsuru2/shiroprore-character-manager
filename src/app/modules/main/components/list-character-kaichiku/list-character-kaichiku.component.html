@@ -1,4 +1,4 @@
-<div class="data-list-view">
+<div class="character-kaichiku-list-view">
   <!---->
   <!-- Header Area -->
   <!---->
@@ -15,68 +15,61 @@
         <i class="pi" [class.pi-times]="inputSearchText !== ''" (click)="onSearchTextClearButtonClick()"></i>
         <input
           type="text"
+          id="ListCharacterKaichiku_SearchTextInput"
           pInputText
-          id="ListCharacter_SearchTextInput"
           [(ngModel)]="inputSearchText"
           placeholder="Search"
           style="width: 100%"
           (keydown.enter)="onTextSearchButtonClick()"
-          title="テキスト検索。タグ検索の場合は#を付けてください。"
         />
       </span>
-      <button
-        pButton
-        type="button"
-        icon="pi pi-search"
-        [disabled]="inputSearchText === ''"
-        (click)="onTextSearchButtonClick()"
-        title="テキスト検索。タグ検索の場合は#を付けてください。"
-      ></button>
+      <button pButton type="button" icon="pi pi-search" [disabled]="inputSearchText === ''" (click)="onTextSearchButtonClick()" title="テキスト検索"></button>
     </div>
 
-    <!-- Layout mode switch. -->
-    <span class="p-buttonset button-group" style="flex: none">
-      <button pButton type="button" icon="pi pi-list" [class.p-button-outlined]="!isListLayout" (click)="isListLayout = true" title="テーブル表示"></button>
-      <button pButton type="button" icon="pi pi-th-large" [class.p-button-outlined]="isListLayout" (click)="isListLayout = false" title="アイコン表示"></button>
+    <!-- Submit button. -->
+    <span>
+      <button
+        id="ListCharacterKaichiku_ApplyButton"
+        pButton
+        type="button"
+        icon="pi pi-check"
+        label="SAVE"
+        (click)="onApplyButtonClick()"
+        [disabled]="!changed"
+        style="flex: none"
+        title="保存"
+      ></button>
     </span>
   </div>
 
   <!---->
   <!-- Contents Area -->
   <!---->
-  <div class="content" id="ListCharacter_Content">
-    <div [class.grid-layout]="!isListLayout" [class.list-layout]="isListLayout">
-      <div
-        *ngFor="let i of paginator.rowIndexes"
-        class="item"
-        [class.list-item]="isListLayout"
-        [class.list-margin-bottom]="i + paginator.firstItemIndex < filteredIndexes.length && isListLayout"
-      >
-        <div>
-          <div [id]="'ListCharacter_ThumbBox_' + i" class="image-box" [class.image-shade]="!ownershipStatues[i]" [class.list-image]="isListLayout">
-            <img [id]="'ListCharacter_Thumb_' + i" (click)="onThumbnailClick(i)" />
-          </div>
-          <div *ngIf="i + paginator.firstItemIndex < filteredIndexes.length" class="team-checkbox">
-            <div *ngFor="let f of teamCheckFlags; index as j" class="narrow-checkbox">
-              <p-checkbox
-                [name]="'ListCharacter_CheckTeams_' + j"
-                [inputId]="'ListCharacter_CheckTeams_' + j + '_' + i"
-                [value]="i"
-                [(ngModel)]="teamCheckFlags[j]"
-                (onChange)="onTeamChecked(i, j, $event)"
-              ></p-checkbox>
-              <label [for]="'ListCharacter_CheckTeams_0_' + i">編成{{ j + 1 }}</label>
-            </div>
-          </div>
+  <div class="grid grid-nogutter">
+    <div class="col-fixed" style="width: 38px">
+      <p-checkbox
+        [inputId]="'ListCharacterKaichiku_Checkbox_All'"
+        name="ListCharacterKaichiku_Checkbox_All"
+        [value]="true"
+        [(ngModel)]="inputAllCheckboxSwitch"
+        (onChange)="onAllCheckboxSwitchClick()"
+      ></p-checkbox>
+    </div>
+    <div class="col">一括チェック</div>
+  </div>
+  <div class="content" id="ListCharacterKaichiku_Content">
+    <div *ngFor="let i of paginator.rowIndexes">
+      <div class="formgrid grid grid-nogutter" *ngIf="i + paginator.firstItemIndex < filteredIndexes.length">
+        <div class="field col-fixed" style="width: 38px">
+          <p-checkbox
+            [inputId]="'ListCharacterKaichiku_Checkbox_' + i"
+            name="ListCharacterKaichiku_Checkbox"
+            [value]="i"
+            [(ngModel)]="inputCharacterKaichikuStatuses"
+            (onChange)="onIndivisualCheckboxClick(i, $event)"
+          ></p-checkbox>
         </div>
-        <div>
-          <table [id]="'ListCharacter_Table_' + i" [hidden]="!isListLayout">
-            <colgroup>
-              <col class="short-col" />
-              <col class="long-col" />
-            </colgroup>
-          </table>
-        </div>
+        <div class="field col">{{ characterLabels[i] }}</div>
       </div>
     </div>
   </div>
@@ -99,7 +92,7 @@
 <!----------------------------------------------------------------------------->
 <!-- Filter setting dialog ---------------------------------------------------->
 <!----------------------------------------------------------------------------->
-<p-dialog header="フィルタ設定" [(visible)]="showFilterDialog" [modal]="true" [closable]="false" [draggable]="false" [resizable]="false" styleClass="dialog">
+<p-dialog header="フィルタ設定" [(visible)]="filterDialogShown" [modal]="true" [closable]="false" [draggable]="false" [resizable]="false" styleClass="dialog">
   <app-character-filter-settings-form
     [(filterSetting)]="filterSetting"
     [hideButton]="true"
@@ -116,14 +109,13 @@
         [styleClass]="'p-button-secondary p-button-text'"
         (onClick)="onFilterSettingsCancelButtonClick()"
       ></p-button>
-    </div>
-  </ng-template>
-</p-dialog>
+    </div> </ng-template
+></p-dialog>
 
 <!----------------------------------------------------------------------------->
 <!-- Sort setting dialog ---------------------------------------------------->
 <!----------------------------------------------------------------------------->
-<p-dialog header="ソート設定" [(visible)]="showSortDialog" [modal]="true" [closable]="false" [draggable]="false" [resizable]="false" styleClass="dialog">
+<p-dialog header="ソート設定" [(visible)]="sortDialogShown" [modal]="true" [closable]="false" [draggable]="false" [resizable]="false" styleClass="dialog">
   <app-character-sort-settings-form
     [(sortSetting)]="sortSetting"
     [hideButton]="true"
@@ -139,6 +131,5 @@
         [styleClass]="'p-button-secondary p-button-text'"
         (onClick)="onSortSettingsCancelButtonClick()"
       ></p-button>
-    </div>
-  </ng-template>
-</p-dialog>
+    </div> </ng-template
+></p-dialog>

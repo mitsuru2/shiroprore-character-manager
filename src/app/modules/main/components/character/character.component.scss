@@ -11,6 +11,11 @@
   }
 }
 
+// Image type label.
+.invalid-image-label {
+  color: gray;
+}
+
 // Input switch.
 :host ::ng-deep .p-inputswitch {
   width: 40px;

@@ -1,6 +1,9 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { NGXLogger } from 'ngx-logger';
+import { MenuItem } from 'primeng/api';
 import { AppInfo } from 'src/app/app-info.enum';
+import { NavigatorService } from '../../services/navigator/navigator.service';
+import { DynamicHelpComponent } from '../dynamic-help/dynamic-help.component';
 
 @Component({
   selector: 'app-top-menu',
@@ -14,13 +17,21 @@ export class TopMenuComponent /*implements OnInit*/ {
 
   @Input() signedIn: boolean = false;
 
+  /** Menu dialog. */
+  @Input() menuItems: MenuItem[] = [];
+
   @Output() requestSignInEvent = new EventEmitter<boolean>();
 
   @Output() requestSignOutEvent = new EventEmitter<boolean>();
 
   @Output() requestGoHomeEvent = new EventEmitter<boolean>();
 
-  constructor(private logger: NGXLogger) {
+  /** Dynamic help. */
+  @ViewChild(DynamicHelpComponent) private dynamicHelpComp!: DynamicHelpComponent;
+
+  helpDialogShown = false;
+
+  constructor(private logger: NGXLogger, private navigator: NavigatorService) {
     this.logger.trace('new TopMenuComponent()');
   }
 
@@ -44,5 +55,19 @@ export class TopMenuComponent /*implements OnInit*/ {
     this.logger.trace(location);
 
     this.requestGoHomeEvent.emit(true);
+  }
+
+  onHelpIconClick() {
+    const location = `${this.className}.onHelpIconClick()`;
+    this.logger.trace(location, { path: this.navigator.currentPath });
+
+    this.dynamicHelpComp.path = this.navigator.currentPath;
+    if (this.navigator.currentPath === 'legal') {
+      this.dynamicHelpComp.tabIndex = this.navigator.getTabIndex('legal');
+    } else if (this.navigator.currentPath === 'support') {
+      this.dynamicHelpComp.tabIndex = this.navigator.getTabIndex('support');
+    }
+
+    this.helpDialogShown = true;
   }
 }

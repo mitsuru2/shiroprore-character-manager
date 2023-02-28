@@ -27,9 +27,16 @@
       grid-template-columns: repeat(auto-fill, 105px);  // 105px: Width of <img> element which show the thumbnails.
       gap: 12px;
       justify-content: space-between;
+
+      .team-checkbox {
+        display: none;
+      }
     }
 
     .list-layout {
+      .team-checkbox {
+        display: block;
+      }
     }
 
     .item {
@@ -51,6 +58,12 @@
       height: 105px;
     }
 
+    img {
+      width: 105px;           // You can adjust <img> element size up to
+      height: 105px;          // the original thumbnail image size. (160px)
+      border-radius: 1rem;
+    }
+
     .image-shade {
       background-color: black;
       border-radius: 1rem;
@@ -58,12 +71,6 @@
       img {
         opacity: 0.6;
       }
-    }
-
-    img {
-      width: 105px;           // You can adjust <img> element size up to
-      height: 105px;          // the original thumbnail image size. (160px)
-      border-radius: 1rem;
     }
 
     .list-image {
@@ -162,4 +169,14 @@ table {
       margin: 0;
     }
   }
+}
+
+.narrow-checkbox {
+  display: flex;
+  align-items: center;
+  margin-top: 0.2rem;
+}
+
+.narrow-checkbox > label {
+  margin-left: 0.5rem;
 }

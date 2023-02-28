@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NGXLogger } from 'ngx-logger';
+import { NavigatorService } from '../../services/navigator/navigator.service';
 
 @Component({
   selector: 'app-legal',
@@ -12,7 +13,7 @@ export class LegalComponent /*implements OnInit*/ {
 
   tabIndex = 0;
 
-  constructor(private logger: NGXLogger, private route: ActivatedRoute) {
+  constructor(private logger: NGXLogger, private route: ActivatedRoute, private navigator: NavigatorService) {
     const location = `new ${this.className}()`;
     this.logger.trace(location);
 
@@ -25,5 +26,13 @@ export class LegalComponent /*implements OnInit*/ {
     } else if (tmp === 'copyright') {
       this.tabIndex = 2;
     }
+  }
+
+  onTabChange() {
+    const location = `${this.className}.onTabChange()`;
+    this.logger.trace(location, { tabIndex: this.tabIndex });
+
+    // Store tab index.
+    this.navigator.setTabIndex('legal', this.tabIndex);
   }
 }

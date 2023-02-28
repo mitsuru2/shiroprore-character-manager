@@ -225,6 +225,32 @@ export class FirestoreDataService {
   }
 
   /**
+   * Add new data field to all documents of the specified data collection.
+   * @param name Data collection name.
+   * @param fieldName The field name to be added.
+   * @param value Default value.
+   * @returns None.
+   */
+  async addFieldToAllDocs(name: FsCollectionName, fieldName: string, value: any): Promise<void> {
+    const location = `${this.className}.addField()`;
+    this.logger.trace(location, { name: name, field: fieldName, value: value });
+
+    // Load data from the remote server.
+    await this.load(name);
+
+    // Get document data.
+    const documents = this.getData(name);
+
+    // Add new field to each document.
+    for (let i = 0; i < documents.length; ++i) {
+      const docId = documents[i].id;
+      await this.collections[name].addField(docId, fieldName, value, this.userId);
+    }
+
+    return;
+  }
+
+  /**
    * Increment 'count' field of the specified document.
    * @param name Data collection name.
    * @param docId Document ID.

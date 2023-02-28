@@ -172,7 +172,7 @@ export class FsCharacter extends FsDocumentBase {
 
 export class FsFacilityType extends FsDocumentBaseWithCode {}
 
-export const FsFacilityRarerityMax = 5;
+export const fsFacilityRarerityMax = 5;
 
 export class FsFacility extends FsDocumentBase {
   type: string = '';
@@ -192,12 +192,27 @@ export class FsIllustrator extends FsDocumentBase {}
 
 export class FsRegion extends FsDocumentBaseWithOrder {}
 
+export const teamNumMax = 3;
+export const teamCharacterNumMax = 40;
+
 export class FsUser extends FsDocumentBase {
   characters: string[] = [];
+
+  kaichikuCharacters: string[] = [];
 
   facilities: string[] = [];
 
   weapons: string[] = [];
+
+  team0: string[] = [];
+
+  team1: string[] = [];
+
+  team2: string[] = [];
+  // teams: list of team
+  // team:list of character ID.
+  // max number of teams: common property. See 'teamNumMax'.
+  // max number of characters in each team: common property. See 'teamCharacterNumMax'.
 
   constructor(id = '', name = '') {
     super(id, name);
@@ -218,7 +233,7 @@ export class FsWeaponType extends FsDocumentBaseWithCode {
   }
 }
 
-export const FsWeaponRarerityMax = 5;
+export const fsWeaponRarerityMax = 5;
 
 export class FsWeapon extends FsDocumentBase {
   type: string = '';

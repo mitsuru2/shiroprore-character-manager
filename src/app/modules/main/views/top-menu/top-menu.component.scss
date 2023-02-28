@@ -7,3 +7,21 @@
 .title {
   margin-left: 0.5rem;
 }
+
+.pc-only {
+  display: block;
+}
+
+.mobile-only {
+  display: none;
+}
+
+@media screen and (max-width: 959px) {
+  .pc-only {
+    display: none;
+  }
+
+  .mobile-only {
+    display: block;
+  }
+}

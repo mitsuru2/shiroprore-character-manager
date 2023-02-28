@@ -177,6 +177,14 @@ export class InquiryFormComponent /*implements OnInit*/ {
   //   this.spinner.hide();
   // }
 
+  // async addDataField() {
+  //   this.spinner.show();
+  //   await this.firestore.addFieldToAllDocs(FsCollectionName.Users, 'team0', []);
+  //   await this.firestore.addFieldToAllDocs(FsCollectionName.Users, 'team1', []);
+  //   await this.firestore.addFieldToAllDocs(FsCollectionName.Users, 'team2', []);
+  //   this.spinner.hide();
+  // }
+
   //============================================================================
   // Private methods.
   //
