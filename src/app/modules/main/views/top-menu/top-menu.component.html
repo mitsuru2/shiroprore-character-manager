@@ -21,6 +21,9 @@
 </div>
 
 <!-- Dialog -->
-<p-dialog [(visible)]="helpDialogShown" [modal]="true" [style]="{ width: '50vw' }" [breakpoints]="{ '960px': '90vw' }">
+<p-dialog [(visible)]="helpDialogShown" [modal]="true" [style]="{ width: '50vw' }" [breakpoints]="{ '960px': '90vw' }" [closable]="false">
   <app-dynamic-help></app-dynamic-help>
+  <ng-template pTemplate="footer">
+    <p-button icon="pi pi-check" label="OK" (onClick)="helpDialogShown = false"></p-button>
+  </ng-template>
 </p-dialog>

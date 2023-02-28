@@ -1,5 +1,5 @@
 <div>
-  <p-tabView [(activeIndex)]="tabIndex">
+  <p-tabView [(activeIndex)]="tabIndex" (onChange)="onTabChange()">
     <p-tabPanel header="はじめに">
       <app-read-me></app-read-me>
     </p-tabPanel>

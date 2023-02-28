@@ -25,6 +25,8 @@ export class NavigatorService implements CanActivateChild {
 
   private _curerntPath = '';
 
+  private tabIndexMap: { [name: string]: number } = {};
+
   //============================================================================
   // Class methods.
   //
@@ -78,5 +80,17 @@ export class NavigatorService implements CanActivateChild {
 
   get currentPath() {
     return this._curerntPath;
+  }
+
+  setTabIndex(name: string, index: number) {
+    this.tabIndexMap[name] = index;
+  }
+
+  getTabIndex(name: string): number {
+    if (this.tabIndexMap[name]) {
+      return this.tabIndexMap[name];
+    } else {
+      return 0;
+    }
   }
 }

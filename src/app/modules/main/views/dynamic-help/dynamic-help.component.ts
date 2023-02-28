@@ -10,6 +10,8 @@ import { NavigatorService } from '../../services/navigator/navigator.service';
 export class DynamicHelpComponent implements OnInit {
   path = '';
 
+  tabIndex = 0;
+
   constructor(private logger: NGXLogger, private navigator: NavigatorService) {}
 
   ngOnInit(): void {

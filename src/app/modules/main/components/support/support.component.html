@@ -1,5 +1,5 @@
 <div>
-  <p-tabView [(activeIndex)]="tabIndex">
+  <p-tabView [(activeIndex)]="tabIndex" (onChange)="onTabChange()">
     <p-tabPanel header="アップデート">
       <app-release-history></app-release-history>
     </p-tabPanel>

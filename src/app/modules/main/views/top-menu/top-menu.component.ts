@@ -27,7 +27,7 @@ export class TopMenuComponent /*implements OnInit*/ {
   @Output() requestGoHomeEvent = new EventEmitter<boolean>();
 
   /** Dynamic help. */
-  @ViewChild(DynamicHelpComponent) private dynamicHelp!: DynamicHelpComponent;
+  @ViewChild(DynamicHelpComponent) private dynamicHelpComp!: DynamicHelpComponent;
 
   helpDialogShown = false;
 
@@ -61,7 +61,13 @@ export class TopMenuComponent /*implements OnInit*/ {
     const location = `${this.className}.onHelpIconClick()`;
     this.logger.trace(location, { path: this.navigator.currentPath });
 
-    this.dynamicHelp.path = this.navigator.currentPath;
+    this.dynamicHelpComp.path = this.navigator.currentPath;
+    if (this.navigator.currentPath === 'legal') {
+      this.dynamicHelpComp.tabIndex = this.navigator.getTabIndex('legal');
+    } else if (this.navigator.currentPath === 'support') {
+      this.dynamicHelpComp.tabIndex = this.navigator.getTabIndex('support');
+    }
+
     this.helpDialogShown = true;
   }
 }
