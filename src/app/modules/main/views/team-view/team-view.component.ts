@@ -397,6 +397,12 @@ export class TeamViewComponent implements OnInit, AfterViewInit {
 
       const member = this.teamMembers.find((item) => item.id === characterId);
       if (member) {
+        // Hidden member should not be counted.
+        if (member.hidden) {
+          threshold++;
+        }
+
+        // Set flag of the member on border position.
         if (i === threshold) {
           member.onBorder = true;
         } else {
@@ -810,49 +816,92 @@ export class TeamViewComponent implements OnInit, AfterViewInit {
    */
   private async shiftTeamMemberElem(id: string, isUp: boolean): Promise<void> {
     // const location = `${this.className}.shiftTeamMemberElem()`;
-    this.spinner.show();
 
     const teamMemberListElem = document.getElementById(`team-member-list-${this.iTeam}`) as HTMLUListElement;
     const teamMemberElems = Array.from(teamMemberListElem.getElementsByTagName('li'));
     let dstNodeId = '';
     let dstCharacterId = '';
+    let characterNodeIdx = -1;
 
+    // Find the node index of the target character.
     for (let i = 0; i < teamMemberElems.length; ++i) {
       const node = teamMemberElems[i];
       const characterId = node.id.replace(`Team_${this.iTeam}_Member_`, '');
 
+      // Get node index of the target character.
       if (characterId === id) {
-        if (isUp) {
-          if (i === 0) {
-            // Do nothing.
-            break;
-          }
-          dstNodeId = teamMemberElems[i - 1].id;
-          dstCharacterId = teamMemberElems[i - 1].id.replace(`Team_${this.iTeam}_Member_`, '');
-        }
-        if (!isUp) {
-          if (i >= teamMemberElems.length - 2) {
-            // -2: Because of the dummy node.
-            // Do nothing.
-            break;
-          }
-          dstNodeId = teamMemberElems[i + 2].id;
-          dstCharacterId = teamMemberElems[i + 1].id.replace(`Team_${this.iTeam}_Member_`, '');
-        }
+        characterNodeIdx = i;
         break;
       }
     }
 
-    if (dstNodeId !== '') {
-      // Swap list element.
-      this.moveListItemBeforeAnotherItem(`Team_${this.iTeam}_Member_${id}`, dstNodeId);
-
-      // Update user team info.
-      await this.changeTeamMemerOrder(id, dstCharacterId);
-
-      // Border line.
-      this.updateOnBorderFlag();
+    // If the target characte is not found, do nothing.
+    if (characterNodeIdx < 0) {
+      return;
     }
+    // If the character cannot move because it is on top or bottom position, do nothing.
+    if (isUp && characterNodeIdx === 0) {
+      return;
+    } else if (!isUp && characterNodeIdx >= teamMemberElems.length - 2) {
+      return;
+    }
+
+    // Calc destination character node. (UP)
+    if (isUp) {
+      for (let i = characterNodeIdx - 1; i >= 0; --i) {
+        const tmpNodeId = teamMemberElems[i].id;
+        const tmpCharacterId = tmpNodeId.replace(`Team_${this.iTeam}_Member_`, '');
+        const tmpMember = this.teamMembers.find((item) => item.id === tmpCharacterId);
+        if (!tmpMember) {
+          continue; // Member not found. Go to next.
+        }
+        if (tmpMember.hidden) {
+          continue; // Hidden member. Go to next.
+        }
+
+        // Copy node ID and character ID.
+        dstNodeId = tmpNodeId;
+        dstCharacterId = tmpCharacterId;
+        break;
+      }
+    }
+    // Calc destination character node. (DOWN)
+    else {
+      for (let i = characterNodeIdx + 1; i < teamMemberElems.length; ++i) {
+        const tmpNodeId = teamMemberElems[i].id;
+        const tmpCharacterId = tmpNodeId.replace(`Team_${this.iTeam}_Member_`, '');
+        const tmpMember = this.teamMembers.find((item) => item.id === tmpCharacterId);
+        if (tmpNodeId !== `dummy-member-element-${this.iTeam}`) {
+          if (!tmpMember) {
+            continue; // Member not found. Go to next.
+          }
+          if (tmpMember.hidden) {
+            continue; // Hidden member. Go to next.
+          }
+        }
+
+        // Copy node ID and character ID.
+        dstNodeId = tmpNodeId;
+        dstCharacterId = tmpCharacterId;
+        break;
+      }
+    }
+
+    // If destination node is not found. Do nothing.
+    if (dstNodeId === '') {
+      return;
+    }
+
+    this.spinner.show();
+
+    // Swap list element.
+    this.moveListItemBeforeAnotherItem(`Team_${this.iTeam}_Member_${id}`, dstNodeId);
+
+    // Update user team info.
+    await this.changeTeamMemerOrder(id, dstCharacterId);
+
+    // Border line.
+    this.updateOnBorderFlag();
 
     this.spinner.hide();
   }
