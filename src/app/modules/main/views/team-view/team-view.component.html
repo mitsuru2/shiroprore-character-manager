@@ -1,6 +1,16 @@
 <div *ngIf="teamMembers.length === 0 || isAllHidden">
   <p>キャラクターが登録されていません。</p>
   <p>「キャラクター一覧」画面から編成にキャラクターを追加してください。</p>
+
+  <p-divider></p-divider>
+
+  <h3>キャラクター登録方法</h3>
+  <ol>
+    <li>キャラクター一覧ページで表示モードをテーブルモードにする。<img src="../../../../../assets/icon_view_mode.png" height="30px" /></li>
+    <li>登録したいキャラにチェックをつける。<br /><img src="../../../../../assets/help_list_team_registration.png" height="150px" /></li>
+    <li>キャラクター編成ページ（このページ）の戻ると、登録したキャラクターが表示される。</li>
+  </ol>
+  <p>※ このヘルプは <img src="../../../../../assets/icon_question.png" height="30px" /> からも確認できます。</p>
 </div>
 <div>
   <ul class="team-member" [id]="'team-member-list-' + iTeam">
