@@ -815,7 +815,7 @@ export class TeamViewComponent implements OnInit, AfterViewInit {
    * @returns None.
    */
   private async shiftTeamMemberElem(id: string, isUp: boolean): Promise<void> {
-    // const location = `${this.className}.shiftTeamMemberElem()`;
+    const location = `${this.className}.shiftTeamMemberElem()`;
 
     const teamMemberListElem = document.getElementById(`team-member-list-${this.iTeam}`) as HTMLUListElement;
     const teamMemberElems = Array.from(teamMemberListElem.getElementsByTagName('li'));
@@ -867,11 +867,14 @@ export class TeamViewComponent implements OnInit, AfterViewInit {
     }
     // Calc destination character node. (DOWN)
     else {
-      for (let i = characterNodeIdx + 1; i < teamMemberElems.length; ++i) {
+      for (let i = characterNodeIdx + 2; i < teamMemberElems.length; ++i) {
         const tmpNodeId = teamMemberElems[i].id;
-        const tmpCharacterId = tmpNodeId.replace(`Team_${this.iTeam}_Member_`, '');
+        let tmpCharacterId = tmpNodeId.replace(`Team_${this.iTeam}_Member_`, '');
         const tmpMember = this.teamMembers.find((item) => item.id === tmpCharacterId);
-        if (tmpNodeId !== `dummy-member-element-${this.iTeam}`) {
+        this.logger.debug(location, { tmpNode: tmpNodeId, tmpCharacter: tmpCharacterId, tmpMember: tmpMember });
+        if (tmpNodeId === `dummy-member-element-${this.iTeam}`) {
+          tmpCharacterId = '';
+        } else {
           if (!tmpMember) {
             continue; // Member not found. Go to next.
           }
@@ -891,6 +894,8 @@ export class TeamViewComponent implements OnInit, AfterViewInit {
     if (dstNodeId === '') {
       return;
     }
+
+    this.logger.debug(location, { dstNode: dstNodeId, dstCharacter: dstCharacterId });
 
     this.spinner.show();
 
