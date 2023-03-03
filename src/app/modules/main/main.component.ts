@@ -176,8 +176,8 @@ export class MainComponent /*implements OnInit*/ {
 
       // Add text to the support menu label if the latest version date is within 4 days.
       if ((today.getTime() - latestVersionDate.getTime()) / this.oneDayInMs <= this.recentDateNum) {
-        this.sideMenuItems[3].label += '(update)';
-        this.sideMenuItemsM[0].items[3].label += '(update)';
+        this.sideMenuItems[5].label += '(update)';
+        this.sideMenuItemsM[0].items[5].label += '(update)';
       }
     }
   }
