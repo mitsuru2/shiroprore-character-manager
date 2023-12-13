@@ -307,9 +307,25 @@
                 ></p-dropdown>
               </div>
             </div>
-            <div class="formgrid grid p-fluid" *ngIf="selectedAbilityTypes[i].isKeiryaku">
+            <div class="formgrid grid p-fluid" *ngIf="selectedAbilityTypes[i].name === '計略' || selectedAbilityTypes[i].name === '特殊能力'">
+              <div class="field col-12 lg:col-6" *ngIf="selectedAbilityTypes[i].name === '特殊能力'">
+                <label [for]="'NewCharacterForm_KeiryakuInitialIntervalInput_' + i">初回待機時間</label>
+                <p-inputNumber
+                  [inputId]="'NewCharacterForm_KeiryakuInitialIntervalInput_' + i"
+                  [name]="'NewCharacterForm_KeiryakuInitialIntervalInput_' + i"
+                  [(ngModel)]="inputAbilities[i].initialInterval"
+                  mode="decimal"
+                  [showButtons]="true"
+                  suffix="秒"
+                  [min]="-1"
+                  [max]="255"
+                  [disabled]="inputAbilities[i].isExisting"
+                >
+                </p-inputNumber>
+              </div>
               <div class="field col-12 lg:col-6">
-                <label [for]="'NewCharacterForm_KeiryakuIntervalInput_' + i">使用間隔</label>
+                <label [for]="'NewCharacterForm_KeiryakuIntervalInput_' + i" *ngIf="selectedAbilityTypes[i].name === '特殊能力'">再使用</label>
+                <label [for]="'NewCharacterForm_KeiryakuIntervalInput_' + i" *ngIf="selectedAbilityTypes[i].name === '計略'">使用間隔</label>
                 <p-inputNumber
                   [inputId]="'NewCharacterForm_KeiryakuIntervalInput_' + i"
                   [name]="'NewCharacterForm_KeiryakuIntervalInput_' + i"
@@ -463,9 +479,25 @@
                 ></p-dropdown>
               </div>
             </div>
-            <div class="formgrid grid p-fluid" *ngIf="selectedAbilityTypesKai[i].isKeiryaku">
+            <div class="formgrid grid p-fluid" *ngIf="selectedAbilityTypesKai[i].name === '計略' || selectedAbilityTypesKai[i].name === '特殊能力'">
+              <div class="field col-12 lg:col-6" *ngIf="selectedAbilityTypesKai[i].name === '特殊能力'">
+                <label [for]="'NewCharacterForm_KeiryakuInitialIntervalKaiInput_' + i">初回待機時間</label>
+                <p-inputNumber
+                  [inputId]="'NewCharacterForm_KeiryakuInitialIntervalKaiInput_' + i"
+                  [name]="'NewCharacterForm_KeiryakuInitialIntervalKaiInput_' + i"
+                  [(ngModel)]="inputAbilitiesKai[i].initialInterval"
+                  mode="decimal"
+                  [showButtons]="true"
+                  suffix="秒"
+                  [min]="-1"
+                  [max]="255"
+                  [disabled]="inputAbilitiesKai[i].isExisting"
+                >
+                </p-inputNumber>
+              </div>
               <div class="field col-12 lg:col-6">
-                <label [for]="'NewCharacterForm_KeiryakuIntervalKaiInput_' + i">使用間隔</label>
+                <label [for]="'NewCharacterForm_KeiryakuIntervalKaiInput_' + i" *ngIf="selectedAbilityTypesKai[i].name === '特殊能力'">再使用</label>
+                <label [for]="'NewCharacterForm_KeiryakuIntervalKaiInput_' + i" *ngIf="selectedAbilityTypesKai[i].name === '計略'">使用間隔</label>
                 <p-inputNumber
                   [inputId]="'NewCharacterForm_KeiryakuIntervalKaiInput_' + i"
                   [name]="'NewCharacterForm_KeiryakuIntervalKaiInput_' + i"

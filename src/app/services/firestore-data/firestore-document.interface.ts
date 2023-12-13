@@ -88,6 +88,8 @@ export class FsAbility extends FsDocumentBase {
 
   interval: number = 0;
 
+  initialInterval?: number = 0;
+
   cost: number = 0;
 
   tokenLayouts: MapCellType[] = [];

@@ -1008,6 +1008,9 @@ export class NewCharacterFormComponent implements OnInit, AfterViewInit {
       for (let i = 0; i < base.descriptions.length; ++i) {
         result.descriptions.push(base.descriptions[i].slice());
       }
+      if (base.initialInterval) {
+        result.initialInterval = base.initialInterval;
+      }
       result.interval = base.interval;
       result.cost = base.cost;
       result.tokenLayouts = [];
@@ -1319,6 +1322,7 @@ export class NewCharacterFormComponent implements OnInit, AfterViewInit {
     result.typeName = type.name;
     result.name = input.name;
     result.descriptions = input.descriptions.filter((text) => text.length > 0);
+    result.initialInterval = input.initialInterval;
     result.interval = input.interval;
     result.cost = input.cost;
     for (let i = 0; i < input.tokenLayouts.length; ++i) {

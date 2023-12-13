@@ -7,7 +7,8 @@ export const fsAbilityTypesData: FsAbilityType[] = [
   new FsAbilityType('fZGsWgRvgqfMKqhLoBnR', '編成特技', 2, false),
   new FsAbilityType('sFtaxbe7qsqYi6zG9Z7i', '大破特技', 3, false),
   new FsAbilityType('OAdc5b0je3Vj7KXVJead', '特殊攻撃', 4, false),
-  new FsAbilityType('yjHNuIylWnqEf634dKJO', '計略', 5, true),
+  new FsAbilityType('SAjy7mRqgvygHGIwgtVd', '特殊能力', 5, false),
+  new FsAbilityType('yjHNuIylWnqEf634dKJO', '計略', 6, true),
 ];
 
 export const fsFacilityTypesData: FsFacilityType[] = [

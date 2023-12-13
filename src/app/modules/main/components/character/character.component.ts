@@ -673,6 +673,8 @@ export class CharacterComponent implements OnInit, AfterViewInit {
         // If the ability type is Keiryaku, add interval, cost, and token info.
         if (type.isKeiryaku && ability.interval >= 0) {
           descText += '\n' + this.makeKeiryakuPropertiesText(ability);
+        } else if (type.name === '特殊能力') {
+          descText += '\n' + this.makeTokushuNoryokuPropertiesText(ability);
         }
 
         td.innerText = descText; // User 'innerText' property to activate line feed.
@@ -709,6 +711,8 @@ export class CharacterComponent implements OnInit, AfterViewInit {
         // If the ability type is Keiryaku, add interval, cost, and token info.
         if (type.isKeiryaku && ability.interval >= 0) {
           descText += '\n' + this.makeKeiryakuPropertiesText(ability);
+        } else if (type.name === '特殊能力') {
+          descText += '\n' + this.makeTokushuNoryokuPropertiesText(ability);
         }
 
         td.innerText = descText; // User 'innerText' property to activate line feed.
@@ -748,6 +752,14 @@ export class CharacterComponent implements OnInit, AfterViewInit {
       }
       result += `(CT:${ability.interval}秒 / 消費気:${ability.cost} / 配置:${tokenLayoutText})`;
     }
+
+    return result;
+  }
+
+  private makeTokushuNoryokuPropertiesText(ability: FsAbility): string {
+    let result = '';
+
+    result += `(ICT:${ability.initialInterval}秒 / RCT:${ability.interval}秒 / 消費気:${ability.cost})`;
 
     return result;
   }
@@ -1176,6 +1188,15 @@ export class CharacterComponent implements OnInit, AfterViewInit {
       // Attributes.
       if (this.isAbilityAttrChanged(orgAbility.attributes, modAbility.attributes)) {
         await this.firestore.updateField(FsCollectionName.Abilities, orgAbility.id, 'attributes', modAbility.attributes);
+      }
+
+      // Initial interval.
+      if (modAbility.initialInterval) {
+        if (!orgAbility.initialInterval) {
+          await this.firestore.updateField(FsCollectionName.Abilities, orgAbility.id, 'initialInterval', modAbility.initialInterval);
+        } else if (orgAbility.initialInterval !== modAbility.initialInterval) {
+          await this.firestore.updateField(FsCollectionName.Abilities, orgAbility.id, 'initialInterval', modAbility.initialInterval);
+        }
       }
 
       // Interval.

@@ -228,6 +228,7 @@ export class NewCharacterComponent /*implements OnInit*/ {
     result.name = src.name;
     result.type = src.type;
     result.cost = src.cost;
+    result.initialInterval = src.initialInterval;
     result.interval = src.interval;
     result.descriptions = src.descriptions;
     result.tokenLayouts = src.tokenLayouts;
