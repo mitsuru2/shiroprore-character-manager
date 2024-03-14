@@ -920,6 +920,7 @@ export class NewCharacterFormComponent implements OnInit, AfterViewInit {
       this.inputMotifWeapons.splice(index); // Remove text chip.
       this.weaponForm = new NewWeaponFormData();
       this.weaponForm.name = value; // Set initial value.
+      this.weaponForm.type = this.characterData.weaponType;
       this.showWeaponForm = true;
     }
   }
