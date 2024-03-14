@@ -1,6 +1,7 @@
 import { csCharacterImageTypes } from 'src/app/services/cloud-storage/cloud-storage.interface';
 import {
   FsAbility,
+  FsAbilityType,
   FsCharacterTag,
   FsCharacterType,
   FsFacility,
@@ -16,7 +17,7 @@ import {
 export type NewCharacterFormMode = 'normal' | 'dataEdit' | 'imageEdit';
 
 export class FsAbilityForNewCharacterForm extends FsAbility {
-  typeName: string = '';
+  typeDetail?: FsAbilityType;
 
   tokenAvailable: boolean = false;
 

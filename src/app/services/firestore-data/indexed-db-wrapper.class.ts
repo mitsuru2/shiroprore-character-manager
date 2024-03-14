@@ -5,18 +5,23 @@ import { ErrorCode } from '../error-handler/error-code.enum';
 import { FsCollectionName } from './firestore-collection-name.enum';
 import {
   FsAbility,
+  FsAbilityType,
   FsAnnounce,
   FsCharacter,
   FsCharacterTag,
   FsCharacterType,
   FsDocumentBase,
   FsFacility,
+  FsFacilityType,
+  FsGeographType,
   FsIllustrator,
+  FsRegion,
   FsSubCharacterType,
   FsUser,
   FsVersion,
   FsVoiceActor,
   FsWeapon,
+  FsWeaponType,
 } from './firestore-document.interface';
 
 // export type DexieDatabase = { [P in keyof Dexie]: Dexie[P] };
@@ -28,14 +33,19 @@ export interface StoredAtTimestampMap {
 
 // export interface ShiroproreDatabase extends Dexie {
 //   [FsCollectionName.Abilities]: Dexie.Table<FsAbility, string>;
+//   [FsCollectionName.AbilityTypes]: Dexie.Table<FsAbilityType, string>;
 //   [FsCollectionName.CharacterTags]: Dexie.Table<FsCharacterTag, string>;
 //   [FsCollectionName.CharacterTypes]: Dexie.Table<FsCharacterType, string>;
 //   [FsCollectionName.Characters]: Dexie.Table<FsCharacter, string>;
 //   [FsCollectionName.Facilities]: Dexie.Table<FsFacility, string>;
+//   [FsCollectionName.FacilityTypes]: Dexie.Table<FsFacilityType, string>;
+//   [FsCollectionName.GeographTypes]: Dexie.Table<FsGeographType, string>;
 //   [FsCollectionName.Illustrators]: Dexie.Table<FsIllustrator, string>;
+//   [FsCollectionName.Regions]: Dexie.Table<FsRegion, string>;
 //   [FsCollectionName.SubCharacterTypes]: Dexie.Table<FsSubCharacterType, string>;
 //   [FsCollectionName.VoiceActors]: Dexie.Table<FsVoiceActor, string>;
 //   [FsCollectionName.Weapons]: Dexie.Table<FsWeapon, string>;
+//   [FsCollectionName.WeaponTypes]: Dexie.Table<FsWeaponType, string>;
 //   TimestampMap: Dexie.Table<FieldValue, string>;
 // }
 
@@ -45,6 +55,8 @@ export class IndexedDbWrapper extends Dexie {
   static readonly className = 'IndexedDbWrapper';
 
   abilities!: Table<FsAbility, string>;
+
+  abilityTypes!: Table<FsAbilityType, string>;
 
   announces!: Table<FsAnnounce, string>;
 
@@ -56,7 +68,13 @@ export class IndexedDbWrapper extends Dexie {
 
   facilities!: Table<FsFacility, string>;
 
+  facilityTypes!: Table<FsFacilityType, string>;
+
+  geographTypes!: Table<FsGeographType, string>;
+
   illustrators!: Table<FsIllustrator, string>;
+
+  regions!: Table<FsRegion, string>;
 
   subCharacterTypes!: Table<FsSubCharacterType, string>;
 
@@ -68,6 +86,8 @@ export class IndexedDbWrapper extends Dexie {
 
   weapons!: Table<FsWeapon, string>;
 
+  weaponTypes!: Table<FsWeaponType, string>;
+
   timeStamps!: Table<StoredAtTimestampMap, string>;
 
   //============================================================================
@@ -75,19 +95,24 @@ export class IndexedDbWrapper extends Dexie {
   //
   constructor() {
     super(IndexedDbWrapper.dbName);
-    this.version(5).stores({
+    this.version(6).stores({
       abilities: 'id',
+      abilityTypes: 'id',
       announces: 'id',
       characterTags: 'id',
       characterTypes: 'id',
       characters: 'id',
       facilities: 'id',
+      facilityTypes: 'id',
+      geographTypes: 'id',
       illustrators: 'id',
+      regions: 'id',
       subCharacterTypes: 'id',
       users: 'id',
       versions: 'id',
       voiceActors: 'id',
       weapons: 'id',
+      weaponTypes: 'id',
       timeStamps: 'name',
     });
   }
@@ -98,6 +123,9 @@ export class IndexedDbWrapper extends Dexie {
 
     if (name === FsCollectionName.Abilities) {
       await indexedDbWrapper.abilities.bulkPut(data as FsAbility[]);
+      await indexedDbWrapper.timeStamps.put({ name: name, timestamp: timestamp });
+    } else if (name === FsCollectionName.AbilityTypes) {
+      await indexedDbWrapper.abilityTypes.bulkPut(data as FsAbilityType[]);
       await indexedDbWrapper.timeStamps.put({ name: name, timestamp: timestamp });
     } else if (name === FsCollectionName.Announces) {
       await indexedDbWrapper.announces.bulkPut(data as FsAnnounce[]);
@@ -114,8 +142,17 @@ export class IndexedDbWrapper extends Dexie {
     } else if (name === FsCollectionName.Facilities) {
       await indexedDbWrapper.facilities.bulkPut(data as FsFacility[]);
       await indexedDbWrapper.timeStamps.put({ name: name, timestamp: timestamp });
+    } else if (name === FsCollectionName.FacilityTypes) {
+      await indexedDbWrapper.facilityTypes.bulkPut(data as FsFacilityType[]);
+      await indexedDbWrapper.timeStamps.put({ name: name, timestamp: timestamp });
+    } else if (name === FsCollectionName.GeographTypes) {
+      await indexedDbWrapper.geographTypes.bulkPut(data as FsGeographType[]);
+      await indexedDbWrapper.timeStamps.put({ name: name, timestamp: timestamp });
     } else if (name === FsCollectionName.Illustrators) {
       await indexedDbWrapper.illustrators.bulkPut(data as FsIllustrator[]);
+      await indexedDbWrapper.timeStamps.put({ name: name, timestamp: timestamp });
+    } else if (name === FsCollectionName.Regions) {
+      await indexedDbWrapper.regions.bulkPut(data as FsRegion[]);
       await indexedDbWrapper.timeStamps.put({ name: name, timestamp: timestamp });
     } else if (name === FsCollectionName.SubCharacterTypes) {
       await indexedDbWrapper.subCharacterTypes.bulkPut(data as FsSubCharacterType[]);
@@ -133,6 +170,9 @@ export class IndexedDbWrapper extends Dexie {
     } else if (name === FsCollectionName.Weapons) {
       await indexedDbWrapper.weapons.bulkPut(data as FsWeapon[]);
       await indexedDbWrapper.timeStamps.put({ name: name, timestamp: timestamp });
+    } else if (name === FsCollectionName.WeaponTypes) {
+      await indexedDbWrapper.weaponTypes.bulkPut(data as FsWeaponType[]);
+      await indexedDbWrapper.timeStamps.put({ name: name, timestamp: timestamp });
     } else {
       const error = new Error(`${location} Unsupported collection name. { name: ${name} }`);
       error.name = ErrorCode.BadRequest;
@@ -146,6 +186,8 @@ export class IndexedDbWrapper extends Dexie {
 
     if (name === FsCollectionName.Abilities) {
       result = await indexedDbWrapper.abilities.toArray();
+    } else if (name === FsCollectionName.AbilityTypes) {
+      result = await indexedDbWrapper.abilityTypes.toArray();
     } else if (name === FsCollectionName.Announces) {
       result = await indexedDbWrapper.announces.toArray();
     } else if (name === FsCollectionName.CharacterTags) {
@@ -156,8 +198,14 @@ export class IndexedDbWrapper extends Dexie {
       result = await indexedDbWrapper.characters.toArray();
     } else if (name === FsCollectionName.Facilities) {
       result = await indexedDbWrapper.facilities.toArray();
+    } else if (name === FsCollectionName.FacilityTypes) {
+      result = await indexedDbWrapper.facilityTypes.toArray();
+    } else if (name === FsCollectionName.GeographTypes) {
+      result = await indexedDbWrapper.geographTypes.toArray();
     } else if (name === FsCollectionName.Illustrators) {
       result = await indexedDbWrapper.illustrators.toArray();
+    } else if (name === FsCollectionName.Regions) {
+      result = await indexedDbWrapper.regions.toArray();
     } else if (name === FsCollectionName.SubCharacterTypes) {
       result = await indexedDbWrapper.subCharacterTypes.toArray();
     } else if (name === FsCollectionName.Users) {
@@ -169,6 +217,8 @@ export class IndexedDbWrapper extends Dexie {
       result = await indexedDbWrapper.voiceActors.toArray();
     } else if (name === FsCollectionName.Weapons) {
       result = await indexedDbWrapper.weapons.toArray();
+    } else if (name === FsCollectionName.WeaponTypes) {
+      result = await indexedDbWrapper.weaponTypes.toArray();
     } else {
       const error = new Error(`${location} Unsupported collection name. { name: ${name} }`);
       error.name = ErrorCode.BadRequest;

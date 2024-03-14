@@ -29,11 +29,11 @@ import {
   FsAnnounce,
 } from './firestore-document.interface';
 import { FirestoreCollectionWrapper } from './firestore-collection-wrapper.class';
-import { FirestoreCollectionDummy } from './firestore-collection-dummy.class';
+//import { FirestoreCollectionDummy } from './firestore-collection-dummy.class';
 import { ErrorHandlerService } from '../error-handler/error-handler.service';
 import { ErrorCode } from '../error-handler/error-code.enum';
 import { sleep } from 'src/app/modules/main/utils/sleep/sleep.utility';
-import { UserAuthService } from 'src/app/modules/main/services/user-auth/user-auth.service';
+//import { UserAuthService } from 'src/app/modules/main/services/user-auth/user-auth.service';
 
 //==============================================================================
 // Service class implementation.
@@ -58,24 +58,24 @@ export class FirestoreDataService {
 
   loaded = false;
 
-  collections: { [key in FsCollectionName]: FirestoreCollectionWrapper<any> | FirestoreCollectionDummy<any> } = {
-    [FsCollectionName.Abilities]:         new FirestoreCollectionWrapper<FsAbility>          (this.fs, FsCollectionName.Abilities), // eslint-disable-line
-    [FsCollectionName.AbilityTypes]:      new FirestoreCollectionDummy<FsAbilityType>        (         FsCollectionName.AbilityTypes), // eslint-disable-line
-    [FsCollectionName.Announces]:         new FirestoreCollectionWrapper<FsAnnounce>         (this.fs, FsCollectionName.Announces), // eslint-disable-line
-    [FsCollectionName.CharacterTags]:     new FirestoreCollectionWrapper<FsCharacterTag>     (this.fs, FsCollectionName.CharacterTags), // eslint-disable-line
-    [FsCollectionName.CharacterTypes]:    new FirestoreCollectionWrapper<FsCharacterType>    (this.fs, FsCollectionName.CharacterTypes), // eslint-disable-line
-    [FsCollectionName.Characters]:        new FirestoreCollectionWrapper<FsCharacter>        (this.fs, FsCollectionName.Characters), // eslint-disable-line
-    [FsCollectionName.Facilities]:        new FirestoreCollectionWrapper<FsFacility>         (this.fs, FsCollectionName.Facilities), // eslint-disable-line
-    [FsCollectionName.FacilityTypes]:     new FirestoreCollectionDummy<FsFacilityType>       (         FsCollectionName.FacilityTypes), // eslint-disable-line
-    [FsCollectionName.GeographTypes]:     new FirestoreCollectionDummy<FsGeographType>       (         FsCollectionName.GeographTypes), // eslint-disable-line
-    [FsCollectionName.Illustrators]:      new FirestoreCollectionWrapper<FsIllustrator>      (this.fs, FsCollectionName.Illustrators), // eslint-disable-line
-    [FsCollectionName.Regions]:           new FirestoreCollectionDummy<FsRegion>             (         FsCollectionName.Regions), // eslint-disable-line
-    [FsCollectionName.SubCharacterTypes]: new FirestoreCollectionWrapper<FsSubCharacterType> (this.fs, FsCollectionName.SubCharacterTypes), // eslint-disable-line
-    [FsCollectionName.Users]:             new FirestoreCollectionWrapper<FsUser>             (this.fs, FsCollectionName.Users), // eslint-disable-line
-    [FsCollectionName.Versions]:          new FirestoreCollectionWrapper<FsVersion>          (this.fs, FsCollectionName.Versions), // eslint-disable-line
-    [FsCollectionName.VoiceActors]:       new FirestoreCollectionWrapper<FsVoiceActor>       (this.fs, FsCollectionName.VoiceActors), // eslint-disable-line
-    [FsCollectionName.WeaponTypes]:       new FirestoreCollectionDummy<FsWeaponType>         (         FsCollectionName.WeaponTypes), // eslint-disable-line
-    [FsCollectionName.Weapons]:           new FirestoreCollectionWrapper<FsWeapon>           (this.fs, FsCollectionName.Weapons), // eslint-disable-line
+  collections: { [key in FsCollectionName]: FirestoreCollectionWrapper<any> } = {
+    [FsCollectionName.Abilities]:         new FirestoreCollectionWrapper<FsAbility>(this.fs, FsCollectionName.Abilities), // eslint-disable-line
+    [FsCollectionName.AbilityTypes]:      new FirestoreCollectionWrapper<FsAbilityType>(this.fs, FsCollectionName.AbilityTypes), // eslint-disable-line
+    [FsCollectionName.Announces]:         new FirestoreCollectionWrapper<FsAnnounce>(this.fs, FsCollectionName.Announces), // eslint-disable-line
+    [FsCollectionName.CharacterTags]:     new FirestoreCollectionWrapper<FsCharacterTag>(this.fs, FsCollectionName.CharacterTags), // eslint-disable-line
+    [FsCollectionName.CharacterTypes]:    new FirestoreCollectionWrapper<FsCharacterType>(this.fs, FsCollectionName.CharacterTypes), // eslint-disable-line
+    [FsCollectionName.Characters]:        new FirestoreCollectionWrapper<FsCharacter>(this.fs, FsCollectionName.Characters), // eslint-disable-line
+    [FsCollectionName.Facilities]:        new FirestoreCollectionWrapper<FsFacility>(this.fs, FsCollectionName.Facilities), // eslint-disable-line
+    [FsCollectionName.FacilityTypes]:     new FirestoreCollectionWrapper<FsFacilityType>(this.fs, FsCollectionName.FacilityTypes), // eslint-disable-line
+    [FsCollectionName.GeographTypes]:     new FirestoreCollectionWrapper<FsGeographType>(this.fs, FsCollectionName.GeographTypes), // eslint-disable-line
+    [FsCollectionName.Illustrators]:      new FirestoreCollectionWrapper<FsIllustrator>(this.fs, FsCollectionName.Illustrators), // eslint-disable-line
+    [FsCollectionName.Regions]:           new FirestoreCollectionWrapper<FsRegion>(this.fs, FsCollectionName.Regions), // eslint-disable-line
+    [FsCollectionName.SubCharacterTypes]: new FirestoreCollectionWrapper<FsSubCharacterType>(this.fs, FsCollectionName.SubCharacterTypes), // eslint-disable-line
+    [FsCollectionName.Users]:             new FirestoreCollectionWrapper<FsUser>(this.fs, FsCollectionName.Users), // eslint-disable-line
+    [FsCollectionName.Versions]:          new FirestoreCollectionWrapper<FsVersion>(this.fs, FsCollectionName.Versions), // eslint-disable-line
+    [FsCollectionName.VoiceActors]:       new FirestoreCollectionWrapper<FsVoiceActor>(this.fs, FsCollectionName.VoiceActors), // eslint-disable-line
+    [FsCollectionName.WeaponTypes]:       new FirestoreCollectionWrapper<FsWeaponType>(this.fs, FsCollectionName.WeaponTypes), // eslint-disable-line
+    [FsCollectionName.Weapons]:           new FirestoreCollectionWrapper<FsWeapon>(this.fs, FsCollectionName.Weapons), // eslint-disable-line
   };
 
   /**

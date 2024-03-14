@@ -669,12 +669,9 @@ export class CharacterComponent implements OnInit, AfterViewInit {
       else {
         td = tr.insertCell();
         let descText = this.makeAbilityDescriptionText(ability.descriptions);
-
-        // If the ability type is Keiryaku, add interval, cost, and token info.
-        if (type.isKeiryaku && ability.interval >= 0) {
-          descText += '\n' + this.makeKeiryakuPropertiesText(ability);
-        } else if (type.name === '特殊能力') {
-          descText += '\n' + this.makeTokushuNoryokuPropertiesText(ability);
+        let propertyText = this.makeAbilityPropertyText(ability, type);
+        if (propertyText.length > 0) {
+          descText += '\n' + propertyText;
         }
 
         td.innerText = descText; // User 'innerText' property to activate line feed.
@@ -707,12 +704,9 @@ export class CharacterComponent implements OnInit, AfterViewInit {
       else {
         td = tr.insertCell();
         let descText = this.makeAbilityDescriptionText(ability.descriptions);
-
-        // If the ability type is Keiryaku, add interval, cost, and token info.
-        if (type.isKeiryaku && ability.interval >= 0) {
-          descText += '\n' + this.makeKeiryakuPropertiesText(ability);
-        } else if (type.name === '特殊能力') {
-          descText += '\n' + this.makeTokushuNoryokuPropertiesText(ability);
+        let propertyText = this.makeAbilityPropertyText(ability, type);
+        if (propertyText.length > 0) {
+          descText += '\n' + propertyText;
         }
 
         td.innerText = descText; // User 'innerText' property to activate line feed.
@@ -736,30 +730,87 @@ export class CharacterComponent implements OnInit, AfterViewInit {
     return result;
   }
 
-  private makeKeiryakuPropertiesText(ability: FsAbility): string {
+  // private makeKeiryakuPropertiesText(ability: FsAbility): string {
+  //   let result = '';
+
+  //   if (ability.tokenLayouts.length === 0) {
+  //     result += `(CT:${ability.interval}秒 / 消費気:${ability.cost})`;
+  //   } else {
+  //     let tokenLayoutText = '';
+  //     this.firestore.sortMapCellTypes(ability.tokenLayouts);
+  //     for (let j = 0; j < ability.tokenLayouts.length; ++j) {
+  //       if (j > 0) {
+  //         tokenLayoutText += ',';
+  //       }
+  //       tokenLayoutText += ability.tokenLayouts[j];
+  //     }
+  //     result += `(CT:${ability.interval}秒 / 消費気:${ability.cost} / 配置:${tokenLayoutText})`;
+  //   }
+
+  //   return result;
+  // }
+
+  // private makeTokushuNoryokuPropertiesText(ability: FsAbility): string {
+  //   let result = '';
+
+  //   result += `(ICT:${ability.initialInterval}秒 / RCT:${ability.interval}秒 / 消費気:${ability.cost})`;
+
+  //   return result;
+  // }
+
+  private makeAbilityPropertyText(ability: FsAbility, type: FsAbilityType): string {
     let result = '';
 
-    if (ability.tokenLayouts.length === 0) {
-      result += `(CT:${ability.interval}秒 / 消費気:${ability.cost})`;
-    } else {
-      let tokenLayoutText = '';
-      this.firestore.sortMapCellTypes(ability.tokenLayouts);
-      for (let j = 0; j < ability.tokenLayouts.length; ++j) {
-        if (j > 0) {
-          tokenLayoutText += ',';
-        }
-        tokenLayoutText += ability.tokenLayouts[j];
-      }
-      result += `(CT:${ability.interval}秒 / 消費気:${ability.cost} / 配置:${tokenLayoutText})`;
+    // No property text if the ability type does not support.
+    if (!type.hasCost && !type.hasInitialInterval && !type.hasInterval) {
+      return result;
     }
 
-    return result;
-  }
+    // No property text if interval time is less than zero.
+    if (ability.interval < 0) {
+      return result;
+    }
 
-  private makeTokushuNoryokuPropertiesText(ability: FsAbility): string {
-    let result = '';
+    // Start bracket.
+    result = '(';
 
-    result += `(ICT:${ability.initialInterval}秒 / RCT:${ability.interval}秒 / 消費気:${ability.cost})`;
+    // Initial interval time.
+    if (type.hasInitialInterval) {
+      result += `ICT:${ability.initialInterval}秒`;
+    }
+
+    // Interval time / Re-cast time.
+    if (type.hasInterval) {
+      if (type.hasInitialInterval) {
+        result += ` / RCT:${ability.interval}秒`;
+      } else {
+        result += `CT:${ability.interval}秒`;
+      }
+    }
+
+    // Cost.
+    if (type.hasCost) {
+      if (result.length > 1) {
+        result += ' / ';
+      }
+      result += `消費気:${ability.cost}`;
+    }
+
+    // Token layout.
+    if (ability.tokenLayouts.length > 0) {
+      let tokenLayoutText = ' / 配置:';
+      this.firestore.sortMapCellTypes(ability.tokenLayouts);
+      for (let i = 0; i < ability.tokenLayouts.length; ++i) {
+        if (i > 0) {
+          tokenLayoutText += ',';
+        }
+        tokenLayoutText += ability.tokenLayouts[i];
+      }
+      result += tokenLayoutText;
+    }
+
+    // Close bracket.
+    result += ')';
 
     return result;
   }
@@ -896,8 +947,7 @@ export class CharacterComponent implements OnInit, AfterViewInit {
     for (let i = 0; i < src.abilities.length; ++i) {
       const ability = this.firestore.getDataById(FsCollectionName.Abilities, src.abilities[i]) as FsAbilityForNewCharacterForm;
       ability.isExisting = false;
-      ability.tokenAvailable = ability.tokenLayouts.length > 0 ? true : false;
-      ability.typeName = this.firestore.getDataById(FsCollectionName.AbilityTypes, ability.type).name;
+      ability.typeDetail = this.firestore.getDataById(FsCollectionName.AbilityTypes, ability.type) as FsAbilityType;
       result.abilities.push(ability);
     }
 
@@ -906,8 +956,7 @@ export class CharacterComponent implements OnInit, AfterViewInit {
     for (let i = 0; i < src.abilitiesKai.length; ++i) {
       const ability = this.firestore.getDataById(FsCollectionName.Abilities, src.abilitiesKai[i]) as FsAbilityForNewCharacterForm;
       ability.isExisting = false;
-      ability.tokenAvailable = ability.tokenLayouts.length > 0 ? true : false;
-      ability.typeName = this.firestore.getDataById(FsCollectionName.AbilityTypes, ability.type).name;
+      ability.typeDetail = this.firestore.getDataById(FsCollectionName.AbilityTypes, ability.type) as FsAbilityType;
       result.abilitiesKai.push(ability);
     }
 

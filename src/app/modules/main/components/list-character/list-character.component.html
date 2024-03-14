@@ -89,7 +89,8 @@
       [rows]="paginator.rowNum"
       [first]="paginator.firstItemIndex"
       [totalRecords]="filteredIndexes.length"
-      [pageLinkSize]="paginator.pageLinkNum"
+      [showPageLinks]="false"
+      [showJumpToPageDropdown]="true"
       styleClass="paginator"
       (onPageChange)="onPageChange($event)"
     ></p-paginator>

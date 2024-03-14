@@ -82,20 +82,27 @@
     <p-card [style]="{ 'margin-bottom': '1rem' }">
       <div class="formgrid grid">
         <div class="col-6 lg:col-3">特技/計略タイプ</div>
-        <div class="col-6 lg:col-3">{{ ability.typeName }}</div>
+        <div class="col-6 lg:col-3">{{ ability.typeDetail?.name }}</div>
         <div class="col-6 lg:col-3">特技/計略名</div>
         <div class="col-6 lg:col-3">{{ ability.name }}</div>
-        <div class="col-6 lg:col-3" *ngIf="ability.typeName === '計略'">使用間隔</div>
-        <div class="col-6 lg:col-3" *ngIf="ability.typeName === '計略'">{{ ability.interval }} 秒</div>
-        <div class="col-6 lg:col-3" *ngIf="ability.typeName === '計略'">消費気</div>
-        <div class="col-6 lg:col-3" *ngIf="ability.typeName === '計略'">{{ ability.cost }}</div>
-        <div class="col-6 lg:col-3" *ngIf="ability.typeName === '計略' && ability.tokenLayouts.length > 0">伏兵配置マス</div>
-        <div class="col-6 lg:col-9" *ngIf="ability.typeName === '計略' && ability.tokenLayouts.length > 0">
+        <div class="col-6 lg:col-3" *ngIf="ability.typeDetail?.hasInitialInterval">初回待機時間</div>
+        <div class="col-6 lg:col-3" *ngIf="ability.typeDetail?.hasInitialInterval">{{ ability.initialInterval }} 秒</div>
+        <div class="col-6 lg:col-3" *ngIf="ability.typeDetail?.hasInterval && ability.typeDetail?.hasInitialInterval">再使用</div>
+        <div class="col-6 lg:col-3" *ngIf="ability.typeDetail?.hasInterval && !ability.typeDetail?.hasInitialInterval">使用間隔</div>
+        <div class="col-6 lg:col-3" *ngIf="ability.typeDetail?.hasInterval">{{ ability.interval }} 秒</div>
+        <div class="col-6 lg:col-3" *ngIf="ability.typeDetail?.hasCost">消費気</div>
+        <div class="col-6 lg:col-3" *ngIf="ability.typeDetail?.hasCost">{{ ability.cost }}</div>
+      </div>
+      <div class="formgrid grid">
+        <div class="col-6 lg:col-3" *ngIf="ability.tokenAvailable">伏兵配置マス</div>
+        <div class="col-6 lg:col-9" *ngIf="ability.tokenAvailable">
           <span *ngFor="let layout of ability.tokenLayouts; let j = index">
             <span *ngIf="j > 0">, </span>
             {{ layout }}
           </span>
         </div>
+      </div>
+      <div class="formgrid grid">
         <div class="col-6 lg:col-3">説明</div>
         <div class="col-6 lg:col-9">
           <div *ngFor="let desc of ability.descriptions">{{ desc }}</div>
@@ -114,15 +121,18 @@
       <p-card [style]="{ 'margin-bottom': '1rem' }">
         <div class="formgrid grid">
           <div class="col-6 lg:col-3">特技/計略タイプ</div>
-          <div class="col-6 lg:col-3">{{ ability.typeName }}</div>
+          <div class="col-6 lg:col-3">{{ ability.typeDetail?.name }}</div>
           <div class="col-6 lg:col-3">特技/計略名</div>
           <div class="col-6 lg:col-3">{{ ability.name }}</div>
-          <div class="col-6 lg:col-3" *ngIf="ability.typeName === '計略'">使用間隔</div>
-          <div class="col-6 lg:col-3" *ngIf="ability.typeName === '計略'">{{ ability.interval }} 秒</div>
-          <div class="col-6 lg:col-3" *ngIf="ability.typeName === '計略'">消費気</div>
-          <div class="col-6 lg:col-3" *ngIf="ability.typeName === '計略'">{{ ability.cost }}</div>
-          <div class="col-6 lg:col-3" *ngIf="ability.typeName === '計略' && ability.tokenLayouts.length > 0">伏兵配置マス</div>
-          <div class="col-6 lg:col-9" *ngIf="ability.typeName === '計略' && ability.tokenLayouts.length > 0">
+          <div class="col-6 lg:col-3" *ngIf="ability.typeDetail?.hasInitialInterval">初回待機時間</div>
+          <div class="col-6 lg:col-3" *ngIf="ability.typeDetail?.hasInitialInterval">{{ ability.initialInterval }} 秒</div>
+          <div class="col-6 lg:col-3" *ngIf="ability.typeDetail?.hasInterval && ability.typeDetail?.hasInitialInterval">再使用</div>
+          <div class="col-6 lg:col-3" *ngIf="ability.typeDetail?.hasInterval && !ability.typeDetail?.hasInitialInterval">使用間隔</div>
+          <div class="col-6 lg:col-3" *ngIf="ability.typeDetail?.hasInterval">{{ ability.interval }} 秒</div>
+          <div class="col-6 lg:col-3" *ngIf="ability.typeDetail?.hasCost">消費気</div>
+          <div class="col-6 lg:col-3" *ngIf="ability.typeDetail?.hasCost">{{ ability.cost }}</div>
+          <div class="col-6 lg:col-3" *ngIf="ability.typeDetail?.hasToken && ability.tokenLayouts.length > 0">伏兵配置マス</div>
+          <div class="col-6 lg:col-9" *ngIf="ability.typeDetail?.hasToken && ability.tokenLayouts.length > 0">
             <span *ngIf="ability.tokenLayouts">
               <span *ngFor="let layout of ability.tokenLayouts; let j = index">
                 <span *ngIf="j > 0">, </span>

@@ -307,8 +307,11 @@
                 ></p-dropdown>
               </div>
             </div>
-            <div class="formgrid grid p-fluid" *ngIf="selectedAbilityTypes[i].name === '計略' || selectedAbilityTypes[i].name === '特殊能力'">
-              <div class="field col-12 lg:col-6" *ngIf="selectedAbilityTypes[i].name === '特殊能力'">
+            <div
+              class="formgrid grid p-fluid"
+              *ngIf="selectedAbilityTypes[i].hasCost || selectedAbilityTypes[i].hasInterval || selectedAbilityTypes[i].hasInitialInterval"
+            >
+              <div class="field col-12 lg:col-6" *ngIf="selectedAbilityTypes[i].hasInitialInterval">
                 <label [for]="'NewCharacterForm_KeiryakuInitialIntervalInput_' + i">初回待機時間</label>
                 <p-inputNumber
                   [inputId]="'NewCharacterForm_KeiryakuInitialIntervalInput_' + i"
@@ -323,9 +326,9 @@
                 >
                 </p-inputNumber>
               </div>
-              <div class="field col-12 lg:col-6">
-                <label [for]="'NewCharacterForm_KeiryakuIntervalInput_' + i" *ngIf="selectedAbilityTypes[i].name === '特殊能力'">再使用</label>
-                <label [for]="'NewCharacterForm_KeiryakuIntervalInput_' + i" *ngIf="selectedAbilityTypes[i].name === '計略'">使用間隔</label>
+              <div class="field col-12 lg:col-6" *ngIf="selectedAbilityTypes[i].hasInterval">
+                <label [for]="'NewCharacterForm_KeiryakuIntervalInput_' + i" *ngIf="selectedAbilityTypes[i].hasInitialInterval">再使用時間</label>
+                <label [for]="'NewCharacterForm_KeiryakuIntervalInput_' + i" *ngIf="!selectedAbilityTypes[i].hasInitialInterval">使用間隔</label>
                 <p-inputNumber
                   [inputId]="'NewCharacterForm_KeiryakuIntervalInput_' + i"
                   [name]="'NewCharacterForm_KeiryakuIntervalInput_' + i"
@@ -339,7 +342,7 @@
                 >
                 </p-inputNumber>
               </div>
-              <div class="field col-12 lg:col-6">
+              <div class="field col-12 lg:col-6" *ngIf="selectedAbilityTypes[i].hasCost">
                 <label [for]="'NewCharacterForm_KeiryakuCostInput_' + i">消費気</label>
                 <p-inputNumber
                   [inputId]="'NewCharacterForm_KeiryakuCostInput_' + i"
@@ -354,7 +357,7 @@
                 </p-inputNumber>
               </div>
             </div>
-            <div class="formgrid grid" *ngIf="selectedAbilityTypes[i].isKeiryaku">
+            <div class="formgrid grid" *ngIf="selectedAbilityTypes[i].hasToken">
               <div class="field col">
                 <label>伏兵</label>
                 <div class="formgroup-inline">
@@ -479,8 +482,11 @@
                 ></p-dropdown>
               </div>
             </div>
-            <div class="formgrid grid p-fluid" *ngIf="selectedAbilityTypesKai[i].name === '計略' || selectedAbilityTypesKai[i].name === '特殊能力'">
-              <div class="field col-12 lg:col-6" *ngIf="selectedAbilityTypesKai[i].name === '特殊能力'">
+            <div
+              class="formgrid grid p-fluid"
+              *ngIf="selectedAbilityTypesKai[i].hasCost || selectedAbilityTypesKai[i].hasInterval || selectedAbilityTypesKai[i].hasInitialInterval"
+            >
+              <div class="field col-12 lg:col-6" *ngIf="selectedAbilityTypesKai[i].hasInitialInterval">
                 <label [for]="'NewCharacterForm_KeiryakuInitialIntervalKaiInput_' + i">初回待機時間</label>
                 <p-inputNumber
                   [inputId]="'NewCharacterForm_KeiryakuInitialIntervalKaiInput_' + i"
@@ -495,9 +501,9 @@
                 >
                 </p-inputNumber>
               </div>
-              <div class="field col-12 lg:col-6">
-                <label [for]="'NewCharacterForm_KeiryakuIntervalKaiInput_' + i" *ngIf="selectedAbilityTypesKai[i].name === '特殊能力'">再使用</label>
-                <label [for]="'NewCharacterForm_KeiryakuIntervalKaiInput_' + i" *ngIf="selectedAbilityTypesKai[i].name === '計略'">使用間隔</label>
+              <div class="field col-12 lg:col-6" *ngIf="selectedAbilityTypesKai[i].hasInterval">
+                <label [for]="'NewCharacterForm_KeiryakuIntervalKaiInput_' + i" *ngIf="selectedAbilityTypesKai[i].hasInitialInterval">再使用時間</label>
+                <label [for]="'NewCharacterForm_KeiryakuIntervalKaiInput_' + i" *ngIf="!selectedAbilityTypesKai[i].hasInitialInterval">使用間隔</label>
                 <p-inputNumber
                   [inputId]="'NewCharacterForm_KeiryakuIntervalKaiInput_' + i"
                   [name]="'NewCharacterForm_KeiryakuIntervalKaiInput_' + i"
@@ -511,7 +517,7 @@
                 >
                 </p-inputNumber>
               </div>
-              <div class="field col-12 lg:col-6">
+              <div class="field col-12 lg:col-6" *ngIf="selectedAbilityTypesKai[i].hasCost">
                 <label [for]="'NewCharacterForm_KeiryakuCostKaiInput_' + i">消費気</label>
                 <p-inputNumber
                   [inputId]="'NewCharacterForm_KeiryakuCostKaiInput_' + i"
@@ -526,7 +532,7 @@
                 </p-inputNumber>
               </div>
             </div>
-            <div class="formgrid grid" *ngIf="selectedAbilityTypesKai[i].isKeiryaku">
+            <div class="formgrid grid" *ngIf="selectedAbilityTypesKai[i].hasToken">
               <div class="field col">
                 <label>伏兵</label>
                 <div class="formgroup-inline">

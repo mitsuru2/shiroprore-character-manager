@@ -261,7 +261,7 @@ export class NewCharacterFormComponent implements OnInit, AfterViewInit {
 
     // Get keiryaku ability type.
     for (let i = 0; i < this.abilityTypes.length; ++i) {
-      if (this.abilityTypes[i].isKeiryaku) {
+      if (this.abilityTypes[i].name == '計略') {
         this.keiryakuTypeId = this.abilityTypes[i].id;
         break;
       }
@@ -1021,11 +1021,10 @@ export class NewCharacterFormComponent implements OnInit, AfterViewInit {
       // Extended info.
       for (let i = 0; i < this.abilityTypes.length; ++i) {
         if (base.type === this.abilityTypes[i].id) {
-          result.typeName = this.abilityTypes[i].name.slice();
+          result.typeDetail = this.abilityTypes[i];
           break;
         }
       }
-      result.tokenAvailable = base.tokenLayouts.length > 0 ? true : false;
       result.isExisting = true;
     }
 
@@ -1319,7 +1318,7 @@ export class NewCharacterFormComponent implements OnInit, AfterViewInit {
 
     result.id = input.id;
     result.type = type.id;
-    result.typeName = type.name;
+    result.typeDetail = type;
     result.name = input.name;
     result.descriptions = input.descriptions.filter((text) => text.length > 0);
     result.initialInterval = input.initialInterval;
@@ -1455,7 +1454,7 @@ export class NewCharacterFormComponent implements OnInit, AfterViewInit {
       }
 
       // Token layout.
-      if (abilityType.isKeiryaku && ability.tokenAvailable) {
+      if (abilityType.hasToken) {
         if (!ability.tokenLayouts || ability.tokenLayouts.length === 0) {
           this.logger.warn(location, 'No token layout option is selected.', { index: i, kaichiku: false });
           this.errorMessage = '伏兵計略の場合は伏兵の配置マスタイプを選択してください。';

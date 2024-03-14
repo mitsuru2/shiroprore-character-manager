@@ -98,11 +98,20 @@ export class FsAbility extends FsDocumentBase {
 }
 
 export class FsAbilityType extends FsDocumentBaseWithOrder {
-  isKeiryaku: boolean = false;
+  hasCost: boolean = false;
 
-  constructor(id = '', name = '', order = 0, isKeiryaku = false) {
+  hasInterval: boolean = false;
+
+  hasInitialInterval: boolean = false;
+
+  hasToken: boolean = false;
+
+  constructor(id = '', name = '', order = 0, hasCost = false, hasInterval = false, hasInitialInterval = false, hasToken = false) {
     super(id, name, order);
-    this.isKeiryaku = isKeiryaku;
+    this.hasCost = hasCost;
+    this.hasInterval = hasInterval;
+    this.hasInitialInterval = hasInitialInterval;
+    this.hasToken = hasToken;
   }
 }
 

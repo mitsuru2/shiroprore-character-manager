@@ -98,24 +98,13 @@ table {
 }
 
 :host ::ng-deep .paginator.p-paginator {
-  .p-paginator-page {
+  .p-paginator-page,
+  .p-paginator-first,
+  .p-paginator-prev,
+  .p-paginator-next,
+  .p-paginator-last,
+  .p-paginator-curremt {
     border-radius: 50%; // Circle.
-  }
-
-  .p-paginator-first {
-    border-radius: 50%;
-  }
-
-  .p-paginator-prev {
-    border-radius: 50%;
-  }
-
-  .p-paginator-next {
-    border-radius: 50%;
-  }
-
-  .p-paginator-last {
-    border-radius: 50%;
   }
 }
 
