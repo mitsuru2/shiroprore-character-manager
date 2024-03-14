@@ -1442,30 +1442,32 @@ export class NewCharacterFormComponent implements OnInit, AfterViewInit {
 
       // Ability name.
       if (ability.name === '') {
-        this.logger.warn(location, 'No ablity name is input.', { index: i, kaichiku: false });
+        this.logger.warn(location, 'No ablity name is input.', { index: i, ability: ability });
         this.errorMessage = '特技/計略名を入力してください。';
         return false;
       }
 
       // Ability type.
       if (!abilityType) {
-        this.logger.warn(location, 'No ablity type is selected.', { index: i, kaichiku: false });
+        this.logger.warn(location, 'No ablity type is selected.', { index: i, ability: ability });
         this.errorMessage = '特技/計略タイプを選択してください。';
         return false;
       }
 
       // Token layout.
       if (abilityType.hasToken) {
-        if (!ability.tokenLayouts || ability.tokenLayouts.length === 0) {
-          this.logger.warn(location, 'No token layout option is selected.', { index: i, kaichiku: false });
-          this.errorMessage = '伏兵計略の場合は伏兵の配置マスタイプを選択してください。';
-          return false;
+        if (ability.tokenAvailable) {
+          if (!ability.tokenLayouts || ability.tokenLayouts.length === 0) {
+            this.logger.warn(location, 'No token layout option is selected.', { index: i, ability: ability });
+            this.errorMessage = '伏兵計略の場合は伏兵の配置マスタイプを選択してください。';
+            return false;
+          }
         }
       }
 
       // Description.
       if (!ability.descriptions || ability.descriptions.length === 0 || ability.descriptions[0] === '') {
-        this.logger.warn(location, 'No ability description is input.', { index: i, kaichiku: false });
+        this.logger.warn(location, 'No ability description is input.', { index: i, ability: ability });
         this.errorMessage = '特技/計略の説明を入力してください。説明文は1行目から入力してください。';
         return false;
       }

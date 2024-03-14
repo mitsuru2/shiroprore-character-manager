@@ -82,6 +82,9 @@ export class NewWeaponFormComponent implements OnInit {
 
     /** Sort weapon type. */
     this.firestore.sortByCode(this.weaponTypeItems);
+
+    /** Rarerity field switch. */
+    this.rarerityShown = !this.weaponData.type.isFixed;
   }
 
   /**
