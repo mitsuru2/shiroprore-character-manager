@@ -89,6 +89,11 @@ export class CharacterFilterSettingsFormComponent {
     for (let i = 0; i < FsCharacterRarerityMax; ++i) {
       this.rarerityItems.push(i + 1);
     }
+
+    // Sort items.
+    this.firestore.sortByCode(this.weaponTypeItems);
+    this.firestore.sortByOrder(this.geographTypeItems);
+    this.firestore.sortByOrder(this.regionItems);
   }
 
   // ngOnInit(): void {}
