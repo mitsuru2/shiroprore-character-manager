@@ -841,6 +841,9 @@ export class NewCharacterFormComponent implements OnInit, AfterViewInit {
     for (let j = 0; j < src.tokenLayouts.length; ++j) {
       result.tokenLayouts.push(src.tokenLayouts[j]);
     }
+    if (result.tokenLayouts.length > 0) {
+      result.tokenAvailable = true;
+    }
 
     return result;
   }
@@ -921,6 +924,7 @@ export class NewCharacterFormComponent implements OnInit, AfterViewInit {
       this.weaponForm = new NewWeaponFormData();
       this.weaponForm.name = value; // Set initial value.
       this.weaponForm.type = this.characterData.weaponType;
+      this.weaponForm.rarerity = 4;
       this.showWeaponForm = true;
     }
   }
@@ -949,6 +953,7 @@ export class NewCharacterFormComponent implements OnInit, AfterViewInit {
       this.inputMotifFacilities.splice(index); // Remove text chip.
       this.facilityForm = new NewFacilityFormData();
       this.facilityForm.name = value;
+      this.facilityForm.rarerity = 4;
       this.showFacilityForm = true;
     }
   }
@@ -1017,6 +1022,9 @@ export class NewCharacterFormComponent implements OnInit, AfterViewInit {
       result.tokenLayouts = [];
       for (let i = 0; i < base.tokenLayouts.length; ++i) {
         result.tokenLayouts.push(base.tokenLayouts[i]);
+      }
+      if (result.tokenLayouts.length > 0) {
+        result.tokenAvailable = true;
       }
 
       // Extended info.
